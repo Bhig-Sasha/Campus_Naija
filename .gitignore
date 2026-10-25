@@ -1,6 +1,7 @@
 
 # Dependencies
 node_modules/
+vercel.json
 
 # Environment variables and secrets
 .env
