@@ -89,7 +89,11 @@ async function seed() {
  * APP
  * ============================================================ */
 const app = express();
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  // Allow your own pages/scripts; relax CSP slightly for the static site
+  contentSecurityPolicy: false,
+}));
 app.use(cors({
   origin: ALLOWED_ORIGINS.includes('*') ? true : ALLOWED_ORIGINS,
   credentials: true,
@@ -1228,6 +1232,26 @@ router.get('/health', asyncH(async (req, res) => {
 }));
 
 /* ============================================================
+ * FRONTEND STATIC FILES
+ * ============================================================ */
+// Serves /public as static. `extensions: ['html']` lets clean URLs like
+// /Home resolve to public/Home.html. `index: false` so we control the
+// root path explicitly below (fall back to Home.html).
+app.use(express.static(path.join(__dirname, 'public'), {
+  extensions: ['html'],
+  index: false,
+  maxAge: '1h',
+  fallthrough: true,
+}));
+
+// Convenience: root → Home.html
+app.get('/', (req, res, next) => {
+  res.sendFile(path.join(__dirname, 'public', 'Home.html'), (err) => {
+    if (err) next();
+  });
+});
+
+/* ============================================================
  * ERROR HANDLING
  * ============================================================ */
 app.use((req, res) => res.status(404).json({ error: 'Not found.' }));
@@ -1244,6 +1268,7 @@ const httpServer = app.listen(PORT, () => {
   console.log(`CampusNaija backend listening on port ${PORT}`);
   console.log(`Owner email: ${OWNER_EMAIL}`);
   console.log(`Uploads directory: ${UPLOAD_DIR}`);
+  console.log(`Public dir: ${path.join(__dirname, 'public')}`);
   console.log('API base: /api');
 });
 
