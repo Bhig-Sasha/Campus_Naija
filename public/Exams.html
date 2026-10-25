@@ -9,39 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: #070A09;
-      font-family: 'Manrope', sans-serif;
-      color: #F5F7F5;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { background-color: #070A09; font-family: 'Manrope', sans-serif; color: #F5F7F5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
     a { text-decoration: none; color: inherit; }
     img { max-width: 100%; display: block; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
-      --radius-card: 16px;
-      --radius-btn: 12px;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 12px;
     }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-    /* ----- HEADER ----- */
-    .site-header {
-      position: sticky; top: 0; z-index: 50;
-      background-color: rgba(7, 10, 9, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
+    /* HEADER */
+    .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
     .logo span { color: var(--primary); }
@@ -49,15 +31,9 @@
     .nav-links a:hover { color: var(--primary); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
     .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
-    .btn-explore {
-      display: none; background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-    }
+    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
-    .mobile-nav {
-      display: none; background-color: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted);
-    }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
     .mobile-nav.active { display: flex; }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
@@ -71,100 +47,47 @@
 
     /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; }
-    .directory-hero .eyebrow {
-      color: var(--primary); font-weight: 700; font-size: 0.85rem;
-      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px;
-    }
+    .directory-hero .eyebrow { color: var(--primary); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
     .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
     .search-filter-bar { margin: 24px 0 32px; }
     .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .search-wrapper {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 6px 6px 6px 20px; display: flex;
-      align-items: center; gap: 8px; flex: 1; min-width: 240px;
-    }
+    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; }
     .search-wrapper:focus-within { border-color: var(--primary); }
     .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
-    .search-wrapper input {
-      flex: 1; background: transparent; border: none; padding: 12px 0;
-      font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none;
-    }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
     .search-wrapper input::placeholder { color: #6b7c74; }
-    .search-wrapper button {
-      background-color: var(--primary); border: none; border-radius: 40px;
-      padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer;
-      white-space: nowrap;
-    }
-    .year-select {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif;
-      font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer;
-      min-width: 160px;
-    }
+    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; }
+    .year-select { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer; min-width: 160px; }
     .year-select:focus { border-color: var(--primary); }
 
     .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
-    .filter-tab {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      color: var(--muted); font-size: 0.85rem; font-weight: 600;
-      padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s;
-    }
+    .filter-tab { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s; }
     .filter-tab:hover { border-color: var(--primary); color: var(--text); }
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
 
-    .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; }
-    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
 
-    .exams-grid {
-      display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 64px;
-    }
+    .exams-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 64px; }
     @media (min-width: 600px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .exams-grid { grid-template-columns: repeat(4, 1fr); } }
 
-    .exam-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s;
-      display: flex; flex-direction: column; cursor: pointer;
-    }
+    .exam-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; display: flex; flex-direction: column; cursor: pointer; }
     .exam-card:hover { border-color: var(--primary); }
-    .exam-img {
-      height: 150px; background-size: cover; background-position: center; position: relative;
-      background-color: var(--elevated);
-    }
-    .exam-img::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, #0D1210 5%, transparent 70%);
-    }
+    .exam-img { height: 150px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); }
+    .exam-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
     .exam-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
     .exam-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
-    .exam-body-tag {
-      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
-      color: var(--primary); font-weight: 700; margin-bottom: 8px;
-    }
+    .exam-body-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
     .exam-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
-    .exam-action {
-      font-weight: 600; font-size: 0.85rem; color: var(--primary);
-      display: inline-flex; align-items: center; gap: 6px; margin-top: auto;
-    }
+    .exam-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; }
 
     /* Calendar strip */
-    .calendar-strip {
-      padding: 40px 0 16px;
-      border-top: 1px solid var(--border);
-      margin-top: 8px;
-    }
+    .calendar-strip { padding: 40px 0 16px; border-top: 1px solid var(--border); margin-top: 8px; }
     .calendar-strip-inner { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; }
-    .calendar-item {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0;
-      border-left: 4px solid var(--accent);
-    }
+    .calendar-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0; border-left: 4px solid var(--accent); }
     .calendar-item .cal-label { color: var(--accent); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
     .calendar-item .cal-event { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
     .calendar-item .cal-date { font-size: 0.85rem; color: var(--muted); }
@@ -172,68 +95,35 @@
 
     /* Prep strip */
     .prep-strip { padding: 32px 0 64px; }
-    .prep-inner {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; padding: 32px 24px;
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px;
-    }
+    .prep-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
     .prep-inner h2 { font-size: 1.6rem; margin-bottom: 8px; }
     .prep-inner p { color: var(--muted); font-size: 0.95rem; max-width: 520px; }
     .prep-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     /* DETAIL */
-    .back-to-directory {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--muted); font-size: 0.9rem; font-weight: 500;
-      padding: 24px 0 8px; cursor: pointer;
-    }
+    .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; }
     .back-to-directory:hover { color: var(--primary); }
 
     .exam-detail-hero { padding: 8px 0 16px; }
-    .exam-detail-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; overflow: hidden;
-    }
-    .exam-detail-banner {
-      height: 220px; background-size: cover; background-position: center; position: relative;
-      background-color: var(--elevated);
-    }
-    .exam-detail-banner::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, #0D1210 15%, transparent 80%);
-    }
-    .exam-detail-header { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .exam-detail-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .exam-detail-header { padding: 24px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid var(--border); }
     .exam-detail-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .exam-detail-title-row h1 { font-size: 2rem; }
-    .exam-badge {
-      background-color: rgba(0,201,130,0.15); color: var(--primary);
-      font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
+    .exam-badge { background-color: rgba(0,201,130,0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em; }
     .exam-badge.gold { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .exam-badge.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .exam-detail-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .exam-detail-sub .dot { font-size: 0.4rem; }
     .exam-detail-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    .btn-primary {
-      background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-outline {
-      background-color: transparent; color: var(--text); font-weight: 600;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem;
-      border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-    }
+    .btn-primary { background-color: var(--primary); color: #070A09; font-weight: 700; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { background-color: transparent; color: var(--text); font-weight: 600; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .exam-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
     .exam-tab-list { display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content; }
-    .exam-tab-item {
-      padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted);
-      cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
-      white-space: nowrap;
-    }
+    .exam-tab-item { padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
     .exam-tab-item:hover { color: var(--text); }
     .exam-tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
 
@@ -243,21 +133,18 @@
     .exam-profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
     @media (min-width: 900px) { .exam-profile-grid { grid-template-columns: 2fr 1fr; } }
 
-    .info-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px;
-    }
+    .info-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; }
     .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
-    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; gap: 12px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
-    .info-value { font-weight: 600; text-align: right; }
+    .info-value { font-weight: 600; text-align: right; word-break: break-word; }
     .info-value a { color: var(--primary); }
 
     .exam-section { margin-bottom: 40px; }
     .exam-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
     .exam-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
-    .exam-section p { color: var(--muted); margin-bottom: 16px; }
+    .exam-section p { color: var(--muted); margin-bottom: 16px; white-space: pre-wrap; }
 
     .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -270,56 +157,31 @@
     .badge-muted { background-color: rgba(155,169,161,0.12); color: var(--muted); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
 
     .update-list { display: flex; flex-direction: column; gap: 16px; }
-    .update-item {
-      background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px;
-      border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start;
-    }
+    .update-item { background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px; border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start; }
     .update-item i { color: var(--accent); margin-top: 4px; }
     .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
-    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
-    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
-    .update-meta a { color: var(--primary); }
+    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; white-space: pre-wrap; }
+    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .update-meta a { color: var(--primary); word-break: break-all; }
 
     .resource-list { display: flex; flex-direction: column; gap: 12px; }
-    .resource-item {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 16px 18px;
-      display: flex; align-items: center; gap: 14px; transition: border-color 0.2s;
-    }
+    .resource-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s; }
     .resource-item:hover { border-color: var(--primary); }
     .resource-item i { color: var(--primary); font-size: 1.2rem; width: 24px; text-align: center; }
-    .resource-item .res-text { flex: 1; }
+    .resource-item .res-text { flex: 1; min-width: 0; }
     .resource-item .res-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
-    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; word-break: break-all; }
     .resource-item .res-action { color: var(--primary); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
 
-    .countdown-box {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 20px; text-align: center;
-    }
+    .countdown-box { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; text-align: center; }
     .countdown-box .cd-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
     .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
     .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
-    .source-note { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 8px; }
-
     /* STATES */
-    .loading-state, .empty-state, .error-state {
-      text-align: center; padding: 64px 24px; color: var(--muted);
-      grid-column: 1 / -1;
-    }
-    .loading-state i, .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); }
-    .error-state i { color: #e07070; }
-    .error-state button {
-      margin-top: 16px; background-color: var(--primary); color: #070A09; border: none;
-      padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer;
-    }
-    .loading-spinner {
-      display: inline-block; width: 32px; height: 32px;
-      border: 3px solid rgba(255,255,255,0.1); border-radius: 50%;
-      border-top-color: var(--primary); animation: spin 0.8s linear infinite;
-      margin-bottom: 16px;
-    }
+    .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
+    .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; }
+    .loading-spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s linear infinite; margin-bottom: 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* FOOTER */
@@ -336,11 +198,7 @@
     .footer-links li { margin-bottom: 10px; }
     .footer-links a { color: var(--muted); font-size: 0.9rem; }
     .footer-links a:hover { color: var(--primary); }
-    .footer-bottom {
-      border-top: 1px solid var(--border); padding-top: 24px;
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
-      font-size: 0.8rem; color: var(--muted);
-    }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
     .footer-legal { display: flex; gap: 20px; }
   </style>
 </head>
@@ -348,28 +206,28 @@
 
 <header class="site-header">
   <div class="container header-inner">
-    <div class="logo" onclick="showDirectory()">Campus<span>Naija</span></div>
+    <a href="/Home.html" class="logo">Campus<span>Naija</span></a>
     <nav class="nav-links">
-      <a href="./Home.html">Home</a>
-      <a href="./Schools.html">Schools</a>
-      <a href="./Admissions.html">Admissions</a>
-      <a href="./Exams.html" onclick="showDirectory(); return false;">Exams</a>
-      <a href="./Scholarships.html">Scholarships</a>
-      <a href="./Trending.html">Trending</a>
+      <a href="/Home.html">Home</a>
+      <a href="/Schools.html">Schools</a>
+      <a href="/Admissions.html">Admissions</a>
+      <a href="/Exams.html">Exams</a>
+      <a href="/Scholarships.html">Scholarships</a>
+      <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
-      <button class="btn-explore" onclick="showDirectory()">Explore</button>
+      <button class="search-icon-btn" aria-label="Search" onclick="document.getElementById('examSearchInput').focus()"><i class="fas fa-search"></i></button>
+      <a class="btn-explore" href="/Schools.html">Explore</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
-    <a href="./Home.html">Home</a>
-    <a href="./Schools.html">Schools</a>
-    <a href="./Admissions.html">Admissions</a>
-    <a href="./Exams.html" onclick="showDirectory(); return false;">Exams</a>
-    <a href="./Scholarships.html">Scholarships</a>
-    <a href="./Trending.html">Trending</a>
+    <a href="/Home.html">Home</a>
+    <a href="/Schools.html">Schools</a>
+    <a href="/Admissions.html">Admissions</a>
+    <a href="/Exams.html">Exams</a>
+    <a href="/Scholarships.html">Scholarships</a>
+    <a href="/Trending.html">Trending</a>
   </div>
 </header>
 
@@ -379,18 +237,18 @@
     <section class="directory-hero">
       <div class="eyebrow">Examination centre</div>
       <h1>Prepare today. Perform tomorrow.</h1>
-      <p>Find examination dates, registration information, timetables, requirements, preparation materials, and official results portals.</p>
+      <p>Find examination dates, registration information, timetables, requirements, preparation resources and official results portals.</p>
     </section>
 
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
           <i class="fas fa-search"></i>
-          <input type="text" id="examSearchInput" placeholder="Search exams or subjects" oninput="debouncedFilterExams()">
+          <input type="text" id="examSearchInput" placeholder="Search exams or subjects" aria-label="Search exams">
           <button onclick="filterExams()">Search</button>
         </div>
-        <select class="year-select" id="yearFilter" onchange="filterExams()">
-          <option value="">Select examination year</option>
+        <select class="year-select" id="yearFilter" onchange="filterExams()" aria-label="Filter by session">
+          <option value="">All sessions</option>
         </select>
       </div>
       <div class="filter-tabs" id="examTypeFilters">
@@ -399,9 +257,7 @@
     </section>
 
     <section>
-      <div class="section-header">
-        <div class="section-title" id="examCount">Examinations</div>
-      </div>
+      <div class="section-header"><div class="section-title" id="examCount">Examinations</div></div>
       <div class="exams-grid" id="examsGrid">
         <div class="loading-state" id="examsLoading">
           <span class="loading-spinner"></span>
@@ -425,8 +281,12 @@
           <p>Subject guides, syllabuses, practice questions, revision resources, and study tips to help you succeed.</p>
         </div>
         <div class="prep-actions">
-          <button class="btn-primary"><i class="fas fa-book-open"></i> Practice questions</button>
-          <button class="btn-outline"><i class="fas fa-download"></i> Download syllabus</button>
+          <a class="btn-primary" href="/Exams.html#preparation" onclick="return false;" style="cursor: default; opacity: 0.7;">
+            <i class="fas fa-book-open"></i> Practice questions
+          </a>
+          <a class="btn-outline" href="/Exams.html#preparation" onclick="return false;" style="cursor: default; opacity: 0.7;">
+            <i class="fas fa-download"></i> Download syllabus
+          </a>
         </div>
       </div>
     </section>
@@ -442,17 +302,15 @@
 
     <section class="exam-detail-hero">
       <div class="exam-detail-card">
-        <div class="exam-detail-banner" id="examDetailBanner"></div>
         <div class="exam-detail-header">
           <div class="exam-detail-title-row">
             <h1 id="examDetailName">Loading...</h1>
             <span class="exam-badge" id="examDetailBadge"></span>
           </div>
           <div class="exam-detail-sub" id="examDetailSub"></div>
-          <p style="color: var(--muted); max-width: 720px;" id="examDetailTagline"></p>
           <div class="exam-detail-actions">
-            <button class="btn-primary" id="registerBtn"><i class="fas fa-pen-to-square"></i> Register now</button>
-            <button class="btn-outline" id="officialSiteBtn"><i class="fas fa-globe"></i> Official website</button>
+            <button class="btn-primary" id="registerBtn" disabled><i class="fas fa-globe"></i> Visit Official Website</button>
+            <button class="btn-outline" id="sourceBtn" disabled><i class="fas fa-file-shield"></i> Official source</button>
           </div>
         </div>
       </div>
@@ -462,9 +320,8 @@
       <ul class="exam-tab-list" id="examTabs">
         <li class="exam-tab-item active" data-tab="overview">Overview</li>
         <li class="exam-tab-item" data-tab="registration">Registration &amp; Timetable</li>
-        <li class="exam-tab-item" data-tab="requirements">Requirements &amp; Subjects</li>
-        <li class="exam-tab-item" data-tab="preparation">Preparation Centre</li>
-        <li class="exam-tab-item" data-tab="results">Results &amp; Services</li>
+        <li class="exam-tab-item" data-tab="requirements">Requirements &amp; Resources</li>
+        <li class="exam-tab-item" data-tab="portal">Official Portal</li>
       </ul>
     </div>
 
@@ -488,22 +345,22 @@
             </div>
           </div>
           <div class="exam-section">
-            <h3>Purpose</h3>
-            <p id="examPurposeText">Loading...</p>
+            <h3>Eligibility</h3>
+            <p id="examEligibleText">Loading...</p>
           </div>
         </div>
         <aside>
           <div class="info-card">
             <h3>Exam information</h3>
             <div class="info-row"><span class="info-label">Body</span><span class="info-value" id="sideBody">—</span></div>
-            <div class="info-row"><span class="info-label">Qualification</span><span class="info-value" id="sideQual">—</span></div>
-            <div class="info-row"><span class="info-label">Year</span><span class="info-value" id="sideYear">—</span></div>
+            <div class="info-row"><span class="info-label">Type</span><span class="info-value" id="sideType">—</span></div>
+            <div class="info-row"><span class="info-label">Session</span><span class="info-value" id="sideSession">—</span></div>
             <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge-soft" id="sideStatus">—</span></span></div>
-            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="sideWebsite">—</a></span></div>
+            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="sideWebsite" target="_blank" rel="noopener">—</a></span></div>
           </div>
-          <div class="countdown-box" id="countdownBox">
-            <div class="cd-label" id="countdownLabel">Registration</div>
-            <div class="cd-value" id="countdownValue">--</div>
+          <div class="countdown-box">
+            <div class="cd-label">Registration</div>
+            <div class="cd-value" id="countdownValue">—</div>
             <div class="cd-sub" id="countdownSub">—</div>
           </div>
         </aside>
@@ -516,30 +373,26 @@
         <div>
           <div class="exam-section">
             <h2>Registration &amp; timetable</h2>
-            <p>Registration opening and closing dates, examination schedule, and important announcements.</p>
+            <p>Registration opening and closing dates, examination timetable information, and important instructions.</p>
           </div>
           <div class="exam-section">
             <h3>Registration dates</h3>
             <div class="data-table-wrapper">
               <table>
-                <thead><tr><th>Event</th><th>Date</th><th>Status</th><th>Source</th></tr></thead>
+                <thead><tr><th>Event</th><th>Date</th><th>Status</th></tr></thead>
                 <tbody id="registrationTable">
-                  <tr><td colspan="4" style="text-align:center; color:var(--muted);">Loading...</td></tr>
+                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
           <div class="exam-section">
-            <h3>Timetable downloads</h3>
-            <div class="resource-list" id="timetableDownloads">
-              <div class="resource-item"><i class="fas fa-file-pdf"></i><div class="res-text"><h4>No downloads available</h4></div></div>
-            </div>
+            <h3>Timetable</h3>
+            <div class="resource-list" id="timetableDownloads"></div>
           </div>
           <div class="exam-section">
-            <h3>Important announcements</h3>
-            <div class="update-list" id="registrationUpdates">
-              <div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">Loading...</p></div></div>
-            </div>
+            <h3>Important instructions</h3>
+            <div class="update-list" id="examInstructions"></div>
           </div>
         </div>
         <aside>
@@ -547,8 +400,7 @@
             <h3>Registration summary</h3>
             <div class="info-row"><span class="info-label">Opens</span><span class="info-value" id="regOpens">—</span></div>
             <div class="info-row"><span class="info-label">Closes</span><span class="info-value" id="regCloses">—</span></div>
-            <div class="info-row"><span class="info-label">Exam date</span><span class="info-value" id="regExamDate">—</span></div>
-            <div class="info-row"><span class="info-label">Registration fee</span><span class="info-value" id="regFee">—</span></div>
+            <div class="info-row"><span class="info-label">Session</span><span class="info-value" id="regSession">—</span></div>
           </div>
         </aside>
       </div>
@@ -559,87 +411,46 @@
       <div class="exam-profile-grid">
         <div>
           <div class="exam-section">
-            <h2>Requirements &amp; subjects</h2>
-            <p>Eligibility, subject combinations, syllabuses, registration documents, and examination-day instructions.</p>
+            <h2>Requirements &amp; resources</h2>
+            <p>Eligibility and preparation resources as published by the examination body.</p>
           </div>
           <div class="exam-section">
             <h3>Eligibility</h3>
             <p id="eligibilityText">Loading...</p>
           </div>
           <div class="exam-section">
-            <h3>Subject combinations</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead><tr><th>Course group</th><th>Required subjects</th><th>Notes</th></tr></thead>
-                <tbody id="subjectCombinations">
-                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="exam-section">
-            <h3>Examination-day instructions</h3>
-            <div class="update-list" id="examDayInstructions">
-              <div class="update-item"><i class="fas fa-check-circle"></i><div class="update-content"><p style="color:var(--muted);">Loading...</p></div></div>
-            </div>
+            <h3>Preparation resources</h3>
+            <div class="update-list" id="examResources"></div>
           </div>
         </div>
         <aside>
           <div class="info-card">
-            <h3>Registration documents</h3>
-            <div class="contact-links" id="registrationDocs">
-              <a href="#"><i class="fas fa-id-card"></i> Loading...</a>
-            </div>
+            <h3>Verification</h3>
+            <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="verifStatus">—</span></div>
           </div>
         </aside>
       </div>
     </div>
 
-    <!-- PREPARATION -->
-    <div class="exam-tab-panel" id="exam-panel-preparation">
+    <!-- PORTAL -->
+    <div class="exam-tab-panel" id="exam-panel-portal">
       <div class="exam-profile-grid">
         <div>
           <div class="exam-section">
-            <h2>Preparation centre</h2>
-            <p>Practice questions, revision guides, past questions, subject resources, and mock tests.</p>
-          </div>
-          <div class="exam-section">
-            <h3>Practice &amp; revision resources</h3>
-            <div class="resource-list" id="preparationResources">
-              <div class="resource-item"><i class="fas fa-book-open"></i><div class="res-text"><h4>Loading...</h4></div></div>
-            </div>
-          </div>
-        </div>
-        <aside>
-          <div class="info-card">
-            <h3>Study tips</h3>
-            <div class="info-row"><span class="info-label">Daily target</span><span class="info-value">2–3 hours</span></div>
-            <div class="info-row"><span class="info-label">Subjects per day</span><span class="info-value">2–3 subjects</span></div>
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <!-- RESULTS -->
-    <div class="exam-tab-panel" id="exam-panel-results">
-      <div class="exam-profile-grid">
-        <div>
-          <div class="exam-section">
-            <h2>Results &amp; official services</h2>
-            <p>Result-checking instructions, official portals, and certificate-related information.</p>
+            <h2>Official portal</h2>
+            <p>Always use the official website for registration, timetable downloads, and result checking.</p>
           </div>
           <div class="exam-section">
             <h3>Official services</h3>
-            <div class="resource-list" id="resultsServices">
-              <div class="resource-item"><i class="fas fa-globe"></i><div class="res-text"><h4>Loading...</h4></div></div>
-            </div>
+            <div class="resource-list" id="resultsServices"></div>
           </div>
         </div>
         <aside>
           <div class="info-card">
-            <h3>Support</h3>
-            <div class="contact-links" id="resultsSupport">
-              <a href="#"><i class="fas fa-envelope"></i> Loading...</a>
+            <h3>Scam awareness</h3>
+            <div class="scam-warning" style="background-color: rgba(245,185,66,0.08); border: 1px solid rgba(245,185,66,0.3); border-radius: var(--radius-card); padding: 16px 18px; display: flex; gap: 12px;">
+              <i class="fas fa-triangle-exclamation" style="color: var(--accent); font-size: 1.1rem; margin-top: 2px;"></i>
+              <p style="font-size: 0.82rem; color: var(--muted); margin: 0;"><strong style="color: var(--accent);">Never pay anyone outside the official portal.</strong> Result upgrades, score changes and special favours are scams.</p>
             </div>
           </div>
         </aside>
@@ -655,136 +466,147 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
       <div class="footer-links">
         <h4>Explore</h4>
         <ul>
-          <li><a href="#">Schools</a></li>
-          <li><a href="#">Admissions</a></li>
-          <li><a href="#" onclick="showDirectory(); return false;">Exams</a></li>
-          <li><a href="#">Scholarships</a></li>
-          <li><a href="#">Trending</a></li>
+          <li><a href="/Schools.html">Schools</a></li>
+          <li><a href="/Admissions.html">Admissions</a></li>
+          <li><a href="/Exams.html">Exams</a></li>
+          <li><a href="/Scholarships.html">Scholarships</a></li>
+          <li><a href="/Trending.html">Trending</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Company</h4>
         <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">FAQ</a></li>
+          <li><a href="/About.html">About</a></li>
+          <li><a href="/Contact.html">Contact</a></li>
+          <li><a href="/FAQ.html">FAQ</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="/Privacy.html">Privacy Policy</a></li>
+          <li><a href="/Terms.html">Terms of Service</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 CampusNaija. All rights reserved.</span>
+      <span>© <span id="year"></span> CampusNaija. All rights reserved.</span>
       <div class="footer-legal">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/Privacy.html">Privacy</a>
+        <a href="/Terms.html">Terms</a>
+        <a href="/Cookies.html">Cookies</a>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  /* ============================================================ */
-  /* CONFIGURATION                                                */
-  /* ============================================================ */
-  const API_URL = 'https://campus-naija.onrender.com';
+(function () {
+  'use strict';
 
-  /* ============================================================ */
-  /* STATE                                                        */
-  /* ============================================================ */
+  const API_URL = 'https://campus-naija.onrender.com';
+  const CLOSING_SOON_DAYS = 14;
+
   let examsCache = [];
   let currentExamTypeFilter = 'all';
 
-  /* ============================================================ */
-  /* UTILITIES                                                    */
-  /* ============================================================ */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- helpers ---------- */
+  const escapeHtml = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const safeUrl = (u) => (u && /^https?:\/\//i.test(u)) ? u : null;
+
   function debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), delay);
     };
   }
-  const debouncedFilterExams = debounce(() => filterExams(), 300);
+  const debouncedFilterExams = debounce(filterExams, 300);
 
-  function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str).replace(/[&<>"']/g, m => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[m]));
+  async function apiGet(path) {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      mode: 'cors',
+      credentials: 'omit',
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} on ${path}`);
+    return res.json();
   }
 
-  function statusBadgeClass(status) {
-    switch ((status || '').toString().toLowerCase()) {
+  function formatDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    if (isNaN(dt)) return '—';
+    return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function computeStatus(openDate, closeDate) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const open = openDate ? new Date(openDate) : null;
+    const close = closeDate ? new Date(closeDate) : null;
+
+    if (close && close < today) return 'closed';
+    if (open && open > today) return 'upcoming';
+    if (close) {
+      const daysLeft = Math.ceil((close - today) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= CLOSING_SOON_DAYS) return 'closing';
+      return 'open';
+    }
+    if (open) return 'open';
+    return 'open';
+  }
+
+  function statusInfo(status) {
+    switch (status) {
+      case 'open': return { label: 'Registration open', cls: 'status-open', badge: '' };
+      case 'closing': return { label: 'Closing soon', cls: 'status-closing', badge: 'gold' };
+      case 'upcoming': return { label: 'Upcoming', cls: 'status-upcoming', badge: 'muted' };
+      case 'closed': return { label: 'Closed', cls: 'status-closed', badge: 'muted' };
+      default: return { label: status || 'Unknown', cls: 'status-upcoming', badge: 'muted' };
+    }
+  }
+
+  function badgeClassFor(status) {
+    switch (status) {
       case 'open': return 'badge-soft';
-      case 'closing': case 'closing soon': return 'badge-gold';
-      case 'scheduled': case 'upcoming': case 'closed': return 'badge-muted';
+      case 'closing': return 'badge-gold';
       default: return 'badge-muted';
     }
   }
 
-  function examDetailBadgeClass(status) {
-    switch ((status || '').toString().toLowerCase()) {
-      case 'open': return '';
-      case 'closing': case 'closing soon': return 'gold';
-      default: return 'muted';
-    }
-  }
-
-  /* ============================================================ */
-  /* API FETCH                                                    */
-  /* ============================================================ */
-  async function fetchWithTimeout(url, timeout = 12000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-      const response = await fetch(url, { signal: controller.signal });
-      clearTimeout(id);
-      return response;
-    } catch (err) {
-      clearTimeout(id);
-      throw err;
-    }
-  }
-
+  /* ---------- load list ---------- */
   async function loadExams() {
     const grid = document.getElementById('examsGrid');
-    grid.innerHTML = `<div class="loading-state" id="examsLoading">
-      <span class="loading-spinner"></span>
-      <p>Loading examinations...</p></div>`;
+    grid.innerHTML = `<div class="loading-state" id="examsLoading"><span class="loading-spinner"></span><p>Loading examinations...</p></div>`;
 
     try {
-      const response = await fetchWithTimeout(`${API_URL}/api/exams?limit=100`);
-      if (!response.ok) throw new Error(`Request failed (${response.status})`);
+      const data = await apiGet('/api/public/exams');
+      const list = Array.isArray(data.exams) ? data.exams : [];
 
-      const data = await response.json();
-      const list = Array.isArray(data) ? data : (data.exams || data.data || []);
-      if (!Array.isArray(list)) throw new Error('Invalid response format');
+      examsCache = list.map((e) => ({ ...e, _status: computeStatus(e.open_date, e.close_date) }));
 
-      examsCache = list;
-      renderExams(list);
-      populateExamTypeFilters(list);
-      populateYearFilter(list);
-      renderCalendarStrip(list);
+      renderExams(examsCache);
+      populateExamTypeFilters(examsCache);
+      populateYearFilter(examsCache);
+      renderCalendarStrip(examsCache);
     } catch (err) {
-      console.error('Failed to load exams:', err);
+      console.error('[exams]', err);
       grid.innerHTML = `<div class="error-state">
-        <i class="fas fa-triangle-exclamation"></i>
         <p>We could not load examinations right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadExams()">Try again</button>
@@ -794,24 +616,12 @@
     }
   }
 
-  async function loadExamDetail(id) {
-    const response = await fetchWithTimeout(`${API_URL}/api/exams/${encodeURIComponent(id)}`);
-    if (!response.ok) throw new Error(`Request failed (${response.status})`);
-    return await response.json();
-  }
-
-  /* ============================================================ */
-  /* RENDER EXAMS GRID                                            */
-  /* ============================================================ */
+  /* ---------- render grid ---------- */
   function renderExams(list) {
     const grid = document.getElementById('examsGrid');
 
-    if (!list || list.length === 0) {
-      grid.innerHTML = `<div class="empty-state">
-        <i class="fas fa-file-circle-exclamation"></i>
-        <p>No examinations have been published yet.</p>
-        <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
-      </div>`;
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty-state"><p>No examinations have been published yet.</p><p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p></div>`;
       document.getElementById('examCount').textContent = 'No examinations yet';
       return;
     }
@@ -819,62 +629,50 @@
     document.getElementById('examCount').textContent =
       `${list.length} examination${list.length === 1 ? '' : 's'}`;
 
-    grid.innerHTML = list.map(item => {
-      const id = item.id || item._id || '';
-      const name = item.name || item.title || 'Examination';
-      const body = item.body || item.examBody || item.organization || '—';
-      const type = item.type || item.description || 'Examination';
-      const typeKey = (item.typeKey || item.category || name).toString().toLowerCase().replace(/\s+/g, '');
-      const year = item.year || '';
-      const img = item.imageUrl || item.image || '';
-      const subjects = (item.subjects || []).join(' ').toLowerCase();
+    grid.innerHTML = list.map((e) => {
+      const typeKey = (e.type || '').toString().toLowerCase().replace(/\s+/g, '');
+      const st = statusInfo(e._status);
+      const desc = e.description || (e.open_date || e.close_date
+        ? `${e.open_date ? 'Opens ' + formatDate(e.open_date) : ''}${e.open_date && e.close_date ? ' · ' : ''}${e.close_date ? 'Closes ' + formatDate(e.close_date) : ''}`
+        : 'Registration details pending');
 
       return `
         <div class="exam-card"
              data-type="${escapeHtml(typeKey)}"
-             data-year="${escapeHtml(year)}"
-             data-name="${escapeHtml(name.toLowerCase())}"
-             data-subjects="${escapeHtml(subjects)}"
-             onclick="openExam('${escapeHtml(id)}')">
-          <div class="exam-img" ${img ? `style="background-image:url('${escapeHtml(img)}')"` : ''}></div>
+             data-session="${escapeHtml((e.session || '').toLowerCase())}"
+             data-name="${escapeHtml((e.title || '').toLowerCase())}"
+             data-body="${escapeHtml((e.body || '').toLowerCase())}"
+             onclick="openExam('${escapeHtml(e.id)}')">
+          <div class="exam-img"></div>
           <div class="exam-info">
-            <div class="exam-body-tag">${escapeHtml(body)}</div>
-            <div class="exam-name">${escapeHtml(name)}</div>
-            <div class="exam-desc">${escapeHtml(type)}</div>
+            <div class="exam-body-tag">${escapeHtml(e.body || 'Examination')}</div>
+            <div class="exam-name">${escapeHtml(e.title || 'Examination')}</div>
+            <div class="exam-desc">${escapeHtml(desc)}</div>
             <span class="exam-action">View details <i class="fas fa-arrow-right"></i></span>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
-  /* ============================================================ */
-  /* FILTERS & CALENDAR                                           */
-  /* ============================================================ */
+  /* ---------- filters ---------- */
   function populateExamTypeFilters(list) {
     const container = document.getElementById('examTypeFilters');
-    const types = [...new Set((list || [])
-      .map(i => (i.typeKey || i.category || i.body || '').toString().toLowerCase().replace(/\s+/g, ''))
-      .filter(Boolean)
-    )];
+    const types = [...new Set(list.map((e) => (e.type || '').trim()).filter(Boolean))].sort();
 
-    if (types.length === 0) return;
-
-    container.innerHTML = `<button class="filter-tab active" data-type="all" onclick="setExamTypeFilter('all', this)">All Exams</button>` +
-      types.map(t => `<button class="filter-tab" data-type="${escapeHtml(t)}" onclick="setExamTypeFilter('${escapeHtml(t)}', this)">${escapeHtml(t.toUpperCase())}</button>`).join('');
+    let html = `<button class="filter-tab active" data-type="all" onclick="setExamTypeFilter('all', this)">All Exams</button>`;
+    for (const t of types) {
+      const key = t.toLowerCase().replace(/\s+/g, '');
+      html += `<button class="filter-tab" data-type="${escapeHtml(key)}" onclick="setExamTypeFilter('${escapeHtml(key)}', this)">${escapeHtml(t)}</button>`;
+    }
+    container.innerHTML = html;
   }
 
   function populateYearFilter(list) {
     const select = document.getElementById('yearFilter');
-    const years = [...new Set((list || [])
-      .map(i => i.year)
-      .filter(Boolean)
-      .map(y => y.toString())
-    )].sort().reverse();
-
+    const sessions = [...new Set(list.map((e) => e.session).filter(Boolean))].sort().reverse();
     const current = select.value;
-    select.innerHTML = '<option value="">Select examination year</option>' +
-      years.map(y => `<option value="${escapeHtml(y)}">${escapeHtml(y)}</option>`).join('');
+    select.innerHTML = '<option value="">All sessions</option>' +
+      sessions.map((s) => `<option value="${escapeHtml(s.toLowerCase())}">${escapeHtml(s)}</option>`).join('');
     select.value = current;
   }
 
@@ -882,38 +680,86 @@
     const section = document.getElementById('calendarStripSection');
     const container = document.getElementById('calendarStripInner');
 
-    const items = (list || []).filter(i => i.nextEventDate || i.examDate || i.registrationCloses);
-    if (items.length === 0) {
-      section.style.display = 'none';
-      return;
-    }
+    const upcoming = list
+      .filter((e) => e.close_date || e.open_date)
+      .sort((a, b) => {
+        const da = new Date(a.close_date || a.open_date);
+        const db = new Date(b.close_date || b.open_date);
+        return da - db;
+      })
+      .slice(0, 8);
 
+    if (!upcoming.length) { section.style.display = 'none'; return; }
     section.style.display = 'block';
-    container.innerHTML = items.slice(0, 8).map(i => {
-      const label = i.name || 'Examination';
-      const event = i.nextEvent || (i.registrationCloses ? 'Registration closes' : 'Examination date');
-      const date = i.nextEventDate || i.registrationCloses || i.examDate || '—';
-      const source = i.source || i.body || 'Official portal';
+
+    container.innerHTML = upcoming.map((e) => {
+      let label, event, date;
+      if (e._status === 'upcoming' && e.open_date) {
+        label = e.title || 'Examination';
+        event = 'Registration opens';
+        date = formatDate(e.open_date);
+      } else if (e.close_date) {
+        label = e.title || 'Examination';
+        event = 'Registration closes';
+        date = formatDate(e.close_date);
+      } else {
+        label = e.title || 'Examination';
+        event = 'Opens';
+        date = formatDate(e.open_date);
+      }
       return `
-        <div class="calendar-item">
+        <div class="calendar-item" onclick="openExam('${escapeHtml(e.id)}')" style="cursor:pointer;">
           <div class="cal-label">${escapeHtml(label)}</div>
           <div class="cal-event">${escapeHtml(event)}</div>
           <div class="cal-date">${escapeHtml(date)}</div>
-          <div class="cal-source">Source: ${escapeHtml(source)}</div>
-        </div>
-      `;
+          <div class="cal-source">Source: ${escapeHtml(e.body || 'Official portal')}</div>
+        </div>`;
     }).join('');
   }
 
-  /* ============================================================ */
-  /* VIEW SWITCHING                                               */
-  /* ============================================================ */
+  /* ---------- filter logic ---------- */
+  function setExamTypeFilter(type, btn) {
+    currentExamTypeFilter = type;
+    document.querySelectorAll('#examTypeFilters .filter-tab').forEach((t) => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterExams();
+  }
+
+  function filterExams() {
+    const query = document.getElementById('examSearchInput').value.toLowerCase().trim();
+    const session = document.getElementById('yearFilter').value.toLowerCase();
+    const cards = document.querySelectorAll('#examsGrid .exam-card');
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const type = card.dataset.type || '';
+      const cardSession = card.dataset.session || '';
+      const name = card.dataset.name || '';
+      const body = card.dataset.body || '';
+
+      const okType = currentExamTypeFilter === 'all' || type === currentExamTypeFilter;
+      const okSession = !session || cardSession === session;
+      const okQuery = !query || name.includes(query) || body.includes(query);
+
+      if (okType && okSession && okQuery) { card.style.display = ''; visible++; }
+      else { card.style.display = 'none'; }
+    });
+
+    const countEl = document.getElementById('examCount');
+    if (!examsCache.length) countEl.textContent = 'No examinations yet';
+    else countEl.textContent = visible === 1 ? '1 examination' : `${visible} examinations`;
+  }
+
+  document.getElementById('examSearchInput').addEventListener('input', debouncedFilterExams);
+  document.getElementById('examSearchInput').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterExams(); });
+
+  /* ---------- views ---------- */
   function showDirectory() {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-exam-detail').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetExamTabs();
-    history.pushState({ view: 'directory' }, '', 'Exams.html');
+    history.pushState({ view: 'directory' }, '', '/Exams.html');
   }
 
   async function openExam(id) {
@@ -927,330 +773,249 @@
     document.getElementById('examDetailBadge').textContent = '';
     document.getElementById('examDetailBadge').className = 'exam-badge';
     document.getElementById('examDetailSub').innerHTML = '';
-    document.getElementById('examDetailTagline').textContent = '';
 
     resetExamTabs();
     document.querySelector('.exam-tab-item[data-tab="overview"]').classList.add('active');
     document.getElementById('exam-panel-overview').classList.add('active');
 
-    history.pushState({ view: 'detail', exam: id }, '', 'Exams.html?exam=' + encodeURIComponent(id));
+    history.pushState({ view: 'detail', exam: id }, '', `/Exams.html?exam=${encodeURIComponent(id)}`);
+
+    const cached = examsCache.find((e) => String(e.id) === String(id));
+    if (cached) { renderExamDetail(cached); return; }
 
     try {
-      const data = await loadExamDetail(id);
-      renderExamDetail(data);
+      const data = await apiGet(`/api/public/exams/${encodeURIComponent(id)}`);
+      if (data && data.exam) {
+        renderExamDetail({ ...data.exam, _status: computeStatus(data.exam.open_date, data.exam.close_date) });
+      } else {
+        renderError('Examination not found.');
+      }
     } catch (err) {
-      console.error('Failed to load exam detail:', err);
-      document.getElementById('examDetailName').textContent = 'Examination unavailable';
-      document.getElementById('examDetailTagline').textContent = err.message;
+      renderError(err.message);
     }
   }
 
-  function renderExamDetail(data) {
-    if (!data || typeof data !== 'object') return;
+  function renderError(msg) {
+    document.getElementById('examDetailName').textContent = 'Examination unavailable';
+    document.getElementById('examOverviewText').textContent = msg;
+  }
 
-    const name = data.name || data.title || 'Examination';
-    const body = data.body || data.examBody || data.organization || '—';
-    const type = data.type || data.description || 'Examination';
-    const status = (data.status || '').toString();
+  /* ---------- render detail ---------- */
+  function renderExamDetail(e) {
+    const body = e.body || '—';
+    const type = e.type || '—';
+    const session = e.session || '';
+    const status = e._status;
+    const st = statusInfo(status);
 
-    // Hero
-    document.getElementById('examDetailName').textContent = name;
+    document.getElementById('examDetailName').textContent = e.title || 'Examination';
     const badge = document.getElementById('examDetailBadge');
-    badge.textContent = data.badge || status || '';
-    badge.className = 'exam-badge ' + examDetailBadgeClass(status);
+    badge.textContent = st.label;
+    badge.className = 'exam-badge ' + st.badge;
 
     document.getElementById('examDetailSub').innerHTML = `
       <span><i class="fas fa-building"></i> ${escapeHtml(body)}</span>
       <span class="dot">●</span>
       <span>${escapeHtml(type)}</span>
+      ${session ? `<span class="dot">●</span><span>${escapeHtml(session)}</span>` : ''}
     `;
-    document.getElementById('examDetailTagline').textContent = data.tagline || '';
-    document.getElementById('examDetailBanner').className = 'exam-detail-banner';
-    const bannerUrl = data.bannerUrl || data.imageUrl || data.image;
-    if (bannerUrl) {
-      document.getElementById('examDetailBanner').style.backgroundImage = `url('${bannerUrl}')`;
-    } else {
-      document.getElementById('examDetailBanner').style.backgroundImage = '';
-    }
 
-    // Action buttons
-    const registerBtn = document.getElementById('registerBtn');
-    const registerUrl = data.registerUrl || data.portalUrl || data.website;
-    if (registerUrl) {
-      registerBtn.onclick = () => window.open(registerUrl.startsWith('http') ? registerUrl : 'https://' + registerUrl, '_blank');
+    // Buttons
+    const siteBtn = document.getElementById('registerBtn');
+    const website = safeUrl(e.website);
+    if (website) {
+      siteBtn.disabled = false;
+      siteBtn.onclick = () => window.open(website, '_blank', 'noopener');
     } else {
-      registerBtn.onclick = null;
-    }
-    const siteBtn = document.getElementById('officialSiteBtn');
-    if (data.website) {
-      siteBtn.onclick = () => window.open(data.website.startsWith('http') ? data.website : 'https://' + data.website, '_blank');
-    } else {
+      siteBtn.disabled = true;
       siteBtn.onclick = null;
     }
 
-    // Overview
-    document.getElementById('examOverviewText').textContent = data.overview || data.description || '—';
-    document.getElementById('examPurposeText').textContent = data.purpose || '—';
-    document.getElementById('sideBody').textContent = body;
-    document.getElementById('sideQual').textContent = data.qualification || '—';
-    document.getElementById('sideYear').textContent = data.year || '—';
-    const sideStatus = document.getElementById('sideStatus');
-    sideStatus.textContent = status || '—';
-    sideStatus.className = statusBadgeClass(status);
-    document.getElementById('sideWebsite').textContent = data.website || '—';
+    const sourceBtn = document.getElementById('sourceBtn');
+    const source = safeUrl(e.source_url);
+    if (source) {
+      sourceBtn.disabled = false;
+      sourceBtn.onclick = () => window.open(source, '_blank', 'noopener');
+    } else {
+      sourceBtn.disabled = true;
+      sourceBtn.onclick = null;
+    }
 
-    // Key facts
-    const keyFacts = Array.isArray(data.keyFacts) ? data.keyFacts : [];
-    document.getElementById('examKeyFacts').innerHTML = keyFacts.length
-      ? keyFacts.map(f => `<tr><td>${escapeHtml(f.label || '')}</td><td>${f.value || ''}</td></tr>`).join('')
-      : '<tr><td colspan="2" style="text-align:center; color:var(--muted);">No key facts available.</td></tr>';
+    // Overview
+    document.getElementById('examOverviewText').textContent =
+      e.description || 'No overview has been published for this examination.';
+    document.getElementById('examEligibleText').textContent =
+      e.eligibility || 'See the official website for eligibility details.';
+
+    // Side info
+    document.getElementById('sideBody').textContent = body;
+    document.getElementById('sideType').textContent = type;
+    document.getElementById('sideSession').textContent = session || '—';
+    const sideStatus = document.getElementById('sideStatus');
+    sideStatus.textContent = st.label;
+    sideStatus.className = badgeClassFor(status);
+    const sideWebsite = document.getElementById('sideWebsite');
+    if (website) { sideWebsite.textContent = website; sideWebsite.href = website; }
+    else { sideWebsite.textContent = '—'; sideWebsite.href = '#'; }
 
     // Countdown
-    const cd = data.countdown || {};
-    document.getElementById('countdownLabel').textContent = cd.label || 'Registration';
-    document.getElementById('countdownValue').textContent = cd.value || status || '—';
-    document.getElementById('countdownSub').textContent = cd.sub || '—';
+    document.getElementById('countdownValue').textContent = session || st.label;
+    document.getElementById('countdownSub').textContent =
+      e.close_date ? `Closes ${formatDate(e.close_date)}` : (e.open_date ? `Opens ${formatDate(e.open_date)}` : 'Dates pending');
+
+    // Key facts
+    const facts = [
+      ['Examination body', body],
+      ['Type', type],
+      ['Session', session || '—'],
+      ['Opens', formatDate(e.open_date)],
+      ['Closes', formatDate(e.close_date)],
+      ['Status', `<span class="${badgeClassFor(status)}">${escapeHtml(st.label)}</span>`],
+      ['Verification', e.verification || '—'],
+    ];
+    document.getElementById('examKeyFacts').innerHTML = facts
+      .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${typeof v === 'string' && v.startsWith('<') ? v : escapeHtml(v)}</td></tr>`)
+      .join('');
 
     // Registration summary
-    const reg = data.registration || {};
-    document.getElementById('regOpens').textContent = reg.opens || '—';
-    document.getElementById('regCloses').textContent = reg.closes || '—';
-    document.getElementById('regExamDate').textContent = reg.examDate || '—';
-    document.getElementById('regFee').textContent = reg.fee || '—';
+    document.getElementById('regOpens').textContent = formatDate(e.open_date);
+    document.getElementById('regCloses').textContent = formatDate(e.close_date);
+    document.getElementById('regSession').textContent = session || '—';
 
     // Registration table
-    const regTable = Array.isArray(data.registrationTable) ? data.registrationTable : [];
-    document.getElementById('registrationTable').innerHTML = regTable.length
-      ? regTable.map(r => `
-          <tr>
-            <td>${escapeHtml(r.event || '')}</td>
-            <td>${r.date || ''}</td>
-            <td><span class="${r.statusClass || statusBadgeClass(r.status)}">${escapeHtml(r.status || '')}</span></td>
-            <td>${escapeHtml(r.source || '')}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="4" style="text-align:center; color:var(--muted);">No registration dates available.</td></tr>';
+    const regRows = [];
+    if (e.open_date) regRows.push({ event: 'Registration opens', date: formatDate(e.open_date), status: computeStatus(e.open_date, null) });
+    if (e.close_date) regRows.push({ event: 'Registration closes', date: formatDate(e.close_date), status: computeStatus(null, e.close_date) });
+    document.getElementById('registrationTable').innerHTML = regRows.length
+      ? regRows.map((r) => {
+          const s = statusInfo(r.status);
+          return `<tr><td>${escapeHtml(r.event)}</td><td>${escapeHtml(r.date)}</td><td><span class="${badgeClassFor(r.status)}">${escapeHtml(s.label)}</span></td></tr>`;
+        }).join('')
+      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
-    // Timetable downloads
-    const downloads = Array.isArray(data.timetableDownloads) ? data.timetableDownloads : [];
-    document.getElementById('timetableDownloads').innerHTML = downloads.length
-      ? downloads.map(d => `
-          <div class="resource-item">
-            <i class="fas fa-file-pdf"></i>
-            <div class="res-text">
-              <h4>${escapeHtml(d.title || '')}</h4>
-              <p>${escapeHtml(d.desc || '')}</p>
-            </div>
-            <span class="res-action">${escapeHtml(d.action || 'Download')}</span>
-          </div>
-        `).join('')
-      : '<div class="resource-item"><i class="fas fa-file-pdf"></i><div class="res-text"><h4>No downloads available</h4></div></div>';
+    // Timetable
+    const ttParts = [];
+    const ttUrl = safeUrl(e.timetable_url);
+    if (ttUrl) {
+      ttParts.push(`<a class="resource-item" href="${escapeHtml(ttUrl)}" target="_blank" rel="noopener">
+        <i class="fas fa-file-pdf"></i>
+        <div class="res-text"><h4>Official timetable</h4><p>${escapeHtml(ttUrl)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    if (e.timetable_info) {
+      ttParts.push(`<div class="update-item"><i class="fas fa-calendar-days"></i><div class="update-content"><h4>Timetable information</h4><p>${escapeHtml(e.timetable_info)}</p></div></div>`);
+    }
+    document.getElementById('timetableDownloads').innerHTML = ttParts.length
+      ? ttParts.join('')
+      : '<div class="resource-item"><i class="fas fa-file-pdf"></i><div class="res-text"><h4>No timetable available yet</h4></div></div>';
 
-    // Registration updates
-    const updates = Array.isArray(data.registrationUpdates) ? data.registrationUpdates : [];
-    document.getElementById('registrationUpdates').innerHTML = updates.length
-      ? updates.map(u => `
-          <div class="update-item">
-            <i class="fas fa-bullhorn"></i>
-            <div class="update-content">
-              <h4>${escapeHtml(u.title || '')}</h4>
-              <p>${escapeHtml(u.text || '')}</p>
-              <div class="update-meta">
-                <span><i class="far fa-calendar-alt"></i> ${escapeHtml(u.date || '')}</span>
-                ${u.link ? `<span><a href="#">${escapeHtml(u.link)}</a></span>` : ''}
-              </div>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">No recent announcements.</p></div></div>';
+    // Instructions
+    document.getElementById('examInstructions').innerHTML = e.instructions
+      ? `<div class="update-item"><i class="fas fa-check-circle"></i><div class="update-content"><h4>Examination instructions</h4><p>${escapeHtml(e.instructions)}</p></div></div>`
+      : '<div class="update-item"><i class="fas fa-info-circle"></i><div class="update-content"><p style="color:var(--muted);">No specific instructions have been published.</p></div></div>';
 
     // Requirements
-    document.getElementById('eligibilityText').textContent = data.eligibility || '—';
+    document.getElementById('eligibilityText').textContent =
+      e.eligibility || 'See the official website for eligibility details.';
+    document.getElementById('verifStatus').textContent = e.verification || '—';
 
-    const subjects = Array.isArray(data.subjectCombinations) ? data.subjectCombinations : [];
-    document.getElementById('subjectCombinations').innerHTML = subjects.length
-      ? subjects.map(s => `
-          <tr>
-            <td>${escapeHtml(s.group || '')}</td>
-            <td>${escapeHtml(s.subjects || '')}</td>
-            <td>${escapeHtml(s.notes || '')}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No subject information available.</td></tr>';
+    // Resources
+    const resParts = [];
+    if (e.resources) {
+      resParts.push(`<div class="update-item"><i class="fas fa-book-open"></i><div class="update-content"><h4>Resources</h4><p>${escapeHtml(e.resources)}</p></div></div>`);
+    }
+    if (e.resource_links) {
+      // Split by whitespace or newlines and try each as a URL
+      const links = String(e.resource_links).split(/[\s,]+/).filter(Boolean);
+      const validLinks = links.map(safeUrl).filter(Boolean);
+      if (validLinks.length) {
+        resParts.push(`<div class="update-item"><i class="fas fa-link"></i><div class="update-content"><h4>Resource links</h4><p>${validLinks.map((u) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener" style="color:var(--primary);">${escapeHtml(u)}</a>`).join('<br>')}</p></div></div>`);
+      }
+    }
+    document.getElementById('examResources').innerHTML = resParts.length
+      ? resParts.join('')
+      : '<div class="update-item"><i class="fas fa-info-circle"></i><div class="update-content"><p style="color:var(--muted);">No preparation resources have been published.</p></div></div>';
 
-    const instructions = Array.isArray(data.examDayInstructions) ? data.examDayInstructions : [];
-    document.getElementById('examDayInstructions').innerHTML = instructions.length
-      ? instructions.map(i => `
-          <div class="update-item">
-            <i class="fas fa-check-circle"></i>
-            <div class="update-content">
-              <h4>${escapeHtml(i.title || '')}</h4>
-              <p>${escapeHtml(i.text || '')}</p>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="update-item"><i class="fas fa-check-circle"></i><div class="update-content"><p style="color:var(--muted);">No instructions available.</p></div></div>';
-
-    const regDocs = Array.isArray(data.registrationDocuments) ? data.registrationDocuments : [];
-    document.getElementById('registrationDocs').innerHTML = regDocs.length
-      ? regDocs.map(d => `<a href="#"><i class="fas ${d.icon || 'fa-file-alt'}"></i> ${escapeHtml(d.text || '')}</a>`).join('')
-      : '<a href="#"><i class="fas fa-file-alt"></i> No documents specified</a>';
-
-    // Preparation
-    const prep = Array.isArray(data.preparationResources) ? data.preparationResources : [];
-    document.getElementById('preparationResources').innerHTML = prep.length
-      ? prep.map(r => `
-          <div class="resource-item">
-            <i class="fas ${r.icon || 'fa-book'}"></i>
-            <div class="res-text">
-              <h4>${escapeHtml(r.title || '')}</h4>
-              <p>${escapeHtml(r.desc || '')}</p>
-            </div>
-            <span class="res-action">${escapeHtml(r.action || 'Open')}</span>
-          </div>
-        `).join('')
-      : '<div class="resource-item"><i class="fas fa-book-open"></i><div class="res-text"><h4>No preparation resources available</h4></div></div>';
-
-    // Results
-    const results = Array.isArray(data.resultsServices) ? data.resultsServices : [];
-    document.getElementById('resultsServices').innerHTML = results.length
-      ? results.map(r => `
-          <div class="resource-item">
-            <i class="fas ${r.icon || 'fa-globe'}"></i>
-            <div class="res-text">
-              <h4>${escapeHtml(r.title || '')}</h4>
-              <p>${escapeHtml(r.desc || '')}</p>
-            </div>
-            <span class="res-action">${escapeHtml(r.action || 'Open')}</span>
-          </div>
-        `).join('')
-      : '<div class="resource-item"><i class="fas fa-globe"></i><div class="res-text"><h4>No results services available</h4></div></div>';
-
-    const support = Array.isArray(data.support) ? data.support : [];
-    document.getElementById('resultsSupport').innerHTML = support.length
-      ? support.map(s => `<a href="#"><i class="fas ${s.icon || 'fa-envelope'}"></i> ${escapeHtml(s.text || '')}</a>`).join('')
-      : '<a href="#"><i class="fas fa-envelope"></i> No support contacts</a>';
+    // Official services
+    const services = [];
+    if (website) {
+      services.push(`<a class="resource-item" href="${escapeHtml(website)}" target="_blank" rel="noopener">
+        <i class="fas fa-globe"></i>
+        <div class="res-text"><h4>Official website</h4><p>${escapeHtml(website)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    if (source) {
+      services.push(`<a class="resource-item" href="${escapeHtml(source)}" target="_blank" rel="noopener">
+        <i class="fas fa-file-shield"></i>
+        <div class="res-text"><h4>Official source notice</h4><p>${escapeHtml(source)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    if (ttUrl) {
+      services.push(`<a class="resource-item" href="${escapeHtml(ttUrl)}" target="_blank" rel="noopener">
+        <i class="fas fa-file-pdf"></i>
+        <div class="res-text"><h4>Timetable</h4><p>${escapeHtml(ttUrl)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    document.getElementById('resultsServices').innerHTML = services.length
+      ? services.join('')
+      : '<div class="resource-item"><i class="fas fa-globe"></i><div class="res-text"><h4>No official links available</h4></div></div>';
   }
 
-  /* ============================================================ */
-  /* TABS                                                         */
-  /* ============================================================ */
-  const examTabItems = document.querySelectorAll('.exam-tab-item');
-  const examTabPanels = {
+  /* ---------- tabs ---------- */
+  const tabItems = document.querySelectorAll('.exam-tab-item');
+  const tabPanels = {
     overview: document.getElementById('exam-panel-overview'),
     registration: document.getElementById('exam-panel-registration'),
     requirements: document.getElementById('exam-panel-requirements'),
-    preparation: document.getElementById('exam-panel-preparation'),
-    results: document.getElementById('exam-panel-results')
+    portal: document.getElementById('exam-panel-portal'),
   };
-
   function resetExamTabs() {
-    examTabItems.forEach(t => t.classList.remove('active'));
-    Object.values(examTabPanels).forEach(p => p.classList.remove('active'));
+    tabItems.forEach((t) => t.classList.remove('active'));
+    Object.values(tabPanels).forEach((p) => p.classList.remove('active'));
   }
-
-  function switchExamTab(tabKey) {
-    resetExamTabs();
-    const targetTab = document.querySelector(`.exam-tab-item[data-tab="${tabKey}"]`);
-    if (targetTab) targetTab.classList.add('active');
-    if (examTabPanels[tabKey]) examTabPanels[tabKey].classList.add('active');
-  }
-
-  examTabItems.forEach(item => {
+  tabItems.forEach((item) => {
     item.addEventListener('click', () => {
       resetExamTabs();
       item.classList.add('active');
-      const tabKey = item.dataset.tab;
-      if (examTabPanels[tabKey]) examTabPanels[tabKey].classList.add('active');
+      const key = item.dataset.tab;
+      if (tabPanels[key]) tabPanels[key].classList.add('active');
     });
   });
 
-  /* ============================================================ */
-  /* FILTERING                                                    */
-  /* ============================================================ */
-  function setExamTypeFilter(type, btn) {
-    currentExamTypeFilter = type;
-    document.querySelectorAll('#examTypeFilters .filter-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    filterExams();
-  }
-
-  function filterExams() {
-    const query = document.getElementById('examSearchInput').value.toLowerCase().trim();
-    const year = document.getElementById('yearFilter').value;
-    const cards = document.querySelectorAll('#examsGrid .exam-card');
-    let visible = 0;
-
-    cards.forEach(card => {
-      const type = card.dataset.type || '';
-      const cardYear = card.dataset.year || '';
-      const name = card.dataset.name || '';
-      const subjects = card.dataset.subjects || '';
-
-      const matchesType = currentExamTypeFilter === 'all' || type === currentExamTypeFilter;
-      const matchesYear = !year || cardYear === year;
-      const matchesQuery = !query || name.includes(query) || subjects.includes(query);
-
-      if (matchesType && matchesYear && matchesQuery) {
-        card.style.display = '';
-        visible++;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-
-    const countEl = document.getElementById('examCount');
-    if (examsCache.length === 0) {
-      countEl.textContent = 'No examinations yet';
-    } else {
-      countEl.textContent = visible === 1 ? '1 examination' : `${visible} examinations`;
-    }
-  }
-
-  document.getElementById('examSearchInput').addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') filterExams();
-  });
-
-  /* ============================================================ */
-  /* MOBILE NAV                                                   */
-  /* ============================================================ */
+  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileNav.classList.toggle('active');
-    });
+    hamburger.addEventListener('click', (e) => { e.stopPropagation(); mobileNav.classList.toggle('active'); });
     document.addEventListener('click', (e) => {
-      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
-        mobileNav.classList.remove('active');
-      }
+      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) mobileNav.classList.remove('active');
     });
   }
 
-  /* ============================================================ */
-  /* HISTORY                                                      */
-  /* ============================================================ */
+  /* ---------- history ---------- */
+  let initialised = false;
   window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.view === 'detail' && e.state.exam) {
-      openExam(e.state.exam);
-    } else {
-      showDirectory();
-    }
+    if (!initialised) return;
+    if (e.state && e.state.view === 'detail' && e.state.exam) openExam(e.state.exam);
+    else showDirectory();
   });
 
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const examParam = params.get('exam');
-
     loadExams().then(() => {
+      initialised = true;
       if (examParam) openExam(examParam);
     });
   });
 
-  document.querySelectorAll('a[href="#"]').forEach(link => {
-    link.addEventListener('click', (e) => e.preventDefault());
-  });
+  // Expose functions used by inline handlers
+  window.showDirectory = showDirectory;
+  window.openExam = openExam;
+  window.filterExams = filterExams;
+  window.setExamTypeFilter = setExamTypeFilter;
+  window.loadExams = loadExams;
+})();
 </script>
 
 </body>

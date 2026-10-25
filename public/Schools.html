@@ -9,58 +9,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: #070A09;
-      font-family: 'Manrope', sans-serif;
-      color: #F5F7F5;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { background-color: #070A09; font-family: 'Manrope', sans-serif; color: #F5F7F5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
     a { text-decoration: none; color: inherit; }
     img { max-width: 100%; display: block; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
-      --radius-card: 16px;
-      --radius-btn: 12px;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 12px;
     }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-    /* ----- HEADER ----- */
-    .site-header {
-      position: sticky; top: 0; z-index: 50;
-      background-color: rgba(7, 10, 9, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
-    .header-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 72px;
-    }
+    /* HEADER */
+    .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
     .logo span { color: var(--primary); }
     .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
     .nav-links a:hover { color: var(--primary); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
     .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
-    .btn-explore {
-      display: none; background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-    }
+    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
-    .mobile-nav {
-      display: none; background-color: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted);
-    }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
     .mobile-nav.active { display: flex; }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
@@ -69,83 +42,43 @@
       .mobile-nav { display: none !important; }
     }
 
-    /* ----- VIEW SWITCHING ----- */
     .view { display: none; }
     .view.active { display: block; }
 
-    /* ============================================================ */
-    /* DIRECTORY VIEW                                               */
-    /* ============================================================ */
+    /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; }
     .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
     .search-filter-bar { margin: 24px 0 32px; }
-    .search-row {
-      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
-    }
-    .search-wrapper {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 6px 6px 6px 20px; display: flex;
-      align-items: center; gap: 8px; flex: 1; min-width: 240px;
-    }
+    .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; }
     .search-wrapper:focus-within { border-color: var(--primary); }
     .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
-    .search-wrapper input {
-      flex: 1; background: transparent; border: none; padding: 12px 0;
-      font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none;
-    }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
     .search-wrapper input::placeholder { color: #6b7c74; }
-    .search-wrapper button {
-      background-color: var(--primary); border: none; border-radius: 40px;
-      padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer;
-      white-space: nowrap;
-    }
-    .state-select {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif;
-      font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer;
-      min-width: 180px;
-    }
+    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; }
+    .state-select { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer; min-width: 180px; }
     .state-select:focus { border-color: var(--primary); }
 
     .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
-    .filter-tab {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      color: var(--muted); font-size: 0.85rem; font-weight: 600;
-      padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s;
-    }
+    .filter-tab { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s; }
     .filter-tab:hover { border-color: var(--primary); color: var(--text); }
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
 
     .schools-section { padding: 8px 0 64px; }
-    .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; }
-    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
 
-    .schools-grid {
-      display: grid; grid-template-columns: 1fr; gap: 20px;
-    }
+    .schools-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     @media (min-width: 600px) { .schools-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .schools-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 1280px) { .schools-grid { grid-template-columns: repeat(4, 1fr); } }
 
-    .school-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s;
-      display: flex; flex-direction: column; cursor: pointer;
-    }
+    .school-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; display: flex; flex-direction: column; cursor: pointer; }
     .school-card:hover { border-color: var(--primary); }
-    .school-img {
-      height: 160px; background-size: cover; background-position: center; position: relative;
-    }
-    .school-img::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, #0D1210 5%, transparent 70%);
-    }
+    .school-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); }
+    .school-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
     .school-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
     .school-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .school-name { font-size: 1.1rem; font-weight: 700; }
@@ -153,70 +86,34 @@
     .school-location { color: var(--muted); font-size: 0.85rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
     .school-type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
     .school-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
-    .school-action {
-      font-weight: 600; font-size: 0.85rem; color: var(--primary);
-      display: inline-flex; align-items: center; gap: 6px; margin-top: auto;
-    }
+    .school-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; }
 
-    /* ============================================================ */
-    /* PROFILE VIEW                                                 */
-    /* ============================================================ */
-    .back-to-directory {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--muted); font-size: 0.9rem; font-weight: 500;
-      padding: 24px 0 8px; cursor: pointer;
-    }
+    /* PROFILE */
+    .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; }
     .back-to-directory:hover { color: var(--primary); }
 
     .profile-hero { padding: 8px 0 16px; }
-    .profile-hero-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; overflow: hidden;
-    }
-    .profile-banner {
-      height: 240px; background-size: cover; background-position: center; position: relative;
-    }
-    .profile-banner::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to top, #0D1210 15%, transparent 80%);
-    }
-    .profile-header-content {
-      padding: 24px; display: flex; flex-direction: column; gap: 16px;
-    }
+    .profile-hero-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .profile-banner { height: 240px; background-size: cover; background-position: center; position: relative; background: linear-gradient(135deg, #0D1210 0%, #1a221e 100%); }
+    .profile-banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 15%, transparent 80%); }
+    .profile-header-content { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
     .profile-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .profile-title-row h1 { font-size: 2rem; }
-    .profile-badge {
-      background-color: rgba(0, 201, 130, 0.15); color: var(--primary);
-      font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    .profile-badge.verify {
-      background-color: rgba(245, 185, 66, 0.15); color: var(--accent);
-    }
+    .profile-badge { background-color: rgba(0, 201, 130, 0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .profile-badge.warn { background-color: rgba(245, 185, 66, 0.15); color: var(--accent); }
+    .profile-badge.muted { background-color: rgba(155, 169, 161, 0.12); color: var(--muted); }
     .profile-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .profile-sub .dot { font-size: 0.4rem; }
     .profile-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    .btn-primary {
-      background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-outline {
-      background-color: transparent; color: var(--text); font-weight: 600;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem;
-      border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-    }
+    .btn-primary { background-color: var(--primary); color: #070A09; font-weight: 700; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { background-color: transparent; color: var(--text); font-weight: 600; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .profile-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
-    .tab-list {
-      display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content;
-    }
-    .tab-item {
-      padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted);
-      cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
-      white-space: nowrap;
-    }
+    .tab-list { display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content; }
+    .tab-item { padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
     .tab-item:hover { color: var(--text); }
     .tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
 
@@ -227,27 +124,18 @@
     .profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
     @media (min-width: 900px) { .profile-grid { grid-template-columns: 2fr 1fr; } }
 
-    .info-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px;
-    }
+    .info-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; }
     .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
-    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; gap: 12px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
-    .info-value { font-weight: 600; text-align: right; }
+    .info-value { font-weight: 600; text-align: right; word-break: break-word; }
     .info-value a { color: var(--primary); }
 
     .profile-section { margin-bottom: 40px; }
     .profile-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
     .profile-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
-    .profile-section p { color: var(--muted); margin-bottom: 16px; }
-
-    .faculty-list { display: flex; flex-wrap: wrap; gap: 10px; }
-    .faculty-tag {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      color: var(--text); font-size: 0.85rem; padding: 8px 18px; border-radius: 40px;
-    }
+    .profile-section p { color: var(--muted); margin-bottom: 16px; white-space: pre-wrap; }
 
     .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -255,69 +143,29 @@
     th { text-align: left; padding: 14px 16px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); white-space: nowrap; }
     td { padding: 14px 16px; border-top: 1px solid var(--border); }
     tr:hover td { background-color: rgba(255,255,255,0.02); }
-    .badge-soft {
-      background-color: rgba(0,201,130,0.12); color: var(--primary);
-      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
-    }
-    .badge-gold {
-      background-color: rgba(245,185,66,0.12); color: var(--accent);
-      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
-    }
-
-    .update-list { display: flex; flex-direction: column; gap: 16px; }
-    .update-item {
-      background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px;
-      border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start;
-    }
-    .update-item i { color: var(--accent); margin-top: 4px; }
-    .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
-    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
-    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
-    .update-meta a { color: var(--primary); }
-
-    .calendar-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    @media (min-width: 600px) { .calendar-grid { grid-template-columns: 1fr 1fr; } }
-    .calendar-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 18px;
-    }
-    .calendar-card .date-label { color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-    .calendar-card .event-name { font-weight: 700; margin-bottom: 4px; }
-    .calendar-card .event-detail { font-size: 0.85rem; color: var(--muted); }
-    .calendar-card .event-source { font-size: 0.7rem; color: var(--muted); margin-top: 8px; font-style: italic; }
-
-    .news-list { display: flex; flex-direction: column; gap: 16px; }
-    .news-item {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 18px;
-    }
-    .news-item .news-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
-    .news-item h4 { font-size: 1.05rem; margin-bottom: 6px; }
-    .news-item p { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
-    .news-item a { color: var(--primary); font-size: 0.8rem; font-weight: 600; }
+    .badge-soft { background-color: rgba(0,201,130,0.12); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
+    .badge-gold { background-color: rgba(245,185,66,0.12); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
+    .badge-muted { background-color: rgba(155,169,161,0.12); color: var(--muted); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
 
     .contact-links { display: flex; flex-direction: column; gap: 12px; }
-    .contact-links a { color: var(--primary); font-weight: 500; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+    .contact-links a { color: var(--primary); font-weight: 500; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; word-break: break-all; }
     .contact-links a:hover { text-decoration: underline; }
-    .contact-links i { width: 18px; }
+    .contact-links a[href="#"] { color: var(--muted); cursor: not-allowed; pointer-events: none; }
+    .contact-links i { width: 18px; flex-shrink: 0; }
 
-    .source-note { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 8px; }
-
-    /* program search in profile */
-    .program-search {
-      display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
-    }
-    .program-search input {
-      flex: 1; min-width: 180px; background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 40px; padding: 10px 18px; font-family: 'Manrope', sans-serif;
-      font-size: 0.9rem; color: var(--text); outline: none;
-    }
+    .program-search { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .program-search input { flex: 1; min-width: 180px; background-color: var(--elevated); border: 1px solid var(--border); border-radius: 40px; padding: 10px 18px; font-family: 'Manrope', sans-serif; font-size: 0.9rem; color: var(--text); outline: none; }
     .program-search input:focus { border-color: var(--primary); }
 
-    /* Footer */
-    .site-footer {
-      background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px;
-    }
+    /* STATES */
+    .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
+    .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); }
+    .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; }
+    .loading-spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
     .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
     @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
     @media (min-width: 1024px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
@@ -330,77 +178,40 @@
     .footer-links li { margin-bottom: 10px; }
     .footer-links a { color: var(--muted); font-size: 0.9rem; }
     .footer-links a:hover { color: var(--primary); }
-    .footer-bottom {
-      border-top: 1px solid var(--border); padding-top: 24px;
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
-      font-size: 0.8rem; color: var(--muted);
-    }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
     .footer-legal { display: flex; gap: 20px; }
-
-    /* Image helpers */
-    .bg-uniabuja {
-      background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=80');
-    }
-    .bg-biu {
-      background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80');
-    }
-    .bg-unilag {
-      background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80');
-    }
-    .bg-yabatech {
-      background-image: url('https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=1200&auto=format&fit=crop&q=80');
-    }
-    .bg-fce {
-      background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&auto=format&fit=crop&q=80');
-    }
-
-    /* Loading & error states */
-    .loading-spinner {
-      display: inline-block; width: 24px; height: 24px;
-      border: 3px solid rgba(255,255,255,0.1); border-radius: 50%;
-      border-top-color: var(--primary); animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .error-msg {
-      color: #ff6b6b; background: rgba(255,107,107,0.1);
-      padding: 12px 16px; border-radius: 8px; font-size: 0.85rem;
-      margin: 12px 0;
-    }
-    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
-    .empty-state i { font-size: 2.5rem; margin-bottom: 16px; color: var(--border); }
   </style>
 </head>
 <body>
 
-<!-- ==================== HEADER ==================== -->
 <header class="site-header">
   <div class="container header-inner">
-    <div class="logo" onclick="showDirectory()">Campus<span>Naija</span></div>
+    <a href="/Home.html" class="logo">Campus<span>Naija</span></a>
     <nav class="nav-links">
-      <a href="./Home.html">Home</a>
-      <a href="./Schools.html" onclick="showDirectory(); return false;">Schools</a>
-      <a href="./Admissions.html">Admissions</a>
-      <a href="./Exams.html">Exams</a>
-      <a href="./Scholarships.html">Scholarships</a>
-      <a href="./Trending.html">Trending</a>
+      <a href="/Home.html">Home</a>
+      <a href="/Schools.html">Schools</a>
+      <a href="/Admissions.html">Admissions</a>
+      <a href="/Exams.html">Exams</a>
+      <a href="/Scholarships.html">Scholarships</a>
+      <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
-      <button class="btn-explore" onclick="showDirectory()">Explore</button>
+      <button class="search-icon-btn" aria-label="Search" onclick="document.getElementById('directorySearch').focus()"><i class="fas fa-search"></i></button>
+      <a class="btn-explore" href="/Admissions.html">Explore</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
-    <a href="./Home.html">Home</a>
-    <a href="./Schools.html" onclick="showDirectory(); return false;">Schools</a>
-    <a href="./Admissions.html">Admissions</a>
-    <a href="./Exams.html">Exams</a>
-    <a href="./Scholarships.html">Scholarships</a>
-    <a href="./Trending.html">Trending</a>
+    <a href="/Home.html">Home</a>
+    <a href="/Schools.html">Schools</a>
+    <a href="/Admissions.html">Admissions</a>
+    <a href="/Exams.html">Exams</a>
+    <a href="/Scholarships.html">Scholarships</a>
+    <a href="/Trending.html">Trending</a>
   </div>
 </header>
 
-<!-- ==================== DIRECTORY VIEW ==================== -->
+<!-- DIRECTORY -->
 <div id="view-directory" class="view active">
   <main class="container">
     <section class="directory-hero">
@@ -412,50 +223,36 @@
       <div class="search-row">
         <div class="search-wrapper">
           <i class="fas fa-search"></i>
-          <input type="text" id="directorySearch" placeholder="Search schools, courses or locations" oninput="debouncedDirectorySearch()">
+          <input type="text" id="directorySearch" placeholder="Search schools, courses or locations" aria-label="Search schools">
           <button onclick="filterDirectory()">Search Schools</button>
         </div>
-        <select class="state-select" id="stateFilter" onchange="filterDirectory()">
-          <option value="">All states in Nigeria</option>
-          <option value="Abuja">Abuja (FCT)</option>
-          <option value="Lagos">Lagos</option>
-          <option value="Edo">Edo</option>
-          <option value="Kaduna">Kaduna</option>
-          <option value="Kano">Kano</option>
+        <select class="state-select" id="stateFilter" onchange="filterDirectory()" aria-label="Filter by state">
+          <option value="">All states</option>
         </select>
       </div>
       <div class="filter-tabs" id="typeFilters">
         <button class="filter-tab active" data-type="all" onclick="setTypeFilter('all', this)">All Institutions</button>
-        <button class="filter-tab" data-type="university" onclick="setTypeFilter('university', this)">Universities</button>
-        <button class="filter-tab" data-type="polytechnic" onclick="setTypeFilter('polytechnic', this)">Polytechnics</button>
-        <button class="filter-tab" data-type="college" onclick="setTypeFilter('college', this)">Colleges</button>
       </div>
     </section>
 
     <section class="schools-section">
       <div class="section-header">
-        <div class="section-title" id="directoryCount">Explore schools</div>
-        <a href="#" class="view-all">Browse all <i class="fas fa-arrow-right"></i></a>
+        <div class="section-title" id="directoryCount">Loading schools...</div>
       </div>
       <div class="schools-grid" id="directoryGrid">
-        <!-- School cards are dynamically rendered by JS -->
-        <div class="empty-state" id="directoryEmpty" style="display:none;">
-          <i class="fas fa-school"></i>
-          <p>No schools match your filters. Try adjusting your search.</p>
-        </div>
+        <div class="loading-state"><span class="loading-spinner"></span><p>Loading schools from database...</p></div>
       </div>
     </section>
   </main>
 </div>
 
-<!-- ==================== PROFILE VIEW ==================== -->
+<!-- PROFILE -->
 <div id="view-profile" class="view">
   <main class="container">
     <div class="back-to-directory" onclick="showDirectory()">
       <i class="fas fa-arrow-left"></i> Back to all schools
     </div>
 
-    <!-- Profile hero (content updated by JS) -->
     <section class="profile-hero">
       <div class="profile-hero-card">
         <div class="profile-banner" id="profileBanner"></div>
@@ -465,44 +262,34 @@
             <span class="profile-badge" id="profileStatus"></span>
           </div>
           <div class="profile-sub" id="profileSub"></div>
-          <p style="color: var(--muted); max-width: 720px;" id="profileTagline"></p>
           <div class="profile-actions">
-            <button class="btn-primary" onclick="switchTab('admissions')"><i class="fas fa-clipboard-list"></i> Admission information</button>
-            <button class="btn-outline" id="profileWebsiteBtn" onclick="window.open('https://' + (document.getElementById('infoWebsite')?.textContent || ''), '_blank')"><i class="fas fa-globe"></i> Official website</button>
+            <button class="btn-primary" id="viewAdmissionsBtn" onclick="switchTab('admissions')" disabled><i class="fas fa-clipboard-list"></i> View admissions</button>
+            <button class="btn-outline" id="profileWebsiteBtn" disabled><i class="fas fa-globe"></i> Official website</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Tab navigation -->
     <div class="profile-tabs">
       <ul class="tab-list" id="profileTabs">
         <li class="tab-item active" data-tab="overview">Overview</li>
-        <li class="tab-item" data-tab="courses">Courses &amp; Fees</li>
+        <li class="tab-item" data-tab="courses">Courses</li>
+        <li class="tab-item" data-tab="fees">Fees</li>
         <li class="tab-item" data-tab="admissions">Admissions</li>
         <li class="tab-item" data-tab="calendar">Calendar</li>
-        <li class="tab-item" data-tab="news">News</li>
+        <li class="tab-item" data-tab="verification">Verification</li>
       </ul>
     </div>
 
-    <!-- ===== TAB: OVERVIEW ===== -->
+    <!-- OVERVIEW -->
     <div class="tab-panel active" id="panel-overview">
       <div class="profile-grid">
         <div>
           <div class="profile-section">
-            <h2>School overview</h2>
+            <h2>About the institution</h2>
             <p id="overviewText">Loading school information...</p>
           </div>
-          <div class="profile-section">
-            <h2>Faculties and colleges</h2>
-            <div class="faculty-list" id="facultyList"></div>
-          </div>
-          <div class="profile-section">
-            <h2>Facilities and student life</h2>
-            <p id="facilitiesText">Campus facilities and student life information will appear here.</p>
-          </div>
         </div>
-
         <aside>
           <div class="info-card">
             <h3>School information</h3>
@@ -510,216 +297,117 @@
             <div class="info-row"><span class="info-label">Ownership</span><span class="info-value" id="infoOwnership">—</span></div>
             <div class="info-row"><span class="info-label">Institution type</span><span class="info-value" id="infoType">—</span></div>
             <div class="info-row"><span class="info-label">Established</span><span class="info-value" id="infoEstablished">—</span></div>
-            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="infoWebsite" target="_blank">—</a></span></div>
+            <div class="info-row"><span class="info-label">Verification</span><span class="info-value"><span id="infoVerification">—</span></span></div>
           </div>
-
           <div class="info-card">
             <h3>Contact and official links</h3>
             <div class="contact-links">
-              <a href="#" id="infoWebsiteLink" target="_blank"><i class="fas fa-globe"></i> Official website</a>
+              <a href="#" id="infoWebsiteLink" target="_blank" rel="noopener"><i class="fas fa-globe"></i> <span id="infoWebsiteText">—</span></a>
               <a href="#" id="infoEmailLink"><i class="fas fa-envelope"></i> <span id="infoEmail">—</span></a>
-              <a href="#" id="infoAddressLink"><i class="fas fa-map-pin"></i> <span id="infoAddress">—</span></a>
-            </div>
-          </div>
-
-          <div class="info-card">
-            <h3>Quick actions</h3>
-            <div class="profile-actions" style="margin-top: 0;">
-              <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="switchTab('admissions')"><i class="fas fa-paper-plane"></i> Apply now</button>
+              <a href="#" id="infoAddressLink" target="_blank" rel="noopener"><i class="fas fa-map-pin"></i> <span id="infoAddress">—</span></a>
             </div>
           </div>
         </aside>
       </div>
     </div>
 
-    <!-- ===== TAB: COURSES & FEES ===== -->
+    <!-- COURSES -->
     <div class="tab-panel" id="panel-courses">
-      <div class="profile-grid">
-        <div>
-          <div class="profile-section">
-            <h2>Courses &amp; Fees</h2>
-            <p>Select a programme to see its associated fees. Fee figures are sample data and should be verified with the university's official schedule for the relevant session.</p>
-            <div class="program-search">
-              <input type="text" id="programSearchInput" placeholder="Search programmes..." oninput="filterPrograms()">
-            </div>
-            <div class="data-table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Programme</th>
-                    <th>Faculty</th>
-                    <th>Duration</th>
-                    <th>Level</th>
-                    <th>Tuition (sample)</th>
-                    <th>Acceptance fee</th>
-                  </tr>
-                </thead>
-                <tbody id="programTableBody">
-                  <tr><td colspan="6" style="text-align:center; color:var(--muted);">Loading programmes...</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="source-note"><i class="fas fa-info-circle"></i> Fees shown are illustrative sample data. Always confirm with the university's official fee schedule for the current academic session.</p>
-          </div>
+      <div class="profile-section">
+        <h2>Courses &amp; programmes</h2>
+        <p>Courses published by the institution. Availability is subject to each programme's entry requirements.</p>
+        <div class="program-search">
+          <input type="text" id="programSearchInput" placeholder="Search programmes..." oninput="filterPrograms()" aria-label="Search programmes">
         </div>
-
-        <aside>
-          <div class="info-card">
-            <h3>Session &amp; payment</h3>
-            <div class="info-row"><span class="info-label">Academic session</span><span class="info-value">2026/2027</span></div>
-            <div class="info-row"><span class="info-label">Payment deadline</span><span class="info-value" id="paymentDeadline">—</span></div>
-            <div class="info-row"><span class="info-label">Payment portal</span><span class="info-value"><a href="#">Pay here</a></span></div>
-          </div>
-          <div class="info-card">
-            <h3>Related</h3>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('calendar'); return false;"><i class="fas fa-calendar"></i> View calendar</a>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions'); return false;"><i class="fas fa-clipboard-list"></i> Admission requirements</a>
-          </div>
-        </aside>
+        <div class="data-table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Programme</th><th>Faculty</th><th>Duration</th><th>Qualification</th><th>Entry route</th></tr>
+            </thead>
+            <tbody id="programTableBody">
+              <tr><td colspan="5" style="text-align:center; color:var(--muted);">Loading courses...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- ===== TAB: ADMISSIONS ===== -->
+    <!-- FEES -->
+    <div class="tab-panel" id="panel-fees">
+      <div class="profile-section">
+        <h2>Fees</h2>
+        <p>Published fee records for this institution. Always confirm with the official fee schedule for the current session.</p>
+        <div class="data-table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Session</th><th>Category</th><th>Programme / Level</th><th>Amount</th><th>Verified</th></tr>
+            </thead>
+            <tbody id="feesTableBody">
+              <tr><td colspan="5" style="text-align:center; color:var(--muted);">Loading fees...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMISSIONS -->
     <div class="tab-panel" id="panel-admissions">
-      <div class="profile-grid">
-        <div>
-          <div class="profile-section">
-            <h2>Admissions</h2>
-            <p id="admissionsIntro">Loading admission information...</p>
-          </div>
-
-          <div class="profile-section">
-            <h3>Entry requirements</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead>
-                  <tr><th>Route</th><th>Requirements</th><th>Status</th></tr>
-                </thead>
-                <tbody id="admissionsTableBody">
-                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="profile-section">
-            <h3>Application process</h3>
-            <div class="update-list">
-              <div class="update-item">
-                <i class="fas fa-1"></i>
-                <div class="update-content">
-                  <h4>Visit the JAMB portal</h4>
-                  <p>Register for UTME or Direct Entry and select the institution.</p>
-                </div>
-              </div>
-              <div class="update-item">
-                <i class="fas fa-2"></i>
-                <div class="update-content">
-                  <h4>Complete the university post-UTME</h4>
-                  <p>Pay the screening fee and complete the online application on the university portal.</p>
-                </div>
-              </div>
-              <div class="update-item">
-                <i class="fas fa-3"></i>
-                <div class="update-content">
-                  <h4>Await admission list</h4>
-                  <p>Check the university and JAMB portals for admission status.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="profile-section">
-            <h3>Admission updates</h3>
-            <div class="update-list" id="admissionUpdates">
-              <div class="update-item">
-                <i class="fas fa-bullhorn"></i>
-                <div class="update-content">
-                  <p style="color: var(--muted);">Loading updates...</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="profile-section">
+        <h2>Admissions</h2>
+        <p>Current admission notices published by the institution, with official application links and source verification.</p>
+        <div class="data-table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Title</th><th>Session</th><th>Route</th><th>Closes</th><th>Status</th></tr>
+            </thead>
+            <tbody id="admissionsTableBody">
+              <tr><td colspan="5" style="text-align:center; color:var(--muted);">Loading admissions...</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <aside>
-          <div class="info-card">
-            <h3>Admission status</h3>
-            <div id="admissionStatusBox">
-              <div class="info-row"><span class="info-label">Status</span><span class="info-value">—</span></div>
-            </div>
-          </div>
-          <div class="info-card">
-            <h3>Official application</h3>
-            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">Applications must be submitted through the official university or JAMB portal.</p>
-            <a href="#" class="btn-primary" style="width: 100%; justify-content: center;" target="_blank"><i class="fas fa-external-link-alt"></i> Apply on official portal</a>
-          </div>
-        </aside>
+        <div id="admissionLinks" style="margin-top: 24px;"></div>
       </div>
     </div>
 
-    <!-- ===== TAB: CALENDAR ===== -->
+    <!-- CALENDAR -->
     <div class="tab-panel" id="panel-calendar">
-      <div class="profile-grid">
-        <div>
-          <div class="profile-section">
-            <h2>Academic calendar &amp; deadlines</h2>
-            <p>Key dates for the 2026/2027 academic session. Dates are indicative and should be confirmed with official university publications.</p>
-            <div class="calendar-grid" id="calendarGrid">
-              <div class="calendar-card"><div class="event-detail">Loading calendar...</div></div>
-            </div>
-            <p class="source-note"><i class="fas fa-info-circle"></i> Dates marked <span class="badge-gold">est.</span> are estimates. Confirm with official university publications before making travel or payment decisions.</p>
-          </div>
+      <div class="profile-section">
+        <h2>Academic calendar</h2>
+        <p>Events published by the institution with official source references.</p>
+        <div class="data-table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Title</th><th>Type</th><th>Session</th><th>Start</th><th>End</th><th>Source</th></tr>
+            </thead>
+            <tbody id="calendarTableBody">
+              <tr><td colspan="6" style="text-align:center; color:var(--muted);">Loading calendar...</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <aside>
-          <div class="info-card">
-            <h3>Session</h3>
-            <div class="info-row"><span class="info-label">Academic session</span><span class="info-value">2026/2027</span></div>
-            <div class="info-row"><span class="info-label">Calendar status</span><span class="info-value"><span class="badge-gold">Draft / estimated</span></span></div>
-          </div>
-          <div class="info-card">
-            <h3>Related</h3>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('courses'); return false;"><i class="fas fa-money-bill"></i> Fee schedule</a>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions'); return false;"><i class="fas fa-clipboard-list"></i> Admission process</a>
-          </div>
-        </aside>
       </div>
     </div>
 
-    <!-- ===== TAB: NEWS ===== -->
-    <div class="tab-panel" id="panel-news">
-      <div class="profile-grid">
-        <div>
-          <div class="profile-section">
-            <h2>News &amp; notices</h2>
-            <p>Official announcements and updates from the institution. Always verify details on the official university website.</p>
-            <div class="news-list" id="newsList">
-              <div class="news-item"><p style="color:var(--muted);">Loading news...</p></div>
-            </div>
+    <!-- VERIFICATION -->
+    <div class="tab-panel" id="panel-verification">
+      <div class="profile-section">
+        <h2>Verification &amp; sources</h2>
+        <p>How this profile is verified and where each figure comes from. We link only to official sources.</p>
+        <div class="info-card">
+          <h3>Verification status</h3>
+          <div class="info-row"><span class="info-label">Institution verification</span><span class="info-value" id="verifInstitution">—</span></div>
+          <div class="info-row"><span class="info-label">Publication status</span><span class="info-value" id="verifPublication">—</span></div>
+        </div>
+        <div class="info-card">
+          <h3>Source links</h3>
+          <div class="contact-links" id="verifSources">
+            <a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle"></i> No source links yet.</a>
           </div>
         </div>
-
-        <aside>
-          <div class="info-card">
-            <h3>Official links</h3>
-            <div class="contact-links">
-              <a href="#" id="newsWebsiteLink" target="_blank"><i class="fas fa-globe"></i> University website</a>
-              <a href="#"><i class="fas fa-newspaper"></i> News portal</a>
-              <a href="#"><i class="fas fa-envelope"></i> Public relations office</a>
-            </div>
-          </div>
-          <div class="info-card">
-            <h3>Trust note</h3>
-            <p style="font-size: 0.85rem; color: var(--muted);">Only announcements confirmed by official university channels are published here. Dates and figures marked as estimates are not official.</p>
-          </div>
-        </aside>
       </div>
     </div>
   </main>
 </div>
 
-<!-- ==================== FOOTER ==================== -->
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -727,838 +415,578 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
       <div class="footer-links">
         <h4>Explore</h4>
         <ul>
-          <li><a href="#" onclick="showDirectory(); return false;">Schools</a></li>
-          <li><a href="#">Admissions</a></li>
-          <li><a href="#">Exams</a></li>
-          <li><a href="#">Scholarships</a></li>
-          <li><a href="#">Trending</a></li>
+          <li><a href="/Schools.html">Schools</a></li>
+          <li><a href="/Admissions.html">Admissions</a></li>
+          <li><a href="/Exams.html">Exams</a></li>
+          <li><a href="/Scholarships.html">Scholarships</a></li>
+          <li><a href="/Trending.html">Trending</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Company</h4>
         <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">FAQ</a></li>
+          <li><a href="/About.html">About</a></li>
+          <li><a href="/Contact.html">Contact</a></li>
+          <li><a href="/FAQ.html">FAQ</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="/Privacy.html">Privacy Policy</a></li>
+          <li><a href="/Terms.html">Terms of Service</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 CampusNaija. All rights reserved.</span>
+      <span>© <span id="year"></span> CampusNaija. All rights reserved.</span>
       <div class="footer-legal">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/Privacy.html">Privacy</a>
+        <a href="/Terms.html">Terms</a>
+        <a href="/Cookies.html">Cookies</a>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  /* ============================================================ */
-  /* CONFIGURATION                                                */
-  /* ============================================================ */
+(function () {
+  'use strict';
+
   const API_URL = 'https://campus-naija.onrender.com';
-  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  /* ============================================================ */
-  /* STATE                                                        */
-  /* ============================================================ */
-  let schoolsCache = null;
-  let schoolsCacheTime = 0;
-  let currentSchool = null;
+  let schoolsCache = [];
   let currentTypeFilter = 'all';
+  let currentSchool = null;
 
-  /* ============================================================ */
-  /* UTILITIES                                                    */
-  /* ============================================================ */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- helpers ---------- */
+  const escapeHtml = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const safeUrl = (u) => (u && /^https?:\/\//i.test(u)) ? u : null;
+
+  const formatDate = (d) => {
+    if (!d) return '—';
+    const dt = new Date(d);
+    if (isNaN(dt)) return '—';
+    return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  const truncate = (s, n) => {
+    const str = String(s || '').trim();
+    return str.length > n ? str.slice(0, n - 1).trimEnd() + '…' : str;
+  };
+
   function debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), delay);
     };
   }
+  const debouncedFilterDirectory = debounce(filterDirectory, 300);
 
-  const debouncedDirectorySearch = debounce(() => filterDirectory(), 300);
-
-  function showToast(message, type = 'info') {
-    // Simple toast implementation
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: ${type === 'error' ? '#ff6b6b' : 'var(--primary)'};
-      color: #070A09; padding: 12px 24px; border-radius: 12px;
-      font-weight: 600; font-size: 0.9rem; z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      animation: fadeInUp 0.3s ease;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.3s';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
+  async function apiGet(path) {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      mode: 'cors',
+      credentials: 'omit',
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} on ${path}`);
+    return res.json();
   }
 
-  // Add fadeInUp animation
-  const style = document.createElement('style');
-  style.textContent = `@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }`;
-  document.head.appendChild(style);
+  const verificationBadge = (v) => {
+    if (v === 'verified') return '<span class="badge-soft"><i class="fas fa-circle-check"></i> Verified</span>';
+    if (v === 'pending') return '<span class="badge-gold"><i class="fas fa-hourglass-half"></i> Pending</span>';
+    return '<span class="badge-muted"><i class="fas fa-question-circle"></i> Unverified</span>';
+  };
 
-  /* ============================================================ */
-  /* API FETCH HELPERS                                            */
-  /* ============================================================ */
-  async function fetchWithTimeout(url, options = {}, timeout = 10000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-      const response = await fetch(url, { ...options, signal: controller.signal });
-      clearTimeout(id);
-      return response;
-    } catch (error) {
-      clearTimeout(id);
-      throw error;
+  const statusLabel = (s) => {
+    switch (s) {
+      case 'published': return '<span class="badge-soft">Published</span>';
+      case 'archived': return '<span class="badge-muted">Archived</span>';
+      default: return '<span class="badge-muted">Draft</span>';
     }
-  }
+  };
 
-  async function fetchSchools(force = false) {
-    const now = Date.now();
-    if (!force && schoolsCache && (now - schoolsCacheTime) < CACHE_TTL) {
-      return schoolsCache;
+  function computeStatus(openDate, closeDate) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const open = openDate ? new Date(openDate) : null;
+    const close = closeDate ? new Date(closeDate) : null;
+    if (close && close < today) return { label: 'Closed', cls: 'badge-muted' };
+    if (open && open > today) return { label: 'Upcoming', cls: 'badge-gold' };
+    if (close) {
+      const daysLeft = Math.ceil((close - today) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 14) return { label: 'Closing soon', cls: 'badge-gold' };
+      return { label: 'Open', cls: 'badge-soft' };
     }
-
-    try {
-      const response = await fetchWithTimeout(`${API_URL}/api/schools?limit=100`);
-      if (!response.ok) {
-        if (response.status === 404) return []; // no schools yet
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const data = await response.json();
-      const schools = Array.isArray(data) ? data : (data.schools || data.data || []);
-      schoolsCache = schools;
-      schoolsCacheTime = now;
-      return schools;
-    } catch (error) {
-      console.warn('Could not fetch schools from API:', error.message);
-      // Return the sample data as fallback
-      return getSampleSchools();
-    }
+    return { label: 'Open', cls: 'badge-soft' };
   }
 
-  async function fetchSchoolDetail(schoolId) {
-    try {
-      const response = await fetchWithTimeout(`${API_URL}/api/schools/${schoolId}`);
-      if (!response.ok) {
-        if (response.status === 404) return null;
-        throw new Error(`HTTP ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.warn('Could not fetch school detail from API:', error.message);
-      return null;
-    }
-  }
-
-  /* ============================================================ */
-  /* SAMPLE DATA FALLBACK                                         */
-  /* ============================================================ */
-  function getSampleSchools() {
-    return [
-      {
-        id: 'uniabuja',
-        name: 'University of Abuja',
-        type: 'university',
-        institutionType: 'Federal University',
-        ownership: 'Federal',
-        location: 'Abuja, FCT',
-        state: 'Abuja',
-        established: '1988',
-        website: 'uniabuja.edu.ng',
-        email: 'info@uniabuja.edu.ng',
-        address: 'Airport Road, Gwagwalada, Abuja',
-        bannerClass: 'bg-uniabuja',
-        verified: true,
-        description: 'Explore programmes, admission information, fees, academic dates, and official university resources.',
-        tagline: 'A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.',
-        overview: 'The University of Abuja is a federal university located in the Federal Capital Territory, Nigeria. Established in 1988, it offers undergraduate and postgraduate programmes across a wide range of disciplines including sciences, arts, social sciences, management, law, and engineering.',
-        facilities: 'The university provides on-campus accommodation, libraries, laboratories, sports facilities, and student support services. Campus life includes student associations, cultural events, and religious activities.',
-        faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Health Sciences', 'Faculty of Education', 'Faculty of Agriculture'],
-        programs: [
-          { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-          { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦140,000', acceptance: '₦30,000' },
-          { name: 'B.Eng. Civil Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦180,000', acceptance: '₦35,000' },
-          { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
-          { name: 'B.A. English', faculty: 'Arts', duration: '4 years', level: '100 Level', tuition: '₦130,000', acceptance: '₦30,000' }
-        ],
-        admissions: {
-          intro: 'Admission into the University of Abuja is through UTME and Direct Entry. Applicants must satisfy the general university requirements and specific programme requirements.',
-          routes: [
-            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180 (sample)", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit; O'Level requirements apply", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
-          ],
-          updates: [
-            { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening has not been officially announced. Verify on the university portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' },
-            { title: 'Direct Entry application', text: 'Direct Entry candidates should monitor the JAMB portal and university website for the application window.', date: 'Source: JAMB', link: 'JAMB portal' }
-          ]
-        },
-        calendar: [
-          { label: 'Admission', name: 'Post-UTME screening', detail: 'Date to be announced', source: 'University portal (pending)' },
-          { label: 'Registration', name: 'Course registration opens', detail: '4 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-          { label: 'Payment', name: 'School fees payment deadline', detail: '30 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
-          { label: 'Lectures', name: 'First semester lectures begin', detail: '12 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
-          { label: 'Examination', name: 'First semester exams', detail: 'Feb 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
-          { label: 'Resumption', name: 'Second semester resumption', detail: 'Mar 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-        ],
-        news: [
-          { date: '15 May 2026', title: 'University announces 2026/2027 academic session', text: 'The university has released a draft academic calendar for the upcoming session. Students are advised to await the final version.', link: 'Official source' },
-          { date: '10 May 2026', title: 'Post-UTME screening date pending', text: 'The university has not yet announced the date for its post-UTME screening exercise. Candidates should monitor the official portal.', link: 'Official source' },
-          { date: '2 May 2026', title: 'New postgraduate programmes approved', text: 'The university senate has approved new postgraduate programmes in data science and renewable energy.', link: 'Official source' }
-        ]
-      },
-      {
-        id: 'biu',
-        name: 'Benson Idahosa University',
-        type: 'university',
-        institutionType: 'Private University',
-        ownership: 'Private',
-        location: 'Benin City, Edo State',
-        state: 'Edo',
-        established: '2002',
-        website: 'biu.edu.ng',
-        email: 'info@biu.edu.ng',
-        address: 'Km 5, Upper Mission Extension, Benin City',
-        bannerClass: 'bg-biu',
-        verified: true,
-        description: 'Discover available courses, entry requirements, tuition information, and student facilities.',
-        tagline: 'A faith-based institution committed to academic excellence and character development.',
-        overview: 'Benson Idahosa University (BIU) is a private Christian university located in Benin City, Edo State, Nigeria. Founded in 2002 by Archbishop Benson Idahosa, the institution is committed to academic excellence, moral integrity and service to humanity.',
-        facilities: 'The university provides on-campus accommodation, a well-stocked library, modern laboratories, sports facilities, and a chapel. Student life includes various fellowships, clubs, and community service opportunities.',
-        faculties: ['Engineering and Technology', 'Sciences', 'Management and Social Sciences', 'Law', 'Education', 'Health Sciences'],
-        programs: [
-          { name: 'B.Sc. Computer Science', faculty: 'Sciences', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
-          { name: 'B.Sc. Accounting', faculty: 'Management', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-          { name: 'B.Eng. Electrical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦190,000', acceptance: '₦40,000' }
-        ],
-        admissions: {
-          intro: 'Admission into Benson Idahosa University is through UTME and Direct Entry, with additional requirements for specific programmes.',
-          routes: [
-            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Open', statusClass: 'badge-soft' }
-          ],
-          updates: [
-            { title: '2026/2027 undergraduate admission form', text: 'The 2026/2027 undergraduate admission form is now available. Apply here.', date: 'Last checked: 25 May 2026', link: 'Apply here' },
-            { title: 'UTME cut-off mark for 2026', text: 'UTME cut-off mark for 2026 set at 180 for most programmes.', date: 'Source: University portal', link: 'Official portal' }
-          ]
-        },
-        calendar: [
-          { label: 'Admission', name: 'Post-UTME screening', detail: '15 Jul 2026', source: 'University portal' },
-          { label: 'Registration', name: 'Course registration opens', detail: '1 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-          { label: 'Payment', name: 'School fees payment deadline', detail: '15 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
-          { label: 'Lectures', name: 'First semester lectures begin', detail: '20 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-        ],
-        news: [
-          { date: '20 May 2026', title: '2026/2027 admission form now available', text: 'The university has opened applications for the 2026/2027 academic session.', link: 'Official source' },
-          { date: '10 May 2026', title: 'UTME cut-off mark announced', text: 'The university has set its UTME cut-off mark at 180 for most undergraduate programmes.', link: 'Official source' }
-        ]
-      },
-      {
-        id: 'unilag',
-        name: 'University of Lagos',
-        type: 'university',
-        institutionType: 'Federal University',
-        ownership: 'Federal',
-        location: 'Akoka, Lagos State',
-        state: 'Lagos',
-        established: '1962',
-        website: 'unilag.edu.ng',
-        email: 'info@unilag.edu.ng',
-        address: 'Akoka, Yaba, Lagos',
-        bannerClass: 'bg-unilag',
-        verified: true,
-        description: "Nigeria's premier federal university, known for research and innovation.",
-        tagline: "Nigeria's premier federal university, known for research and innovation.",
-        overview: "The University of Lagos (UNILAG) is a federal university located in Akoka, Lagos State. Established in 1962, it is one of Nigeria's most prestigious universities, offering a wide range of undergraduate and postgraduate programmes across various faculties.",
-        facilities: 'UNILAG offers extensive facilities including modern lecture theatres, research laboratories, a main library, sports complex, medical centre, and various hostels. The campus is vibrant with student associations and activities.',
-        faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Medicine', 'Faculty of Education', 'Faculty of Environmental Sciences'],
-        programs: [
-          { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
-          { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-          { name: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
-          { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦220,000', acceptance: '₦45,000' }
-        ],
-        admissions: {
-          intro: 'Admission into the University of Lagos is highly competitive, through UTME and Direct Entry.',
-          routes: [
-            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 200 (sample)", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Upper Credit", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
-          ],
-          updates: [
-            { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening is expected to open soon. Monitor the university portal.', date: 'Last checked: 22 May 2026', link: 'Official portal' }
-          ]
-        },
-        calendar: [
-          { label: 'Admission', name: 'Post-UTME screening', detail: 'Aug 2026 <span class="badge-gold">est.</span>', source: 'University portal (pending)' },
-          { label: 'Registration', name: 'Course registration opens', detail: '5 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-          { label: 'Lectures', name: 'First semester lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-        ],
-        news: [
-          { date: '18 May 2026', title: 'UNILAG announces new vice-chancellor', text: 'The university has appointed a new vice-chancellor effective from June 2026.', link: 'Official source' }
-        ]
-      },
-      {
-        id: 'yabatech',
-        name: 'Yaba College of Technology',
-        type: 'polytechnic',
-        institutionType: 'Polytechnic',
-        ownership: 'Federal',
-        location: 'Yaba, Lagos State',
-        state: 'Lagos',
-        established: '1947',
-        website: 'yabatech.edu.ng',
-        email: 'info@yabatech.edu.ng',
-        address: 'Herbert Macaulay Way, Yaba, Lagos',
-        bannerClass: 'bg-yabatech',
-        verified: true,
-        description: 'Leading polytechnic in Nigeria, focused on technical and vocational education.',
-        tagline: 'Leading polytechnic in Nigeria, focused on technical and vocational education.',
-        overview: "Yaba College of Technology (YABATECH) is Nigeria's premier polytechnic, established in 1947. It offers National Diploma (ND) and Higher National Diploma (HND) programmes across various fields including engineering, science, management, and art.",
-        facilities: 'YABATECH provides well-equipped workshops, laboratories, a library, ICT centre, and sports facilities. The institution emphasizes practical, hands-on training.',
-        faculties: ['School of Engineering', 'School of Science', 'School of Management & Business Studies', 'School of Art, Design & Printing', 'School of Environmental Studies'],
-        programs: [
-          { name: 'ND Computer Science', faculty: 'Science', duration: '2 years', level: 'ND 1', tuition: '₦70,000', acceptance: '₦20,000' },
-          { name: 'HND Computer Science', faculty: 'Science', duration: '2 years', level: 'HND 1', tuition: '₦80,000', acceptance: '₦25,000' },
-          { name: 'ND Mechanical Engineering', faculty: 'Engineering', duration: '2 years', level: 'ND 1', tuition: '₦75,000', acceptance: '₦20,000' },
-          { name: 'ND Business Administration', faculty: 'Management', duration: '2 years', level: 'ND 1', tuition: '₦65,000', acceptance: '₦20,000' }
-        ],
-        admissions: {
-          intro: 'Admission into Yaba College of Technology is through UTME for ND programmes and through HND screening for HND programmes.',
-          routes: [
-            { route: 'ND (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 120 (sample)", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'HND', reqs: "ND with minimum Lower Credit in relevant field; 1 year industrial attachment", status: 'Open', statusClass: 'badge-soft' }
-          ],
-          updates: [
-            { title: '2026/2027 ND/HND application', text: 'Applications for the 2026/2027 academic session are now open on the polytechnic portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' }
-          ]
-        },
-        calendar: [
-          { label: 'Admission', name: 'ND/HND screening', detail: '20 Aug 2026 <span class="badge-gold">est.</span>', source: 'Polytechnic portal (pending)' },
-          { label: 'Registration', name: 'Registration begins', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-          { label: 'Lectures', name: 'Lectures begin', detail: '25 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-        ],
-        news: [
-          { date: '12 May 2026', title: 'YABATECH ranked top polytechnic', text: 'The polytechnic has been ranked as the top polytechnic in Nigeria for the third consecutive year.', link: 'Official source' }
-        ]
-      },
-      {
-        id: 'fce',
-        name: 'Federal College of Education',
-        type: 'college',
-        institutionType: 'College of Education',
-        ownership: 'Federal',
-        location: 'Kano, Kano State',
-        state: 'Kano',
-        established: '1961',
-        website: 'fcekano.edu.ng',
-        email: 'info@fcekano.edu.ng',
-        address: 'Federal College of Education, Kano',
-        bannerClass: 'bg-fce',
-        verified: true,
-        description: 'Dedicated to producing high-quality educators for Nigerian schools.',
-        tagline: 'Dedicated to producing high-quality educators for Nigerian schools.',
-        overview: 'The Federal College of Education, Kano, is a federal institution established to train teachers and educators for Nigerian schools. It offers Nigeria Certificate in Education (NCE) programmes across various subject areas.',
-        facilities: 'The college provides lecture halls, a library, teaching practice facilities, and student hostels. It focuses on pedagogical training and educational research.',
-        faculties: ['School of Education', 'School of Sciences', 'School of Arts & Social Sciences', 'School of Languages'],
-        programs: [
-          { name: 'NCE Computer Science Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦45,000', acceptance: '₦15,000' },
-          { name: 'NCE Mathematics Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' },
-          { name: 'NCE English Education', faculty: 'Languages', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' }
-        ],
-        admissions: {
-          intro: 'Admission into the Federal College of Education is through UTME and Direct Entry for NCE programmes.',
-          routes: [
-            { route: 'NCE (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 100 (sample)", status: 'Open', statusClass: 'badge-soft' },
-            { route: 'Direct Entry', reqs: "A-Level / NCE / ND with minimum Pass", status: 'Open', statusClass: 'badge-soft' }
-          ],
-          updates: [
-            { title: '2026/2027 NCE admission', text: 'Applications for the 2026/2027 NCE programmes are now open.', date: 'Last checked: 18 May 2026', link: 'Official portal' }
-          ]
-        },
-        calendar: [
-          { label: 'Admission', name: 'NCE screening', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'College portal (pending)' },
-          { label: 'Registration', name: 'Registration begins', detail: '1 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-          { label: 'Lectures', name: 'Lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-        ],
-        news: [
-          { date: '5 May 2026', title: 'FCE Kano graduates 1,200 teachers', text: 'The college held its 2026 convocation ceremony, graduating over 1,200 NCE teachers.', link: 'Official source' }
-        ]
-      }
-    ];
-  }
-
-  /* ============================================================ */
-  /* RENDER SCHOOL CARDS                                          */
-  /* ============================================================ */
-  function renderSchoolCards(schools) {
+  /* ---------- load list ---------- */
+  async function loadSchools() {
     const grid = document.getElementById('directoryGrid');
-    const empty = document.getElementById('directoryEmpty');
+    grid.innerHTML = `<div class="loading-state"><span class="loading-spinner"></span><p>Loading schools from database...</p></div>`;
 
-    if (!schools || schools.length === 0) {
-      grid.innerHTML = '';
-      grid.appendChild(empty);
-      empty.style.display = '';
-      document.getElementById('directoryCount').textContent = 'No schools found';
+    try {
+      const data = await apiGet('/api/public/schools');
+      schoolsCache = Array.isArray(data.schools) ? data.schools : [];
+      renderSchoolCards(schoolsCache);
+      populateFilters(schoolsCache);
+    } catch (err) {
+      console.error('[schools]', err);
+      grid.innerHTML = `<div class="error-state">
+        <i class="fas fa-triangle-exclamation"></i>
+        <p>We could not load schools right now.</p>
+        <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
+        <button onclick="loadSchools()">Try again</button>
+      </div>`;
+      document.getElementById('directoryCount').textContent = 'Schools unavailable';
+    }
+  }
+
+  /* ---------- render cards ---------- */
+  function renderSchoolCards(list) {
+    const grid = document.getElementById('directoryGrid');
+
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty-state">
+        <i class="fas fa-school"></i>
+        <p>No schools have been published yet.</p>
+        <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
+      </div>`;
+      document.getElementById('directoryCount').textContent = 'No schools yet';
       return;
     }
 
-    empty.style.display = 'none';
-    document.getElementById('directoryCount').textContent = `${schools.length} school${schools.length > 1 ? 's' : ''} found`;
+    document.getElementById('directoryCount').textContent =
+      `${list.length} school${list.length === 1 ? '' : 's'} found`;
 
-    grid.innerHTML = schools.map(school => {
-      const name = school.name || 'Unnamed School';
-      const location = school.location || school.state || 'Nigeria';
-      const type = school.institutionType || school.type || 'Institution';
-      const desc = school.description || 'View full details, courses, fees, and admission information.';
-      const typeKey = (school.type || 'university').toLowerCase();
-      const bannerClass = school.bannerClass || getBannerClass(typeKey);
-      const verified = school.verified !== false;
+    grid.innerHTML = list.map((s) => {
+      const name = s.name || 'Unnamed School';
+      const location = [s.city, s.state].filter(Boolean).join(', ') || 'Nigeria';
+      const type = s.type || 'Institution';
+      const desc = s.description || `${type} in ${location}.`;
+      const typeKey = (s.type || '').toLowerCase();
+      const slug = s.slug || s.id;
+      const cover = s.cover_url || s.logo_url || '';
+      const isVerified = s.verification === 'verified';
 
       return `
-        <div class="school-card" data-type="${typeKey}" data-state="${school.state || ''}" data-name="${name.toLowerCase()}" data-location="${location.toLowerCase()}" onclick="openProfile('${school.id}')">
-          <div class="school-img ${bannerClass}"></div>
+        <div class="school-card"
+             data-type="${escapeHtml(typeKey)}"
+             data-state="${escapeHtml((s.state || '').toLowerCase())}"
+             data-name="${escapeHtml(name.toLowerCase())}"
+             data-location="${escapeHtml(location.toLowerCase())}"
+             onclick="openProfile('${escapeHtml(slug)}')">
+          <div class="school-img" ${cover ? `style="background-image:url('${encodeURI(cover)}')"` : ''}></div>
           <div class="school-info">
             <div class="school-name-row">
-              <span class="school-name">${name}</span>
-              ${verified ? '<i class="fas fa-circle-check verified-badge" title="Verified"></i>' : ''}
+              <span class="school-name">${escapeHtml(name)}</span>
+              ${isVerified ? '<i class="fas fa-circle-check verified-badge" title="Verified institution"></i>' : ''}
             </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> ${location}</div>
-            <div class="school-type">${type}</div>
-            <div class="school-desc">${desc}</div>
+            <div class="school-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(location)}</div>
+            <div class="school-type">${escapeHtml(type)}</div>
+            <div class="school-desc">${escapeHtml(truncate(desc, 140))}</div>
             <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
-  function getBannerClass(type) {
-    const map = {
-      university: 'bg-uniabuja',
-      polytechnic: 'bg-yabatech',
-      college: 'bg-fce'
-    };
-    return map[type] || 'bg-uniabuja';
+  /* ---------- filters ---------- */
+  function populateFilters(list) {
+    // Type tabs
+    const tabs = document.getElementById('typeFilters');
+    const types = [...new Set(list.map((s) => s.type).filter(Boolean))].sort();
+
+    let html = `<button class="filter-tab active" data-type="all" onclick="setTypeFilter('all', this)">All Institutions</button>`;
+    for (const t of types) {
+      const key = t.toLowerCase();
+      const label = t.length > 20 ? t : t;
+      html += `<button class="filter-tab" data-type="${escapeHtml(key)}" onclick="setTypeFilter('${escapeHtml(key)}', this)">${escapeHtml(label)}</button>`;
+    }
+    tabs.innerHTML = html;
+
+    // State select
+    const select = document.getElementById('stateFilter');
+    const states = [...new Set(list.map((s) => s.state).filter(Boolean))].sort();
+    select.innerHTML = '<option value="">All states</option>' +
+      states.map((st) => `<option value="${escapeHtml(st.toLowerCase())}">${escapeHtml(st)}</option>`).join('');
   }
 
-  /* ============================================================ */
-  /* DIRECTORY FILTERING                                          */
-  /* ============================================================ */
   function setTypeFilter(type, btn) {
     currentTypeFilter = type;
-    document.querySelectorAll('#typeFilters .filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#typeFilters .filter-tab').forEach((t) => t.classList.remove('active'));
     btn.classList.add('active');
     filterDirectory();
   }
 
   function filterDirectory() {
     const query = document.getElementById('directorySearch').value.toLowerCase().trim();
-    const state = document.getElementById('stateFilter').value;
+    const state = document.getElementById('stateFilter').value.toLowerCase();
     const cards = document.querySelectorAll('#directoryGrid .school-card');
-    let visibleCount = 0;
+    let visible = 0;
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const type = card.dataset.type || '';
       const cardState = card.dataset.state || '';
-      const name = (card.dataset.name || '').toLowerCase();
-      const location = (card.dataset.location || '').toLowerCase();
+      const name = card.dataset.name || '';
+      const loc = card.dataset.location || '';
 
-      const matchesType = currentTypeFilter === 'all' || type === currentTypeFilter;
-      const matchesState = !state || cardState === state;
-      const matchesQuery = !query || name.includes(query) || location.includes(query);
+      const okType = currentTypeFilter === 'all' || type === currentTypeFilter;
+      const okState = !state || cardState === state;
+      const okQuery = !query || name.includes(query) || loc.includes(query);
 
-      if (matchesType && matchesState && matchesQuery) {
-        card.style.display = '';
-        visibleCount++;
-      } else {
-        card.style.display = 'none';
-      }
+      if (okType && okState && okQuery) { card.style.display = ''; visible++; }
+      else { card.style.display = 'none'; }
     });
 
-    document.getElementById('directoryCount').textContent =
-      visibleCount > 0 ? `${visibleCount} school${visibleCount > 1 ? 's' : ''} found` : 'No schools found';
+    const countEl = document.getElementById('directoryCount');
+    if (!schoolsCache.length) countEl.textContent = 'No schools yet';
+    else countEl.textContent = visible === 1 ? '1 school found' : `${visible} schools found`;
   }
 
-  /* ============================================================ */
-  /* PROFILE VIEW                                                 */
-  /* ============================================================ */
-  async function openProfile(schoolId) {
-    // Show loading state
-    document.getElementById('profileName').textContent = 'Loading...';
-    document.getElementById('profileStatus').textContent = '';
-    document.getElementById('profileSub').innerHTML = '';
-    document.getElementById('profileTagline').textContent = 'Fetching school details...';
-    document.getElementById('profileBanner').className = 'profile-banner';
+  document.getElementById('directorySearch').addEventListener('input', debouncedFilterDirectory);
+  document.getElementById('directorySearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterDirectory(); });
 
-    document.getElementById('view-directory').classList.remove('active');
-    document.getElementById('view-profile').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Try API first, fall back to cache/sample
-    let school = null;
-
-    // Check cache first
-    if (schoolsCache) {
-      school = schoolsCache.find(s => s.id === schoolId);
-    }
-
-    // If not in cache, try fetching detail from API
-    if (!school) {
-      try {
-        school = await fetchSchoolDetail(schoolId);
-      } catch (e) {
-        console.warn('Detail fetch failed:', e);
-      }
-    }
-
-    // Fallback to sample data
-    if (!school) {
-      const samples = getSampleSchools();
-      school = samples.find(s => s.id === schoolId);
-    }
-
-    if (!school) {
-      document.getElementById('profileName').textContent = 'School not found';
-      document.getElementById('profileTagline').textContent = 'The requested school could not be loaded. Please go back and try again.';
-      return;
-    }
-
-    currentSchool = school;
-    renderProfile(school);
-    updateURL(school.id);
-    resetTabs();
-    document.querySelector('.tab-item[data-tab="overview"]').classList.add('active');
-    document.getElementById('panel-overview').classList.add('active');
-  }
-
-  function renderProfile(school) {
-    const name = school.name || 'School';
-    const location = school.location || school.state || 'Nigeria';
-    const type = school.institutionType || school.type || 'Institution';
-    const tagline = school.tagline || 'A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.';
-    const bannerClass = school.bannerClass || getBannerClass((school.type || 'university').toLowerCase());
-    const verified = school.verified !== false;
-
-    // Hero
-    document.getElementById('profileName').textContent = name;
-    document.getElementById('profileStatus').innerHTML = verified
-      ? '<i class="fas fa-circle-check"></i> Verified institution'
-      : '<i class="fas fa-triangle-exclamation"></i> Admission status: verify';
-    document.getElementById('profileStatus').className = 'profile-badge ' + (verified ? '' : 'verify');
-    document.getElementById('profileSub').innerHTML =
-      `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>
-       <span class="dot">●</span>
-       <span>${type}</span>`;
-    document.getElementById('profileTagline').textContent = tagline;
-    document.getElementById('profileBanner').className = 'profile-banner ' + bannerClass;
-
-    // Overview tab
-    document.getElementById('overviewText').textContent = school.overview || school.description || 'Overview information not available.';
-    document.getElementById('facilitiesText').textContent = school.facilities || 'Facilities and student life information will be updated soon.';
-
-    const faculties = school.faculties || [];
-    document.getElementById('facultyList').innerHTML = faculties.length > 0
-      ? faculties.map(f => `<span class="faculty-tag">${f}</span>`).join('')
-      : '<p style="color: var(--muted);">Faculty information not available.</p>';
-
-    // Info card
-    document.getElementById('infoLocation').textContent = location;
-    document.getElementById('infoOwnership').textContent = school.ownership || '—';
-    document.getElementById('infoType').textContent = type;
-    document.getElementById('infoEstablished').textContent = school.established || '—';
-
-    const website = school.website || '';
-    const websiteLink = document.getElementById('infoWebsite');
-    websiteLink.textContent = website || '—';
-    if (website) {
-      websiteLink.href = website.startsWith('http') ? website : `https://${website}`;
-      websiteLink.target = '_blank';
-    } else {
-      websiteLink.removeAttribute('href');
-    }
-
-    const email = school.email || '—';
-    document.getElementById('infoEmail').textContent = email;
-    const emailLink = document.getElementById('infoEmailLink');
-    if (email && email.includes('@')) {
-      emailLink.href = `mailto:${email}`;
-    } else {
-      emailLink.removeAttribute('href');
-    }
-
-    const address = school.address || '—';
-    document.getElementById('infoAddress').textContent = address;
-    const addressLink = document.getElementById('infoAddressLink');
-    if (address && address !== '—') {
-      addressLink.href = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
-      addressLink.target = '_blank';
-    } else {
-      addressLink.removeAttribute('href');
-    }
-
-    // Courses & fees
-    const programs = school.programs || school.courses || [];
-    document.getElementById('programTableBody').innerHTML = programs.length > 0
-      ? programs.map(p => `
-          <tr>
-            <td>${p.name || 'Programme'}</td>
-            <td>${p.faculty || '—'}</td>
-            <td>${p.duration || '—'}</td>
-            <td>${p.level || '—'}</td>
-            <td>${p.tuition || '—'} <span class="badge-gold">sample</span></td>
-            <td>${p.acceptance || '—'}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="6" style="text-align:center; color:var(--muted);">Programme information not available.</td></tr>';
-
-    // Payment deadline from calendar
-    const calendar = school.calendar || [];
-    const paymentEvent = calendar.find(c => (c.label || '').toLowerCase().includes('payment'));
-    document.getElementById('paymentDeadline').innerHTML = paymentEvent
-      ? (paymentEvent.detail || '—')
-      : '—';
-
-    // Admissions
-    const admissions = school.admissions || {};
-    document.getElementById('admissionsIntro').textContent = admissions.intro || 'Admission information is not available at this time.';
-
-    const routes = admissions.routes || [];
-    document.getElementById('admissionsTableBody').innerHTML = routes.length > 0
-      ? routes.map(r => `
-          <tr>
-            <td>${r.route || '—'}</td>
-            <td>${r.reqs || '—'}</td>
-            <td><span class="${r.statusClass || 'badge-soft'}">${r.status || '—'}</span></td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">Admission route information not available.</td></tr>';
-
-    const updates = admissions.updates || [];
-    document.getElementById('admissionUpdates').innerHTML = updates.length > 0
-      ? updates.map(u => `
-          <div class="update-item">
-            <i class="fas fa-bullhorn"></i>
-            <div class="update-content">
-              <h4>${u.title || 'Update'}</h4>
-              <p>${u.text || ''}</p>
-              <div class="update-meta">
-                <span><i class="far fa-calendar-alt"></i> ${u.date || ''}</span>
-                <span><a href="#" onclick="return false;">${u.link || 'Official source'}</a></span>
-              </div>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color: var(--muted);">No recent admission updates.</p></div></div>';
-
-    // Admission status box
-    const statusBox = document.getElementById('admissionStatusBox');
-    if (routes.length > 0) {
-      statusBox.innerHTML = routes.map(r => `
-        <div class="info-row">
-          <span class="info-label">${r.route || '—'}</span>
-          <span class="info-value"><span class="${r.statusClass || 'badge-soft'}">${r.status || '—'}</span></span>
-        </div>
-      `).join('');
-    } else {
-      statusBox.innerHTML = '<div class="info-row"><span class="info-label">Status</span><span class="info-value">—</span></div>';
-    }
-
-    // Calendar
-    document.getElementById('calendarGrid').innerHTML = calendar.length > 0
-      ? calendar.map(c => `
-          <div class="calendar-card">
-            <div class="date-label">${c.label || 'Event'}</div>
-            <div class="event-name">${c.name || ''}</div>
-            <div class="event-detail">${c.detail || ''}</div>
-            <div class="event-source">Source: ${c.source || '—'}</div>
-          </div>
-        `).join('')
-      : '<div class="calendar-card"><div class="event-detail">Calendar information not available.</div></div>';
-
-    // News
-    const news = school.news || [];
-    document.getElementById('newsList').innerHTML = news.length > 0
-      ? news.map(n => `
-          <div class="news-item">
-            <div class="news-date">${n.date || ''} · <a href="#" onclick="return false;">Official source</a></div>
-            <h4>${n.title || ''}</h4>
-            <p>${n.text || ''}</p>
-            <a href="#" onclick="return false;">Read more <i class="fas fa-arrow-right"></i></a>
-          </div>
-        `).join('')
-      : '<div class="news-item"><p style="color:var(--muted);">No recent news.</p></div>';
-
-    // Update website links
-    if (website) {
-      const url = website.startsWith('http') ? website : `https://${website}`;
-      document.getElementById('infoWebsiteLink').href = url;
-      document.getElementById('newsWebsiteLink').href = url;
-    }
-  }
-
-  /* ============================================================ */
-  /* VIEW SWITCHING                                               */
-  /* ============================================================ */
+  /* ---------- views ---------- */
   function showDirectory() {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-profile').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetTabs();
-    updateURL(null);
+    history.pushState({ view: 'directory' }, '', '/Schools.html');
   }
 
-  function updateURL(schoolId) {
-    if (schoolId) {
-      history.pushState({ view: 'profile', school: schoolId }, '', `?school=${schoolId}`);
-    } else {
-      history.pushState({ view: 'directory' }, '', window.location.pathname);
+  async function openProfile(slugOrId) {
+    if (!slugOrId) return;
+
+    document.getElementById('view-directory').classList.remove('active');
+    document.getElementById('view-profile').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    document.getElementById('profileName').textContent = 'Loading...';
+    document.getElementById('profileStatus').textContent = '';
+    document.getElementById('profileStatus').className = 'profile-badge';
+    document.getElementById('profileSub').innerHTML = '';
+    document.getElementById('viewAdmissionsBtn').disabled = true;
+    document.getElementById('profileWebsiteBtn').disabled = true;
+
+    resetTabs();
+    document.querySelector('.tab-item[data-tab="overview"]').classList.add('active');
+    document.getElementById('panel-overview').classList.add('active');
+
+    history.pushState({ view: 'profile', school: slugOrId }, '', `/Schools.html?school=${encodeURIComponent(slugOrId)}`);
+
+    try {
+      // The slug endpoint returns { school, courses, fees, admissions, calendar }
+      const data = await apiGet(`/api/public/schools/${encodeURIComponent(slugOrId)}`);
+      const school = data.school || data;
+      const courses = Array.isArray(data.courses) ? data.courses : [];
+      const fees = Array.isArray(data.fees) ? data.fees : [];
+      const admissions = Array.isArray(data.admissions) ? data.admissions : [];
+      const calendar = Array.isArray(data.calendar) ? data.calendar : [];
+
+      currentSchool = school;
+      renderProfile({ school, courses, fees, admissions, calendar });
+    } catch (err) {
+      console.error('[profile]', err);
+      document.getElementById('profileName').textContent = 'School unavailable';
+      document.getElementById('overviewText').textContent = err.message;
     }
   }
 
-  /* ============================================================ */
-  /* TAB SWITCHING                                                */
-  /* ============================================================ */
+  function renderProfile({ school, courses, fees, admissions, calendar }) {
+    const name = school.name || 'School';
+    const location = [school.city, school.state].filter(Boolean).join(', ') || 'Nigeria';
+    const type = school.type || 'Institution';
+    const website = safeUrl(school.website);
+    const email = school.email || '';
+    const address = school.address || '';
+
+    // Hero
+    document.getElementById('profileName').textContent = name;
+    const statusBadge = document.getElementById('profileStatus');
+    if (school.verification === 'verified') {
+      statusBadge.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+      statusBadge.className = 'profile-badge';
+    } else if (school.verification === 'pending') {
+      statusBadge.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+      statusBadge.className = 'profile-badge warn';
+    } else {
+      statusBadge.innerHTML = '<i class="fas fa-question-circle"></i> Unverified';
+      statusBadge.className = 'profile-badge muted';
+    }
+
+    document.getElementById('profileSub').innerHTML = `
+      <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(location)}</span>
+      <span class="dot">●</span>
+      <span>${escapeHtml(type)}</span>
+    `;
+
+    const banner = document.getElementById('profileBanner');
+    const cover = school.cover_url || school.logo_url;
+    if (cover) banner.style.backgroundImage = `url('${encodeURI(cover)}')`;
+    else banner.style.backgroundImage = '';
+
+    // Buttons
+    const admBtn = document.getElementById('viewAdmissionsBtn');
+    admBtn.disabled = admissions.length === 0;
+    admBtn.onclick = () => switchTab('admissions');
+
+    const siteBtn = document.getElementById('profileWebsiteBtn');
+    if (website) {
+      siteBtn.disabled = false;
+      siteBtn.onclick = () => window.open(website, '_blank', 'noopener');
+    } else {
+      siteBtn.disabled = true;
+      siteBtn.onclick = null;
+    }
+
+    // Overview
+    document.getElementById('overviewText').textContent =
+      school.description || 'No description has been published for this institution.';
+
+    document.getElementById('infoLocation').textContent = location;
+    document.getElementById('infoOwnership').textContent = school.ownership || '—';
+    document.getElementById('infoType').textContent = type;
+    document.getElementById('infoEstablished').textContent = school.established || '—';
+    document.getElementById('infoVerification').innerHTML = verificationBadge(school.verification);
+
+    // Contact links
+    const websiteLink = document.getElementById('infoWebsiteLink');
+    if (website) {
+      websiteLink.href = website;
+      websiteLink.style.pointerEvents = '';
+      document.getElementById('infoWebsiteText').textContent = website;
+    } else {
+      websiteLink.removeAttribute('href');
+      document.getElementById('infoWebsiteText').textContent = 'Not available';
+    }
+
+    const emailLink = document.getElementById('infoEmailLink');
+    if (email && email.includes('@')) {
+      emailLink.href = `mailto:${email}`;
+      emailLink.style.pointerEvents = '';
+      document.getElementById('infoEmail').textContent = email;
+    } else {
+      emailLink.removeAttribute('href');
+      document.getElementById('infoEmail').textContent = 'Not available';
+    }
+
+    const addrLink = document.getElementById('infoAddressLink');
+    if (address) {
+      addrLink.href = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+      addrLink.style.pointerEvents = '';
+      document.getElementById('infoAddress').textContent = address;
+    } else {
+      addrLink.removeAttribute('href');
+      document.getElementById('infoAddress').textContent = 'Not available';
+    }
+
+    // Courses
+    const programBody = document.getElementById('programTableBody');
+    if (courses.length) {
+      programBody.innerHTML = courses.map((c) => `
+        <tr>
+          <td>${escapeHtml(c.name || '—')}</td>
+          <td>${escapeHtml(c.faculty || '—')}</td>
+          <td>${escapeHtml(c.duration || '—')}</td>
+          <td>${escapeHtml(c.qualification || '—')}</td>
+          <td>${escapeHtml(c.entry_route || '—')}</td>
+        </tr>`).join('');
+    } else {
+      programBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No courses published for this institution yet.</td></tr>';
+    }
+
+    // Fees
+    const feesBody = document.getElementById('feesTableBody');
+    if (fees.length) {
+      feesBody.innerHTML = fees.map((f) => {
+        const amount = f.amount != null ? `₦${Number(f.amount).toLocaleString('en-NG')}` : '—';
+        return `
+          <tr>
+            <td>${escapeHtml(f.session || '—')}</td>
+            <td>${escapeHtml(f.category || '—')}</td>
+            <td>${escapeHtml([f.programme, f.level].filter(Boolean).join(' · ') || '—')}</td>
+            <td>${escapeHtml(amount)}</td>
+            <td>${escapeHtml(f.verified_date ? formatDate(f.verified_date) : '—')}</td>
+          </tr>`;
+      }).join('');
+    } else {
+      feesBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No published fees for this institution yet.</td></tr>';
+    }
+
+    // Admissions
+    const admBody = document.getElementById('admissionsTableBody');
+    const linksContainer = document.getElementById('admissionLinks');
+
+    if (admissions.length) {
+      admBody.innerHTML = admissions.map((a) => {
+        const status = computeStatus(a.open_date, a.close_date);
+        return `
+          <tr>
+            <td>${escapeHtml(a.title || '—')}</td>
+            <td>${escapeHtml(a.session || '—')}</td>
+            <td>${escapeHtml(a.entry_route || '—')}</td>
+            <td>${escapeHtml(formatDate(a.close_date))}</td>
+            <td><span class="${status.cls}">${escapeHtml(status.label)}</span></td>
+          </tr>`;
+      }).join('');
+
+      const links = admissions.map((a) => {
+        const app = safeUrl(a.application_url);
+        const src = safeUrl(a.source_url);
+        if (!app && !src) return '';
+        return `
+          <div class="info-card">
+            <h3>${escapeHtml(a.title || 'Admission')}</h3>
+            <div class="contact-links">
+              ${app ? `<a href="${escapeHtml(app)}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Application portal</a>` : ''}
+              ${src ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Official source</a>` : ''}
+            </div>
+          </div>`;
+      }).filter(Boolean).join('');
+      linksContainer.innerHTML = links || '';
+    } else {
+      admBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No admission notices published yet.</td></tr>';
+      linksContainer.innerHTML = '';
+    }
+
+    // Calendar
+    const calBody = document.getElementById('calendarTableBody');
+    if (calendar.length) {
+      calBody.innerHTML = calendar.map((ev) => {
+        const src = safeUrl(ev.source_url);
+        return `
+          <tr>
+            <td>${escapeHtml(ev.title || '—')}</td>
+            <td>${escapeHtml(ev.type || '—')}</td>
+            <td>${escapeHtml(ev.session || '—')}</td>
+            <td>${escapeHtml(formatDate(ev.start_date))}</td>
+            <td>${escapeHtml(formatDate(ev.end_date))}</td>
+            <td>${src ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener" style="color:var(--primary);">Open</a>` : '—'}</td>
+          </tr>`;
+      }).join('');
+    } else {
+      calBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--muted);">No calendar events published yet.</td></tr>';
+    }
+
+    // Verification tab
+    document.getElementById('verifInstitution').innerHTML = verificationBadge(school.verification);
+    document.getElementById('verifPublication').innerHTML = statusLabel(school.publication);
+
+    const sources = [];
+    if (website) sources.push(`<a href="${escapeHtml(website)}" target="_blank" rel="noopener"><i class="fas fa-globe"></i> Official website</a>`);
+    for (const a of admissions) {
+      const s = safeUrl(a.source_url);
+      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Admission source — ${escapeHtml(a.title || '')}</a>`);
+    }
+    for (const ev of calendar) {
+      const s = safeUrl(ev.source_url);
+      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Calendar source — ${escapeHtml(ev.title || '')}</a>`);
+    }
+    document.getElementById('verifSources').innerHTML = sources.length
+      ? sources.join('')
+      : '<a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle"></i> No source links published yet.</a>';
+  }
+
+  /* ---------- tabs ---------- */
   const tabItems = document.querySelectorAll('.tab-item');
   const tabPanels = {
     overview: document.getElementById('panel-overview'),
     courses: document.getElementById('panel-courses'),
+    fees: document.getElementById('panel-fees'),
     admissions: document.getElementById('panel-admissions'),
     calendar: document.getElementById('panel-calendar'),
-    news: document.getElementById('panel-news')
+    verification: document.getElementById('panel-verification'),
   };
 
   function resetTabs() {
-    tabItems.forEach(t => t.classList.remove('active'));
-    Object.values(tabPanels).forEach(p => p.classList.remove('active'));
+    tabItems.forEach((t) => t.classList.remove('active'));
+    Object.values(tabPanels).forEach((p) => p.classList.remove('active'));
   }
 
-  function switchTab(tabKey) {
+  function switchTab(key) {
     resetTabs();
-    const targetTab = document.querySelector(`.tab-item[data-tab="${tabKey}"]`);
-    if (targetTab) targetTab.classList.add('active');
-    if (tabPanels[tabKey]) tabPanels[tabKey].classList.add('active');
-    // Scroll to tabs on mobile
+    const target = document.querySelector(`.tab-item[data-tab="${key}"]`);
+    if (target) target.classList.add('active');
+    if (tabPanels[key]) tabPanels[key].classList.add('active');
     if (window.innerWidth < 900) {
       const tabsEl = document.querySelector('.profile-tabs');
       if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
-  tabItems.forEach(item => {
+  tabItems.forEach((item) => {
     item.addEventListener('click', () => {
       resetTabs();
       item.classList.add('active');
-      const tabKey = item.dataset.tab;
-      if (tabPanels[tabKey]) {
-        tabPanels[tabKey].classList.add('active');
-      }
+      const key = item.dataset.tab;
+      if (tabPanels[key]) tabPanels[key].classList.add('active');
     });
   });
 
-  /* ============================================================ */
-  /* PROGRAM SEARCH (inside profile)                              */
-  /* ============================================================ */
+  /* ---------- program search ---------- */
   function filterPrograms() {
     const query = document.getElementById('programSearchInput').value.toLowerCase().trim();
     const rows = document.querySelectorAll('#programTableBody tr');
-    rows.forEach(row => {
+    rows.forEach((row) => {
       const text = row.textContent.toLowerCase();
       row.style.display = !query || text.includes(query) ? '' : 'none';
     });
   }
 
-  /* ============================================================ */
-  /* MOBILE NAV TOGGLE                                            */
-  /* ============================================================ */
+  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
-  if (hamburger) {
-    hamburger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileNav.classList.toggle('active');
-    });
+  if (hamburger && mobileNav) {
+    hamburger.addEventListener('click', (e) => { e.stopPropagation(); mobileNav.classList.toggle('active'); });
     document.addEventListener('click', (e) => {
-      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
-        mobileNav.classList.remove('active');
-      }
+      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) mobileNav.classList.remove('active');
     });
   }
 
-  /* ============================================================ */
-  /* INITIALIZATION                                               */
-  /* ============================================================ */
-  async function init() {
-    // Load schools from API
-    const schools = await fetchSchools();
-    renderSchoolCards(schools);
+  /* ---------- history ---------- */
+  let initialised = false;
+  window.addEventListener('popstate', (e) => {
+    if (!initialised) return;
+    if (e.state && e.state.view === 'profile' && e.state.school) openProfile(e.state.school);
+    else showDirectory();
+  });
 
-    // Handle deep link
+  window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const schoolParam = params.get('school');
-    if (schoolParam) {
-      // Find school by id
-      let school = schools.find(s => s.id === schoolParam);
-      if (!school) {
-        // Try matching by name slug
-        school = schools.find(s =>
-          s.name && s.name.toLowerCase().replace(/\s+/g, '-') === schoolParam
-        );
-      }
-      if (school) {
-        openProfile(school.id);
-      }
-    }
-  }
-
-  // Handle browser back/forward
-  window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.view === 'profile' && e.state.school) {
-      openProfile(e.state.school);
-    } else {
-      showDirectory();
-    }
+    loadSchools().then(() => {
+      initialised = true;
+      if (schoolParam) openProfile(schoolParam);
+    });
   });
 
-  // Prevent default on placeholder links
-  document.querySelectorAll('a[href="#"]').forEach(link => {
-    link.addEventListener('click', (e) => e.preventDefault());
-  });
-
-  // Start
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  window.showDirectory = showDirectory;
+  window.openProfile = openProfile;
+  window.filterDirectory = filterDirectory;
+  window.setTypeFilter = setTypeFilter;
+  window.switchTab = switchTab;
+  window.filterPrograms = filterPrograms;
+  window.loadSchools = loadSchools;
+})();
 </script>
 
 </body>
