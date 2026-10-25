@@ -46,7 +46,7 @@
       display: flex; align-items: center; justify-content: space-between;
       height: 72px;
     }
-    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
     .logo span { color: var(--primary); }
     .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
     .nav-links a:hover { color: var(--primary); }
@@ -353,6 +353,21 @@
     .bg-fce {
       background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&auto=format&fit=crop&q=80');
     }
+
+    /* Loading & error states */
+    .loading-spinner {
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid rgba(255,255,255,0.1); border-radius: 50%;
+      border-top-color: var(--primary); animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg {
+      color: #ff6b6b; background: rgba(255,107,107,0.1);
+      padding: 12px 16px; border-radius: 8px; font-size: 0.85rem;
+      margin: 12px 0;
+    }
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 16px; color: var(--border); }
   </style>
 </head>
 <body>
@@ -360,14 +375,14 @@
 <!-- ==================== HEADER ==================== -->
 <header class="site-header">
   <div class="container header-inner">
-    <div class="logo" onclick="showDirectory()" style="cursor: pointer;">Campus<span>Naija</span></div>
+    <div class="logo" onclick="showDirectory()">Campus<span>Naija</span></div>
     <nav class="nav-links">
-      <a href="./Home.html" onclick="showDirectory()">Home</a>
-      <a href="./Schools.html" onclick="showDirectory()">Schools</a>
-      <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
-      <a href="./Exams.html" onclick="showDirectory()">Exams</a>
-      <a href="./Scholarships.html" onclick="showDirectory()">Scholarships</a>
-      <a href="./Trending.html" onclick="showDirectory()">Trending</a>
+      <a href="./Home.html">Home</a>
+      <a href="./Schools.html" onclick="showDirectory(); return false;">Schools</a>
+      <a href="./Admissions.html">Admissions</a>
+      <a href="./Exams.html">Exams</a>
+      <a href="./Scholarships.html">Scholarships</a>
+      <a href="./Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
       <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
@@ -376,12 +391,12 @@
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
-    <a href="./Home.html" onclick="showDirectory()">Home</a>
-    <a href="./Schools.html" onclick="showDirectory()">Schools</a>
-    <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
-    <a href="./Exams.html" onclick="showDirectory()">Exams</a>
-    <a href="./Scholarships.html" onclick="showDirectory()">Scholarships</a>
-    <a href="./Trending.html" onclick="showDirectory()">Trending</a>
+    <a href="./Home.html">Home</a>
+    <a href="./Schools.html" onclick="showDirectory(); return false;">Schools</a>
+    <a href="./Admissions.html">Admissions</a>
+    <a href="./Exams.html">Exams</a>
+    <a href="./Scholarships.html">Scholarships</a>
+    <a href="./Trending.html">Trending</a>
   </div>
 </header>
 
@@ -397,7 +412,7 @@
       <div class="search-row">
         <div class="search-wrapper">
           <i class="fas fa-search"></i>
-          <input type="text" id="directorySearch" placeholder="Search schools, courses or locations">
+          <input type="text" id="directorySearch" placeholder="Search schools, courses or locations" oninput="debouncedDirectorySearch()">
           <button onclick="filterDirectory()">Search Schools</button>
         </div>
         <select class="state-select" id="stateFilter" onchange="filterDirectory()">
@@ -419,83 +434,14 @@
 
     <section class="schools-section">
       <div class="section-header">
-        <div class="section-title">Explore schools</div>
+        <div class="section-title" id="directoryCount">Explore schools</div>
         <a href="#" class="view-all">Browse all <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="schools-grid" id="directoryGrid">
-        <!-- University of Abuja -->
-        <div class="school-card" data-type="university" data-state="Abuja" data-name="University of Abuja" data-location="Abuja" onclick="openProfile('uniabuja')">
-          <div class="school-img bg-uniabuja"></div>
-          <div class="school-info">
-            <div class="school-name-row">
-              <span class="school-name">University of Abuja</span>
-              <i class="fas fa-circle-check verified-badge" title="Verified"></i>
-            </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> Abuja, FCT</div>
-            <div class="school-type">Federal University</div>
-            <div class="school-desc">Explore programmes, admission information, fees, academic dates, and official university resources.</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
-          </div>
-        </div>
-
-        <!-- Benson Idahosa University -->
-        <div class="school-card" data-type="university" data-state="Edo" data-name="Benson Idahosa University" data-location="Benin City" onclick="openProfile('biu')">
-          <div class="school-img bg-biu"></div>
-          <div class="school-info">
-            <div class="school-name-row">
-              <span class="school-name">Benson Idahosa University</span>
-              <i class="fas fa-circle-check verified-badge" title="Verified"></i>
-            </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> Benin City, Edo State</div>
-            <div class="school-type">Private University</div>
-            <div class="school-desc">Discover available courses, entry requirements, tuition information, and student facilities.</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
-          </div>
-        </div>
-
-        <!-- University of Lagos -->
-        <div class="school-card" data-type="university" data-state="Lagos" data-name="University of Lagos" data-location="Lagos" onclick="openProfile('unilag')">
-          <div class="school-img bg-unilag"></div>
-          <div class="school-info">
-            <div class="school-name-row">
-              <span class="school-name">University of Lagos</span>
-              <i class="fas fa-circle-check verified-badge" title="Verified"></i>
-            </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> Akoka, Lagos State</div>
-            <div class="school-type">Federal University</div>
-            <div class="school-desc">Nigeria's premier federal university, known for research and innovation.</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
-          </div>
-        </div>
-
-        <!-- Yaba College of Technology -->
-        <div class="school-card" data-type="polytechnic" data-state="Lagos" data-name="Yaba College of Technology" data-location="Lagos" onclick="openProfile('yabatech')">
-          <div class="school-img bg-yabatech"></div>
-          <div class="school-info">
-            <div class="school-name-row">
-              <span class="school-name">Yaba College of Technology</span>
-              <i class="fas fa-circle-check verified-badge" title="Verified"></i>
-            </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> Yaba, Lagos State</div>
-            <div class="school-type">Polytechnic</div>
-            <div class="school-desc">Leading polytechnic in Nigeria, focused on technical and vocational education.</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
-          </div>
-        </div>
-
-        <!-- Federal College of Education -->
-        <div class="school-card" data-type="college" data-state="Kano" data-name="Federal College of Education" data-location="Kano" onclick="openProfile('fce')">
-          <div class="school-img bg-fce"></div>
-          <div class="school-info">
-            <div class="school-name-row">
-              <span class="school-name">Federal College of Education</span>
-              <i class="fas fa-circle-check verified-badge" title="Verified"></i>
-            </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> Kano, Kano State</div>
-            <div class="school-type">College of Education</div>
-            <div class="school-desc">Dedicated to producing high-quality educators for Nigerian schools.</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
-          </div>
+        <!-- School cards are dynamically rendered by JS -->
+        <div class="empty-state" id="directoryEmpty" style="display:none;">
+          <i class="fas fa-school"></i>
+          <p>No schools match your filters. Try adjusting your search.</p>
         </div>
       </div>
     </section>
@@ -515,18 +461,14 @@
         <div class="profile-banner" id="profileBanner"></div>
         <div class="profile-header-content">
           <div class="profile-title-row">
-            <h1 id="profileName">University of Abuja</h1>
-            <span class="profile-badge verify" id="profileStatus"><i class="fas fa-triangle-exclamation"></i> Admission status: verify</span>
+            <h1 id="profileName">Loading...</h1>
+            <span class="profile-badge" id="profileStatus"></span>
           </div>
-          <div class="profile-sub" id="profileSub">
-            <span><i class="fas fa-map-marker-alt"></i> Abuja, FCT, Nigeria</span>
-            <span class="dot">●</span>
-            <span>Federal University</span>
-          </div>
-          <p style="color: var(--muted); max-width: 720px;" id="profileTagline">A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.</p>
+          <div class="profile-sub" id="profileSub"></div>
+          <p style="color: var(--muted); max-width: 720px;" id="profileTagline"></p>
           <div class="profile-actions">
-            <button class="btn-primary"><i class="fas fa-clipboard-list"></i> Admission information</button>
-            <button class="btn-outline"><i class="fas fa-globe"></i> Official website</button>
+            <button class="btn-primary" onclick="switchTab('admissions')"><i class="fas fa-clipboard-list"></i> Admission information</button>
+            <button class="btn-outline" id="profileWebsiteBtn" onclick="window.open('https://' + (document.getElementById('infoWebsite')?.textContent || ''), '_blank')"><i class="fas fa-globe"></i> Official website</button>
           </div>
         </div>
       </div>
@@ -549,54 +491,41 @@
         <div>
           <div class="profile-section">
             <h2>School overview</h2>
-            <p id="overviewText">The University of Abuja is a federal university located in the Federal Capital Territory, Nigeria. Established in 1988, it offers undergraduate and postgraduate programmes across a wide range of disciplines including sciences, arts, social sciences, management, law, and engineering.</p>
-            <p>The university operates multiple campuses and is committed to academic excellence, research, and community service. Its strategic location in Abuja provides students with access to Nigeria's political and administrative center.</p>
+            <p id="overviewText">Loading school information...</p>
           </div>
-
           <div class="profile-section">
             <h2>Faculties and colleges</h2>
-            <div class="faculty-list" id="facultyList">
-              <span class="faculty-tag">Faculty of Science</span>
-              <span class="faculty-tag">Faculty of Arts</span>
-              <span class="faculty-tag">Faculty of Social Sciences</span>
-              <span class="faculty-tag">Faculty of Management Sciences</span>
-              <span class="faculty-tag">Faculty of Law</span>
-              <span class="faculty-tag">Faculty of Engineering</span>
-              <span class="faculty-tag">College of Health Sciences</span>
-              <span class="faculty-tag">Faculty of Education</span>
-              <span class="faculty-tag">Faculty of Agriculture</span>
-            </div>
+            <div class="faculty-list" id="facultyList"></div>
           </div>
-
           <div class="profile-section">
             <h2>Facilities and student life</h2>
-            <p>The university provides on-campus accommodation, libraries, laboratories, sports facilities, and student support services. Campus life includes student associations, cultural events, and religious activities.</p>
+            <p id="facilitiesText">Campus facilities and student life information will appear here.</p>
           </div>
         </div>
 
         <aside>
           <div class="info-card">
             <h3>School information</h3>
-            <div class="info-row"><span class="info-label">Location</span><span class="info-value" id="infoLocation">FCT, Abuja</span></div>
-            <div class="info-row"><span class="info-label">Ownership</span><span class="info-value" id="infoOwnership">Federal</span></div>
-            <div class="info-row"><span class="info-label">Institution type</span><span class="info-value" id="infoType">University</span></div>
-            <div class="info-row"><span class="info-label">Established</span><span class="info-value" id="infoEstablished">1988</span></div>
-            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="infoWebsite">uniabuja.edu.ng</a></span></div>
+            <div class="info-row"><span class="info-label">Location</span><span class="info-value" id="infoLocation">—</span></div>
+            <div class="info-row"><span class="info-label">Ownership</span><span class="info-value" id="infoOwnership">—</span></div>
+            <div class="info-row"><span class="info-label">Institution type</span><span class="info-value" id="infoType">—</span></div>
+            <div class="info-row"><span class="info-label">Established</span><span class="info-value" id="infoEstablished">—</span></div>
+            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="infoWebsite" target="_blank">—</a></span></div>
           </div>
 
           <div class="info-card">
             <h3>Contact and official links</h3>
             <div class="contact-links">
-              <a href="#"><i class="fas fa-globe"></i> Official website</a>
-              <a href="#"><i class="fas fa-envelope"></i> <span id="infoEmail">info@uniabuja.edu.ng</span></a>
-              <a href="#"><i class="fas fa-map-pin"></i> <span id="infoAddress">Airport Road, Gwagwalada, Abuja</span></a>
+              <a href="#" id="infoWebsiteLink" target="_blank"><i class="fas fa-globe"></i> Official website</a>
+              <a href="#" id="infoEmailLink"><i class="fas fa-envelope"></i> <span id="infoEmail">—</span></a>
+              <a href="#" id="infoAddressLink"><i class="fas fa-map-pin"></i> <span id="infoAddress">—</span></a>
             </div>
           </div>
 
           <div class="info-card">
             <h3>Quick actions</h3>
             <div class="profile-actions" style="margin-top: 0;">
-              <button class="btn-primary" style="width: 100%; justify-content: center;"><i class="fas fa-paper-plane"></i> Apply now</button>
+              <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="switchTab('admissions')"><i class="fas fa-paper-plane"></i> Apply now</button>
             </div>
           </div>
         </aside>
@@ -626,66 +555,11 @@
                   </tr>
                 </thead>
                 <tbody id="programTableBody">
-                  <tr>
-                    <td>B.Sc. Computer Science</td>
-                    <td>Science</td>
-                    <td>4 years</td>
-                    <td>100 Level</td>
-                    <td>₦150,000 <span class="badge-gold">sample</span></td>
-                    <td>₦30,000</td>
-                  </tr>
-                  <tr>
-                    <td>B.Sc. Economics</td>
-                    <td>Social Sciences</td>
-                    <td>4 years</td>
-                    <td>100 Level</td>
-                    <td>₦140,000 <span class="badge-gold">sample</span></td>
-                    <td>₦30,000</td>
-                  </tr>
-                  <tr>
-                    <td>B.Eng. Civil Engineering</td>
-                    <td>Engineering</td>
-                    <td>5 years</td>
-                    <td>100 Level</td>
-                    <td>₦180,000 <span class="badge-gold">sample</span></td>
-                    <td>₦35,000</td>
-                  </tr>
-                  <tr>
-                    <td>LL.B. Law</td>
-                    <td>Law</td>
-                    <td>5 years</td>
-                    <td>100 Level</td>
-                    <td>₦200,000 <span class="badge-gold">sample</span></td>
-                    <td>₦40,000</td>
-                  </tr>
-                  <tr>
-                    <td>B.A. English</td>
-                    <td>Arts</td>
-                    <td>4 years</td>
-                    <td>100 Level</td>
-                    <td>₦130,000 <span class="badge-gold">sample</span></td>
-                    <td>₦30,000</td>
-                  </tr>
+                  <tr><td colspan="6" style="text-align:center; color:var(--muted);">Loading programmes...</td></tr>
                 </tbody>
               </table>
             </div>
             <p class="source-note"><i class="fas fa-info-circle"></i> Fees shown are illustrative sample data. Always confirm with the university's official fee schedule for the current academic session.</p>
-          </div>
-
-          <div class="profile-section">
-            <h3>Additional charges</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead>
-                  <tr><th>Fee type</th><th>Amount (sample)</th><th>Notes</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>Hostel accommodation</td><td>₦60,000 – ₦90,000</td><td>Per session, varies by hall</td></tr>
-                  <tr><td>Medical services</td><td>₦10,000</td><td>Annual</td></tr>
-                  <tr><td>Student union fees</td><td>₦5,000</td><td>Annual</td></tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
 
@@ -693,13 +567,13 @@
           <div class="info-card">
             <h3>Session &amp; payment</h3>
             <div class="info-row"><span class="info-label">Academic session</span><span class="info-value">2026/2027</span></div>
-            <div class="info-row"><span class="info-label">Payment deadline</span><span class="info-value">30 Sep 2026 <span class="badge-gold">est.</span></span></div>
+            <div class="info-row"><span class="info-label">Payment deadline</span><span class="info-value" id="paymentDeadline">—</span></div>
             <div class="info-row"><span class="info-label">Payment portal</span><span class="info-value"><a href="#">Pay here</a></span></div>
           </div>
           <div class="info-card">
             <h3>Related</h3>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('calendar')"><i class="fas fa-calendar"></i> View calendar</a>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions')"><i class="fas fa-clipboard-list"></i> Admission requirements</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('calendar'); return false;"><i class="fas fa-calendar"></i> View calendar</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions'); return false;"><i class="fas fa-clipboard-list"></i> Admission requirements</a>
           </div>
         </aside>
       </div>
@@ -711,7 +585,7 @@
         <div>
           <div class="profile-section">
             <h2>Admissions</h2>
-            <p id="admissionsIntro">Admission into the University of Abuja is through UTME and Direct Entry. Applicants must satisfy the general university requirements and specific programme requirements.</p>
+            <p id="admissionsIntro">Loading admission information...</p>
           </div>
 
           <div class="profile-section">
@@ -722,21 +596,7 @@
                   <tr><th>Route</th><th>Requirements</th><th>Status</th></tr>
                 </thead>
                 <tbody id="admissionsTableBody">
-                  <tr>
-                    <td>UTME (100 Level)</td>
-                    <td>5 O'Level credits including English and Mathematics; UTME cut-off 180 (sample)</td>
-                    <td><span class="badge-soft">Open</span></td>
-                  </tr>
-                  <tr>
-                    <td>Direct Entry (200 Level)</td>
-                    <td>A-Level / NCE / ND with minimum Lower Credit; O'Level requirements apply</td>
-                    <td><span class="badge-soft">Open</span></td>
-                  </tr>
-                  <tr>
-                    <td>Post-UTME screening</td>
-                    <td>Computer-based screening; candidates must upload O'Level results</td>
-                    <td><span class="badge-gold">Scheduled</span></td>
-                  </tr>
+                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -775,23 +635,7 @@
               <div class="update-item">
                 <i class="fas fa-bullhorn"></i>
                 <div class="update-content">
-                  <h4>2026/2027 Post-UTME registration</h4>
-                  <p>Registration for the 2026/2027 post-UTME screening has not been officially announced. Verify on the university portal.</p>
-                  <div class="update-meta">
-                    <span><i class="far fa-calendar-alt"></i> Last checked: 20 May 2026</span>
-                    <span><a href="#">Official portal</a></span>
-                  </div>
-                </div>
-              </div>
-              <div class="update-item">
-                <i class="fas fa-bullhorn"></i>
-                <div class="update-content">
-                  <h4>Direct Entry application</h4>
-                  <p>Direct Entry candidates should monitor the JAMB portal and university website for the application window.</p>
-                  <div class="update-meta">
-                    <span><i class="far fa-calendar-alt"></i> Source: JAMB</span>
-                    <span><a href="#">JAMB portal</a></span>
-                  </div>
+                  <p style="color: var(--muted);">Loading updates...</p>
                 </div>
               </div>
             </div>
@@ -801,14 +645,14 @@
         <aside>
           <div class="info-card">
             <h3>Admission status</h3>
-            <div class="info-row"><span class="info-label">UTME</span><span class="info-value"><span class="badge-soft">Open</span></span></div>
-            <div class="info-row"><span class="info-label">Direct Entry</span><span class="info-value"><span class="badge-soft">Open</span></span></div>
-            <div class="info-row"><span class="info-label">Post-UTME</span><span class="info-value"><span class="badge-gold">Not announced</span></span></div>
+            <div id="admissionStatusBox">
+              <div class="info-row"><span class="info-label">Status</span><span class="info-value">—</span></div>
+            </div>
           </div>
           <div class="info-card">
             <h3>Official application</h3>
             <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">Applications must be submitted through the official university or JAMB portal.</p>
-            <a href="#" class="btn-primary" style="width: 100%; justify-content: center;"><i class="fas fa-external-link-alt"></i> Apply on official portal</a>
+            <a href="#" class="btn-primary" style="width: 100%; justify-content: center;" target="_blank"><i class="fas fa-external-link-alt"></i> Apply on official portal</a>
           </div>
         </aside>
       </div>
@@ -822,42 +666,7 @@
             <h2>Academic calendar &amp; deadlines</h2>
             <p>Key dates for the 2026/2027 academic session. Dates are indicative and should be confirmed with official university publications.</p>
             <div class="calendar-grid" id="calendarGrid">
-              <div class="calendar-card">
-                <div class="date-label">Admission</div>
-                <div class="event-name">Post-UTME screening</div>
-                <div class="event-detail">Date to be announced</div>
-                <div class="event-source">Source: University portal (pending)</div>
-              </div>
-              <div class="calendar-card">
-                <div class="date-label">Registration</div>
-                <div class="event-name">Course registration opens</div>
-                <div class="event-detail">4 Oct 2026 <span class="badge-gold">est.</span></div>
-                <div class="event-source">Source: Academic office (estimated)</div>
-              </div>
-              <div class="calendar-card">
-                <div class="date-label">Payment</div>
-                <div class="event-name">School fees payment deadline</div>
-                <div class="event-detail">30 Sep 2026 <span class="badge-gold">est.</span></div>
-                <div class="event-source">Source: Bursary (estimated)</div>
-              </div>
-              <div class="calendar-card">
-                <div class="date-label">Lectures</div>
-                <div class="event-name">First semester lectures begin</div>
-                <div class="event-detail">12 Oct 2026 <span class="badge-gold">est.</span></div>
-                <div class="event-source">Source: Academic calendar (draft)</div>
-              </div>
-              <div class="calendar-card">
-                <div class="date-label">Examination</div>
-                <div class="event-name">First semester exams</div>
-                <div class="event-detail">Feb 2027 <span class="badge-gold">est.</span></div>
-                <div class="event-source">Source: Academic calendar (draft)</div>
-              </div>
-              <div class="calendar-card">
-                <div class="date-label">Resumption</div>
-                <div class="event-name">Second semester resumption</div>
-                <div class="event-detail">Mar 2027 <span class="badge-gold">est.</span></div>
-                <div class="event-source">Source: Academic calendar (draft)</div>
-              </div>
+              <div class="calendar-card"><div class="event-detail">Loading calendar...</div></div>
             </div>
             <p class="source-note"><i class="fas fa-info-circle"></i> Dates marked <span class="badge-gold">est.</span> are estimates. Confirm with official university publications before making travel or payment decisions.</p>
           </div>
@@ -871,8 +680,8 @@
           </div>
           <div class="info-card">
             <h3>Related</h3>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('courses')"><i class="fas fa-money-bill"></i> Fee schedule</a>
-            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions')"><i class="fas fa-clipboard-list"></i> Admission process</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchTab('courses'); return false;"><i class="fas fa-money-bill"></i> Fee schedule</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchTab('admissions'); return false;"><i class="fas fa-clipboard-list"></i> Admission process</a>
           </div>
         </aside>
       </div>
@@ -886,24 +695,7 @@
             <h2>News &amp; notices</h2>
             <p>Official announcements and updates from the institution. Always verify details on the official university website.</p>
             <div class="news-list" id="newsList">
-              <div class="news-item">
-                <div class="news-date">15 May 2026 · <a href="#">Official source</a></div>
-                <h4>University announces 2026/2027 academic session</h4>
-                <p>The university has released a draft academic calendar for the upcoming session. Students are advised to await the final version.</p>
-                <a href="#">Read more <i class="fas fa-arrow-right"></i></a>
-              </div>
-              <div class="news-item">
-                <div class="news-date">10 May 2026 · <a href="#">Official source</a></div>
-                <h4>Post-UTME screening date pending</h4>
-                <p>The university has not yet announced the date for its post-UTME screening exercise. Candidates should monitor the official portal.</p>
-                <a href="#">Read more <i class="fas fa-arrow-right"></i></a>
-              </div>
-              <div class="news-item">
-                <div class="news-date">2 May 2026 · <a href="#">Official source</a></div>
-                <h4>New postgraduate programmes approved</h4>
-                <p>The university senate has approved new postgraduate programmes in data science and renewable energy.</p>
-                <a href="#">Read more <i class="fas fa-arrow-right"></i></a>
-              </div>
+              <div class="news-item"><p style="color:var(--muted);">Loading news...</p></div>
             </div>
           </div>
         </div>
@@ -912,7 +704,7 @@
           <div class="info-card">
             <h3>Official links</h3>
             <div class="contact-links">
-              <a href="#"><i class="fas fa-globe"></i> University website</a>
+              <a href="#" id="newsWebsiteLink" target="_blank"><i class="fas fa-globe"></i> University website</a>
               <a href="#"><i class="fas fa-newspaper"></i> News portal</a>
               <a href="#"><i class="fas fa-envelope"></i> Public relations office</a>
             </div>
@@ -944,7 +736,7 @@
       <div class="footer-links">
         <h4>Explore</h4>
         <ul>
-          <li><a href="#" onclick="showDirectory()">Schools</a></li>
+          <li><a href="#" onclick="showDirectory(); return false;">Schools</a></li>
           <li><a href="#">Admissions</a></li>
           <li><a href="#">Exams</a></li>
           <li><a href="#">Scholarships</a></li>
@@ -980,336 +772,680 @@
 
 <script>
   /* ============================================================ */
-  /* DATA: SCHOOL PROFILES (sample data)                          */
+  /* CONFIGURATION                                                */
   /* ============================================================ */
-  const schoolData = {
-    uniabuja: {
-      name: 'University of Abuja',
-      status: 'Admission status: verify',
-      location: 'Abuja, FCT, Nigeria',
-      type: 'Federal University',
-      ownership: 'Federal',
-      established: '1988',
-      website: 'uniabuja.edu.ng',
-      email: 'info@uniabuja.edu.ng',
-      address: 'Airport Road, Gwagwalada, Abuja',
-      bannerClass: 'bg-uniabuja',
-      tagline: 'A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.',
-      overview: 'The University of Abuja is a federal university located in the Federal Capital Territory, Nigeria. Established in 1988, it offers undergraduate and postgraduate programmes across a wide range of disciplines including sciences, arts, social sciences, management, law, and engineering.',
-      faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Health Sciences', 'Faculty of Education', 'Faculty of Agriculture'],
-      programs: [
-        { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-        { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦140,000', acceptance: '₦30,000' },
-        { name: 'B.Eng. Civil Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦180,000', acceptance: '₦35,000' },
-        { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
-        { name: 'B.A. English', faculty: 'Arts', duration: '4 years', level: '100 Level', tuition: '₦130,000', acceptance: '₦30,000' }
-      ],
-      admissions: {
-        intro: 'Admission into the University of Abuja is through UTME and Direct Entry. Applicants must satisfy the general university requirements and specific programme requirements.',
-        routes: [
-          { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180 (sample)", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit; O'Level requirements apply", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
-        ],
-        updates: [
-          { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening has not been officially announced. Verify on the university portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' },
-          { title: 'Direct Entry application', text: 'Direct Entry candidates should monitor the JAMB portal and university website for the application window.', date: 'Source: JAMB', link: 'JAMB portal' }
-        ]
-      },
-      calendar: [
-        { label: 'Admission', name: 'Post-UTME screening', detail: 'Date to be announced', source: 'University portal (pending)' },
-        { label: 'Registration', name: 'Course registration opens', detail: '4 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-        { label: 'Payment', name: 'School fees payment deadline', detail: '30 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
-        { label: 'Lectures', name: 'First semester lectures begin', detail: '12 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
-        { label: 'Examination', name: 'First semester exams', detail: 'Feb 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
-        { label: 'Resumption', name: 'Second semester resumption', detail: 'Mar 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-      ],
-      news: [
-        { date: '15 May 2026', title: 'University announces 2026/2027 academic session', text: 'The university has released a draft academic calendar for the upcoming session. Students are advised to await the final version.', link: 'Official source' },
-        { date: '10 May 2026', title: 'Post-UTME screening date pending', text: 'The university has not yet announced the date for its post-UTME screening exercise. Candidates should monitor the official portal.', link: 'Official source' },
-        { date: '2 May 2026', title: 'New postgraduate programmes approved', text: 'The university senate has approved new postgraduate programmes in data science and renewable energy.', link: 'Official source' }
-      ]
-    },
-    biu: {
-      name: 'Benson Idahosa University',
-      status: 'Verified institution',
-      location: 'Benin City, Edo State, Nigeria',
-      type: 'Private University',
-      ownership: 'Private',
-      established: '2002',
-      website: 'biu.edu.ng',
-      email: 'info@biu.edu.ng',
-      address: 'Km 5, Upper Mission Extension, Benin City',
-      bannerClass: 'bg-biu',
-      tagline: 'A faith-based institution committed to academic excellence and character development.',
-      overview: 'Benson Idahosa University (BIU) is a private Christian university located in Benin City, Edo State, Nigeria. Founded in 2002 by Archbishop Benson Idahosa, the institution is committed to academic excellence, moral integrity and service to humanity. The university offers undergraduate and postgraduate programmes across multiple faculties.',
-      faculties: ['Engineering and Technology', 'Sciences', 'Management and Social Sciences', 'Law', 'Education', 'Health Sciences'],
-      programs: [
-        { name: 'B.Sc. Computer Science', faculty: 'Sciences', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
-        { name: 'B.Sc. Accounting', faculty: 'Management', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-        { name: 'B.Eng. Electrical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦190,000', acceptance: '₦40,000' }
-      ],
-      admissions: {
-        intro: 'Admission into Benson Idahosa University is through UTME and Direct Entry, with additional requirements for specific programmes.',
-        routes: [
-          { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Open', statusClass: 'badge-soft' }
-        ],
-        updates: [
-          { title: '2026/2027 undergraduate admission form', text: 'The 2026/2027 undergraduate admission form is now available. Apply here.', date: 'Last checked: 25 May 2026', link: 'Apply here' },
-          { title: 'UTME cut-off mark for 2026', text: 'UTME cut-off mark for 2026 set at 180 for most programmes.', date: 'Source: University portal', link: 'Official portal' }
-        ]
-      },
-      calendar: [
-        { label: 'Admission', name: 'Post-UTME screening', detail: '15 Jul 2026', source: 'University portal' },
-        { label: 'Registration', name: 'Course registration opens', detail: '1 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-        { label: 'Payment', name: 'School fees payment deadline', detail: '15 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
-        { label: 'Lectures', name: 'First semester lectures begin', detail: '20 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-      ],
-      news: [
-        { date: '20 May 2026', title: '2026/2027 admission form now available', text: 'The university has opened applications for the 2026/2027 academic session.', link: 'Official source' },
-        { date: '10 May 2026', title: 'UTME cut-off mark announced', text: 'The university has set its UTME cut-off mark at 180 for most undergraduate programmes.', link: 'Official source' }
-      ]
-    },
-    unilag: {
-      name: 'University of Lagos',
-      status: 'Verified institution',
-      location: 'Akoka, Lagos State, Nigeria',
-      type: 'Federal University',
-      ownership: 'Federal',
-      established: '1962',
-      website: 'unilag.edu.ng',
-      email: 'info@unilag.edu.ng',
-      address: 'Akoka, Yaba, Lagos',
-      bannerClass: 'bg-unilag',
-      tagline: "Nigeria's premier federal university, known for research and innovation.",
-      overview: 'The University of Lagos (UNILAG) is a federal university located in Akoka, Lagos State. Established in 1962, it is one of Nigeria\'s most prestigious universities, offering a wide range of undergraduate and postgraduate programmes across various faculties.',
-      faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Medicine', 'Faculty of Education', 'Faculty of Environmental Sciences'],
-      programs: [
-        { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
-        { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
-        { name: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
-        { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦220,000', acceptance: '₦45,000' }
-      ],
-      admissions: {
-        intro: 'Admission into the University of Lagos is highly competitive, through UTME and Direct Entry.',
-        routes: [
-          { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 200 (sample)", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Upper Credit", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
-        ],
-        updates: [
-          { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening is expected to open soon. Monitor the university portal.', date: 'Last checked: 22 May 2026', link: 'Official portal' }
-        ]
-      },
-      calendar: [
-        { label: 'Admission', name: 'Post-UTME screening', detail: 'Aug 2026 <span class="badge-gold">est.</span>', source: 'University portal (pending)' },
-        { label: 'Registration', name: 'Course registration opens', detail: '5 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-        { label: 'Lectures', name: 'First semester lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-      ],
-      news: [
-        { date: '18 May 2026', title: 'UNILAG announces new vice-chancellor', text: 'The university has appointed a new vice-chancellor effective from June 2026.', link: 'Official source' }
-      ]
-    },
-    yabatech: {
-      name: 'Yaba College of Technology',
-      status: 'Verified institution',
-      location: 'Yaba, Lagos State, Nigeria',
-      type: 'Polytechnic',
-      ownership: 'Federal',
-      established: '1947',
-      website: 'yabatech.edu.ng',
-      email: 'info@yabatech.edu.ng',
-      address: 'Herbert Macaulay Way, Yaba, Lagos',
-      bannerClass: 'bg-yabatech',
-      tagline: 'Leading polytechnic in Nigeria, focused on technical and vocational education.',
-      overview: 'Yaba College of Technology (YABATECH) is Nigeria\'s premier polytechnic, established in 1947. It offers National Diploma (ND) and Higher National Diploma (HND) programmes across various fields including engineering, science, management, and art.',
-      faculties: ['School of Engineering', 'School of Science', 'School of Management & Business Studies', 'School of Art, Design & Printing', 'School of Environmental Studies'],
-      programs: [
-        { name: 'ND Computer Science', faculty: 'Science', duration: '2 years', level: 'ND 1', tuition: '₦70,000', acceptance: '₦20,000' },
-        { name: 'HND Computer Science', faculty: 'Science', duration: '2 years', level: 'HND 1', tuition: '₦80,000', acceptance: '₦25,000' },
-        { name: 'ND Mechanical Engineering', faculty: 'Engineering', duration: '2 years', level: 'ND 1', tuition: '₦75,000', acceptance: '₦20,000' },
-        { name: 'ND Business Administration', faculty: 'Management', duration: '2 years', level: 'ND 1', tuition: '₦65,000', acceptance: '₦20,000' }
-      ],
-      admissions: {
-        intro: 'Admission into Yaba College of Technology is through UTME for ND programmes and through HND screening for HND programmes.',
-        routes: [
-          { route: 'ND (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 120 (sample)", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'HND', reqs: "ND with minimum Lower Credit in relevant field; 1 year industrial attachment", status: 'Open', statusClass: 'badge-soft' }
-        ],
-        updates: [
-          { title: '2026/2027 ND/HND application', text: 'Applications for the 2026/2027 academic session are now open on the polytechnic portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' }
-        ]
-      },
-      calendar: [
-        { label: 'Admission', name: 'ND/HND screening', detail: '20 Aug 2026 <span class="badge-gold">est.</span>', source: 'Polytechnic portal (pending)' },
-        { label: 'Registration', name: 'Registration begins', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-        { label: 'Lectures', name: 'Lectures begin', detail: '25 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-      ],
-      news: [
-        { date: '12 May 2026', title: 'YABATECH ranked top polytechnic', text: 'The polytechnic has been ranked as the top polytechnic in Nigeria for the third consecutive year.', link: 'Official source' }
-      ]
-    },
-    fce: {
-      name: 'Federal College of Education',
-      status: 'Verified institution',
-      location: 'Kano, Kano State, Nigeria',
-      type: 'College of Education',
-      ownership: 'Federal',
-      established: '1961',
-      website: 'fcekano.edu.ng',
-      email: 'info@fcekano.edu.ng',
-      address: 'Federal College of Education, Kano',
-      bannerClass: 'bg-fce',
-      tagline: 'Dedicated to producing high-quality educators for Nigerian schools.',
-      overview: 'The Federal College of Education, Kano, is a federal institution established to train teachers and educators for Nigerian schools. It offers Nigeria Certificate in Education (NCE) programmes across various subject areas.',
-      faculties: ['School of Education', 'School of Sciences', 'School of Arts & Social Sciences', 'School of Languages'],
-      programs: [
-        { name: 'NCE Computer Science Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦45,000', acceptance: '₦15,000' },
-        { name: 'NCE Mathematics Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' },
-        { name: 'NCE English Education', faculty: 'Languages', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' }
-      ],
-      admissions: {
-        intro: 'Admission into the Federal College of Education is through UTME and Direct Entry for NCE programmes.',
-        routes: [
-          { route: 'NCE (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 100 (sample)", status: 'Open', statusClass: 'badge-soft' },
-          { route: 'Direct Entry', reqs: "A-Level / NCE / ND with minimum Pass", status: 'Open', statusClass: 'badge-soft' }
-        ],
-        updates: [
-          { title: '2026/2027 NCE admission', text: 'Applications for the 2026/2027 NCE programmes are now open.', date: 'Last checked: 18 May 2026', link: 'Official portal' }
-        ]
-      },
-      calendar: [
-        { label: 'Admission', name: 'NCE screening', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'College portal (pending)' },
-        { label: 'Registration', name: 'Registration begins', detail: '1 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
-        { label: 'Lectures', name: 'Lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
-      ],
-      news: [
-        { date: '5 May 2026', title: 'FCE Kano graduates 1,200 teachers', text: 'The college held its 2026 convocation ceremony, graduating over 1,200 NCE teachers.', link: 'Official source' }
-      ]
-    }
-  };
+  const API_URL = 'https://campus-naija.onrender.com';
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   /* ============================================================ */
-  /* VIEW SWITCHING                                                */
+  /* STATE                                                        */
   /* ============================================================ */
-  let currentSchoolKey = 'uniabuja';
+  let schoolsCache = null;
+  let schoolsCacheTime = 0;
+  let currentSchool = null;
   let currentTypeFilter = 'all';
 
-  function showDirectory() {
-    document.getElementById('view-directory').classList.add('active');
-    document.getElementById('view-profile').classList.remove('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Reset tabs to overview
-    resetTabs();
-    // Update URL (without navigating)
-    history.pushState({ view: 'directory' }, '', 'Schools.html');
+  /* ============================================================ */
+  /* UTILITIES                                                    */
+  /* ============================================================ */
+  function debounce(fn, delay) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), delay);
+    };
   }
 
-  function openProfile(schoolKey) {
-    currentSchoolKey = schoolKey;
-    const data = schoolData[schoolKey];
-    if (!data) return;
+  const debouncedDirectorySearch = debounce(() => filterDirectory(), 300);
 
-    // Populate hero
-    document.getElementById('profileName').textContent = data.name;
-    document.getElementById('profileStatus').innerHTML = data.status.includes('verify')
-      ? '<i class="fas fa-triangle-exclamation"></i> ' + data.status
-      : '<i class="fas fa-circle-check"></i> ' + data.status;
-    document.getElementById('profileStatus').className = 'profile-badge ' + (data.status.includes('verify') ? 'verify' : '');
-    document.getElementById('profileSub').innerHTML =
-      `<span><i class="fas fa-map-marker-alt"></i> ${data.location}</span>
-       <span class="dot">●</span>
-       <span>${data.type}</span>`;
-    document.getElementById('profileTagline').textContent = data.tagline;
-    document.getElementById('profileBanner').className = 'profile-banner ' + data.bannerClass;
+  function showToast(message, type = 'info') {
+    // Simple toast implementation
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: ${type === 'error' ? '#ff6b6b' : 'var(--primary)'};
+      color: #070A09; padding: 12px 24px; border-radius: 12px;
+      font-weight: 600; font-size: 0.9rem; z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: fadeInUp 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
 
-    // Overview
-    document.getElementById('overviewText').textContent = data.overview;
-    document.getElementById('infoLocation').textContent = data.location.split(',')[0] + ', ' + data.location.split(',')[1]?.trim() || data.location;
-    document.getElementById('infoOwnership').textContent = data.ownership;
-    document.getElementById('infoType').textContent = data.type;
-    document.getElementById('infoEstablished').textContent = data.established;
-    document.getElementById('infoWebsite').textContent = data.website;
-    document.getElementById('infoEmail').textContent = data.email;
-    document.getElementById('infoAddress').textContent = data.address;
-    document.getElementById('facultyList').innerHTML = data.faculties.map(f => `<span class="faculty-tag">${f}</span>`).join('');
+  // Add fadeInUp animation
+  const style = document.createElement('style');
+  style.textContent = `@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }`;
+  document.head.appendChild(style);
 
-    // Programs (courses & fees)
-    const tbody = document.getElementById('programTableBody');
-    tbody.innerHTML = data.programs.map(p => `
-      <tr>
-        <td>${p.name}</td>
-        <td>${p.faculty}</td>
-        <td>${p.duration}</td>
-        <td>${p.level}</td>
-        <td>${p.tuition} <span class="badge-gold">sample</span></td>
-        <td>${p.acceptance}</td>
-      </tr>
-    `).join('');
+  /* ============================================================ */
+  /* API FETCH HELPERS                                            */
+  /* ============================================================ */
+  async function fetchWithTimeout(url, options = {}, timeout = 10000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      return response;
+    } catch (error) {
+      clearTimeout(id);
+      throw error;
+    }
+  }
 
-    // Admissions
-    document.getElementById('admissionsIntro').textContent = data.admissions.intro;
-    document.getElementById('admissionsTableBody').innerHTML = data.admissions.routes.map(r => `
-      <tr>
-        <td>${r.route}</td>
-        <td>${r.reqs}</td>
-        <td><span class="${r.statusClass}">${r.status}</span></td>
-      </tr>
-    `).join('');
-    document.getElementById('admissionUpdates').innerHTML = data.admissions.updates.map(u => `
-      <div class="update-item">
-        <i class="fas fa-bullhorn"></i>
-        <div class="update-content">
-          <h4>${u.title}</h4>
-          <p>${u.text}</p>
-          <div class="update-meta">
-            <span><i class="far fa-calendar-alt"></i> ${u.date}</span>
-            <span><a href="#">${u.link}</a></span>
+  async function fetchSchools(force = false) {
+    const now = Date.now();
+    if (!force && schoolsCache && (now - schoolsCacheTime) < CACHE_TTL) {
+      return schoolsCache;
+    }
+
+    try {
+      const response = await fetchWithTimeout(`${API_URL}/api/schools?limit=100`);
+      if (!response.ok) {
+        if (response.status === 404) return []; // no schools yet
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const data = await response.json();
+      const schools = Array.isArray(data) ? data : (data.schools || data.data || []);
+      schoolsCache = schools;
+      schoolsCacheTime = now;
+      return schools;
+    } catch (error) {
+      console.warn('Could not fetch schools from API:', error.message);
+      // Return the sample data as fallback
+      return getSampleSchools();
+    }
+  }
+
+  async function fetchSchoolDetail(schoolId) {
+    try {
+      const response = await fetchWithTimeout(`${API_URL}/api/schools/${schoolId}`);
+      if (!response.ok) {
+        if (response.status === 404) return null;
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn('Could not fetch school detail from API:', error.message);
+      return null;
+    }
+  }
+
+  /* ============================================================ */
+  /* SAMPLE DATA FALLBACK                                         */
+  /* ============================================================ */
+  function getSampleSchools() {
+    return [
+      {
+        id: 'uniabuja',
+        name: 'University of Abuja',
+        type: 'university',
+        institutionType: 'Federal University',
+        ownership: 'Federal',
+        location: 'Abuja, FCT',
+        state: 'Abuja',
+        established: '1988',
+        website: 'uniabuja.edu.ng',
+        email: 'info@uniabuja.edu.ng',
+        address: 'Airport Road, Gwagwalada, Abuja',
+        bannerClass: 'bg-uniabuja',
+        verified: true,
+        description: 'Explore programmes, admission information, fees, academic dates, and official university resources.',
+        tagline: 'A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.',
+        overview: 'The University of Abuja is a federal university located in the Federal Capital Territory, Nigeria. Established in 1988, it offers undergraduate and postgraduate programmes across a wide range of disciplines including sciences, arts, social sciences, management, law, and engineering.',
+        facilities: 'The university provides on-campus accommodation, libraries, laboratories, sports facilities, and student support services. Campus life includes student associations, cultural events, and religious activities.',
+        faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Health Sciences', 'Faculty of Education', 'Faculty of Agriculture'],
+        programs: [
+          { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
+          { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦140,000', acceptance: '₦30,000' },
+          { name: 'B.Eng. Civil Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦180,000', acceptance: '₦35,000' },
+          { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
+          { name: 'B.A. English', faculty: 'Arts', duration: '4 years', level: '100 Level', tuition: '₦130,000', acceptance: '₦30,000' }
+        ],
+        admissions: {
+          intro: 'Admission into the University of Abuja is through UTME and Direct Entry. Applicants must satisfy the general university requirements and specific programme requirements.',
+          routes: [
+            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180 (sample)", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit; O'Level requirements apply", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
+          ],
+          updates: [
+            { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening has not been officially announced. Verify on the university portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' },
+            { title: 'Direct Entry application', text: 'Direct Entry candidates should monitor the JAMB portal and university website for the application window.', date: 'Source: JAMB', link: 'JAMB portal' }
+          ]
+        },
+        calendar: [
+          { label: 'Admission', name: 'Post-UTME screening', detail: 'Date to be announced', source: 'University portal (pending)' },
+          { label: 'Registration', name: 'Course registration opens', detail: '4 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
+          { label: 'Payment', name: 'School fees payment deadline', detail: '30 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
+          { label: 'Lectures', name: 'First semester lectures begin', detail: '12 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
+          { label: 'Examination', name: 'First semester exams', detail: 'Feb 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' },
+          { label: 'Resumption', name: 'Second semester resumption', detail: 'Mar 2027 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
+        ],
+        news: [
+          { date: '15 May 2026', title: 'University announces 2026/2027 academic session', text: 'The university has released a draft academic calendar for the upcoming session. Students are advised to await the final version.', link: 'Official source' },
+          { date: '10 May 2026', title: 'Post-UTME screening date pending', text: 'The university has not yet announced the date for its post-UTME screening exercise. Candidates should monitor the official portal.', link: 'Official source' },
+          { date: '2 May 2026', title: 'New postgraduate programmes approved', text: 'The university senate has approved new postgraduate programmes in data science and renewable energy.', link: 'Official source' }
+        ]
+      },
+      {
+        id: 'biu',
+        name: 'Benson Idahosa University',
+        type: 'university',
+        institutionType: 'Private University',
+        ownership: 'Private',
+        location: 'Benin City, Edo State',
+        state: 'Edo',
+        established: '2002',
+        website: 'biu.edu.ng',
+        email: 'info@biu.edu.ng',
+        address: 'Km 5, Upper Mission Extension, Benin City',
+        bannerClass: 'bg-biu',
+        verified: true,
+        description: 'Discover available courses, entry requirements, tuition information, and student facilities.',
+        tagline: 'A faith-based institution committed to academic excellence and character development.',
+        overview: 'Benson Idahosa University (BIU) is a private Christian university located in Benin City, Edo State, Nigeria. Founded in 2002 by Archbishop Benson Idahosa, the institution is committed to academic excellence, moral integrity and service to humanity.',
+        facilities: 'The university provides on-campus accommodation, a well-stocked library, modern laboratories, sports facilities, and a chapel. Student life includes various fellowships, clubs, and community service opportunities.',
+        faculties: ['Engineering and Technology', 'Sciences', 'Management and Social Sciences', 'Law', 'Education', 'Health Sciences'],
+        programs: [
+          { name: 'B.Sc. Computer Science', faculty: 'Sciences', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
+          { name: 'B.Sc. Accounting', faculty: 'Management', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
+          { name: 'B.Eng. Electrical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦190,000', acceptance: '₦40,000' }
+        ],
+        admissions: {
+          intro: 'Admission into Benson Idahosa University is through UTME and Direct Entry, with additional requirements for specific programmes.',
+          routes: [
+            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 180", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Lower Credit", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Open', statusClass: 'badge-soft' }
+          ],
+          updates: [
+            { title: '2026/2027 undergraduate admission form', text: 'The 2026/2027 undergraduate admission form is now available. Apply here.', date: 'Last checked: 25 May 2026', link: 'Apply here' },
+            { title: 'UTME cut-off mark for 2026', text: 'UTME cut-off mark for 2026 set at 180 for most programmes.', date: 'Source: University portal', link: 'Official portal' }
+          ]
+        },
+        calendar: [
+          { label: 'Admission', name: 'Post-UTME screening', detail: '15 Jul 2026', source: 'University portal' },
+          { label: 'Registration', name: 'Course registration opens', detail: '1 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
+          { label: 'Payment', name: 'School fees payment deadline', detail: '15 Sep 2026 <span class="badge-gold">est.</span>', source: 'Bursary (estimated)' },
+          { label: 'Lectures', name: 'First semester lectures begin', detail: '20 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
+        ],
+        news: [
+          { date: '20 May 2026', title: '2026/2027 admission form now available', text: 'The university has opened applications for the 2026/2027 academic session.', link: 'Official source' },
+          { date: '10 May 2026', title: 'UTME cut-off mark announced', text: 'The university has set its UTME cut-off mark at 180 for most undergraduate programmes.', link: 'Official source' }
+        ]
+      },
+      {
+        id: 'unilag',
+        name: 'University of Lagos',
+        type: 'university',
+        institutionType: 'Federal University',
+        ownership: 'Federal',
+        location: 'Akoka, Lagos State',
+        state: 'Lagos',
+        established: '1962',
+        website: 'unilag.edu.ng',
+        email: 'info@unilag.edu.ng',
+        address: 'Akoka, Yaba, Lagos',
+        bannerClass: 'bg-unilag',
+        verified: true,
+        description: "Nigeria's premier federal university, known for research and innovation.",
+        tagline: "Nigeria's premier federal university, known for research and innovation.",
+        overview: "The University of Lagos (UNILAG) is a federal university located in Akoka, Lagos State. Established in 1962, it is one of Nigeria's most prestigious universities, offering a wide range of undergraduate and postgraduate programmes across various faculties.",
+        facilities: 'UNILAG offers extensive facilities including modern lecture theatres, research laboratories, a main library, sports complex, medical centre, and various hostels. The campus is vibrant with student associations and activities.',
+        faculties: ['Faculty of Science', 'Faculty of Arts', 'Faculty of Social Sciences', 'Faculty of Management Sciences', 'Faculty of Law', 'Faculty of Engineering', 'College of Medicine', 'Faculty of Education', 'Faculty of Environmental Sciences'],
+        programs: [
+          { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', level: '100 Level', tuition: '₦160,000', acceptance: '₦35,000' },
+          { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', level: '100 Level', tuition: '₦150,000', acceptance: '₦30,000' },
+          { name: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', duration: '5 years', level: '100 Level', tuition: '₦200,000', acceptance: '₦40,000' },
+          { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', level: '100 Level', tuition: '₦220,000', acceptance: '₦45,000' }
+        ],
+        admissions: {
+          intro: 'Admission into the University of Lagos is highly competitive, through UTME and Direct Entry.',
+          routes: [
+            { route: 'UTME (100 Level)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 200 (sample)", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Direct Entry (200 Level)', reqs: "A-Level / NCE / ND with minimum Upper Credit", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Post-UTME screening', reqs: "Computer-based screening; candidates must upload O'Level results", status: 'Scheduled', statusClass: 'badge-gold' }
+          ],
+          updates: [
+            { title: '2026/2027 Post-UTME registration', text: 'Registration for the 2026/2027 post-UTME screening is expected to open soon. Monitor the university portal.', date: 'Last checked: 22 May 2026', link: 'Official portal' }
+          ]
+        },
+        calendar: [
+          { label: 'Admission', name: 'Post-UTME screening', detail: 'Aug 2026 <span class="badge-gold">est.</span>', source: 'University portal (pending)' },
+          { label: 'Registration', name: 'Course registration opens', detail: '5 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
+          { label: 'Lectures', name: 'First semester lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
+        ],
+        news: [
+          { date: '18 May 2026', title: 'UNILAG announces new vice-chancellor', text: 'The university has appointed a new vice-chancellor effective from June 2026.', link: 'Official source' }
+        ]
+      },
+      {
+        id: 'yabatech',
+        name: 'Yaba College of Technology',
+        type: 'polytechnic',
+        institutionType: 'Polytechnic',
+        ownership: 'Federal',
+        location: 'Yaba, Lagos State',
+        state: 'Lagos',
+        established: '1947',
+        website: 'yabatech.edu.ng',
+        email: 'info@yabatech.edu.ng',
+        address: 'Herbert Macaulay Way, Yaba, Lagos',
+        bannerClass: 'bg-yabatech',
+        verified: true,
+        description: 'Leading polytechnic in Nigeria, focused on technical and vocational education.',
+        tagline: 'Leading polytechnic in Nigeria, focused on technical and vocational education.',
+        overview: "Yaba College of Technology (YABATECH) is Nigeria's premier polytechnic, established in 1947. It offers National Diploma (ND) and Higher National Diploma (HND) programmes across various fields including engineering, science, management, and art.",
+        facilities: 'YABATECH provides well-equipped workshops, laboratories, a library, ICT centre, and sports facilities. The institution emphasizes practical, hands-on training.',
+        faculties: ['School of Engineering', 'School of Science', 'School of Management & Business Studies', 'School of Art, Design & Printing', 'School of Environmental Studies'],
+        programs: [
+          { name: 'ND Computer Science', faculty: 'Science', duration: '2 years', level: 'ND 1', tuition: '₦70,000', acceptance: '₦20,000' },
+          { name: 'HND Computer Science', faculty: 'Science', duration: '2 years', level: 'HND 1', tuition: '₦80,000', acceptance: '₦25,000' },
+          { name: 'ND Mechanical Engineering', faculty: 'Engineering', duration: '2 years', level: 'ND 1', tuition: '₦75,000', acceptance: '₦20,000' },
+          { name: 'ND Business Administration', faculty: 'Management', duration: '2 years', level: 'ND 1', tuition: '₦65,000', acceptance: '₦20,000' }
+        ],
+        admissions: {
+          intro: 'Admission into Yaba College of Technology is through UTME for ND programmes and through HND screening for HND programmes.',
+          routes: [
+            { route: 'ND (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 120 (sample)", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'HND', reqs: "ND with minimum Lower Credit in relevant field; 1 year industrial attachment", status: 'Open', statusClass: 'badge-soft' }
+          ],
+          updates: [
+            { title: '2026/2027 ND/HND application', text: 'Applications for the 2026/2027 academic session are now open on the polytechnic portal.', date: 'Last checked: 20 May 2026', link: 'Official portal' }
+          ]
+        },
+        calendar: [
+          { label: 'Admission', name: 'ND/HND screening', detail: '20 Aug 2026 <span class="badge-gold">est.</span>', source: 'Polytechnic portal (pending)' },
+          { label: 'Registration', name: 'Registration begins', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
+          { label: 'Lectures', name: 'Lectures begin', detail: '25 Sep 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
+        ],
+        news: [
+          { date: '12 May 2026', title: 'YABATECH ranked top polytechnic', text: 'The polytechnic has been ranked as the top polytechnic in Nigeria for the third consecutive year.', link: 'Official source' }
+        ]
+      },
+      {
+        id: 'fce',
+        name: 'Federal College of Education',
+        type: 'college',
+        institutionType: 'College of Education',
+        ownership: 'Federal',
+        location: 'Kano, Kano State',
+        state: 'Kano',
+        established: '1961',
+        website: 'fcekano.edu.ng',
+        email: 'info@fcekano.edu.ng',
+        address: 'Federal College of Education, Kano',
+        bannerClass: 'bg-fce',
+        verified: true,
+        description: 'Dedicated to producing high-quality educators for Nigerian schools.',
+        tagline: 'Dedicated to producing high-quality educators for Nigerian schools.',
+        overview: 'The Federal College of Education, Kano, is a federal institution established to train teachers and educators for Nigerian schools. It offers Nigeria Certificate in Education (NCE) programmes across various subject areas.',
+        facilities: 'The college provides lecture halls, a library, teaching practice facilities, and student hostels. It focuses on pedagogical training and educational research.',
+        faculties: ['School of Education', 'School of Sciences', 'School of Arts & Social Sciences', 'School of Languages'],
+        programs: [
+          { name: 'NCE Computer Science Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦45,000', acceptance: '₦15,000' },
+          { name: 'NCE Mathematics Education', faculty: 'Sciences', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' },
+          { name: 'NCE English Education', faculty: 'Languages', duration: '3 years', level: 'NCE 1', tuition: '₦40,000', acceptance: '₦15,000' }
+        ],
+        admissions: {
+          intro: 'Admission into the Federal College of Education is through UTME and Direct Entry for NCE programmes.',
+          routes: [
+            { route: 'NCE (UTME)', reqs: "5 O'Level credits including English and Mathematics; UTME cut-off 100 (sample)", status: 'Open', statusClass: 'badge-soft' },
+            { route: 'Direct Entry', reqs: "A-Level / NCE / ND with minimum Pass", status: 'Open', statusClass: 'badge-soft' }
+          ],
+          updates: [
+            { title: '2026/2027 NCE admission', text: 'Applications for the 2026/2027 NCE programmes are now open.', date: 'Last checked: 18 May 2026', link: 'Official portal' }
+          ]
+        },
+        calendar: [
+          { label: 'Admission', name: 'NCE screening', detail: '10 Sep 2026 <span class="badge-gold">est.</span>', source: 'College portal (pending)' },
+          { label: 'Registration', name: 'Registration begins', detail: '1 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic office (estimated)' },
+          { label: 'Lectures', name: 'Lectures begin', detail: '15 Oct 2026 <span class="badge-gold">est.</span>', source: 'Academic calendar (draft)' }
+        ],
+        news: [
+          { date: '5 May 2026', title: 'FCE Kano graduates 1,200 teachers', text: 'The college held its 2026 convocation ceremony, graduating over 1,200 NCE teachers.', link: 'Official source' }
+        ]
+      }
+    ];
+  }
+
+  /* ============================================================ */
+  /* RENDER SCHOOL CARDS                                          */
+  /* ============================================================ */
+  function renderSchoolCards(schools) {
+    const grid = document.getElementById('directoryGrid');
+    const empty = document.getElementById('directoryEmpty');
+
+    if (!schools || schools.length === 0) {
+      grid.innerHTML = '';
+      grid.appendChild(empty);
+      empty.style.display = '';
+      document.getElementById('directoryCount').textContent = 'No schools found';
+      return;
+    }
+
+    empty.style.display = 'none';
+    document.getElementById('directoryCount').textContent = `${schools.length} school${schools.length > 1 ? 's' : ''} found`;
+
+    grid.innerHTML = schools.map(school => {
+      const name = school.name || 'Unnamed School';
+      const location = school.location || school.state || 'Nigeria';
+      const type = school.institutionType || school.type || 'Institution';
+      const desc = school.description || 'View full details, courses, fees, and admission information.';
+      const typeKey = (school.type || 'university').toLowerCase();
+      const bannerClass = school.bannerClass || getBannerClass(typeKey);
+      const verified = school.verified !== false;
+
+      return `
+        <div class="school-card" data-type="${typeKey}" data-state="${school.state || ''}" data-name="${name.toLowerCase()}" data-location="${location.toLowerCase()}" onclick="openProfile('${school.id}')">
+          <div class="school-img ${bannerClass}"></div>
+          <div class="school-info">
+            <div class="school-name-row">
+              <span class="school-name">${name}</span>
+              ${verified ? '<i class="fas fa-circle-check verified-badge" title="Verified"></i>' : ''}
+            </div>
+            <div class="school-location"><i class="fas fa-map-marker-alt"></i> ${location}</div>
+            <div class="school-type">${type}</div>
+            <div class="school-desc">${desc}</div>
+            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+  }
 
-    // Calendar
-    document.getElementById('calendarGrid').innerHTML = data.calendar.map(c => `
-      <div class="calendar-card">
-        <div class="date-label">${c.label}</div>
-        <div class="event-name">${c.name}</div>
-        <div class="event-detail">${c.detail}</div>
-        <div class="event-source">Source: ${c.source}</div>
-      </div>
-    `).join('');
+  function getBannerClass(type) {
+    const map = {
+      university: 'bg-uniabuja',
+      polytechnic: 'bg-yabatech',
+      college: 'bg-fce'
+    };
+    return map[type] || 'bg-uniabuja';
+  }
 
-    // News
-    document.getElementById('newsList').innerHTML = data.news.map(n => `
-      <div class="news-item">
-        <div class="news-date">${n.date} · <a href="#">Official source</a></div>
-        <h4>${n.title}</h4>
-        <p>${n.text}</p>
-        <a href="#">Read more <i class="fas fa-arrow-right"></i></a>
-      </div>
-    `).join('');
+  /* ============================================================ */
+  /* DIRECTORY FILTERING                                          */
+  /* ============================================================ */
+  function setTypeFilter(type, btn) {
+    currentTypeFilter = type;
+    document.querySelectorAll('#typeFilters .filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterDirectory();
+  }
 
-    // Show profile view
+  function filterDirectory() {
+    const query = document.getElementById('directorySearch').value.toLowerCase().trim();
+    const state = document.getElementById('stateFilter').value;
+    const cards = document.querySelectorAll('#directoryGrid .school-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const type = card.dataset.type || '';
+      const cardState = card.dataset.state || '';
+      const name = (card.dataset.name || '').toLowerCase();
+      const location = (card.dataset.location || '').toLowerCase();
+
+      const matchesType = currentTypeFilter === 'all' || type === currentTypeFilter;
+      const matchesState = !state || cardState === state;
+      const matchesQuery = !query || name.includes(query) || location.includes(query);
+
+      if (matchesType && matchesState && matchesQuery) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.getElementById('directoryCount').textContent =
+      visibleCount > 0 ? `${visibleCount} school${visibleCount > 1 ? 's' : ''} found` : 'No schools found';
+  }
+
+  /* ============================================================ */
+  /* PROFILE VIEW                                                 */
+  /* ============================================================ */
+  async function openProfile(schoolId) {
+    // Show loading state
+    document.getElementById('profileName').textContent = 'Loading...';
+    document.getElementById('profileStatus').textContent = '';
+    document.getElementById('profileSub').innerHTML = '';
+    document.getElementById('profileTagline').textContent = 'Fetching school details...';
+    document.getElementById('profileBanner').className = 'profile-banner';
+
     document.getElementById('view-directory').classList.remove('active');
     document.getElementById('view-profile').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Update URL
-    const slug = schoolKey.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    history.pushState({ view: 'profile', school: schoolKey }, '', 'Schools.html?school=' + slug);
+    // Try API first, fall back to cache/sample
+    let school = null;
 
-    // Reset tabs to overview
+    // Check cache first
+    if (schoolsCache) {
+      school = schoolsCache.find(s => s.id === schoolId);
+    }
+
+    // If not in cache, try fetching detail from API
+    if (!school) {
+      try {
+        school = await fetchSchoolDetail(schoolId);
+      } catch (e) {
+        console.warn('Detail fetch failed:', e);
+      }
+    }
+
+    // Fallback to sample data
+    if (!school) {
+      const samples = getSampleSchools();
+      school = samples.find(s => s.id === schoolId);
+    }
+
+    if (!school) {
+      document.getElementById('profileName').textContent = 'School not found';
+      document.getElementById('profileTagline').textContent = 'The requested school could not be loaded. Please go back and try again.';
+      return;
+    }
+
+    currentSchool = school;
+    renderProfile(school);
+    updateURL(school.id);
     resetTabs();
-    // Activate overview tab
     document.querySelector('.tab-item[data-tab="overview"]').classList.add('active');
     document.getElementById('panel-overview').classList.add('active');
   }
 
+  function renderProfile(school) {
+    const name = school.name || 'School';
+    const location = school.location || school.state || 'Nigeria';
+    const type = school.institutionType || school.type || 'Institution';
+    const tagline = school.tagline || 'A comprehensive institution profile connecting courses, fees, admissions, and academic calendar in one place.';
+    const bannerClass = school.bannerClass || getBannerClass((school.type || 'university').toLowerCase());
+    const verified = school.verified !== false;
+
+    // Hero
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileStatus').innerHTML = verified
+      ? '<i class="fas fa-circle-check"></i> Verified institution'
+      : '<i class="fas fa-triangle-exclamation"></i> Admission status: verify';
+    document.getElementById('profileStatus').className = 'profile-badge ' + (verified ? '' : 'verify');
+    document.getElementById('profileSub').innerHTML =
+      `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>
+       <span class="dot">●</span>
+       <span>${type}</span>`;
+    document.getElementById('profileTagline').textContent = tagline;
+    document.getElementById('profileBanner').className = 'profile-banner ' + bannerClass;
+
+    // Overview tab
+    document.getElementById('overviewText').textContent = school.overview || school.description || 'Overview information not available.';
+    document.getElementById('facilitiesText').textContent = school.facilities || 'Facilities and student life information will be updated soon.';
+
+    const faculties = school.faculties || [];
+    document.getElementById('facultyList').innerHTML = faculties.length > 0
+      ? faculties.map(f => `<span class="faculty-tag">${f}</span>`).join('')
+      : '<p style="color: var(--muted);">Faculty information not available.</p>';
+
+    // Info card
+    document.getElementById('infoLocation').textContent = location;
+    document.getElementById('infoOwnership').textContent = school.ownership || '—';
+    document.getElementById('infoType').textContent = type;
+    document.getElementById('infoEstablished').textContent = school.established || '—';
+
+    const website = school.website || '';
+    const websiteLink = document.getElementById('infoWebsite');
+    websiteLink.textContent = website || '—';
+    if (website) {
+      websiteLink.href = website.startsWith('http') ? website : `https://${website}`;
+      websiteLink.target = '_blank';
+    } else {
+      websiteLink.removeAttribute('href');
+    }
+
+    const email = school.email || '—';
+    document.getElementById('infoEmail').textContent = email;
+    const emailLink = document.getElementById('infoEmailLink');
+    if (email && email.includes('@')) {
+      emailLink.href = `mailto:${email}`;
+    } else {
+      emailLink.removeAttribute('href');
+    }
+
+    const address = school.address || '—';
+    document.getElementById('infoAddress').textContent = address;
+    const addressLink = document.getElementById('infoAddressLink');
+    if (address && address !== '—') {
+      addressLink.href = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+      addressLink.target = '_blank';
+    } else {
+      addressLink.removeAttribute('href');
+    }
+
+    // Courses & fees
+    const programs = school.programs || school.courses || [];
+    document.getElementById('programTableBody').innerHTML = programs.length > 0
+      ? programs.map(p => `
+          <tr>
+            <td>${p.name || 'Programme'}</td>
+            <td>${p.faculty || '—'}</td>
+            <td>${p.duration || '—'}</td>
+            <td>${p.level || '—'}</td>
+            <td>${p.tuition || '—'} <span class="badge-gold">sample</span></td>
+            <td>${p.acceptance || '—'}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="6" style="text-align:center; color:var(--muted);">Programme information not available.</td></tr>';
+
+    // Payment deadline from calendar
+    const calendar = school.calendar || [];
+    const paymentEvent = calendar.find(c => (c.label || '').toLowerCase().includes('payment'));
+    document.getElementById('paymentDeadline').innerHTML = paymentEvent
+      ? (paymentEvent.detail || '—')
+      : '—';
+
+    // Admissions
+    const admissions = school.admissions || {};
+    document.getElementById('admissionsIntro').textContent = admissions.intro || 'Admission information is not available at this time.';
+
+    const routes = admissions.routes || [];
+    document.getElementById('admissionsTableBody').innerHTML = routes.length > 0
+      ? routes.map(r => `
+          <tr>
+            <td>${r.route || '—'}</td>
+            <td>${r.reqs || '—'}</td>
+            <td><span class="${r.statusClass || 'badge-soft'}">${r.status || '—'}</span></td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">Admission route information not available.</td></tr>';
+
+    const updates = admissions.updates || [];
+    document.getElementById('admissionUpdates').innerHTML = updates.length > 0
+      ? updates.map(u => `
+          <div class="update-item">
+            <i class="fas fa-bullhorn"></i>
+            <div class="update-content">
+              <h4>${u.title || 'Update'}</h4>
+              <p>${u.text || ''}</p>
+              <div class="update-meta">
+                <span><i class="far fa-calendar-alt"></i> ${u.date || ''}</span>
+                <span><a href="#" onclick="return false;">${u.link || 'Official source'}</a></span>
+              </div>
+            </div>
+          </div>
+        `).join('')
+      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color: var(--muted);">No recent admission updates.</p></div></div>';
+
+    // Admission status box
+    const statusBox = document.getElementById('admissionStatusBox');
+    if (routes.length > 0) {
+      statusBox.innerHTML = routes.map(r => `
+        <div class="info-row">
+          <span class="info-label">${r.route || '—'}</span>
+          <span class="info-value"><span class="${r.statusClass || 'badge-soft'}">${r.status || '—'}</span></span>
+        </div>
+      `).join('');
+    } else {
+      statusBox.innerHTML = '<div class="info-row"><span class="info-label">Status</span><span class="info-value">—</span></div>';
+    }
+
+    // Calendar
+    document.getElementById('calendarGrid').innerHTML = calendar.length > 0
+      ? calendar.map(c => `
+          <div class="calendar-card">
+            <div class="date-label">${c.label || 'Event'}</div>
+            <div class="event-name">${c.name || ''}</div>
+            <div class="event-detail">${c.detail || ''}</div>
+            <div class="event-source">Source: ${c.source || '—'}</div>
+          </div>
+        `).join('')
+      : '<div class="calendar-card"><div class="event-detail">Calendar information not available.</div></div>';
+
+    // News
+    const news = school.news || [];
+    document.getElementById('newsList').innerHTML = news.length > 0
+      ? news.map(n => `
+          <div class="news-item">
+            <div class="news-date">${n.date || ''} · <a href="#" onclick="return false;">Official source</a></div>
+            <h4>${n.title || ''}</h4>
+            <p>${n.text || ''}</p>
+            <a href="#" onclick="return false;">Read more <i class="fas fa-arrow-right"></i></a>
+          </div>
+        `).join('')
+      : '<div class="news-item"><p style="color:var(--muted);">No recent news.</p></div>';
+
+    // Update website links
+    if (website) {
+      const url = website.startsWith('http') ? website : `https://${website}`;
+      document.getElementById('infoWebsiteLink').href = url;
+      document.getElementById('newsWebsiteLink').href = url;
+    }
+  }
+
   /* ============================================================ */
-  /* TAB SWITCHING                                                 */
+  /* VIEW SWITCHING                                               */
+  /* ============================================================ */
+  function showDirectory() {
+    document.getElementById('view-directory').classList.add('active');
+    document.getElementById('view-profile').classList.remove('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    resetTabs();
+    updateURL(null);
+  }
+
+  function updateURL(schoolId) {
+    if (schoolId) {
+      history.pushState({ view: 'profile', school: schoolId }, '', `?school=${schoolId}`);
+    } else {
+      history.pushState({ view: 'directory' }, '', window.location.pathname);
+    }
+  }
+
+  /* ============================================================ */
+  /* TAB SWITCHING                                                */
   /* ============================================================ */
   const tabItems = document.querySelectorAll('.tab-item');
   const tabPanels = {
@@ -1330,6 +1466,11 @@
     const targetTab = document.querySelector(`.tab-item[data-tab="${tabKey}"]`);
     if (targetTab) targetTab.classList.add('active');
     if (tabPanels[tabKey]) tabPanels[tabKey].classList.add('active');
+    // Scroll to tabs on mobile
+    if (window.innerWidth < 900) {
+      const tabsEl = document.querySelector('.profile-tabs');
+      if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   tabItems.forEach(item => {
@@ -1344,45 +1485,7 @@
   });
 
   /* ============================================================ */
-  /* DIRECTORY FILTERING                                           */
-  /* ============================================================ */
-  function setTypeFilter(type, btn) {
-    currentTypeFilter = type;
-    document.querySelectorAll('#typeFilters .filter-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    filterDirectory();
-  }
-
-  function filterDirectory() {
-    const query = document.getElementById('directorySearch').value.toLowerCase().trim();
-    const state = document.getElementById('stateFilter').value;
-    const cards = document.querySelectorAll('#directoryGrid .school-card');
-
-    cards.forEach(card => {
-      const type = card.dataset.type || '';
-      const cardState = card.dataset.state || '';
-      const name = (card.dataset.name || '').toLowerCase();
-      const location = (card.dataset.location || '').toLowerCase();
-
-      const matchesType = currentTypeFilter === 'all' || type === currentTypeFilter;
-      const matchesState = !state || cardState === state;
-      const matchesQuery = !query || name.includes(query) || location.includes(query);
-
-      if (matchesType && matchesState && matchesQuery) {
-        card.style.display = '';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  }
-
-  // Search on enter key
-  document.getElementById('directorySearch').addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') filterDirectory();
-  });
-
-  /* ============================================================ */
-  /* PROGRAM SEARCH (inside profile)                               */
+  /* PROGRAM SEARCH (inside profile)                              */
   /* ============================================================ */
   function filterPrograms() {
     const query = document.getElementById('programSearchInput').value.toLowerCase().trim();
@@ -1394,7 +1497,7 @@
   }
 
   /* ============================================================ */
-  /* MOBILE NAV TOGGLE                                             */
+  /* MOBILE NAV TOGGLE                                            */
   /* ============================================================ */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
@@ -1411,8 +1514,32 @@
   }
 
   /* ============================================================ */
-  /* HANDLE BROWSER BACK/FORWARD (URL state)                       */
+  /* INITIALIZATION                                               */
   /* ============================================================ */
+  async function init() {
+    // Load schools from API
+    const schools = await fetchSchools();
+    renderSchoolCards(schools);
+
+    // Handle deep link
+    const params = new URLSearchParams(window.location.search);
+    const schoolParam = params.get('school');
+    if (schoolParam) {
+      // Find school by id
+      let school = schools.find(s => s.id === schoolParam);
+      if (!school) {
+        // Try matching by name slug
+        school = schools.find(s =>
+          s.name && s.name.toLowerCase().replace(/\s+/g, '-') === schoolParam
+        );
+      }
+      if (school) {
+        openProfile(school.id);
+      }
+    }
+  }
+
+  // Handle browser back/forward
   window.addEventListener('popstate', (e) => {
     if (e.state && e.state.view === 'profile' && e.state.school) {
       openProfile(e.state.school);
@@ -1421,48 +1548,17 @@
     }
   });
 
-  // Handle initial load with ?school= in URL
-  window.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const schoolParam = params.get('school');
-    if (schoolParam) {
-      // Map slug back to key (simple reverse)
-      const key = schoolParam.replace(/-([a-z])/g, (m, p1) => p1.toUpperCase());
-      if (schoolData[key]) {
-        openProfile(key);
-      } else {
-        // Try matching by name
-        for (const [k, v] of Object.entries(schoolData)) {
-          if (v.name.toLowerCase().replace(/\s+/g, '-').includes(schoolParam)) {
-            openProfile(k);
-            break;
-          }
-        }
-      }
-    }
-  });
-
-  /* ============================================================ */
-  /* PREVENT DEFAULT ON LINKS (demo)                               */
-  /* ============================================================ */
+  // Prevent default on placeholder links
   document.querySelectorAll('a[href="#"]').forEach(link => {
     link.addEventListener('click', (e) => e.preventDefault());
   });
 
-  /* ============================================================ */
-  /* SMOOTH SCROLL TO TOP ON TAB SWITCH (mobile)                   */
-  /* ============================================================ */
-  document.querySelectorAll('.tab-item').forEach(item => {
-    item.addEventListener('click', () => {
-      // small delay to allow panel display
-      setTimeout(() => {
-        const tabsEl = document.querySelector('.profile-tabs');
-        if (tabsEl && window.innerWidth < 900) {
-          tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 50);
-    });
-  });
+  // Start
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 </script>
 
 </body>

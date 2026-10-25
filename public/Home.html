@@ -931,8 +931,8 @@
           <p class="hero-description">Explore Nigerian universities, admission updates, examinations and scholarships — all in one place.</p>
           <div class="search-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search schools, courses, exams...">
-            <button>Search</button>
+            <input type="text" id="searchInput" placeholder="Search schools, courses, exams...">
+            <button id="searchBtn">Search</button>
           </div>
           <div class="quick-chips">
             <span class="chip">Universities</span>
@@ -1196,9 +1196,13 @@
     </div>
   </footer>
 
-  <!-- Small JS for mobile nav toggle (optional) -->
+  <!-- Production Script with API integration -->
   <script>
     (function() {
+      // Configuration — replace with your actual API base URL
+      const API_URL = 'https://campus-naija.onrender.com';
+
+      // ---- Mobile nav toggle ----
       const hamburger = document.getElementById('hamburgerBtn');
       const mobileNav = document.getElementById('mobileNav');
       if (hamburger && mobileNav) {
@@ -1206,13 +1210,94 @@
           e.stopPropagation();
           mobileNav.classList.toggle('active');
         });
-        // close if clicking outside
         document.addEventListener('click', function(e) {
           if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
             mobileNav.classList.remove('active');
           }
         });
       }
+
+      // ---- Search functionality (production) ----
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn = document.getElementById('searchBtn');
+
+      // Debounce helper
+      function debounce(fn, delay) {
+        let timeout;
+        return function(...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => fn.apply(this, args), delay);
+        };
+      }
+
+      async function performSearch(query) {
+        if (!query.trim()) return;
+
+        // Optionally navigate to search results page:
+        // window.location.href = `./search.html?q=${encodeURIComponent(query)}`;
+
+        // For now, just show an alert (replace with actual search page redirect or API call)
+        // But we can also call the API to demonstrate integration.
+        try {
+          // Example: fetch schools matching query from your API
+          const response = await fetch(`${API_URL}/api/schools?search=${encodeURIComponent(query)}`);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          console.log('Search results:', data);
+          // In production, you would render the results or redirect.
+          // For demonstration, we'll alert the number of results (if data is array).
+          if (Array.isArray(data)) {
+            alert(`Found ${data.length} result(s) for "${query}". Check console for details.`);
+          } else {
+            alert(`Search initiated for "${query}". (API response logged to console)`);
+          }
+        } catch (error) {
+          console.error('Search error:', error);
+          // Fallback: redirect to search page anyway
+          // window.location.href = `./search.html?q=${encodeURIComponent(query)}`;
+          alert(`Searching for "${query}". (API currently unavailable, redirecting...)`);
+        }
+      }
+
+      // Trigger on button click
+      if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+          const query = searchInput.value.trim();
+          performSearch(query);
+        });
+      }
+
+      // Trigger on Enter key
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+          }
+        });
+      }
+
+      // ---- Chips quick filter (optional) ----
+      const chips = document.querySelectorAll('.chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', function() {
+          const text = this.textContent.trim();
+          if (searchInput) {
+            searchInput.value = text;
+            performSearch(text);
+          }
+        });
+      });
+
+      // ---- Example: Health check / ping API (optional) ----
+      // You can remove this or use it for monitoring
+      fetch(`${API_URL}/api/health`)
+        .then(res => {
+          if (res.ok) console.log('CampusNaija API is reachable.');
+          else console.warn('API health check returned status:', res.status);
+        })
+        .catch(err => console.warn('API health check failed:', err.message));
+
     })();
   </script>
 </body>
