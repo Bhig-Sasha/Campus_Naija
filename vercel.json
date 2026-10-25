@@ -1,0 +1,69 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "public": true,
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+
+    { "source": "/schools", "destination": "/public/schools.html" },
+    { "source": "/schools/:slug", "destination": "/public/schools.html" },
+    { "source": "/exams", "destination": "/public/exams.html" },
+    { "source": "/exams/:id", "destination": "/public/exams.html" },
+    { "source": "/scholarships", "destination": "/public/scholarships.html" },
+    { "source": "/scholarships/:id", "destination": "/public/scholarships.html" },
+    { "source": "/admissions", "destination": "/public/admissions.html" },
+    { "source": "/trending", "destination": "/public/trending.html" },
+    { "source": "/trending/:id", "destination": "/public/trending.html" },
+
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/login", "destination": "/admin/login.html" },
+    { "source": "/admin/schools", "destination": "/admin/Schools.html" },
+    { "source": "/admin/admissions", "destination": "/admin/Admissions.html" },
+    { "source": "/admin/exams", "destination": "/admin/Exams.html" },
+    { "source": "/admin/scholarships", "destination": "/admin/Scholarships.html" },
+    { "source": "/admin/trending", "destination": "/admin/Trending.html" },
+    { "source": "/admin/media", "destination": "/admin/Media.html" },
+    { "source": "/admin/users", "destination": "/admin/Users.html" },
+    { "source": "/admin/audit", "destination": "/admin/Audit.html" },
+    { "source": "/admin/settings", "destination": "/admin/Settings.html" },
+
+    { "source": "/school", "destination": "/SchoolAd/index.html" },
+    { "source": "/school/login", "destination": "/SchoolAd/login.html" },
+    { "source": "/school/profile", "destination": "/SchoolAd/profile.html" },
+    { "source": "/school/courses", "destination": "/SchoolAd/courses.html" },
+    { "source": "/school/fees", "destination": "/SchoolAd/fees.html" },
+    { "source": "/school/admissions", "destination": "/SchoolAd/admissions.html" },
+    { "source": "/school/calendar", "destination": "/SchoolAd/calendar.html" },
+    { "source": "/school/media", "destination": "/SchoolAd/media.html" },
+    { "source": "/school/submissions", "destination": "/SchoolAd/submissions.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/SchoolAd/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}
