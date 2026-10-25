@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Audit Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
+    .admin-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .admin-user:hover { background-color: var(--elevated); }
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .admin-user-info { flex: 1; min-width: 0; }
+    .admin-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; display: flex; align-items: center; }
+    .topbar-search i {
+      position: absolute; left: 14px; color: var(--muted);
+      font-size: 0.85rem; pointer-events: none;
+    }
+    .topbar-search input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-size: 0.85rem; color: var(--text); outline: none;
+    }
+    .topbar-search input::placeholder { color: #6b7c74; }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+
+    /* ============================================================ */
+    /* PAGE HEADING                                                 */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+
+    .owner-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background-color: rgba(245,185,66,0.1); color: var(--accent);
+      font-size: 0.68rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 40px; margin-left: 12px;
+      border: 1px solid rgba(245,185,66,0.3);
+      vertical-align: middle;
+    }
+
+    /* Stats */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+    .stat-mini-sub {
+      font-size: 0.7rem; color: var(--muted); margin-top: 4px;
+    }
+
+    /* ============================================================ */
+    /* TOOLBAR                                                      */
+    /* ============================================================ */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-gold {
+      background-color: transparent; color: var(--accent); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+    .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
+    .filter-row .search-inline i {
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
+    }
+    .filter-row input[type="text"], .filter-row select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 0.83rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-row .search-inline input { padding-left: 34px; width: 100%; }
+    .filter-row input::placeholder { color: #6b7c74; }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
+
+    /* ============================================================ */
+    /* EVENT LIST                                                   */
+    /* ============================================================ */
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .section-title i { color: var(--primary); font-size: 0.95rem; }
+    .section-count { font-size: 0.78rem; color: var(--muted); }
+
+    .event-list { display: flex; flex-direction: column; gap: 10px; }
+    .event-row {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 20px;
+      display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;
+      transition: border-color 0.15s; cursor: pointer;
+    }
+    .event-row:hover { border-color: var(--primary); }
+
+    .event-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0; margin-top: 2px;
+    }
+    .ev-publish { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .ev-submit { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .ev-update { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
+    .ev-permission { background-color: rgba(199,138,255,0.15); color: #c78aff; }
+    .ev-security { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .ev-settings { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+
+    .event-main { flex: 1; min-width: 220px; }
+    .event-title-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;
+    }
+    .event-title { font-size: 0.95rem; font-weight: 700; }
+    .event-action-badge {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .ab-publish { background-color: rgba(0,201,130,0.15); color: var(--primary); }
+    .ab-submit { background-color: rgba(245,185,66,0.15); color: var(--accent); }
+    .ab-update { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
+    .ab-permission { background-color: rgba(199,138,255,0.15); color: #c78aff; }
+    .ab-security { background-color: rgba(224,112,112,0.15); color: var(--danger); }
+    .ab-settings { background-color: rgba(155,169,161,0.15); color: var(--muted); }
+
+    .event-sub {
+      font-size: 0.8rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    }
+    .event-sub .actor { color: var(--text); font-weight: 600; }
+    .event-sub .sep { color: var(--border); }
+
+    .event-meta-cell {
+      min-width: 130px; text-align: right; flex-shrink: 0;
+    }
+    .event-time {
+      font-size: 0.78rem; color: var(--muted); font-weight: 600;
+      display: flex; align-items: center; gap: 6px; justify-content: flex-end;
+    }
+    .event-id {
+      font-size: 0.68rem; color: var(--muted); font-family: monospace;
+      margin-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center; padding: 56px 20px;
+      color: var(--muted); background-color: var(--elevated);
+      border: 1px dashed var(--border); border-radius: var(--radius-card);
+    }
+    .empty-state i { font-size: 2.2rem; color: var(--border); margin-bottom: 14px; display: inline-block; }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.85rem; }
+
+    .footnote {
+      font-size: 0.75rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* ============================================================ */
+    /* INFO PANELS (What this page records + security rules)        */
+    /* ============================================================ */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 40px;
+    }
+    @media (min-width: 900px) { .info-grid { grid-template-columns: 1fr 1fr; } }
+
+    .info-panel {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px;
+    }
+    .info-panel h2 {
+      font-size: 1.1rem; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .info-panel h2 i { color: var(--primary); font-size: 0.95rem; }
+    .info-panel.security h2 i { color: var(--accent); }
+
+    .info-list { display: flex; flex-direction: column; gap: 10px; }
+    .info-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 0.85rem; color: var(--muted); line-height: 1.5;
+    }
+    .info-item i {
+      color: var(--primary); font-size: 0.8rem; margin-top: 3px; flex-shrink: 0;
+    }
+    .info-panel.security .info-item i { color: var(--accent); }
+    .info-item strong { color: var(--text); font-weight: 700; }
+
+    /* ============================================================ */
+    /* DETAIL PANEL                                                 */
+    /* ============================================================ */
+    .detail-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 100;
+      backdrop-filter: blur(2px);
+    }
+    .detail-overlay.active { display: block; }
+
+    .detail-panel {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 500px;
+      background-color: var(--surface); border-left: 1px solid var(--border);
+      z-index: 110; display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.25s ease;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+    }
+    .detail-panel.open { transform: translateX(0); }
+
+    .detail-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .detail-header h3 { font-size: 1.1rem; }
+    .detail-close {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 34px; height: 34px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-close:hover { color: var(--danger); border-color: var(--danger); }
+
+    .detail-body { flex: 1; overflow-y: auto; padding: 24px; }
+    .detail-body::-webkit-scrollbar { width: 6px; }
+    .detail-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    .detail-event-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .detail-event-header .event-icon { width: 48px; height: 48px; font-size: 1.1rem; }
+    .detail-event-header .deh-title { font-size: 1.05rem; font-weight: 700; }
+    .detail-event-header .deh-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    .meta-info {
+      display: flex; flex-direction: column; gap: 0;
+      background-color: var(--elevated); border-radius: 10px;
+      padding: 4px 14px; margin-bottom: 20px;
+      font-size: 0.82rem;
+    }
+    .meta-info-row {
+      display: flex; justify-content: space-between; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .meta-info-row:last-child { border-bottom: none; }
+    .meta-info-row .mi-label { color: var(--muted); }
+    .meta-info-row .mi-value { font-weight: 600; text-align: right; word-break: break-word; }
+    .meta-info-row .mi-value.mono { font-family: monospace; font-size: 0.75rem; }
+
+    .detail-section-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 20px 0 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .detail-section-title i { color: var(--primary); font-size: 0.8rem; }
+
+    .diff-box {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 16px;
+    }
+    .diff-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .diff-row:last-child { border-bottom: none; }
+    .diff-field {
+      width: 110px; flex-shrink: 0; color: var(--muted); font-weight: 600;
+    }
+    .diff-values { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .diff-before, .diff-after {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 4px 8px; border-radius: 5px;
+      font-family: monospace; font-size: 0.76rem; word-break: break-word;
+    }
+    .diff-before {
+      background-color: rgba(224,112,112,0.08); color: #f0a0a0;
+      border-left: 2px solid var(--danger);
+    }
+    .diff-after {
+      background-color: rgba(0,201,130,0.08); color: #9fe0c5;
+      border-left: 2px solid var(--primary);
+    }
+    .diff-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; flex-shrink: 0;
+    }
+    .diff-before .diff-label { color: var(--danger); }
+    .diff-after .diff-label { color: var(--primary); }
+
+    .detail-note {
+      display: flex; gap: 10px; padding: 12px 14px;
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.25);
+      border-radius: 10px; font-size: 0.78rem; color: var(--muted);
+      line-height: 1.5;
+    }
+    .detail-note i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+    .detail-note strong { color: var(--accent); }
+
+    .detail-actions {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      flex-shrink: 0; background-color: var(--surface);
+    }
+    .detail-actions .btn-outline { flex: 1; justify-content: center; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+    }
+    @media (max-width: 600px) {
+      .topbar-search { display: none; }
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .event-row { padding: 14px 16px; }
+      .event-meta-cell { min-width: 100%; text-align: left; }
+      .event-time { justify-content: flex-start; }
+      .filter-row .search-inline { min-width: 100%; }
+      .detail-panel { max-width: 100%; }
+      .owner-badge { display: inline-flex; margin-left: 0; margin-top: 6px; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item active"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Admin User</div>
+            <div class="admin-user-role">Platform Owner</div>
+          </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out"
+            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search audit records..." aria-label="Search">
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="admin-avatar">AD</div>
+            <div>
+              <div class="topbar-admin-name">Admin User</div>
+              <div class="topbar-admin-role">Platform Owner</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-list-check"></i> Platform administration</div>
+          <h1>Audit Log <span class="owner-badge"><i class="fas fa-crown"></i> Owner access</span></h1>
+          <p>Track platform activity, publishing decisions and security events. This page is restricted to the platform owner and specifically authorized administrators.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-label">Recorded events <i class="fas fa-list-check"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Live database count</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Security events <i class="fas fa-shield-halved gold"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Live database count</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Publishing actions <i class="fas fa-bullhorn"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Live database count</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Account changes <i class="fas fa-users"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Live database count</div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <button class="btn-outline" onclick="resetFilters()"><i class="fas fa-rotate-left"></i> Reset filters</button>
+          <button class="btn-gold" onclick="exportAudit()"><i class="fas fa-file-export"></i> Export audit log</button>
+          <div class="filter-row">
+            <div class="search-inline">
+              <i class="fas fa-search"></i>
+              <input type="text" id="auditSearch" placeholder="Search actor, action, record or event ID..." oninput="filterEvents()">
+            </div>
+            <select id="categoryFilter" onchange="filterEvents()">
+              <option value="">All events</option>
+              <option value="publish">Publishing</option>
+              <option value="submit">Submissions</option>
+              <option value="update">Content updates</option>
+              <option value="permission">Permissions</option>
+              <option value="security">Security</option>
+              <option value="settings">Settings</option>
+            </select>
+            <select id="timeFilter" onchange="filterEvents()">
+              <option value="">All time</option>
+              <option value="today">Today</option>
+              <option value="week">Past 7 days</option>
+              <option value="month">Past 30 days</option>
+            </select>
+            <select id="actorFilter" onchange="filterEvents()">
+              <option value="">All actors</option>
+              <option value="admin">Platform Administrator</option>
+              <option value="school-manager">School Manager</option>
+              <option value="editor">Content Editor</option>
+              <option value="reviewer">Reviewer</option>
+              <option value="security">Security event</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Activity list header -->
+        <div class="section-header">
+          <div class="section-title"><i class="fas fa-clock-rotate-left"></i> Activity records</div>
+          <div class="section-count" id="eventCount">Showing 0 records</div>
+        </div>
+
+        <!-- Event list -->
+        <div class="event-list" id="eventList">
+          <!-- Populated by JS -->
+        </div>
+
+        <p class="footnote">
+          <i class="fas fa-circle-info"></i> Illustrative entries to demonstrate the layout. Actual records must come from the backend. The filters and sample entries above are for demonstrating the interface; the live version should use real database records rather than fixed sample counts.
+        </p>
+
+        <!-- Info panels -->
+        <div class="info-grid">
+          <!-- What this page records -->
+          <div class="info-panel">
+            <h2><i class="fas fa-clipboard-list"></i> What this page must record</h2>
+            <div class="info-list">
+              <div class="info-item">
+                <i class="fas fa-pen"></i>
+                <div><strong>Content changes:</strong> creation, edits, publication, unpublishing, archiving and deletion requests.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-school"></i>
+                <div><strong>School management:</strong> school-manager submissions, review decisions and approved profile changes.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-key"></i>
+                <div><strong>Account security:</strong> login successes and failures, password-reset events, role changes and account suspension.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-gear"></i>
+                <div><strong>Administrative actions:</strong> settings changes, permission updates and significant system operations.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-code-compare"></i>
+                <div><strong>Change details:</strong> actor, timestamp, event ID, affected record, action outcome and before/after values where appropriate.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security rules -->
+          <div class="info-panel security">
+            <h2><i class="fas fa-shield-halved"></i> Important security rules</h2>
+            <div class="info-list">
+              <div class="info-item">
+                <i class="fas fa-lock"></i>
+                <div><strong>Append-only records.</strong> Normal administrators must not be able to edit or delete historical events.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-server"></i>
+                <div><strong>Server-side recording.</strong> Record events on the server, not just in browser JavaScript.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-eye-slash"></i>
+                <div><strong>No secrets.</strong> Never log passwords, authentication tokens, or other secrets.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-user-shield"></i>
+                <div><strong>Restricted access.</strong> Restrict audit access to the platform owner and specifically authorized administrators.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-file-export"></i>
+                <div><strong>Controlled exports.</strong> Make exports permission-controlled and record when an audit export occurs.</div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-shield"></i>
+                <div><strong>Retention &amp; privacy.</strong> Apply retention and privacy policies to IP addresses and device information.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== DETAIL PANEL ==================== -->
+  <div class="detail-overlay" id="detailOverlay"></div>
+  <aside class="detail-panel" id="detailPanel" aria-label="Event details">
+    <div class="detail-header">
+      <h3>Event details</h3>
+      <button class="detail-close" onclick="closeDetail()" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="detail-body" id="detailBody">
+      <!-- Populated by JS -->
+    </div>
+    <div class="detail-actions" id="detailActions">
+      <!-- Populated by JS -->
+    </div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Copied</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO EVENTS DATA                                             */
+      /* ============================================================ */
+      let events = [
+        {
+          id: 'evt_2f8a1c9d',
+          category: 'publish',
+          action: 'Published content',
+          actionLabel: 'Published',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'University of Lagos — Direct Entry Admission',
+          targetType: 'Admission notice',
+          timestamp: '2026-05-24 10:42:18',
+          relativeTime: '12 minutes ago',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'status', before: 'draft', after: 'published' },
+            { field: 'verified_at', before: 'null', after: '2026-05-24 10:42' }
+          ]
+        },
+        {
+          id: 'evt_9c4b2a7e',
+          category: 'submit',
+          action: 'Submitted changes',
+          actionLabel: 'Submitted',
+          actor: 'Dr. Funmi Adeyemi',
+          actorRole: 'School Manager',
+          actorType: 'school-manager',
+          target: 'University of Lagos — School profile',
+          targetType: 'School record',
+          timestamp: '2026-05-24 09:15:03',
+          relativeTime: '1 hour ago',
+          outcome: 'Pending review',
+          ip: '197.210.x.x',
+          changes: [
+            { field: 'fees.100L', before: '₦150,000', after: '₦160,000' },
+            { field: 'fees.source', before: 'estimate', after: 'official' }
+          ]
+        },
+        {
+          id: 'evt_4d1f8b6a',
+          category: 'update',
+          action: 'Updated article',
+          actionLabel: 'Updated',
+          actor: 'Aisha Bello',
+          actorRole: 'Content Editor',
+          actorType: 'editor',
+          target: 'JAMB announces key dates for 2026 UTME',
+          targetType: 'Trending article',
+          timestamp: '2026-05-24 08:30:11',
+          relativeTime: '2 hours ago',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'title', before: 'JAMB 2026 dates', after: 'JAMB announces key dates for 2026 UTME' },
+            { field: 'body', before: '(draft)', after: '(revised, 3 paragraphs added)' }
+          ]
+        },
+        {
+          id: 'evt_7a2e5c1b',
+          category: 'permission',
+          action: 'Changed permissions',
+          actionLabel: 'Permissions',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'Account: Tunde Ogunlesi (Reviewer)',
+          targetType: 'Platform account',
+          timestamp: '2026-05-23 16:08:45',
+          relativeTime: 'Yesterday',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'scope.scholarships', before: 'false', after: 'true' },
+            { field: 'scope.exams', before: 'false', after: 'false' }
+          ]
+        },
+        {
+          id: 'evt_1b8c3d9f',
+          category: 'security',
+          action: 'Failed login',
+          actionLabel: 'Security',
+          actor: 'Unknown / unverified',
+          actorRole: 'Security event',
+          actorType: 'security',
+          target: 'Admin authentication',
+          targetType: 'Authentication',
+          timestamp: '2026-05-23 02:14:30',
+          relativeTime: 'Yesterday',
+          outcome: 'Rejected',
+          ip: '45.155.x.x',
+          changes: []
+        },
+        {
+          id: 'evt_6e9a4b2d',
+          category: 'publish',
+          action: 'Unpublished content',
+          actionLabel: 'Unpublished',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'Ahmadu Bello University — UTME Admission 2025/2026',
+          targetType: 'Admission notice',
+          timestamp: '2026-05-22 14:20:09',
+          relativeTime: '2 days ago',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'status', before: 'published', after: 'archived' },
+            { field: 'reason', before: 'null', after: 'session expired' }
+          ]
+        },
+        {
+          id: 'evt_3c7f1e5a',
+          category: 'settings',
+          action: 'Updated platform settings',
+          actionLabel: 'Settings',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'Content review workflow',
+          targetType: 'Platform settings',
+          timestamp: '2026-05-22 11:05:22',
+          relativeTime: '2 days ago',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'require_review_for_fees', before: 'false', after: 'true' }
+          ]
+        },
+        {
+          id: 'evt_8b5d2f4c',
+          category: 'security',
+          action: 'Password reset requested',
+          actionLabel: 'Security',
+          actor: 'Bola Martins',
+          actorRole: 'Content Editor',
+          actorType: 'security',
+          target: 'Account recovery',
+          targetType: 'Authentication',
+          timestamp: '2026-05-21 19:40:15',
+          relativeTime: '3 days ago',
+          outcome: 'Success',
+          ip: '197.210.x.x',
+          changes: []
+        },
+        {
+          id: 'evt_5a3e7b1d',
+          category: 'submit',
+          action: 'Rejected submission',
+          actionLabel: 'Rejected',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'Benson Idahosa University — Postgraduate admission',
+          targetType: 'Admission notice',
+          timestamp: '2026-05-21 10:12:33',
+          relativeTime: '3 days ago',
+          outcome: 'Returned for correction',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'status', before: 'pending', after: 'draft' },
+            { field: 'reviewer_note', before: 'null', after: 'Source URL missing' }
+          ]
+        },
+        {
+          id: 'evt_2d6c8f3a',
+          category: 'update',
+          action: 'Archived scholarship',
+          actionLabel: 'Archived',
+          actor: 'Platform Administrator',
+          actorRole: 'Administrator',
+          actorType: 'admin',
+          target: 'Commonwealth Research Grant',
+          targetType: 'Scholarship',
+          timestamp: '2026-05-20 15:48:01',
+          relativeTime: '4 days ago',
+          outcome: 'Success',
+          ip: '102.89.x.x',
+          changes: [
+            { field: 'status', before: 'expired', after: 'archived' }
+          ]
+        }
+      ];
+
+      let selectedEventId = null;
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      function categoryIcon(cat) {
+        if (cat === 'publish') return 'fa-bullhorn';
+        if (cat === 'submit') return 'fa-paper-plane';
+        if (cat === 'update') return 'fa-pen';
+        if (cat === 'permission') return 'fa-shield-halved';
+        if (cat === 'security') return 'fa-key';
+        if (cat === 'settings') return 'fa-gear';
+        return 'fa-circle-info';
+      }
+
+      function iconClass(cat) {
+        if (cat === 'publish') return 'ev-publish';
+        if (cat === 'submit') return 'ev-submit';
+        if (cat === 'update') return 'ev-update';
+        if (cat === 'permission') return 'ev-permission';
+        if (cat === 'security') return 'ev-security';
+        return 'ev-settings';
+      }
+
+      function badgeClass(cat) {
+        if (cat === 'publish') return 'ab-publish';
+        if (cat === 'submit') return 'ab-submit';
+        if (cat === 'update') return 'ab-update';
+        if (cat === 'permission') return 'ab-permission';
+        if (cat === 'security') return 'ab-security';
+        return 'ab-settings';
+      }
+
+      /* ============================================================ */
+      /* RENDER                                                       */
+      /* ============================================================ */
+      function filterEvents() {
+        const query = (document.getElementById('auditSearch').value || '').toLowerCase().trim();
+        const category = document.getElementById('categoryFilter').value;
+        const time = document.getElementById('timeFilter').value;
+        const actor = document.getElementById('actorFilter').value;
+
+        const now = new Date('2026-05-24T12:00:00');
+        const filtered = events.filter(e => {
+          const matchQ = !query ||
+            e.actor.toLowerCase().includes(query) ||
+            e.action.toLowerCase().includes(query) ||
+            e.target.toLowerCase().includes(query) ||
+            e.id.toLowerCase().includes(query);
+          const matchCat = !category || e.category === category;
+          const matchActor = !actor || e.actorType === actor;
+          let matchTime = true;
+          if (time) {
+            const evDate = new Date(e.timestamp.replace(' ', 'T'));
+            const diffDays = (now - evDate) / (1000 * 60 * 60 * 24);
+            if (time === 'today') matchTime = diffDays < 1;
+            else if (time === 'week') matchTime = diffDays < 7;
+            else if (time === 'month') matchTime = diffDays < 30;
+          }
+          return matchQ && matchCat && matchActor && matchTime;
+        });
+
+        document.getElementById('eventCount').textContent = `Showing ${filtered.length} of ${events.length} records`;
+
+        const list = document.getElementById('eventList');
+        if (filtered.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-list-check"></i>
+              <h3>No audit records match your filters</h3>
+              <p>Try adjusting the search or filter options.</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map(e => `
+          <div class="event-row" onclick="openDetail('${e.id}')">
+            <div class="event-icon ${iconClass(e.category)}">
+              <i class="fas ${categoryIcon(e.category)}"></i>
+            </div>
+            <div class="event-main">
+              <div class="event-title-row">
+                <span class="event-title">${e.action}</span>
+                <span class="event-action-badge ${badgeClass(e.category)}">${e.actionLabel}</span>
+              </div>
+              <div class="event-sub">
+                <span class="actor">${e.actor}</span>
+                <span class="sep">·</span>
+                <span>${e.actorRole}</span>
+                <span class="sep">·</span>
+                <span>${e.target}</span>
+              </div>
+            </div>
+            <div class="event-meta-cell">
+              <div class="event-time"><i class="far fa-clock"></i> ${e.relativeTime}</div>
+              <div class="event-id">${e.id}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function resetFilters() {
+        document.getElementById('auditSearch').value = '';
+        document.getElementById('categoryFilter').value = '';
+        document.getElementById('timeFilter').value = '';
+        document.getElementById('actorFilter').value = '';
+        filterEvents();
+        toast('Filters reset.');
+      }
+
+      function exportAudit() {
+        if (!confirm('Export the audit log? This action will be recorded in the audit trail and the export will be permission-controlled.')) return;
+        toast('Export initiated · this export event will be logged.');
+      }
+
+      /* ============================================================ */
+      /* DETAIL PANEL                                                 */
+      /* ============================================================ */
+      function openDetail(id) {
+        selectedEventId = id;
+        const e = events.find(x => x.id === id);
+        if (!e) return;
+
+        const changesHtml = e.changes && e.changes.length > 0
+          ? e.changes.map(c => `
+              <div class="diff-row">
+                <div class="diff-field">${c.field}</div>
+                <div class="diff-values">
+                  <div class="diff-before"><span class="diff-label">Before</span>${c.before}</div>
+                  <div class="diff-after"><span class="diff-label">After</span>${c.after}</div>
+                </div>
+              </div>
+            `).join('')
+          : `<div style="padding: 16px; text-align: center; color: var(--muted); font-size: 0.82rem;">No field changes recorded for this event.</div>`;
+
+        document.getElementById('detailBody').innerHTML = `
+          <div class="detail-event-header">
+            <div class="event-icon ${iconClass(e.category)}">
+              <i class="fas ${categoryIcon(e.category)}"></i>
+            </div>
+            <div>
+              <div class="deh-title">${e.action}</div>
+              <div class="deh-sub">${e.actionLabel} · ${e.outcome}</div>
+            </div>
+          </div>
+
+          <div class="meta-info">
+            <div class="meta-info-row"><span class="mi-label">Event ID</span><span class="mi-value mono">${e.id}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Actor</span><span class="mi-value">${e.actor}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Role</span><span class="mi-value">${e.actorRole}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Affected record</span><span class="mi-value">${e.target}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Record type</span><span class="mi-value">${e.targetType}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Timestamp</span><span class="mi-value">${e.timestamp}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Outcome</span><span class="mi-value">${e.outcome}</span></div>
+            <div class="meta-info-row"><span class="mi-label">IP address</span><span class="mi-value mono">${e.ip}</span></div>
+          </div>
+
+          <div class="detail-section-title"><i class="fas fa-code-compare"></i> Before / after values</div>
+          <div class="diff-box">${changesHtml}</div>
+
+          <div class="detail-note">
+            <i class="fas fa-lock"></i>
+            <div><strong>Append-only record.</strong> This audit entry cannot be edited or deleted by normal administrators. It is stored server-side and retained per your data-retention policy.</div>
+          </div>
+        `;
+
+        document.getElementById('detailActions').innerHTML = `
+          <button class="btn-outline" onclick="toast('Event ID copied to clipboard.')"><i class="fas fa-copy"></i> Copy event ID</button>
+          <button class="btn-outline" onclick="closeDetail()">Close</button>
+        `;
+
+        document.getElementById('detailOverlay').classList.add('active');
+        document.getElementById('detailPanel').classList.add('open');
+      }
+
+      function closeDetail() {
+        document.getElementById('detailPanel').classList.remove('open');
+        document.getElementById('detailOverlay').classList.remove('active');
+        selectedEventId = null;
+      }
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+
+      overlay.addEventListener('click', () => {
+        closeSidebar();
+        closeDetail();
+      });
+
+      document.getElementById('detailOverlay').addEventListener('click', closeDetail);
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeSidebar();
+          closeDetail();
+        }
+      });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        filterEvents();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

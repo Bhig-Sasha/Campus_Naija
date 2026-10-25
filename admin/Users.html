@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Users & Permissions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
+
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
+    .admin-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .admin-user:hover { background-color: var(--elevated); }
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .admin-user-info { flex: 1; min-width: 0; }
+    .admin-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; display: flex; align-items: center; }
+    .topbar-search i {
+      position: absolute; left: 14px; color: var(--muted);
+      font-size: 0.85rem; pointer-events: none;
+    }
+    .topbar-search input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-size: 0.85rem; color: var(--text); outline: none;
+    }
+    .topbar-search input::placeholder { color: #6b7c74; }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ============================================================ */
+    /* PAGE HEADING & STATS                                         */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+
+    /* ============================================================ */
+    /* PENDING APPROVALS (gold callout)                            */
+    /* ============================================================ */
+    .pending-callout {
+      background-color: rgba(245,185,66,0.05);
+      border: 1px solid rgba(245,185,66,0.3);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-card);
+      padding: 20px 22px; margin-bottom: 28px;
+    }
+    .pending-callout-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    }
+    .pending-callout-header i { color: var(--accent); font-size: 1rem; }
+    .pending-callout-header h3 { font-size: 1rem; }
+    .pending-callout-header .count-badge {
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.68rem; font-weight: 800; padding: 2px 9px;
+      border-radius: 40px; margin-left: 4px;
+    }
+    .pending-list { display: flex; flex-direction: column; gap: 10px; }
+    .pending-item {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+      padding: 12px 14px; background-color: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px;
+    }
+    .pending-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .pending-text { flex: 1; min-width: 160px; }
+    .pending-text h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
+    .pending-text p { font-size: 0.75rem; color: var(--muted); margin: 0; }
+    .pending-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pending-btn {
+      padding: 6px 12px; border-radius: 8px; font-size: 0.75rem;
+      font-weight: 700; cursor: pointer; border: 1px solid var(--border);
+      background-color: transparent; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: all 0.15s;
+    }
+    .pending-btn.approve {
+      color: var(--primary); border-color: rgba(0,201,130,0.4);
+    }
+    .pending-btn.approve:hover { background-color: var(--primary); color: #070A09; }
+    .pending-btn.reject {
+      color: var(--danger); border-color: rgba(224,112,112,0.4);
+    }
+    .pending-btn.reject:hover { background-color: var(--danger); color: #070A09; }
+    .pending-btn.view {
+      color: var(--text); border-color: var(--border);
+    }
+    .pending-btn.view:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ============================================================ */
+    /* TOOLBAR                                                      */
+    /* ============================================================ */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+    .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 240px; }
+    .filter-row .search-inline i {
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
+    }
+    .filter-row input[type="text"], .filter-row select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 0.83rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-row .search-inline input { padding-left: 34px; width: 100%; }
+    .filter-row input::placeholder { color: #6b7c74; }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
+
+    /* ============================================================ */
+    /* USER LIST                                                    */
+    /* ============================================================ */
+    .record-list { display: flex; flex-direction: column; gap: 12px; }
+    .record-row {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      transition: border-color 0.15s;
+    }
+    .record-row:hover { border-color: var(--primary); }
+    .user-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .av-admin { background: linear-gradient(135deg, #00C982, #008f5c); }
+    .av-school { background: linear-gradient(135deg, #F5B942, #b88720); }
+    .av-editor { background: linear-gradient(135deg, #8ab5ff, #4a78b5); }
+    .av-reviewer { background: linear-gradient(135deg, #c78aff, #7d4ab5); }
+    .record-main { flex: 1; min-width: 200px; }
+    .record-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+    .user-name { font-size: 1rem; font-weight: 700; }
+    .user-email { font-size: 0.78rem; color: var(--muted); }
+    .record-meta-cell { min-width: 110px; }
+    .meta-label-sm {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 3px;
+    }
+    .meta-value-sm { font-size: 0.85rem; font-weight: 600; }
+    .role-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 40px;
+    }
+    .role-admin { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .role-school { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .role-editor { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
+    .role-reviewer { background-color: rgba(199,138,255,0.15); color: #c78aff; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 40px;
+    }
+    .status-active { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .status-pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .status-suspended { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .record-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+    .icon-action {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.8rem; cursor: pointer;
+      padding: 7px 10px; border-radius: 8px;
+      transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .icon-action:hover { color: var(--primary); border-color: var(--primary); }
+    .icon-action.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+    .empty-state {
+      text-align: center; padding: 56px 20px;
+      color: var(--muted); background-color: var(--elevated);
+      border: 1px dashed var(--border); border-radius: var(--radius-card);
+    }
+    .empty-state i { font-size: 2.2rem; color: var(--border); margin-bottom: 14px; display: inline-block; }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.85rem; }
+
+    .footnote {
+      font-size: 0.75rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* ============================================================ */
+    /* CREATE / EDIT USER MODAL                                    */
+    /* ============================================================ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.7); z-index: 150;
+      backdrop-filter: blur(4px); padding: 24px;
+      overflow-y: auto; align-items: flex-start; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; max-width: 560px; width: 100%;
+      margin: auto; position: relative;
+    }
+    .modal-header {
+      padding: 24px 24px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h3 { font-size: 1.2rem; }
+    .modal-close {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 34px; height: 34px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { color: var(--danger); border-color: var(--danger); }
+    .modal-body { padding: 20px 24px; }
+    .modal-footer {
+      padding: 16px 24px 24px; display: flex; gap: 10px;
+      justify-content: flex-end; flex-wrap: wrap;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 560px) { .form-grid.two { grid-template-columns: 1fr 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-size: 0.78rem; font-weight: 600; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .form-group label .req { color: var(--danger); font-size: 0.75rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-input); padding: 10px 14px;
+      font-size: 0.88rem; color: var(--text); outline: none;
+      transition: border-color 0.15s; width: 100%;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #6b7c74; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--primary); }
+    .form-group textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+    .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+
+    /* Role cards inside modal */
+    .role-cards { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    @media (min-width: 560px) { .role-cards { grid-template-columns: 1fr 1fr; } }
+    .role-card {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .role-card:hover { border-color: var(--primary); }
+    .role-card.selected { border-color: var(--primary); background-color: rgba(0,201,130,0.06); }
+    .role-card .rc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .role-card .rc-top i { font-size: 0.8rem; color: var(--muted); }
+    .role-card.selected .rc-top i { color: var(--primary); }
+    .role-card .rc-title { font-size: 0.82rem; font-weight: 700; }
+    .role-card .rc-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
+
+    /* ============================================================ */
+    /* PERMISSIONS PANEL (viewed from detail)                       */
+    /* ============================================================ */
+    .detail-panel {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 480px;
+      background-color: var(--surface); border-left: 1px solid var(--border);
+      z-index: 110; display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.25s ease;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+    }
+    .detail-panel.open { transform: translateX(0); }
+    .detail-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .detail-header h3 { font-size: 1.1rem; }
+    .detail-close {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 34px; height: 34px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-close:hover { color: var(--danger); border-color: var(--danger); }
+    .detail-body {
+      flex: 1; overflow-y: auto; padding: 24px;
+    }
+    .detail-actions {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .detail-actions .btn-primary,
+    .detail-actions .btn-outline { flex: 1; justify-content: center; min-width: 100px; }
+
+    .user-detail-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .user-detail-header .user-avatar { width: 56px; height: 56px; font-size: 1.1rem; }
+    .user-detail-header .user-detail-name { font-size: 1.1rem; font-weight: 700; }
+    .user-detail-header .user-detail-email { font-size: 0.82rem; color: var(--muted); }
+
+    .perm-section-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 20px 0 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .perm-section-title i { color: var(--primary); font-size: 0.8rem; }
+
+    .perm-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .perm-row:last-child { border-bottom: none; }
+    .perm-row .perm-label { color: var(--text); }
+    .perm-row .perm-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .perm-toggle {
+      width: 40px; height: 22px; border-radius: 40px;
+      background-color: var(--border); position: relative;
+      cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+    }
+    .perm-toggle.on { background-color: var(--primary); }
+    .perm-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background-color: var(--text); transition: transform 0.2s;
+    }
+    .perm-toggle.on::after { transform: translateX(18px); background-color: #070A09; }
+
+    .scope-box {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px; font-size: 0.82rem;
+    }
+    .scope-box i { color: var(--accent); flex-shrink: 0; }
+    .scope-box .scope-text { flex: 1; }
+    .scope-box .scope-text strong { display: block; margin-bottom: 1px; }
+    .scope-box .scope-text span { font-size: 0.72rem; color: var(--muted); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+    }
+    @media (max-width: 600px) {
+      .topbar-search { display: none; }
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .record-row { padding: 16px; }
+      .record-actions { width: 100%; justify-content: flex-end; }
+      .filter-row .search-inline { min-width: 100%; }
+      .detail-panel { max-width: 100%; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+    .detail-body::-webkit-scrollbar { width: 6px; }
+    .detail-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Admin User</div>
+            <div class="admin-user-role">Super Administrator</div>
+          </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out"
+            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search admin records..." aria-label="Search">
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="admin-avatar">AD</div>
+            <div>
+              <div class="topbar-admin-name">Admin User</div>
+              <div class="topbar-admin-role">Super Administrator</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- ============================================================ -->
+        <!-- DIRECTORY VIEW                                               -->
+        <!-- ============================================================ -->
+        <div id="view-directory" class="view active">
+          <div class="page-heading">
+            <div class="eyebrow"><i class="fas fa-users"></i> Users &amp; access</div>
+            <h1>Users &amp; Permissions</h1>
+            <p>Manage platform accounts, school representatives and staff access. There is no public registration for platform administrators — only the platform owner can create and approve accounts.</p>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-row">
+            <div class="stat-mini">
+              <div class="stat-mini-label">All accounts <i class="fas fa-users"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">School managers <i class="fas fa-school"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Pending approvals <i class="fas fa-clock gold"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Suspended <i class="fas fa-ban"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+          </div>
+
+          <!-- Pending school manager approvals -->
+          <div class="pending-callout" id="pendingCallout">
+            <div class="pending-callout-header">
+              <i class="fas fa-triangle-exclamation"></i>
+              <h3>School manager applications awaiting approval</h3>
+              <span class="count-badge" id="pendingCount">2</span>
+            </div>
+            <div class="pending-list" id="pendingList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <button class="btn-primary" onclick="openCreateModal()">
+              <i class="fas fa-user-plus"></i> Create Account
+            </button>
+            <div class="filter-row">
+              <div class="search-inline">
+                <i class="fas fa-search"></i>
+                <input type="text" id="userSearch" placeholder="Search name, email or institution..." oninput="filterUsers()">
+              </div>
+              <select id="roleFilter" onchange="filterUsers()">
+                <option value="">All roles</option>
+                <option value="admin">Administrator</option>
+                <option value="school-manager">School Manager</option>
+                <option value="editor">Content Editor</option>
+                <option value="reviewer">Reviewer</option>
+              </select>
+              <select id="statusFilter" onchange="filterUsers()">
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- List header -->
+          <div class="panel-header" style="margin: 8px 0 14px; display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
+              <i class="fas fa-list" style="color:var(--primary); font-size:0.95rem;"></i> Platform accounts
+            </div>
+            <span style="font-size:0.78rem; color: var(--muted);" id="userCount">Showing 0 records</span>
+          </div>
+
+          <div class="record-list" id="userList">
+            <!-- Populated by JS -->
+          </div>
+
+          <p class="footnote">
+            <i class="fas fa-circle-info"></i> Illustrative accounts only, not real users. School representatives can request access, but an authorized platform administrator must verify and approve their account before they can manage school information.
+          </p>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== CREATE / EDIT USER MODAL ==================== -->
+  <div class="modal-overlay" id="userModal" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Create account</h3>
+        <button class="modal-close" onclick="closeCreateModal()" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Full name <span class="req">*</span></label>
+            <input type="text" id="newUserName" placeholder="e.g. Jane Doe">
+          </div>
+          <div class="form-group full">
+            <label>Email address <span class="req">*</span></label>
+            <input type="email" id="newUserEmail" placeholder="name@institution.edu.ng">
+            <span class="form-hint">An invitation with a secure account setup link will be sent to this address.</span>
+          </div>
+
+          <div class="form-group full">
+            <label>Role <span class="req">*</span></label>
+            <div class="role-cards">
+              <div class="role-card selected" data-role="school-manager" onclick="selectRole('school-manager', this)">
+                <div class="rc-top"><i class="fas fa-school"></i><span class="rc-title">School Manager</span></div>
+                <div class="rc-desc">Manages their own institution only. Limited to assigned school.</div>
+              </div>
+              <div class="role-card" data-role="editor" onclick="selectRole('editor', this)">
+                <div class="rc-top"><i class="fas fa-pen-fancy"></i><span class="rc-title">Content Editor</span></div>
+                <div class="rc-desc">Manages assigned articles and media. Cannot administer users.</div>
+              </div>
+              <div class="role-card" data-role="reviewer" onclick="selectRole('reviewer', this)">
+                <div class="rc-top"><i class="fas fa-magnifying-glass"></i><span class="rc-title">Reviewer</span></div>
+                <div class="rc-desc">Verifies and approves content before publication.</div>
+              </div>
+              <div class="role-card" data-role="admin" onclick="selectRole('admin', this)">
+                <div class="rc-top"><i class="fas fa-shield-halved"></i><span class="rc-title">Administrator</span></div>
+                <div class="rc-desc">Full platform access. Only grant to trusted staff.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group full" id="schoolScopeGroup">
+            <label>Assigned school <span class="req">*</span></label>
+            <select id="newUserSchool">
+              <option value="">Select institution</option>
+              <option value="uniabuja">University of Abuja</option>
+              <option value="unilag">University of Lagos</option>
+              <option value="biu">Benson Idahosa University</option>
+              <option value="yabatech">Yaba College of Technology</option>
+              <option value="abu">Ahmadu Bello University</option>
+              <option value="fce">Federal College of Education, Kano</option>
+            </select>
+            <span class="form-hint">The account will only be able to manage this specific institution.</span>
+          </div>
+
+          <div class="form-group full" id="contentScopeGroup" style="display:none;">
+            <label>Content scope</label>
+            <select id="newUserContentScope">
+              <option value="news">News &amp; Trending</option>
+              <option value="scholarships">Scholarships</option>
+              <option value="exams">Exams</option>
+              <option value="all-content">All content areas</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label>Internal notes <span class="form-hint" style="display:inline;">(optional)</span></label>
+            <textarea id="newUserNotes" placeholder="Any context for this account (visible to admins only)..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeCreateModal()">Cancel</button>
+        <button class="btn-primary" onclick="createUser()"><i class="fas fa-paper-plane"></i> Send invite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PERMISSIONS DETAIL PANEL ==================== -->
+  <aside class="detail-panel" id="detailPanel" aria-label="Account permissions">
+    <div class="detail-header">
+      <h3>Account permissions</h3>
+      <button class="detail-close" onclick="closeDetail()" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="detail-body" id="detailBody">
+      <!-- Populated by JS -->
+    </div>
+    <div class="detail-actions" id="detailActions">
+      <!-- Populated by JS -->
+    </div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Saved</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO DATA                                                    */
+      /* ============================================================ */
+      let users = [
+        {
+          id: 'u1',
+          name: 'Admin User',
+          email: 'admin@campusnaija.ng',
+          role: 'admin',
+          roleLabel: 'Administrator',
+          status: 'active',
+          scope: 'Full platform access',
+          lastActive: 'Today, 10:42 AM',
+          joined: '2025-01-10',
+          notes: 'Platform owner.'
+        },
+        {
+          id: 'u2',
+          name: 'Dr. Funmi Adeyemi',
+          email: 'f.adeyemi@unilag.edu.ng',
+          role: 'school-manager',
+          roleLabel: 'School Manager',
+          status: 'active',
+          scope: 'University of Lagos',
+          lastActive: 'Today, 9:15 AM',
+          joined: '2026-02-14',
+          notes: 'Verified representative from UNILAG ICT office.'
+        },
+        {
+          id: 'u3',
+          name: 'Emeka Nwosu',
+          email: 'e.nwosu@biu.edu.ng',
+          role: 'school-manager',
+          roleLabel: 'School Manager',
+          status: 'pending',
+          scope: 'Benson Idahosa University',
+          lastActive: '—',
+          joined: '2026-05-22',
+          notes: 'Awaiting verification of staff ID and appointment letter.'
+        },
+        {
+          id: 'u4',
+          name: 'Aisha Bello',
+          email: 'aisha.b@campusnaija.ng',
+          role: 'editor',
+          roleLabel: 'Content Editor',
+          status: 'active',
+          scope: 'News & Trending',
+          lastActive: 'Yesterday, 4:20 PM',
+          joined: '2026-01-20',
+          notes: 'Manages news and article drafts.'
+        },
+        {
+          id: 'u5',
+          name: 'Tunde Ogunlesi',
+          email: 'tunde.o@campusnaija.ng',
+          role: 'reviewer',
+          roleLabel: 'Reviewer',
+          status: 'active',
+          scope: 'Admissions & Scholarships',
+          lastActive: 'Yesterday, 2:05 PM',
+          joined: '2026-02-02',
+          notes: 'Verifies official sources and deadlines.'
+        },
+        {
+          id: 'u6',
+          name: 'Ngozi Eze',
+          email: 'n.eze@fcekano.edu.ng',
+          role: 'school-manager',
+          roleLabel: 'School Manager',
+          status: 'pending',
+          scope: 'Federal College of Education, Kano',
+          lastActive: '—',
+          joined: '2026-05-24',
+          notes: 'Awaiting confirmation from institution registrar.'
+        },
+        {
+          id: 'u7',
+          name: 'Bola Martins',
+          email: 'bola.m@campusnaija.ng',
+          role: 'editor',
+          roleLabel: 'Content Editor',
+          status: 'suspended',
+          scope: 'Scholarships',
+          lastActive: '3 weeks ago',
+          joined: '2025-11-05',
+          notes: 'Suspended pending review of editing activity.'
+        }
+      ];
+
+      let currentViewRole = 'school-manager';
+      let selectedUserId = null;
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      function initials(name) {
+        return name.split(' ').filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('');
+      }
+
+      function avatarClass(role) {
+        if (role === 'admin') return 'av-admin';
+        if (role === 'school-manager') return 'av-school';
+        if (role === 'editor') return 'av-editor';
+        if (role === 'reviewer') return 'av-reviewer';
+        return 'av-admin';
+      }
+
+      function rolePillClass(role) {
+        if (role === 'admin') return 'role-admin';
+        if (role === 'school-manager') return 'role-school';
+        if (role === 'editor') return 'role-editor';
+        if (role === 'reviewer') return 'role-reviewer';
+        return 'role-admin';
+      }
+
+      function roleIcon(role) {
+        if (role === 'admin') return 'fa-shield-halved';
+        if (role === 'school-manager') return 'fa-school';
+        if (role === 'editor') return 'fa-pen-fancy';
+        if (role === 'reviewer') return 'fa-magnifying-glass';
+        return 'fa-user';
+      }
+
+      function statusPillClass(status) {
+        if (status === 'active') return 'status-active';
+        if (status === 'pending') return 'status-pending';
+        if (status === 'suspended') return 'status-suspended';
+        return 'status-active';
+      }
+
+      function statusLabel(status) {
+        if (status === 'active') return 'Active';
+        if (status === 'pending') return 'Pending';
+        if (status === 'suspended') return 'Suspended';
+        return status;
+      }
+
+      /* ============================================================ */
+      /* RENDER                                                       */
+      /* ============================================================ */
+      function filterUsers() {
+        const query = (document.getElementById('userSearch').value || '').toLowerCase().trim();
+        const role = document.getElementById('roleFilter').value;
+        const status = document.getElementById('statusFilter').value;
+
+        const filtered = users.filter(u => {
+          const matchQ = !query ||
+            u.name.toLowerCase().includes(query) ||
+            u.email.toLowerCase().includes(query) ||
+            u.scope.toLowerCase().includes(query);
+          const matchR = !role || u.role === role;
+          const matchS = !status || u.status === status;
+          return matchQ && matchR && matchS;
+        });
+
+        document.getElementById('userCount').textContent = `Showing ${filtered.length} of ${users.length} records`;
+
+        const list = document.getElementById('userList');
+        if (filtered.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-users"></i>
+              <h3>No accounts match your filters</h3>
+              <p>Try adjusting the search or filter options.</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map(u => `
+          <div class="record-row">
+            <div class="user-avatar ${avatarClass(u.role)}">${initials(u.name)}</div>
+            <div class="record-main">
+              <div class="record-title-row">
+                <span class="user-name">${u.name}</span>
+              </div>
+              <div class="user-email">${u.email}</div>
+            </div>
+            <div class="record-meta-cell">
+              <div class="meta-label-sm">Role</div>
+              <span class="role-pill ${rolePillClass(u.role)}"><i class="fas ${roleIcon(u.role)}"></i> ${u.roleLabel}</span>
+            </div>
+            <div class="record-meta-cell">
+              <div class="meta-label-sm">Scope</div>
+              <div class="meta-value-sm">${u.scope}</div>
+            </div>
+            <div class="record-meta-cell">
+              <div class="meta-label-sm">Last active</div>
+              <div class="meta-value-sm">${u.lastActive}</div>
+            </div>
+            <div class="record-meta-cell">
+              <div class="meta-label-sm">Status</div>
+              <span class="status-pill ${statusPillClass(u.status)}">
+                <i class="fas ${u.status === 'active' ? 'fa-circle-check' : u.status === 'pending' ? 'fa-clock' : 'fa-ban'}"></i>
+                ${statusLabel(u.status)}
+              </span>
+            </div>
+            <div class="record-actions">
+              <button class="icon-action" onclick="openDetail('${u.id}')" title="Manage permissions"><i class="fas fa-shield-halved"></i> Permissions</button>
+              ${u.status === 'pending' ? `
+                <button class="icon-action" onclick="approveUser('${u.id}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);"><i class="fas fa-check"></i> Approve</button>
+              ` : u.status === 'active' ? `
+                <button class="icon-action danger" onclick="suspendUser('${u.id}')" title="Suspend"><i class="fas fa-ban"></i></button>
+              ` : `
+                <button class="icon-action" onclick="reactivateUser('${u.id}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);"><i class="fas fa-rotate-right"></i> Reactivate</button>
+              `}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      /* ============================================================ */
+      /* PENDING APPROVALS                                            */
+      /* ============================================================ */
+      function renderPending() {
+        const pending = users.filter(u => u.status === 'pending');
+        const list = document.getElementById('pendingList');
+        const callout = document.getElementById('pendingCallout');
+        document.getElementById('pendingCount').textContent = pending.length;
+
+        if (pending.length === 0) {
+          callout.style.display = 'none';
+          return;
+        }
+        callout.style.display = 'block';
+
+        list.innerHTML = pending.map(u => `
+          <div class="pending-item">
+            <div class="pending-icon"><i class="fas fa-user-clock"></i></div>
+            <div class="pending-text">
+              <h4>${u.name}</h4>
+              <p>${u.roleLabel} · ${u.scope} · Requested ${u.joined}</p>
+            </div>
+            <div class="pending-actions">
+              <button class="pending-btn view" onclick="openDetail('${u.id}')"><i class="fas fa-eye"></i> Review</button>
+              <button class="pending-btn approve" onclick="approveUser('${u.id}')"><i class="fas fa-check"></i> Approve</button>
+              <button class="pending-btn reject" onclick="rejectUser('${u.id}')"><i class="fas fa-xmark"></i> Reject</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function approveUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Approve ${u.name} as ${u.roleLabel} for ${u.scope}?\n\nThey will receive an email with a secure account setup link.`)) return;
+        u.status = 'active';
+        u.lastActive = 'Never';
+        renderDirectory();
+        toast(`${u.name} approved · invite sent and audit recorded.`);
+      }
+
+      function rejectUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Reject this school manager application from ${u.name}?`)) return;
+        users = users.filter(x => x.id !== id);
+        renderDirectory();
+        toast('Application rejected and removed.');
+      }
+
+      function suspendUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Suspend ${u.name}? They will be signed out and cannot sign in until reactivated.`)) return;
+        u.status = 'suspended';
+        renderDirectory();
+        toast(`${u.name} suspended · logged to audit trail.`);
+      }
+
+      function reactivateUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Reactivate ${u.name}? They will be able to sign in again.`)) return;
+        u.status = 'active';
+        renderDirectory();
+        toast(`${u.name} reactivated · logged to audit trail.`);
+      }
+
+      function renderDirectory() {
+        filterUsers();
+        renderPending();
+      }
+
+      /* ============================================================ */
+      /* DETAIL / PERMISSIONS PANEL                                   */
+      /* ============================================================ */
+      function openDetail(id) {
+        selectedUserId = id;
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+
+        const isSchoolManager = u.role === 'school-manager';
+        const isEditor = u.role === 'editor';
+        const isAdmin = u.role === 'admin';
+
+        const permRow = (label, desc, on) => `
+          <div class="perm-row">
+            <div>
+              <div class="perm-label">${label}</div>
+              <div class="perm-desc">${desc}</div>
+            </div>
+            <div class="perm-toggle ${on ? 'on' : ''}"></div>
+          </div>
+        `;
+
+        let permHtml = '';
+
+        if (isAdmin) {
+          permHtml = `
+            ${permRow('Manage schools', 'Create, edit, verify, archive schools', true)}
+            ${permRow('Manage admissions', 'Create and publish admission notices', true)}
+            ${permRow('Manage exams', 'Create and publish exam records', true)}
+            ${permRow('Manage scholarships', 'Create and publish scholarships', true)}
+            ${permRow('Manage content', 'Create and publish news articles', true)}
+            ${permRow('Manage media', 'Upload and organize media files', true)}
+            ${permRow('Manage users', 'Create, approve and suspend accounts', true)}
+            ${permRow('Manage settings', 'Platform-wide configuration', true)}
+          `;
+        } else if (isSchoolManager) {
+          permHtml = `
+            <div class="scope-box">
+              <i class="fas fa-school"></i>
+              <div class="scope-text">
+                <strong>Assigned institution</strong>
+                <span>${u.scope}</span>
+              </div>
+            </div>
+            <div class="perm-section-title"><i class="fas fa-lock"></i> Restricted permissions</div>
+            ${permRow('Edit school profile', 'Name, description, contact details', true)}
+            ${permRow('Manage courses & fees', 'Within the assigned institution only', true)}
+            ${permRow('Upload campus gallery', 'Logo and campus pictures', true)}
+            ${permRow('Submit admission notices', 'For platform admin review before publishing', true)}
+            ${permRow('Manage academic calendar', 'Publish verified dates', true)}
+            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
+            ${permRow('Edit other schools', 'Strictly forbidden at the backend', false)}
+            ${permRow('Manage platform users', 'Reserved for administrators', false)}
+            ${permRow('Publish sensitive fees', 'Requires admin approval', false)}
+          `;
+        } else if (isEditor) {
+          permHtml = `
+            <div class="scope-box">
+              <i class="fas fa-folder-open"></i>
+              <div class="scope-text">
+                <strong>Content scope</strong>
+                <span>${u.scope}</span>
+              </div>
+            </div>
+            <div class="perm-section-title"><i class="fas fa-check"></i> Content permissions</div>
+            ${permRow('Create articles', 'Draft news and trending stories', true)}
+            ${permRow('Edit own articles', 'Within their content scope', true)}
+            ${permRow('Upload media', 'Select from the central media library', true)}
+            ${permRow('Submit for review', 'Send drafts to a reviewer', true)}
+            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
+            ${permRow('Publish without approval', 'Requires reviewer approval', false)}
+            ${permRow('Manage users', 'Reserved for administrators', false)}
+            ${permRow('Edit school profiles', 'Reserved for school managers', false)}
+          `;
+        } else if (u.role === 'reviewer') {
+          permHtml = `
+            <div class="scope-box">
+              <i class="fas fa-magnifying-glass"></i>
+              <div class="scope-text">
+                <strong>Review scope</strong>
+                <span>${u.scope}</span>
+              </div>
+            </div>
+            <div class="perm-section-title"><i class="fas fa-check"></i> Review permissions</div>
+            ${permRow('Verify official sources', 'Confirm links, dates and requirements', true)}
+            ${permRow('Approve or return content', 'For correction before publication', true)}
+            ${permRow('Review school information', 'Verify school records', true)}
+            ${permRow('Review admissions', 'Verify deadlines and requirements', true)}
+            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
+            ${permRow('Publish directly', 'Must pass through admin publishing', false)}
+            ${permRow('Manage users', 'Reserved for administrators', false)}
+          `;
+        }
+
+        const body = document.getElementById('detailBody');
+        body.innerHTML = `
+          <div class="user-detail-header">
+            <div class="user-avatar ${avatarClass(u.role)}">${initials(u.name)}</div>
+            <div>
+              <div class="user-detail-name">${u.name}</div>
+              <div class="user-detail-email">${u.email}</div>
+            </div>
+          </div>
+
+          <div class="meta-info" style="display:flex; flex-direction:column; gap:8px; padding:14px; background-color:var(--elevated); border-radius:10px; margin-bottom:18px; font-size:0.82rem;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Role</span><span class="role-pill ${rolePillClass(u.role)}" style="font-size:0.68rem;"><i class="fas ${roleIcon(u.role)}"></i> ${u.roleLabel}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Status</span><span class="status-pill ${statusPillClass(u.status)}" style="font-size:0.68rem;"><i class="fas ${u.status === 'active' ? 'fa-circle-check' : u.status === 'pending' ? 'fa-clock' : 'fa-ban'}"></i> ${statusLabel(u.status)}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Joined</span><span style="font-weight:600;">${u.joined}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Last active</span><span style="font-weight:600;">${u.lastActive}</span></div>
+          </div>
+
+          ${permHtml}
+
+          <div class="perm-section-title"><i class="fas fa-note-sticky"></i> Internal notes</div>
+          <p style="font-size:0.82rem; color:var(--muted); line-height:1.5; margin-bottom:12px;">${u.notes || 'No notes.'}</p>
+
+          <div class="perm-section-title"><i class="fas fa-triangle-exclamation" style="color:var(--accent);"></i> Permission enforcement</div>
+          <div style="background-color:rgba(245,185,66,0.06); border:1px solid rgba(245,185,66,0.25); border-radius:10px; padding:12px 14px; font-size:0.75rem; color:var(--muted); line-height:1.5;">
+            All permissions shown here must also be enforced on the backend. Hiding a button is not sufficient — the server must check roles and scopes on every request, especially for school managers (who must only ever access their assigned institution).
+          </div>
+        `;
+
+        document.getElementById('detailActions').innerHTML = `
+          ${u.status === 'pending' ? `
+            <button class="btn-primary" onclick="approveUser('${u.id}')"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn-outline" onclick="rejectUser('${u.id}')"><i class="fas fa-xmark"></i> Reject</button>
+          ` : u.status === 'active' ? `
+            <button class="btn-outline" onclick="suspendUser('${u.id}')"><i class="fas fa-ban"></i> Suspend</button>
+            <button class="btn-outline" onclick="toast('Password reset email sent (demo).')"><i class="fas fa-key"></i> Reset access</button>
+          ` : `
+            <button class="btn-primary" onclick="reactivateUser('${u.id}')"><i class="fas fa-rotate-right"></i> Reactivate</button>
+          `}
+          <button class="btn-outline" onclick="closeDetail()">Close</button>
+        `;
+
+        document.getElementById('userModal').classList.remove('active');
+        document.getElementById('detailPanel').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('active');
+      }
+
+      function closeDetail() {
+        document.getElementById('detailPanel').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+        selectedUserId = null;
+      }
+
+      /* ============================================================ */
+      /* CREATE MODAL                                                 */
+      /* ============================================================ */
+      function openCreateModal() {
+        document.getElementById('modalTitle').textContent = 'Create account';
+        document.getElementById('newUserName').value = '';
+        document.getElementById('newUserEmail').value = '';
+        document.getElementById('newUserNotes').value = '';
+        document.getElementById('newUserSchool').value = '';
+        document.getElementById('newUserContentScope').value = 'news';
+        currentViewRole = 'school-manager';
+        document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+        const defaultCard = document.querySelector('.role-card[data-role="school-manager"]');
+        if (defaultCard) defaultCard.classList.add('selected');
+        updateScopeFields();
+        document.getElementById('userModal').classList.add('active');
+        document.getElementById('newUserName').focus();
+      }
+
+      function closeCreateModal() {
+        document.getElementById('userModal').classList.remove('active');
+      }
+
+      function selectRole(role, el) {
+        currentViewRole = role;
+        document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        updateScopeFields();
+      }
+
+      function updateScopeFields() {
+        const schoolGroup = document.getElementById('schoolScopeGroup');
+        const contentGroup = document.getElementById('contentScopeGroup');
+        if (currentViewRole === 'school-manager') {
+          schoolGroup.style.display = 'flex';
+          contentGroup.style.display = 'none';
+        } else if (currentViewRole === 'editor' || currentViewRole === 'reviewer') {
+          schoolGroup.style.display = 'none';
+          contentGroup.style.display = 'flex';
+        } else {
+          schoolGroup.style.display = 'none';
+          contentGroup.style.display = 'none';
+        }
+      }
+
+      function createUser() {
+        const name = document.getElementById('newUserName').value.trim();
+        const email = document.getElementById('newUserEmail').value.trim();
+        const role = currentViewRole;
+        const notes = document.getElementById('newUserNotes').value.trim();
+
+        if (!name) { toast('Please enter the full name.'); return; }
+        if (!email) { toast('Please enter an email address.'); return; }
+        try { new RegExp('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$').test(email); } catch (e) {}
+
+        let scope = '';
+        if (role === 'school-manager') {
+          const schoolSel = document.getElementById('newUserSchool');
+          if (!schoolSel.value) { toast('Please select the assigned school.'); return; }
+          scope = schoolSel.options[schoolSel.selectedIndex].text;
+        } else if (role === 'editor' || role === 'reviewer') {
+          const scopeSel = document.getElementById('newUserContentScope');
+          scope = scopeSel.options[scopeSel.selectedIndex].text;
+        } else {
+          scope = 'Full platform access';
+        }
+
+        const roleLabel = {
+          'admin': 'Administrator',
+          'school-manager': 'School Manager',
+          'editor': 'Content Editor',
+          'reviewer': 'Reviewer'
+        }[role];
+
+        // School managers require approval; other roles are created directly by admin
+        const status = role === 'school-manager' ? 'pending' : 'active';
+
+        const newUser = {
+          id: 'u' + Date.now(),
+          name: name,
+          email: email,
+          role: role,
+          roleLabel: roleLabel,
+          status: status,
+          scope: scope,
+          lastActive: status === 'active' ? 'Never' : '—',
+          joined: new Date().toISOString().split('T')[0],
+          notes: notes
+        };
+
+        users.unshift(newUser);
+        closeCreateModal();
+        renderDirectory();
+
+        if (status === 'pending') {
+          toast(`${name} invited · school manager application awaits your approval.`);
+        } else {
+          toast(`${name} invited · account created and invite email sent.`);
+        }
+      }
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+
+      overlay.addEventListener('click', () => {
+        closeSidebar();
+        closeDetail();
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeSidebar();
+          closeCreateModal();
+          closeDetail();
+        }
+      });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* Close modal on overlay click */
+      document.getElementById('userModal').addEventListener('click', e => {
+        if (e.target === document.getElementById('userModal')) closeCreateModal();
+      });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        renderDirectory();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

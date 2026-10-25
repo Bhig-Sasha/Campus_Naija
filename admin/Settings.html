@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
+    .admin-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .admin-user:hover { background-color: var(--elevated); }
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .admin-user-info { flex: 1; min-width: 0; }
+    .admin-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; display: flex; align-items: center; }
+    .topbar-search i {
+      position: absolute; left: 14px; color: var(--muted);
+      font-size: 0.85rem; pointer-events: none;
+    }
+    .topbar-search input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-size: 0.85rem; color: var(--text); outline: none;
+    }
+    .topbar-search input::placeholder { color: #6b7c74; }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+
+    /* ============================================================ */
+    /* PAGE HEADING                                                 */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+
+    .owner-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background-color: rgba(245,185,66,0.1); color: var(--accent);
+      font-size: 0.68rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 40px; margin-left: 12px;
+      border: 1px solid rgba(245,185,66,0.3);
+      vertical-align: middle;
+    }
+
+    /* ============================================================ */
+    /* SETTINGS LAYOUT                                              */
+    /* ============================================================ */
+    .settings-layout {
+      display: grid; grid-template-columns: 1fr; gap: 24px;
+    }
+    @media (min-width: 900px) { .settings-layout { grid-template-columns: 220px 1fr; } }
+
+    /* Settings nav */
+    .settings-nav {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 10px;
+      height: fit-content;
+      position: sticky; top: 92px;
+    }
+    @media (max-width: 899px) { .settings-nav { position: static; } }
+    .settings-nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600; color: var(--muted);
+      cursor: pointer; transition: all 0.15s;
+      border: none; background: transparent;
+      width: 100%; text-align: left;
+    }
+    .settings-nav-item i { width: 18px; text-align: center; font-size: 0.9rem; }
+    .settings-nav-item:hover { background-color: var(--surface); color: var(--text); }
+    .settings-nav-item.active {
+      background-color: rgba(0, 201, 130, 0.1); color: var(--primary);
+    }
+
+    /* Settings panels */
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+
+    .panel {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .panel-title i { color: var(--primary); font-size: 0.95rem; }
+    .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-size: 0.78rem; font-weight: 600; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .form-group label .req { color: var(--danger); font-size: 0.75rem; }
+    .form-group label .optional { color: var(--muted); font-size: 0.7rem; font-weight: 500; font-style: italic; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-input); padding: 10px 14px;
+      font-size: 0.88rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #6b7c74; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--primary); }
+    .form-group textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+
+    /* Toggle rows */
+    .toggle-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-text { flex: 1; }
+    .toggle-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
+    .toggle-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .toggle-switch {
+      width: 44px; height: 24px; border-radius: 40px;
+      background-color: var(--border); position: relative;
+      cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+      border: none;
+    }
+    .toggle-switch.on { background-color: var(--primary); }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--text); transition: transform 0.2s;
+    }
+    .toggle-switch.on::after { transform: translateX(20px); background-color: #070A09; }
+    .toggle-switch.accent.on { background-color: var(--accent); }
+
+    /* Form actions */
+    .form-actions {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-gold {
+      background-color: transparent; color: var(--accent); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+
+    /* Notice */
+    .notice {
+      display: flex; gap: 12px; padding: 14px 16px;
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.25);
+      border-radius: var(--radius-input); margin-bottom: 20px;
+    }
+    .notice i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+    .notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
+    .notice strong { color: var(--accent); }
+
+    .notice.info {
+      background-color: rgba(0,201,130,0.06);
+      border-color: rgba(0,201,130,0.25);
+    }
+    .notice.info i { color: var(--primary); }
+    .notice.info strong { color: var(--primary); }
+
+    /* Backend status */
+    .backend-status {
+      display: grid; grid-template-columns: 1fr; gap: 10px;
+    }
+    @media (min-width: 700px) { .backend-status { grid-template-columns: repeat(2, 1fr); } }
+    .status-box {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .status-box .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background-color: var(--primary); flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.2);
+    }
+    .status-box .status-dot.gold {
+      background-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245,185,66,0.2);
+    }
+    .status-box .status-dot.red {
+      background-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(224,112,112,0.2);
+    }
+    .status-box .status-text { flex: 1; }
+    .status-box .status-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 2px;
+    }
+    .status-box .status-value { font-size: 0.85rem; font-weight: 600; }
+
+    /* Danger panel */
+    .danger-panel { border-color: rgba(224, 112, 112, 0.3); }
+    .danger-panel .panel-title { color: var(--danger); }
+    .danger-panel .panel-title i { color: var(--danger); }
+
+    /* Footer note */
+    .footnote {
+      font-size: 0.75rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+    }
+    @media (max-width: 600px) {
+      .topbar-search { display: none; }
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .owner-badge { display: inline-flex; margin-left: 0; margin-top: 6px; }
+      .settings-nav { display: flex; overflow-x: auto; gap: 6px; padding: 8px; }
+      .settings-nav-item { white-space: nowrap; padding: 9px 14px; }
+      .form-actions { flex-direction: column; }
+      .form-actions .btn-primary,
+      .form-actions .btn-outline,
+      .form-actions .btn-gold,
+      .form-actions .btn-danger { width: 100%; justify-content: center; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item active"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Admin User</div>
+            <div class="admin-user-role">Platform Owner</div>
+          </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out"
+            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search admin records..." aria-label="Search">
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="admin-avatar">AD</div>
+            <div>
+              <div class="topbar-admin-name">Admin User</div>
+              <div class="topbar-admin-role">Platform Owner</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-gear"></i> Platform owner console</div>
+          <h1>Settings <span class="owner-badge"><i class="fas fa-crown"></i> Owner access</span></h1>
+          <p>Configure your platform. Changes should be saved securely to the backend before they take effect.</p>
+        </div>
+
+        <!-- Settings layout -->
+        <div class="settings-layout">
+
+          <!-- Settings nav -->
+          <nav class="settings-nav" aria-label="Settings sections">
+            <button class="settings-nav-item active" data-section="general" onclick="switchSection('general', this)">
+              <i class="fas fa-sliders"></i> General
+            </button>
+            <button class="settings-nav-item" data-section="content" onclick="switchSection('content', this)">
+              <i class="fas fa-file-lines"></i> Content
+            </button>
+            <button class="settings-nav-item" data-section="security" onclick="switchSection('security', this)">
+              <i class="fas fa-shield-halved"></i> Security
+            </button>
+            <button class="settings-nav-item" data-section="notifications" onclick="switchSection('notifications', this)">
+              <i class="fas fa-bell"></i> Notifications
+            </button>
+            <button class="settings-nav-item" data-section="system" onclick="switchSection('system', this)">
+              <i class="fas fa-server"></i> System
+            </button>
+          </nav>
+
+          <!-- Settings panels -->
+          <div>
+
+            <!-- ===== GENERAL ===== -->
+            <div class="settings-panel active" id="panel-general">
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-sliders"></i> General preferences</div>
+                </div>
+                <p class="panel-desc">Control how CampusNaija identifies itself across public pages. Branding changes should update shared site components through the backend, not require editing each page individually.</p>
+                <div class="form-grid">
+                  <div class="form-group full">
+                    <label>Platform name <span class="req">*</span></label>
+                    <input type="text" id="generalName" value="CampusNaija" placeholder="e.g. CampusNaija">
+                  </div>
+                  <div class="form-group full">
+                    <label>Platform tagline</label>
+                    <input type="text" id="generalTagline" value="Your education. Your next move." placeholder="A short tagline">
+                  </div>
+                  <div class="form-group full">
+                    <label>Administrator contact email <span class="req">*</span></label>
+                    <input type="email" id="generalEmail" value="admin@campusnaija.ng" placeholder="admin@campusnaija.ng">
+                    <span class="form-hint">Used for platform notifications and account recovery.</span>
+                  </div>
+                  <div class="form-group">
+                    <label>Default timezone</label>
+                    <select id="generalTimezone">
+                      <option value="Africa/Lagos" selected>Africa/Lagos (WAT)</option>
+                      <option value="UTC">UTC</option>
+                      <option value="Africa/London">Europe/London</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Default language</label>
+                    <select id="generalLanguage">
+                      <option value="en" selected>English</option>
+                      <option value="fr">French</option>
+                    </select>
+                  </div>
+                  <div class="form-group full">
+                    <label>Platform description</label>
+                    <textarea id="generalDesc" placeholder="A short description used in metadata and footer...">Nigeria's education discovery platform for schools, admissions, exams, scholarships and news.</textarea>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('General preferences')"><i class="fas fa-save"></i> Save changes</button>
+                  <button class="btn-outline" onclick="toast('Draft saved locally (demo).')"><i class="fas fa-file"></i> Save as draft</button>
+                </div>
+              </div>
+
+              <!-- Backend status -->
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-server"></i> Backend connection</div>
+                </div>
+                <p class="panel-desc">Settings are stored on the backend. The preview does not persist changes to a live database.</p>
+                <div class="backend-status">
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">API</div>
+                      <div class="status-value">Connected</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">Database</div>
+                      <div class="status-value">Operational</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot gold"></div>
+                    <div class="status-text">
+                      <div class="status-label">Media storage</div>
+                      <div class="status-value">Healthy</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">Last backup</div>
+                      <div class="status-value">Today, 03:00 AM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== CONTENT ===== -->
+            <div class="settings-panel" id="panel-content">
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-file-lines"></i> Content &amp; publishing</div>
+                </div>
+                <p class="panel-desc">Review requirements, publishing rules and moderation defaults.</p>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Require review before publishing</div>
+                    <div class="toggle-desc">Drafts must be reviewed by a reviewer or administrator before they go public.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle require review" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Require verification for fees and deadlines</div>
+                    <div class="toggle-desc">Fees and admission deadlines cannot be published without a verified source URL.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle fee verification" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Allow school managers to submit changes</div>
+                    <div class="toggle-desc">Approved school representatives can submit profile changes for admin review.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle school manager submissions" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Auto-archive expired opportunities</div>
+                    <div class="toggle-desc">Scholarships and admission notices are automatically archived after their deadline passes.</div>
+                  </div>
+                  <button class="toggle-switch" aria-label="Toggle auto-archive" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Enable editorial featured stories</div>
+                    <div class="toggle-desc">Allow administrators to feature trending stories on the homepage.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle featured stories" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('Content settings')"><i class="fas fa-save"></i> Save changes</button>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-gavel"></i> Moderation defaults</div>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Default new content status</label>
+                    <select id="contentDefaultStatus">
+                      <option value="draft" selected>Draft</option>
+                      <option value="pending">Pending review</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Auto-expire content after</label>
+                    <select id="contentExpiry">
+                      <option value="30">30 days after deadline</option>
+                      <option value="7">7 days after deadline</option>
+                      <option value="never">Never auto-expire</option>
+                    </select>
+                  </div>
+                  <div class="form-group full">
+                    <label>Editorial guidelines note</label>
+                    <textarea id="contentGuidelines" placeholder="A short note reminding editors of guidelines...">Verify all sources before publishing. Never publish fees or deadlines without an official source URL.</textarea>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('Moderation defaults')"><i class="fas fa-save"></i> Save changes</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SECURITY ===== -->
+            <div class="settings-panel" id="panel-security">
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-shield-halved"></i> Security &amp; access</div>
+                </div>
+                <p class="panel-desc">Two-factor authentication policies, session controls and access safeguards.</p>
+
+                <div class="notice">
+                  <i class="fas fa-triangle-exclamation"></i>
+                  <p><strong>Security changes require backend enforcement.</strong> Interface toggles must be mirrored by server-side rules. Never rely on the frontend alone.</p>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Require two-factor authentication for all administrators</div>
+                    <div class="toggle-desc">Admins must enable 2FA to sign in. Enforced server-side.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle 2FA for admins" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Require 2FA for school managers and editors</div>
+                    <div class="toggle-desc">Applies to all non-visitor accounts.</div>
+                  </div>
+                  <button class="toggle-switch" aria-label="Toggle 2FA for staff" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Single active session per account</div>
+                    <div class="toggle-desc">Signing in on a new device ends previous sessions.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle single session" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Lock account after 5 failed login attempts</div>
+                    <div class="toggle-desc">Temporary lockout helps prevent brute-force attacks.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle lockout" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                  <div class="form-group">
+                    <label>Session timeout (minutes)</label>
+                    <input type="number" id="securitySession" value="30" min="5" max="480">
+                  </div>
+                  <div class="form-group">
+                    <label>Password minimum length</label>
+                    <input type="number" id="securityPwdLen" value="12" min="8" max="64">
+                  </div>
+                  <div class="form-group">
+                    <label>Account lockout duration (minutes)</label>
+                    <input type="number" id="securityLockout" value="15" min="1" max="1440">
+                  </div>
+                  <div class="form-group">
+                    <label>Require password change every (days)</label>
+                    <input type="number" id="securityPwdAge" value="90" min="30" max="365">
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('Security settings')"><i class="fas fa-save"></i> Save changes</button>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-key"></i> Access safeguards</div>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Restrict audit log to platform owner</div>
+                    <div class="toggle-desc">Only the platform owner can view and export audit records.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle audit restriction" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Log all export actions</div>
+                    <div class="toggle-desc">Every audit or data export is written to the audit log.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle export logging" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Enforce school-manager scope on backend</div>
+                    <div class="toggle-desc">School managers can only ever access their assigned institution.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle scope enforcement" onclick="toggleSwitch(this)"></button>
+                </div>
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('Access safeguards')"><i class="fas fa-save"></i> Save changes</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== NOTIFICATIONS ===== -->
+            <div class="settings-panel" id="panel-notifications">
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-bell"></i> Notification preferences</div>
+                </div>
+                <p class="panel-desc">Choose which events trigger alerts and where alerts are sent.</p>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">New school manager applications</div>
+                    <div class="toggle-desc">Get alerted when a school representative requests access.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle school manager alerts" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Content submitted for review</div>
+                    <div class="toggle-desc">Alert reviewers when drafts are ready for approval.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle review alerts" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Deadlines approaching</div>
+                    <div class="toggle-desc">Notify admins about scholarship and admission deadlines closing within 7 days.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle deadline alerts" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Security events</div>
+                    <div class="toggle-desc">Alert the platform owner about failed logins, role changes and suspensions.</div>
+                  </div>
+                  <button class="toggle-switch on accent" aria-label="Toggle security alerts" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Publishing failures</div>
+                    <div class="toggle-desc">Notify when content fails to publish or schedule.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle publishing alerts" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Weekly summary email</div>
+                    <div class="toggle-desc">A weekly digest of platform activity delivered to the admin email.</div>
+                  </div>
+                  <button class="toggle-switch" aria-label="Toggle weekly summary" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                  <div class="form-group full">
+                    <label>Notification email</label>
+                    <input type="email" id="notifEmail" value="admin@campusnaija.ng">
+                  </div>
+                  <div class="form-group full">
+                    <label>Additional recipients <span class="optional">(comma-separated)</span></label>
+                    <input type="text" id="notifRecipients" placeholder="reviewer@campusnaija.ng, editor@campusnaija.ng">
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('Notification preferences')"><i class="fas fa-save"></i> Save changes</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== SYSTEM ===== -->
+            <div class="settings-panel" id="panel-system">
+              <div class="panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-server"></i> System &amp; operations</div>
+                </div>
+                <p class="panel-desc">Backup information, maintenance controls and operational configuration.</p>
+
+                <div class="backend-status" style="margin-bottom: 20px;">
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">Last backup</div>
+                      <div class="status-value">Today, 03:00 AM</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot gold"></div>
+                    <div class="status-text">
+                      <div class="status-label">Next backup</div>
+                      <div class="status-value">Tomorrow, 03:00 AM</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">Backup retention</div>
+                      <div class="status-value">30 days</div>
+                    </div>
+                  </div>
+                  <div class="status-box">
+                    <div class="status-dot"></div>
+                    <div class="status-text">
+                      <div class="status-label">System status</div>
+                      <div class="status-value">Operational</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Maintenance mode</div>
+                    <div class="toggle-desc">Show a maintenance page to public visitors. Admin access remains available.</div>
+                  </div>
+                  <button class="toggle-switch" aria-label="Toggle maintenance mode" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Auto-delete unused media after 90 days</div>
+                    <div class="toggle-desc">Media files not referenced by any content are cleaned up to save storage.</div>
+                  </div>
+                  <button class="toggle-switch" aria-label="Toggle auto-delete media" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <div class="toggle-title">Enable error monitoring</div>
+                    <div class="toggle-desc">Send system errors to the platform owner for investigation.</div>
+                  </div>
+                  <button class="toggle-switch on" aria-label="Toggle error monitoring" onclick="toggleSwitch(this)"></button>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn-primary" onclick="saveSection('System settings')"><i class="fas fa-save"></i> Save changes</button>
+                  <button class="btn-outline" onclick="toast('Manual backup triggered (demo).')"><i class="fas fa-database"></i> Trigger backup</button>
+                </div>
+              </div>
+
+              <!-- Danger zone -->
+              <div class="panel danger-panel">
+                <div class="panel-header">
+                  <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
+                </div>
+                <p class="panel-desc">Destructive actions require confirmation and are recorded in the audit trail.</p>
+                <div class="form-actions" style="border-top: none; padding-top: 0;">
+                  <button class="btn-danger" onclick="if(confirm('Clear all caches? This will briefly slow the site while caches rebuild.')) toast('Cache cleared (demo).')"><i class="fas fa-broom"></i> Clear caches</button>
+                  <button class="btn-danger" onclick="if(confirm('This will permanently delete all audit logs older than 30 days. Are you sure?')) toast('Old logs scheduled for deletion (demo).')"><i class="fas fa-trash"></i> Purge old logs</button>
+                </div>
+              </div>
+            </div>
+
+            <p class="footnote">
+              <i class="fas fa-circle-info"></i> Interactive preview only. No settings have been saved or changed on your live site.
+            </p>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Saved</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      function toggleSwitch(el) {
+        el.classList.toggle('on');
+      }
+
+      function saveSection(name) {
+        toast(name + ' saved securely · logged to audit trail.');
+      }
+
+      /* ============================================================ */
+      /* SECTION SWITCHING                                            */
+      /* ============================================================ */
+      function switchSection(section, el) {
+        document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+        if (el) el.classList.add('active');
+        document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+        const panel = document.getElementById('panel-' + section);
+        if (panel) panel.classList.add('active');
+        // Scroll to top of settings area on mobile
+        if (window.innerWidth < 900) {
+          document.querySelector('.page-heading').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

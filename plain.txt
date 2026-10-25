@@ -1,0 +1,54 @@
+CampusNaija/
+├── index.html
+├── Home.html
+├── Schools.html
+├── Admissions.html
+├── Exams.html
+├── Scholarships.html
+├── Trending.html
+├── Search.html
+├── About.html
+├── Contact.html
+│
+├── admin/
+│   ├── login.html
+│   ├── index.html
+│   ├── Schools.html
+│   ├── Admissions.html
+│   ├── Exams.html
+│   ├── Scholarships.html
+│   ├── Trending.html
+│   ├── Courses.html
+│   ├── Media.html
+│   ├── Users.html
+│   ├── Audit.html
+│   └── Settings.html
+│
+├── assets/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+└── backend/
+    ├── routes/
+    ├── controllers/
+    ├── services/
+    └── database/
+
+    SchoolAd/
+├── login.html
+├── index.html
+├── profile.html
+├── courses.html
+├── fees.html
+├── admissions.html
+├── calendar.html
+├── media.html
+└── submissions.html
+
+
+Email	Password
+owner@campusnaija.ng	OwnerDemo123!
+funmi@unilag.edu.ng	SchoolDemo123!
+editor@campusnaija.ng	EditorDemo123!
+reviewer@campusnaija.ng	ReviewerDemo123!

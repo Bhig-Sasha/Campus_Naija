@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — My Submissions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-institution {
+      margin: 14px 14px 0;
+      padding: 14px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .sidebar-institution .inst-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .sidebar-institution .inst-name {
+      font-size: 0.85rem; font-weight: 700; line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .sidebar-institution .inst-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 40px;
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
+    .sidebar-institution .inst-status.verified {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+    }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+
+    .sidebar-signout {
+      margin-top: auto;
+      padding: 12px 14px 4px;
+      border-top: 1px solid var(--border);
+    }
+    .signout-nav-btn {
+      width: 100%;
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+      text-align: left; transition: background 0.15s, color 0.15s;
+    }
+    .signout-nav-btn i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .signout-nav-btn:hover { background-color: rgba(224,112,112,0.1); color: var(--danger); }
+
+    .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
+    .rep-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+    }
+    .rep-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #F5B942, #b88720);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .rep-user-info { flex: 1; min-width: 0; }
+    .rep-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rep-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+
+    .topbar-title { display: flex; flex-direction: column; gap: 2px; }
+    .topbar-title .t-eyebrow {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--primary);
+    }
+    .topbar-title .t-name { font-size: 0.92rem; font-weight: 700; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .icon-btn.signout-icon:hover {
+      color: var(--danger);
+      border-color: rgba(224, 112, 112, 0.4);
+      background-color: rgba(224, 112, 112, 0.08);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-rep {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-rep:hover { background-color: var(--elevated); }
+    .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+
+    /* ============================================================ */
+    /* PAGE HEADING                                                 */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--accent); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+
+    /* ============================================================ */
+    /* SCOPE BANNER                                                 */
+    /* ============================================================ */
+    .scope-banner {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      background-color: rgba(0,201,130,0.05);
+      border: 1px solid rgba(0,201,130,0.25);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner .scope-text { flex: 1; min-width: 200px; }
+    .scope-banner .scope-text strong {
+      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
+    }
+    .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
+    .scope-banner .scope-pill {
+      font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 40px;
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+      white-space: nowrap;
+    }
+
+    /* ============================================================ */
+    /* STATS                                                        */
+    /* ============================================================ */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      transition: border-color 0.15s;
+    }
+    .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-label i.red { color: var(--danger); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+    /* ============================================================ */
+    /* TOOLBAR                                                      */
+    /* ============================================================ */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .filter-row select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 0.83rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+      min-width: 170px;
+    }
+    .filter-row select:focus { border-color: var(--primary); }
+
+    /* ============================================================ */
+    /* TABS                                                         */
+    /* ============================================================ */
+    .sub-tabs {
+      display: flex; gap: 4px; overflow-x: auto;
+      border-bottom: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .sub-tab {
+      padding: 11px 18px; font-size: 0.85rem; font-weight: 600;
+      color: var(--muted); cursor: pointer; white-space: nowrap;
+      border: none; background: transparent;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .sub-tab:hover { color: var(--text); }
+    .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .sub-tab i { font-size: 0.85rem; }
+
+    /* ============================================================ */
+    /* PANEL / EMPTY STATE                                          */
+    /* ============================================================ */
+    .panel {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .panel-title i { color: var(--primary); font-size: 0.95rem; }
+    .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+    .empty-state {
+      text-align: center; padding: 48px 24px; color: var(--muted);
+    }
+    .empty-state .es-icon {
+      width: 64px; height: 64px; border-radius: 16px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
+    }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
+    .empty-state p {
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
+      max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;
+    }
+    .empty-state .data-note {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.72rem; color: var(--muted);
+      padding: 6px 14px; border-radius: 40px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      margin-top: 16px; font-style: italic;
+    }
+    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+
+    /* ============================================================ */
+    /* SUBMISSION LIFECYCLE                                         */
+    /* ============================================================ */
+    .lifecycle-grid {
+      display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    @media (min-width: 700px) { .lifecycle-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1100px) { .lifecycle-grid { grid-template-columns: repeat(5, 1fr); } }
+    .lifecycle-step {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px;
+      position: relative;
+    }
+    .lifecycle-step .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 9px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      font-weight: 800; font-size: 0.85rem; margin-bottom: 10px;
+    }
+    .lifecycle-step:nth-child(2) .step-num { background-color: rgba(0,201,130,0.12); }
+    .lifecycle-step:nth-child(3) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .lifecycle-step:nth-child(4) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .lifecycle-step:nth-child(5) .step-num { background-color: rgba(0,201,130,0.15); }
+    .lifecycle-step h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .lifecycle-step p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; margin: 0; }
+
+    /* ============================================================ */
+    /* FEEDBACK PANEL                                               */
+    /* ============================================================ */
+    .feedback-panel {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px; padding: 18px 22px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .feedback-panel i {
+      color: var(--accent); font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;
+    }
+    .feedback-panel .fb-text { flex: 1; }
+    .feedback-panel h4 { font-size: 0.9rem; margin-bottom: 4px; }
+    .feedback-panel p {
+      font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
+    }
+
+    /* ============================================================ */
+    /* WORKSPACE COMPLETE PANEL                                     */
+    /* ============================================================ */
+    .workspace-panel {
+      background: linear-gradient(135deg, rgba(0,201,130,0.06) 0%, rgba(17,24,21,1) 70%);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .workspace-panel .wp-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .workspace-panel .wp-badge i { font-size: 0.8rem; }
+    .workspace-panel h3 {
+      font-size: 1.2rem; margin-bottom: 8px;
+    }
+    .workspace-panel p {
+      font-size: 0.88rem; color: var(--muted); line-height: 1.55;
+      margin-bottom: 20px; max-width: 720px;
+    }
+    .file-tree {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 18px;
+      overflow-x: auto;
+    }
+    .file-tree .tree-folder {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .file-tree .tree-file {
+      color: var(--text);
+    }
+    .file-tree .tree-file.complete {
+      color: var(--primary);
+    }
+    .file-tree .tree-branch { color: var(--border); }
+
+    .completion-note {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px;
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.25);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .completion-note i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+    .completion-note p {
+      font-size: 0.8rem; color: var(--muted); margin: 0; line-height: 1.5;
+    }
+    .completion-note strong { color: var(--accent); }
+
+    .next-step {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px;
+      background-color: rgba(0,201,130,0.06);
+      border: 1px solid rgba(0,201,130,0.25);
+      border-radius: 10px;
+    }
+    .next-step i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+    .next-step p {
+      font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5;
+    }
+    .next-step strong { color: var(--primary); }
+
+    /* Footer note */
+    .footnote {
+      font-size: 0.72rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+    .footnote i { color: var(--accent); margin-right: 6px; }
+
+    /* ============================================================ */
+    /* TOAST                                                        */
+    /* ============================================================ */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+      .topbar-title { display: none; }
+    }
+    @media (max-width: 600px) {
+      .topbar-rep-name, .topbar-rep-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .panel { padding: 18px; }
+      .filter-row { width: 100%; }
+      .filter-row select { flex: 1; }
+      .empty-state { padding: 32px 16px; }
+      .sub-tab { padding: 9px 12px; font-size: 0.8rem; }
+      .lifecycle-step { padding: 14px; }
+      .file-tree { font-size: 0.72rem; padding: 12px 14px; }
+      .workspace-panel { padding: 18px; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-school"></i> School Administration</div>
+      </div>
+
+      <div class="sidebar-institution">
+        <div class="inst-label">Assigned institution</div>
+        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <span class="inst-status" id="sidebarInstStatus">
+          <i class="fas fa-clock"></i> Pending verification
+        </span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="submissions.html" class="nav-item active">
+          <i class="fas fa-paper-plane"></i> Submissions
+          <span class="nav-badge">—</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-signout">
+        <button class="signout-nav-btn" onclick="signOut()">
+          <i class="fas fa-arrow-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="rep-user">
+          <div class="rep-avatar">FA</div>
+          <div class="rep-user-info">
+            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
+            <div class="rep-user-role">School Representative</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="topbar-title">
+          <span class="t-eyebrow">Content review workflow</span>
+          <span class="t-name">My Submissions</span>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-rep">
+            <div class="rep-avatar">FA</div>
+            <div>
+              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-role">School Representative</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+          <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-paper-plane"></i> Content review workflow</div>
+          <h1>My Submissions</h1>
+          <p>Follow each change from draft to review, approval and publication.</p>
+        </div>
+
+        <!-- Scoped access banner -->
+        <div class="scope-banner">
+          <i class="fas fa-lock"></i>
+          <div class="scope-text">
+            <strong>School-scoped access</strong>
+            <span>Representatives see only submissions belonging to their assigned institution.</span>
+          </div>
+          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-label">Submitted <i class="fas fa-paper-plane"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Total submissions</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">In review queue</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Approved <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Ready to publish</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Needs changes <i class="fas fa-rotate-left red"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Returned for revision</div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="filter-row">
+            <select id="statusFilter" onchange="filterSubmissions()">
+              <option value="all">All statuses</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="review">Under review</option>
+              <option value="approved">Approved</option>
+              <option value="changes">Needs changes</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="sub-tabs">
+          <button class="sub-tab active" data-cat="all" onclick="switchTab('all', this)">
+            <i class="fas fa-list"></i> All submissions
+          </button>
+          <button class="sub-tab" data-cat="attention" onclick="switchTab('attention', this)">
+            <i class="fas fa-triangle-exclamation"></i> Needs attention
+          </button>
+          <button class="sub-tab" data-cat="published" onclick="switchTab('published', this)">
+            <i class="fas fa-circle-check"></i> Published
+          </button>
+        </div>
+
+        <!-- Submission history panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Submission history</div>
+          </div>
+          <p class="panel-desc">Your real submission records, reviewer comments and status history will appear here after backend integration.</p>
+
+          <div class="empty-state">
+            <div class="es-icon"><i class="fas fa-inbox"></i></div>
+            <h3>No submissions loaded</h3>
+            <p>Your real submission records, reviewer comments and status history will appear here after backend integration.</p>
+            <div class="data-note">
+              <i class="fas fa-circle-info"></i> No sample submissions or counts are being presented as real school data.
+            </div>
+          </div>
+        </div>
+
+        <!-- Submission lifecycle -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-diagram-project"></i> Submission lifecycle</div>
+          </div>
+          <p class="panel-desc">Every submission follows this workflow. You can prepare changes in drafts, submit them for review, and revise returned content before it is published.</p>
+          <div class="lifecycle-grid">
+            <div class="lifecycle-step">
+              <div class="step-num">01</div>
+              <h4>Draft</h4>
+              <p>Prepare changes and check the details before submitting.</p>
+            </div>
+            <div class="lifecycle-step">
+              <div class="step-num">02</div>
+              <h4>Submitted</h4>
+              <p>The system records the submission and sends it to the review queue.</p>
+            </div>
+            <div class="lifecycle-step">
+              <div class="step-num">03</div>
+              <h4>Under review</h4>
+              <p>The platform owner checks accuracy, completeness and supporting evidence.</p>
+            </div>
+            <div class="lifecycle-step">
+              <div class="step-num">04</div>
+              <h4>Approved or changes requested</h4>
+              <p>Reviewers approve the content or return it with feedback.</p>
+            </div>
+            <div class="lifecycle-step">
+              <div class="step-num">05</div>
+              <h4>Published</h4>
+              <p>Approved content becomes visible on the public school profile when published.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviewer feedback panel -->
+        <div class="feedback-panel">
+          <i class="fas fa-comment-dots"></i>
+          <div class="fb-text">
+            <h4>Reviewer feedback</h4>
+            <p>Each reviewed submission should show the reviewer's comments, decision date, and the next action required. Representatives should be able to revise and resubmit returned content.</p>
+          </div>
+        </div>
+
+        <!-- Workspace complete panel -->
+        <div class="workspace-panel">
+          <div class="wp-badge"><i class="fas fa-circle-check"></i> School Representative workspace — complete</div>
+          <h3>All nine pages of the SchoolAd workspace are now designed.</h3>
+          <p>Each page shares the same layout, dark theme, scoped-access banner, and approval workflow. The next step is to connect them to your backend with real authentication, database persistence, file storage, and the review pipeline.</p>
+
+          <div class="file-tree">
+<span class="tree-folder">SchoolAd/</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">login.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">index.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">profile.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">courses.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">fees.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">admissions.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">calendar.html</span>
+<span class="tree-branch">├── </span><span class="tree-file complete">media.html</span>
+<span class="tree-branch">└── </span><span class="tree-file complete">submissions.html</span>
+          </div>
+
+          <div class="completion-note">
+            <i class="fas fa-triangle-exclamation"></i>
+            <p><strong>UI previews only.</strong> Login authentication, database persistence, file uploads, and approval workflows still need to be implemented.</p>
+          </div>
+
+          <div class="next-step">
+            <i class="fas fa-arrow-right"></i>
+            <p><strong>Next step:</strong> build the actual <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">SchoolAd</code> pages in vanilla HTML, CSS and JavaScript, using shared styling and connecting them to your CampusNaija backend.</p>
+          </div>
+        </div>
+
+        <p class="footnote">
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+        </p>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO: institution loaded from account                        */
+      /* ============================================================ */
+      const demoAccount = {
+        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
+        school: {
+          name: 'University of Lagos',
+          initials: 'UL',
+          type: 'University',
+          state: 'Lagos State',
+          verified: false
+        }
+      };
+
+      function applyAccount() {
+        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
+        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
+        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
+
+        const statusEl = document.getElementById('sidebarInstStatus');
+        if (demoAccount.school.verified) {
+          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          statusEl.classList.add('verified');
+        }
+      }
+
+      /* ============================================================ */
+      /* TABS                                                         */
+      /* ============================================================ */
+      window.switchTab = function(cat, el) {
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        if (cat !== 'all') {
+          toast('Filtering submissions: ' + cat);
+        }
+      };
+
+      /* ============================================================ */
+      /* FILTERING                                                    */
+      /* ============================================================ */
+      window.filterSubmissions = function() {
+        const status = document.getElementById('statusFilter').value;
+        if (status !== 'all') {
+          toast('Filtering submissions by status: ' + status);
+        }
+      };
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      window.toast = function(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      };
+
+      window.signOut = function() {
+        if (!confirm('Sign out of the school portal?')) return;
+        window.location.href = 'login.html';
+      };
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        applyAccount();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

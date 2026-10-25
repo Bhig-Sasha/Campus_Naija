@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Scholarships Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
+
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
+    .admin-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .admin-user:hover { background-color: var(--elevated); }
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .admin-user-info { flex: 1; min-width: 0; }
+    .admin-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; display: flex; align-items: center; }
+    .topbar-search i {
+      position: absolute; left: 14px; color: var(--muted);
+      font-size: 0.85rem; pointer-events: none;
+    }
+    .topbar-search input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-size: 0.85rem; color: var(--text); outline: none;
+    }
+    .topbar-search input::placeholder { color: #6b7c74; }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ============================================================ */
+    /* DIRECTORY VIEW                                               */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+    .btn-gold {
+      background-color: transparent; color: var(--accent); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+    .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
+    .filter-row .search-inline i {
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
+    }
+    .filter-row input[type="text"], .filter-row select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 0.83rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-row .search-inline input { padding-left: 34px; width: 100%; }
+    .filter-row input::placeholder { color: #6b7c74; }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
+
+    /* Scholarship record list */
+    .record-list { display: flex; flex-direction: column; gap: 12px; }
+    .record-row {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      transition: border-color 0.15s;
+    }
+    .record-row:hover { border-color: var(--primary); }
+    .record-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,201,130,0.18), rgba(0,201,130,0.05));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--primary); flex-shrink: 0;
+    }
+    .record-icon.gold {
+      background: linear-gradient(135deg, rgba(245,185,66,0.18), rgba(245,185,66,0.05));
+      color: var(--accent);
+    }
+    .record-main { flex: 1; min-width: 200px; }
+    .record-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+    .record-title { font-size: 1rem; font-weight: 700; }
+    .record-sub { font-size: 0.8rem; color: var(--muted); }
+    .record-meta-cell { min-width: 110px; }
+    .meta-label-sm {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 3px;
+    }
+    .meta-value-sm { font-size: 0.85rem; font-weight: 600; }
+    .meta-value-sm.gold { color: var(--accent); }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 40px;
+    }
+    .status-published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .status-draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .status-pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .status-verified { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .status-archived { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .status-expired { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .record-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
+    .empty-state {
+      text-align: center; padding: 56px 20px;
+      color: var(--muted); background-color: var(--elevated);
+      border: 1px dashed var(--border); border-radius: var(--radius-card);
+    }
+    .empty-state i { font-size: 2.2rem; color: var(--border); margin-bottom: 14px; display: inline-block; }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.85rem; }
+
+    .footnote {
+      font-size: 0.75rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* ============================================================ */
+    /* EDITOR VIEW                                                  */
+    /* ============================================================ */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 0.88rem; font-weight: 500;
+      padding: 4px 0 18px; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    .editor-header {
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px; margin-bottom: 24px;
+    }
+    .editor-header-info h1 { font-size: 1.7rem; margin-bottom: 6px; }
+    .editor-header-info p { color: var(--muted); font-size: 0.9rem; max-width: 640px; }
+    .editor-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .panel {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .panel-title i { color: var(--primary); font-size: 0.95rem; }
+    .panel-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-size: 0.78rem; font-weight: 600; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .form-group label .req { color: var(--danger); font-size: 0.75rem; }
+    .form-group label .optional { color: var(--muted); font-size: 0.7rem; font-weight: 500; font-style: italic; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-input); padding: 10px 14px;
+      font-size: 0.88rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #6b7c74; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--primary); }
+    .form-group textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+    .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+
+    .form-actions {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+
+    /* Status cards */
+    .status-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 600px) { .status-cards { grid-template-columns: repeat(4, 1fr); } }
+    .status-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .status-card:hover { border-color: var(--primary); }
+    .status-card.selected { border-color: var(--primary); background-color: rgba(0,201,130,0.06); }
+    .status-card .sc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .status-card .sc-top i { font-size: 0.85rem; color: var(--muted); }
+    .status-card.selected .sc-top i { color: var(--primary); }
+    .status-card .sc-title { font-size: 0.82rem; font-weight: 700; }
+    .status-card .sc-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
+
+    /* Verify notice */
+    .verify-notice {
+      display: flex; gap: 12px; padding: 14px 16px;
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.25);
+      border-radius: var(--radius-input); margin-bottom: 20px;
+    }
+    .verify-notice i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+    .verify-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
+    .verify-notice strong { color: var(--accent); }
+
+    /* Media upload tiles */
+    .media-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    }
+    @media (min-width: 600px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
+    .media-tile {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .media-thumb {
+      height: 90px; background-color: #0a0f0d;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1.5rem;
+    }
+    .media-caption { padding: 10px 12px; }
+    .media-caption h5 { font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; }
+    .media-caption p { font-size: 0.7rem; color: var(--muted); }
+    .media-upload {
+      border: 1px dashed var(--border); background-color: var(--surface);
+      border-radius: 12px; min-height: 130px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .media-upload:hover { border-color: var(--primary); color: var(--primary); }
+    .media-upload i { font-size: 1.3rem; }
+
+    /* Danger panel */
+    .danger-panel { border-color: rgba(224, 112, 112, 0.3); }
+    .danger-panel .panel-title { color: var(--danger); }
+    .danger-panel .panel-title i { color: var(--danger); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+    }
+    @media (max-width: 600px) {
+      .topbar-search { display: none; }
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .editor-header-info h1 { font-size: 1.4rem; }
+      .record-row { padding: 16px; }
+      .record-actions { width: 100%; justify-content: flex-end; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item active"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Admin User</div>
+            <div class="admin-user-role">Super Administrator</div>
+          </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out"
+            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search admin records..." aria-label="Search">
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="admin-avatar">AD</div>
+            <div>
+              <div class="topbar-admin-name">Admin User</div>
+              <div class="topbar-admin-role">Super Administrator</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- ============================================================ -->
+        <!-- DIRECTORY VIEW                                               -->
+        <!-- ============================================================ -->
+        <div id="view-directory" class="view active">
+          <div class="page-heading">
+            <div class="eyebrow"><i class="fas fa-award"></i> Scholarship management</div>
+            <h1>Scholarships</h1>
+            <p>Manage funding opportunities and applications.</p>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-row">
+            <div class="stat-mini">
+              <div class="stat-mini-label">Total records <i class="fas fa-list"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
+              <div class="stat-mini-value">—</div>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <button class="btn-primary" onclick="openEditor()">
+              <i class="fas fa-plus"></i> Add Scholarship
+            </button>
+            <div class="filter-row">
+              <div class="search-inline">
+                <i class="fas fa-search"></i>
+                <input type="text" id="recordSearch" placeholder="Search scholarships..." oninput="filterRecords()">
+              </div>
+              <select id="sponsorFilter" onchange="filterRecords()">
+                <option value="">All sponsors</option>
+                <option value="Government">Government</option>
+                <option value="Corporate">Corporate</option>
+                <option value="University">University</option>
+                <option value="Foundation">Foundation</option>
+              </select>
+              <select id="typeFilter" onchange="filterRecords()">
+                <option value="">All categories</option>
+                <option value="scholarship">Scholarship</option>
+                <option value="bursary">Bursary</option>
+                <option value="grant">Research grant</option>
+                <option value="international">International</option>
+              </select>
+              <select id="levelFilter" onchange="filterRecords()">
+                <option value="">All study levels</option>
+                <option value="undergraduate">Undergraduate</option>
+                <option value="postgraduate">Postgraduate</option>
+                <option value="doctoral">Doctoral</option>
+              </select>
+              <select id="locationFilter" onchange="filterRecords()">
+                <option value="">All locations</option>
+                <option value="nigeria">Nigeria</option>
+                <option value="international">International</option>
+              </select>
+              <select id="statusFilter" onchange="filterRecords()">
+                <option value="">All statuses</option>
+                <option value="draft">Draft</option>
+                <option value="pending">Review</option>
+                <option value="verified">Verified</option>
+                <option value="published">Published</option>
+                <option value="expired">Expired</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- List header -->
+          <div class="panel-header" style="margin: 8px 0 14px;">
+            <div class="panel-title" style="font-size: 1rem;"><i class="fas fa-list"></i> Manage opportunities</div>
+            <span style="font-size:0.78rem; color: var(--muted);" id="recordCount">Showing 0 records</span>
+          </div>
+
+          <div class="record-list" id="recordList">
+            <!-- Populated by JS -->
+          </div>
+
+          <p class="footnote">
+            <i class="fas fa-circle-info"></i> Example categories, not verified scholarship listings. No live records are supplied in this preview.
+          </p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- EDITOR VIEW                                                  -->
+        <!-- ============================================================ -->
+        <div id="view-editor" class="view">
+          <div class="back-link" onclick="showDirectory()">
+            <i class="fas fa-arrow-left"></i> Back to all scholarships
+          </div>
+
+          <div class="editor-header">
+            <div class="editor-header-info">
+              <h1 id="editorTitle">New scholarship</h1>
+              <p>Create or edit a scholarship listing. Fields can be left blank where the official source does not provide the information.</p>
+            </div>
+            <div class="editor-header-actions">
+              <button class="btn-outline" onclick="showDirectory()">Cancel</button>
+              <button class="btn-outline" onclick="saveRecord('Draft')"><i class="fas fa-file"></i> Save as draft</button>
+            </div>
+          </div>
+
+          <!-- Scholarship details -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-circle-info"></i> Scholarship details</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Scholarship title <span class="req">*</span></label>
+                <input type="text" id="recordTitle" placeholder="e.g. MTN Foundation Scholarship">
+              </div>
+              <div class="form-group">
+                <label>Sponsor or funding organization <span class="req">*</span></label>
+                <input type="text" id="recordSponsor" placeholder="e.g. MTN Foundation">
+              </div>
+              <div class="form-group">
+                <label>Sponsor category</label>
+                <select id="recordSponsorType">
+                  <option value="">Select category</option>
+                  <option value="Government">Government</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="University">University</option>
+                  <option value="Foundation">Foundation</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Scholarship category <span class="req">*</span></label>
+                <select id="recordCategory">
+                  <option value="">Select category</option>
+                  <option value="scholarship">Scholarship</option>
+                  <option value="bursary">Bursary</option>
+                  <option value="grant">Research grant</option>
+                  <option value="international">International scholarship</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Eligible study level <span class="req">*</span></label>
+                <select id="recordLevel">
+                  <option value="">Select level</option>
+                  <option value="undergraduate">Undergraduate</option>
+                  <option value="postgraduate">Postgraduate</option>
+                  <option value="doctoral">Doctoral</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Study location</label>
+                <select id="recordLocation">
+                  <option value="">Select location</option>
+                  <option value="nigeria">Nigeria</option>
+                  <option value="international">International</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Application deadline <span class="optional">(leave blank if not confirmed)</span></label>
+                <input type="date" id="recordDeadline">
+                <span class="form-hint">Leave blank if the deadline is not confirmed. Do not invent a date.</span>
+              </div>
+              <div class="form-group full">
+                <label>Eligibility and requirements</label>
+                <textarea id="recordEligibility" placeholder="Who is eligible? Include nationality, course, grades, age or other criteria..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Official application URL <span class="req">*</span></label>
+                <input type="url" id="recordApplyUrl" placeholder="https://official-application-portal.example">
+              </div>
+              <div class="form-group full">
+                <label>Verification source URL <span class="req">*</span></label>
+                <input type="url" id="recordSourceUrl" placeholder="Paste the official announcement or verification link">
+                <span class="form-hint">Required before marking the record as verified.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Funding -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-money-bill"></i> Funding</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Funding coverage <span class="optional">(leave blank if unspecified)</span></label>
+                <input type="text" id="recordCoverage" placeholder="e.g. Full tuition + stipend, or leave blank">
+              </div>
+              <div class="form-group">
+                <label>Award amount <span class="optional">(if specified)</span></label>
+                <input type="text" id="recordAmount" placeholder="e.g. 200,000">
+              </div>
+              <div class="form-group">
+                <label>Currency</label>
+                <select id="recordCurrency">
+                  <option value="">Not specified</option>
+                  <option value="NGN">NGN (₦)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Payment frequency</label>
+                <select id="recordFrequency">
+                  <option value="">Not specified</option>
+                  <option value="one-time">One-time</option>
+                  <option value="annual">Annual</option>
+                  <option value="per-session">Per session</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label>What expenses are covered</label>
+                <textarea id="recordCovered" placeholder="Tuition, accommodation, stipend, books, travel, etc."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Expenses not covered</label>
+                <textarea id="recordNotCovered" placeholder="List any known exclusions."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eligibility & Documents -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-list-check"></i> Eligibility &amp; supporting documents</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Nationality / residency requirements</label>
+                <input type="text" id="recordNationality" placeholder="e.g. Nigerian citizen, or leave blank">
+              </div>
+              <div class="form-group full">
+                <label>Academic requirements</label>
+                <textarea id="recordAcademic" placeholder="Grades, classification, or other academic criteria..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Supporting documents required</label>
+                <textarea id="recordDocuments" placeholder="Transcript, admission letter, ID, references, essay, etc."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Application -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-pen-to-square"></i> Application</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Application steps</label>
+                <textarea id="recordSteps" placeholder="Step-by-step instructions for applicants..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Contact details</label>
+                <input type="text" id="recordContact" placeholder="Email or phone for enquiries">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dates -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-calendar"></i> Dates</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Opening date</label>
+                <input type="date" id="recordOpenDate">
+              </div>
+              <div class="form-group">
+                <label>Deadline</label>
+                <input type="date" id="recordCloseDate">
+              </div>
+              <div class="form-group full">
+                <label>Verified extension <span class="optional">(if applicable)</span></label>
+                <input type="text" id="recordExtension" placeholder="e.g. Extended to 15 Aug 2026 — official source confirmed">
+              </div>
+            </div>
+          </div>
+
+          <!-- Verification -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification</div>
+            </div>
+            <div class="verify-notice">
+              <i class="fas fa-triangle-exclamation"></i>
+              <p><strong>Verification and publication are separate states.</strong> A scholarship must be verified before it can be published. Keep a record of who verified it and when.</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Last checked date</label>
+                <input type="date" id="recordCheckedDate">
+              </div>
+              <div class="form-group">
+                <label>Reviewer</label>
+                <input type="text" id="recordReviewer" placeholder="Name of reviewer" value="Admin User">
+              </div>
+              <div class="form-group full">
+                <label>Internal notes</label>
+                <textarea id="recordReviewNotes" placeholder="Notes about source verification or changes requested..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Media -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-photo-film"></i> Media</div>
+            </div>
+            <div class="media-grid">
+              <div class="media-tile">
+                <div class="media-thumb"><i class="fas fa-image"></i></div>
+                <div class="media-caption">
+                  <h5>Sponsor logo</h5>
+                  <p>Primary logo</p>
+                </div>
+              </div>
+              <div class="media-upload" onclick="toast('Upload dialog opened (demo).')">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <span>Upload image</span>
+              </div>
+            </div>
+            <div class="form-group full" style="margin-top:16px;">
+              <label>Alternative text</label>
+              <input type="text" id="recordAltText" placeholder="Describe the image for accessibility">
+            </div>
+          </div>
+
+          <!-- Publication status -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-bullhorn"></i> Publication status</div>
+            </div>
+            <div class="status-cards">
+              <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
+                <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
+                <div class="sc-desc">Stored privately. Not visible to the public.</div>
+              </div>
+              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
+                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
+                <div class="sc-desc">Waiting for source verification.</div>
+              </div>
+              <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
+                <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
+                <div class="sc-desc">Confirmed. Ready to publish.</div>
+              </div>
+              <div class="status-card" data-status="expired" onclick="selectStatus('expired', this)">
+                <div class="sc-top"><i class="fas fa-calendar-xmark"></i><span class="sc-title">Expired</span></div>
+                <div class="sc-desc">Deadline passed. Remains visible as closed.</div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-primary" onclick="saveRecord('Draft')"><i class="fas fa-save"></i> Save as draft</button>
+              <button class="btn-gold" onclick="saveRecord('Pending verification')"><i class="fas fa-clock"></i> Submit for review</button>
+              <button class="btn-outline" onclick="saveRecord('Verified')"><i class="fas fa-circle-check"></i> Mark as verified</button>
+              <button class="btn-primary" onclick="publishRecord()"><i class="fas fa-bullhorn"></i> Publish</button>
+            </div>
+            <p class="form-hint" style="margin-top:12px;">Interactive design preview only — no scholarship is saved or published in this prototype.</p>
+          </div>
+
+          <!-- Danger zone -->
+          <div class="panel danger-panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
+            </div>
+            <p style="font-size:0.85rem; color: var(--muted); margin-bottom:14px;">Destructive actions require confirmation and are recorded in the audit trail.</p>
+            <div class="form-actions" style="border-top:none; padding-top:0;">
+              <button class="btn-outline" onclick="if(confirm('Unpublish this scholarship? It will be hidden from the public Scholarships page.')) toast('Scholarship unpublished (demo).')"><i class="fas fa-eye-slash"></i> Unpublish</button>
+              <button class="btn-danger" onclick="if(confirm('Archive this scholarship? Historical data will be retained.')) toast('Scholarship archived (demo).')"><i class="fas fa-box-archive"></i> Archive</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Saved</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO DATA                                                    */
+      /* ============================================================ */
+      let records = [
+        {
+          id: 'mtn-foundation',
+          title: 'MTN Foundation Scholarship',
+          sponsor: 'MTN Foundation',
+          sponsorType: 'Corporate',
+          category: 'scholarship',
+          categoryLabel: 'Scholarship',
+          level: 'undergraduate',
+          levelLabel: 'Undergraduate',
+          location: 'nigeria',
+          deadline: '2026-06-30',
+          status: 'published',
+          verification: 'verified',
+          applyUrl: 'https://mtnfoundation.ng/scholarship',
+          sourceUrl: 'https://mtnfoundation.ng/scholarship-2026',
+          eligibility: 'Undergraduate students in Nigerian public universities with a minimum CGPA of 3.0.',
+          coverage: 'Full tuition + stipend',
+          amount: '',
+          currency: '',
+          frequency: 'annual',
+          covered: 'Tuition, stipend',
+          notCovered: 'Accommodation, personal expenses',
+          nationality: 'Nigerian citizen',
+          academic: 'Minimum CGPA of 3.0',
+          documents: 'Transcript, admission letter, proof of identity',
+          steps: 'Apply through the MTN Foundation portal.',
+          contact: 'info@mtnfoundation.ng',
+          openDate: '2026-05-01',
+          closeDate: '2026-06-30',
+          extension: ''
+        },
+        {
+          id: 'chevening',
+          title: 'Chevening Scholarship',
+          sponsor: 'UK Government',
+          sponsorType: 'Government',
+          category: 'international',
+          categoryLabel: 'International',
+          level: 'postgraduate',
+          levelLabel: 'Postgraduate',
+          location: 'international',
+          deadline: '2026-07-15',
+          status: 'published',
+          verification: 'verified',
+          applyUrl: 'https://chevening.org/apply',
+          sourceUrl: 'https://chevening.org/nigeria',
+          eligibility: 'Nigerian graduates with a bachelor\'s degree and at least 2 years of work experience.',
+          coverage: 'Full tuition + living expenses',
+          amount: '',
+          currency: 'GBP',
+          frequency: 'annual',
+          covered: 'Tuition, living expenses, accommodation allowance',
+          notCovered: 'Dependants\' costs',
+          nationality: 'Nigerian citizen',
+          academic: 'Bachelor\'s degree (minimum 2:1)',
+          documents: 'Passport, degree certificate, transcripts, two references',
+          steps: 'Apply through the Chevening online portal.',
+          contact: 'info@chevening.org',
+          openDate: '2026-06-01',
+          closeDate: '2026-07-15',
+          extension: ''
+        },
+        {
+          id: 'nnpc-total',
+          title: 'NNPC/Total Scholarship',
+          sponsor: 'NNPC/TotalEnergies',
+          sponsorType: 'Corporate',
+          category: 'scholarship',
+          categoryLabel: 'Scholarship',
+          level: 'undergraduate',
+          levelLabel: 'Undergraduate',
+          location: 'nigeria',
+          deadline: '2026-08-05',
+          status: 'pending',
+          verification: 'pending',
+          applyUrl: 'https://totalenergies.com.ng/scholarship',
+          sourceUrl: '',
+          eligibility: 'Engineering and geosciences students in Nigerian public universities.',
+          coverage: 'Tuition + annual allowance',
+          amount: '',
+          currency: 'NGN',
+          frequency: 'annual',
+          covered: 'Tuition, annual allowance',
+          notCovered: 'Accommodation, personal expenses',
+          nationality: 'Nigerian citizen',
+          academic: 'Good academic standing',
+          documents: 'Transcript, admission letter, proof of identity',
+          steps: 'Apply through the TotalEnergies scholarship portal.',
+          contact: 'scholarships@totalenergies.com.ng',
+          openDate: '2026-06-01',
+          closeDate: '2026-08-05',
+          extension: ''
+        },
+        {
+          id: 'agbami-medical',
+          title: 'Agbami Medical Bursary',
+          sponsor: 'Agbami Partners',
+          sponsorType: 'Corporate',
+          category: 'bursary',
+          categoryLabel: 'Bursary',
+          level: 'undergraduate',
+          levelLabel: 'Undergraduate',
+          location: 'nigeria',
+          deadline: '2026-09-20',
+          status: 'draft',
+          verification: 'unverified',
+          applyUrl: 'https://agbamipartners.com/bursary',
+          sourceUrl: '',
+          eligibility: 'Medical students in Nigerian universities.',
+          coverage: '₦200,000 per year',
+          amount: '200,000',
+          currency: 'NGN',
+          frequency: 'annual',
+          covered: 'Medical education support',
+          notCovered: '',
+          nationality: 'Nigerian citizen',
+          academic: 'Good academic standing',
+          documents: 'Proof of enrollment, transcript, ID',
+          steps: 'Apply through the Agbami Partners portal.',
+          contact: '',
+          openDate: '2026-08-01',
+          closeDate: '2026-09-20',
+          extension: ''
+        },
+        {
+          id: 'commonwealth-research',
+          title: 'Commonwealth Research Grant',
+          sponsor: 'Commonwealth Foundation',
+          sponsorType: 'Foundation',
+          category: 'grant',
+          categoryLabel: 'Research grant',
+          level: 'doctoral',
+          levelLabel: 'Doctoral',
+          location: 'international',
+          deadline: '2026-04-30',
+          status: 'expired',
+          verification: 'verified',
+          applyUrl: 'https://commonwealthfoundation.com/grants',
+          sourceUrl: 'https://commonwealthfoundation.com/research-grant',
+          eligibility: 'Postgraduate researchers from Commonwealth countries.',
+          coverage: 'Research funding',
+          amount: '',
+          currency: '',
+          frequency: 'one-time',
+          covered: 'Research expenses, fieldwork, conference attendance',
+          notCovered: 'Tuition, living expenses',
+          nationality: 'Commonwealth citizen',
+          academic: 'Postgraduate research (MPhil/PhD)',
+          documents: 'Research proposal, academic references, proof of enrollment',
+          steps: 'Submit through the Commonwealth Foundation portal.',
+          contact: 'grants@commonwealthfoundation.com',
+          openDate: '2026-02-01',
+          closeDate: '2026-04-30',
+          extension: ''
+        },
+        {
+          id: 'lagos-bursary',
+          title: 'Lagos State Bursary',
+          sponsor: 'Lagos State Government',
+          sponsorType: 'Government',
+          category: 'bursary',
+          categoryLabel: 'Bursary',
+          level: 'undergraduate',
+          levelLabel: 'Undergraduate',
+          location: 'nigeria',
+          deadline: '2026-10-15',
+          status: 'published',
+          verification: 'verified',
+          applyUrl: 'https://lagosstate.gov.ng/bursary',
+          sourceUrl: 'https://lagosstate.gov.ng/bursary-2026',
+          eligibility: 'Lagos State indigenes in recognized tertiary institutions.',
+          coverage: '₦50,000 per session',
+          amount: '50,000',
+          currency: 'NGN',
+          frequency: 'per-session',
+          covered: 'Education support',
+          notCovered: 'Tuition, accommodation',
+          nationality: 'Lagos State indigene',
+          academic: 'Satisfactory academic standing',
+          documents: 'Proof of indigeneship, enrollment letter, ID',
+          steps: 'Apply through the Lagos State bursary portal.',
+          contact: '',
+          openDate: '2026-08-01',
+          closeDate: '2026-10-15',
+          extension: ''
+        }
+      ];
+
+      let currentRecordId = null;
+      let selectedStatus = 'draft';
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function statusPill(status, verification) {
+        if (status === 'published') {
+          return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
+        }
+        if (status === 'expired') {
+          return `<span class="status-pill status-expired"><i class="fas fa-calendar-xmark"></i> Expired</span>`;
+        }
+        if (status === 'archived') {
+          return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
+        }
+        if (verification === 'pending') {
+          return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
+        }
+        if (verification === 'verified') {
+          return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
+        }
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+      }
+
+      function formatDate(d) {
+        if (!d) return 'Not confirmed';
+        const date = new Date(d + 'T00:00:00');
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      /* ============================================================ */
+      /* DIRECTORY                                                    */
+      /* ============================================================ */
+      function renderDirectory() {
+        const list = document.getElementById('recordList');
+        const query = (document.getElementById('recordSearch').value || '').toLowerCase().trim();
+        const sponsor = document.getElementById('sponsorFilter').value;
+        const type = document.getElementById('typeFilter').value;
+        const level = document.getElementById('levelFilter').value;
+        const location = document.getElementById('locationFilter').value;
+        const status = document.getElementById('statusFilter').value;
+
+        const filtered = records.filter(r => {
+          const matchQ = !query ||
+            r.title.toLowerCase().includes(query) ||
+            r.sponsor.toLowerCase().includes(query);
+          const matchS = !sponsor || r.sponsorType === sponsor;
+          const matchT = !type || r.category === type;
+          const matchL = !level || r.level === level;
+          const matchLoc = !location || r.location === location;
+          const matchStatus = !status || r.status === status || r.verification === status;
+          return matchQ && matchS && matchT && matchL && matchLoc && matchStatus;
+        });
+
+        document.getElementById('recordCount').textContent = `Showing ${filtered.length} of ${records.length} records`;
+
+        if (filtered.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-award"></i>
+              <h3>No scholarships match your filters</h3>
+              <p>Try adjusting the search or filter options.</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map(r => {
+          const isGold = r.status === 'published' || r.verification === 'pending';
+          const iconClass = r.category === 'grant' ? 'fa-flask' :
+                            r.category === 'bursary' ? 'fa-hand-holding-dollar' :
+                            r.category === 'international' ? 'fa-earth-africa' : 'fa-graduation-cap';
+          return `
+            <div class="record-row">
+              <div class="record-icon ${isGold ? 'gold' : ''}">
+                <i class="fas ${iconClass}"></i>
+              </div>
+              <div class="record-main">
+                <div class="record-title-row">
+                  <span class="record-title">${r.title}</span>
+                </div>
+                <div class="record-sub">${r.sponsor} · ${r.levelLabel}</div>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Category</div>
+                <div class="meta-value-sm">${r.categoryLabel}</div>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Coverage</div>
+                <div class="meta-value-sm">${r.coverage || '—'}</div>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Deadline</div>
+                <div class="meta-value-sm ${r.deadline ? 'gold' : ''}">${formatDate(r.deadline)}</div>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Status</div>
+                ${statusPill(r.status, r.verification)}
+              </div>
+              <div class="record-actions">
+                <button class="btn-outline" onclick="openEditor('${r.id}')"><i class="fas fa-pen"></i> Edit</button>
+                <button class="btn-outline" onclick="previewRecord('${r.id}')"><i class="fas fa-eye"></i> Preview</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function filterRecords() { renderDirectory(); }
+
+      function previewRecord(id) {
+        const r = records.find(x => x.id === id);
+        if (r) toast('Previewing "' + r.title + '" (demo).');
+      }
+
+      /* ============================================================ */
+      /* EDITOR                                                       */
+      /* ============================================================ */
+      function openEditor(id) {
+        currentRecordId = id || null;
+        const r = id ? records.find(x => x.id === id) : null;
+
+        document.getElementById('editorTitle').textContent = r ? 'Edit scholarship' : 'New scholarship';
+
+        // Basic fields
+        document.getElementById('recordTitle').value = r ? r.title : '';
+        document.getElementById('recordSponsor').value = r ? r.sponsor : '';
+        document.getElementById('recordSponsorType').value = r ? r.sponsorType : '';
+        document.getElementById('recordCategory').value = r ? r.category : '';
+        document.getElementById('recordLevel').value = r ? r.level : '';
+        document.getElementById('recordLocation').value = r ? r.location : '';
+        document.getElementById('recordDeadline').value = r ? r.deadline : '';
+        document.getElementById('recordEligibility').value = r ? r.eligibility : '';
+        document.getElementById('recordApplyUrl').value = r ? r.applyUrl : '';
+        document.getElementById('recordSourceUrl').value = r ? r.sourceUrl : '';
+
+        // Funding
+        document.getElementById('recordCoverage').value = r ? r.coverage : '';
+        document.getElementById('recordAmount').value = r ? r.amount : '';
+        document.getElementById('recordCurrency').value = r ? r.currency : '';
+        document.getElementById('recordFrequency').value = r ? r.frequency : '';
+        document.getElementById('recordCovered').value = r ? r.covered : '';
+        document.getElementById('recordNotCovered').value = r ? r.notCovered : '';
+
+        // Eligibility & documents
+        document.getElementById('recordNationality').value = r ? r.nationality : '';
+        document.getElementById('recordAcademic').value = r ? r.academic : '';
+        document.getElementById('recordDocuments').value = r ? r.documents : '';
+
+        // Application
+        document.getElementById('recordSteps').value = r ? r.steps : '';
+        document.getElementById('recordContact').value = r ? r.contact : '';
+
+        // Dates
+        document.getElementById('recordOpenDate').value = r ? r.openDate : '';
+        document.getElementById('recordCloseDate').value = r ? r.closeDate : '';
+        document.getElementById('recordExtension').value = r ? r.extension : '';
+
+        // Verification
+        document.getElementById('recordCheckedDate').value = '';
+        document.getElementById('recordReviewNotes').value = '';
+
+        // Media
+        document.getElementById('recordAltText').value = '';
+
+        // Status
+        selectedStatus = r ? (r.status === 'published' ? 'verified' : r.status === 'expired' ? 'expired' : r.verification || 'draft') : 'draft';
+        if (selectedStatus === 'unverified') selectedStatus = 'draft';
+        document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
+        const statusCard = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
+        if (statusCard) statusCard.classList.add('selected');
+
+        document.getElementById('view-directory').classList.remove('active');
+        document.getElementById('view-editor').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function showDirectory() {
+        document.getElementById('view-editor').classList.remove('active');
+        document.getElementById('view-directory').classList.add('active');
+        currentRecordId = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function selectStatus(status, el) {
+        selectedStatus = status;
+        document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+      }
+
+      /* ============================================================ */
+      /* SAVE & PUBLISH                                               */
+      /* ============================================================ */
+      function saveRecord(statusLabel) {
+        const title = document.getElementById('recordTitle').value.trim();
+        const sponsor = document.getElementById('recordSponsor').value.trim();
+        const category = document.getElementById('recordCategory').value;
+        const level = document.getElementById('recordLevel').value;
+        const applyUrl = document.getElementById('recordApplyUrl').value.trim();
+        const sourceUrl = document.getElementById('recordSourceUrl').value.trim();
+
+        if (!title) { toast('Please enter a scholarship title.'); return; }
+        if (!sponsor) { toast('Please enter the sponsor name.'); return; }
+        if (!category) { toast('Please select a scholarship category.'); return; }
+        if (!level) { toast('Please select an eligible study level.'); return; }
+        if (!applyUrl) { toast('Please enter the official application URL.'); return; }
+        try { new URL(applyUrl); } catch (e) { toast('Please enter a valid application URL (including https://).'); return; }
+        if (sourceUrl) {
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.'); return; }
+        }
+
+        let verification = 'unverified';
+        let finalStatus = 'draft';
+        if (selectedStatus === 'pending') { verification = 'pending'; finalStatus = 'draft'; }
+        else if (selectedStatus === 'verified') { verification = 'verified'; finalStatus = 'draft'; }
+        else if (selectedStatus === 'expired') { verification = 'verified'; finalStatus = 'expired'; }
+
+        if (statusLabel === 'Pending verification') { verification = 'pending'; finalStatus = 'draft'; }
+        if (statusLabel === 'Verified') {
+          if (!sourceUrl) { toast('An official source URL is required to mark as verified.'); return; }
+          verification = 'verified';
+          finalStatus = 'draft';
+        }
+
+        const sponsorSelect = document.getElementById('recordSponsorType');
+        const categorySelect = document.getElementById('recordCategory');
+        const levelSelect = document.getElementById('recordLevel');
+        const categoryLabel = categorySelect.options[categorySelect.selectedIndex].text;
+        const levelLabel = levelSelect.options[levelSelect.selectedIndex].text;
+
+        const obj = {
+          id: currentRecordId || 'scholarship-' + Date.now(),
+          title: title,
+          sponsor: sponsor,
+          sponsorType: sponsorSelect.value,
+          category: category,
+          categoryLabel: categoryLabel,
+          level: level,
+          levelLabel: levelLabel,
+          location: document.getElementById('recordLocation').value,
+          deadline: document.getElementById('recordDeadline').value,
+          status: finalStatus,
+          verification: verification,
+          applyUrl: applyUrl,
+          sourceUrl: sourceUrl,
+          eligibility: document.getElementById('recordEligibility').value.trim(),
+          coverage: document.getElementById('recordCoverage').value.trim(),
+          amount: document.getElementById('recordAmount').value.trim(),
+          currency: document.getElementById('recordCurrency').value,
+          frequency: document.getElementById('recordFrequency').value,
+          covered: document.getElementById('recordCovered').value.trim(),
+          notCovered: document.getElementById('recordNotCovered').value.trim(),
+          nationality: document.getElementById('recordNationality').value.trim(),
+          academic: document.getElementById('recordAcademic').value.trim(),
+          documents: document.getElementById('recordDocuments').value.trim(),
+          steps: document.getElementById('recordSteps').value.trim(),
+          contact: document.getElementById('recordContact').value.trim(),
+          openDate: document.getElementById('recordOpenDate').value,
+          closeDate: document.getElementById('recordCloseDate').value,
+          extension: document.getElementById('recordExtension').value.trim()
+        };
+
+        if (currentRecordId) {
+          const idx = records.findIndex(x => x.id === currentRecordId);
+          if (idx !== -1) records[idx] = obj;
+        } else {
+          records.unshift(obj);
+          currentRecordId = obj.id;
+        }
+
+        renderDirectory();
+        toast(statusLabel + ' · saved and logged to audit trail.');
+
+        if (statusLabel === 'Draft') {
+          setTimeout(showDirectory, 600);
+        }
+      }
+
+      function publishRecord() {
+        if (!currentRecordId) {
+          toast('Save the scholarship first before publishing.');
+          return;
+        }
+        const r = records.find(x => x.id === currentRecordId);
+        if (!r) return;
+        if (r.verification !== 'verified') {
+          toast('Scholarship must be verified before it can be published.');
+          return;
+        }
+        if (!r.applyUrl || !r.applyUrl.startsWith('http')) {
+          toast('A valid official application URL is required before publishing.');
+          return;
+        }
+        if (!confirm('Publish this scholarship? It will appear on the public Scholarships page, Search, and related sections.')) return;
+        r.status = 'published';
+        renderDirectory();
+        toast('Scholarship published · visible on public Scholarships page and logged to audit trail.');
+        setTimeout(showDirectory, 800);
+      }
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        renderDirectory();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

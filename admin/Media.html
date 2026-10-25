@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Media Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
+
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
+    .admin-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .admin-user:hover { background-color: var(--elevated); }
+    .admin-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .admin-user-info { flex: 1; min-width: 0; }
+    .admin-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; display: flex; align-items: center; }
+    .topbar-search i {
+      position: absolute; left: 14px; color: var(--muted);
+      font-size: 0.85rem; pointer-events: none;
+    }
+    .topbar-search input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-size: 0.85rem; color: var(--text); outline: none;
+    }
+    .topbar-search input::placeholder { color: #6b7c74; }
+    .topbar-search input:focus { border-color: var(--primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+
+    /* ============================================================ */
+    /* PAGE HEADING & STATS                                         */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+
+    /* ============================================================ */
+    /* UPLOAD ZONE                                                  */
+    /* ============================================================ */
+    .upload-zone {
+      background-color: var(--elevated); border: 1px dashed var(--border);
+      border-radius: var(--radius-card); padding: 40px 24px;
+      text-align: center; margin-bottom: 32px;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+    .upload-zone:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.03); }
+    .upload-zone .uz-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 16px;
+    }
+    .upload-zone h3 { font-size: 1.15rem; margin-bottom: 6px; }
+    .upload-zone p { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+    .upload-formats {
+      display: inline-flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    }
+    .format-tag {
+      background-color: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.7rem; font-weight: 700;
+      padding: 4px 12px; border-radius: 40px;
+    }
+
+    /* ============================================================ */
+    /* CATEGORY CARDS                                               */
+    /* ============================================================ */
+    .category-grid {
+      display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px;
+    }
+    @media (min-width: 600px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .category-grid { grid-template-columns: repeat(3, 1fr); } }
+    .category-card {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); overflow: hidden;
+      display: flex; flex-direction: column; transition: border-color 0.15s;
+      cursor: pointer;
+    }
+    .category-card:hover { border-color: var(--primary); }
+    .category-thumb {
+      height: 130px; background-size: cover; background-position: center;
+      background-color: #0a0f0d; display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2rem; position: relative;
+    }
+    .category-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, #111815 5%, transparent 60%);
+    }
+    .category-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .category-body h4 { font-size: 1rem; margin-bottom: 6px; }
+    .category-body p { font-size: 0.82rem; color: var(--muted); flex: 1; margin-bottom: 12px; }
+    .category-count {
+      font-size: 0.7rem; font-weight: 700; color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    /* ============================================================ */
+    /* TOOLBAR                                                      */
+    /* ============================================================ */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-gold {
+      background-color: transparent; color: var(--accent); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+    .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
+    .filter-row .search-inline i {
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
+    }
+    .filter-row input[type="text"], .filter-row select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 0.83rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-row .search-inline input { padding-left: 34px; width: 100%; }
+    .filter-row input::placeholder { color: #6b7c74; }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
+
+    .view-toggle {
+      display: flex; background-color: var(--elevated);
+      border: 1px solid var(--border); border-radius: 10px; padding: 3px;
+    }
+    .view-toggle button {
+      background: transparent; border: none; color: var(--muted);
+      padding: 6px 12px; border-radius: 7px; cursor: pointer;
+      font-size: 0.8rem; transition: all 0.15s;
+    }
+    .view-toggle button.active { background-color: var(--primary); color: #070A09; }
+
+    /* ============================================================ */
+    /* MEDIA GALLERY                                               */
+    /* ============================================================ */
+    .gallery-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+    }
+    .gallery-title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .gallery-title i { color: var(--primary); font-size: 0.95rem; }
+    .gallery-count { font-size: 0.78rem; color: var(--muted); }
+
+    .media-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    }
+    @media (min-width: 600px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1000px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 1300px) { .media-grid { grid-template-columns: repeat(5, 1fr); } }
+
+    .media-item {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s;
+      display: flex; flex-direction: column;
+    }
+    .media-item:hover { border-color: var(--primary); }
+    .media-item.selected { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,201,130,0.2); }
+
+    .media-thumbnail {
+      height: 120px; background-size: cover; background-position: center;
+      background-color: #0a0f0d; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1.8rem;
+    }
+    .media-type-badge {
+      position: absolute; top: 8px; left: 8px;
+      background-color: rgba(7, 10, 9, 0.85); color: var(--text);
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px;
+    }
+    .media-usage-badge {
+      position: absolute; top: 8px; right: 8px;
+      background-color: rgba(245, 185, 66, 0.9); color: #070A09;
+      font-size: 0.6rem; font-weight: 800; padding: 3px 8px;
+      border-radius: 4px; display: flex; align-items: center; gap: 4px;
+    }
+    .media-info { padding: 12px 14px; flex: 1; }
+    .media-name {
+      font-size: 0.82rem; font-weight: 700; margin-bottom: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .media-meta {
+      font-size: 0.7rem; color: var(--muted);
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    /* List view */
+    .media-list { display: flex; flex-direction: column; gap: 8px; }
+    .media-list-row {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .media-list-row:hover { border-color: var(--primary); }
+    .media-list-row.selected { border-color: var(--primary); }
+    .mlr-thumb {
+      width: 48px; height: 48px; border-radius: 8px;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1rem; flex-shrink: 0;
+    }
+    .mlr-main { flex: 1; min-width: 160px; }
+    .mlr-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+    .mlr-meta { font-size: 0.75rem; color: var(--muted); }
+    .mlr-cell { min-width: 90px; }
+    .mlr-cell .mlr-label {
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); font-weight: 700; margin-bottom: 2px;
+    }
+    .mlr-cell .mlr-value { font-size: 0.8rem; font-weight: 600; }
+    .mlr-cell .mlr-value.gold { color: var(--accent); }
+
+    .empty-state {
+      text-align: center; padding: 56px 20px;
+      color: var(--muted); background-color: var(--elevated);
+      border: 1px dashed var(--border); border-radius: var(--radius-card);
+    }
+    .empty-state i { font-size: 2.2rem; color: var(--border); margin-bottom: 14px; display: inline-block; }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.85rem; }
+
+    .footnote {
+      font-size: 0.75rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* ============================================================ */
+    /* DETAIL PANEL (side drawer)                                  */
+    /* ============================================================ */
+    .detail-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 100;
+      backdrop-filter: blur(2px);
+    }
+    .detail-overlay.active { display: block; }
+
+    .detail-panel {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 440px;
+      background-color: var(--surface); border-left: 1px solid var(--border);
+      z-index: 110; display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.25s ease;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+    }
+    .detail-panel.open { transform: translateX(0); }
+
+    .detail-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .detail-header h3 { font-size: 1.1rem; }
+    .detail-close {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 34px; height: 34px;
+      border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-close:hover { color: var(--danger); border-color: var(--danger); }
+
+    .detail-body {
+      flex: 1; overflow-y: auto; padding: 24px;
+    }
+    .detail-preview {
+      width: 100%; height: 200px; background-size: cover;
+      background-position: center; background-color: #0a0f0d;
+      border-radius: 12px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2.4rem;
+      border: 1px solid var(--border);
+    }
+
+    .detail-form-group { margin-bottom: 16px; }
+    .detail-form-group label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .detail-form-group input,
+    .detail-form-group textarea,
+    .detail-form-group select {
+      width: 100%; background-color: var(--elevated);
+      border: 1px solid var(--border); border-radius: var(--radius-input);
+      padding: 9px 12px; font-size: 0.82rem; color: var(--text);
+      outline: none; transition: border-color 0.15s;
+    }
+    .detail-form-group input::placeholder,
+    .detail-form-group textarea::placeholder { color: #6b7c74; }
+    .detail-form-group input:focus,
+    .detail-form-group textarea:focus,
+    .detail-form-group select:focus { border-color: var(--primary); }
+    .detail-form-group textarea { resize: vertical; min-height: 60px; }
+
+    .meta-info {
+      display: flex; flex-direction: column; gap: 8px;
+      padding: 14px; background-color: var(--elevated);
+      border-radius: 10px; margin-bottom: 16px;
+      font-size: 0.78rem;
+    }
+    .meta-info-row {
+      display: flex; justify-content: space-between; gap: 12px;
+    }
+    .meta-info-row .mi-label { color: var(--muted); }
+    .meta-info-row .mi-value { font-weight: 600; text-align: right; word-break: break-all; }
+
+    .url-copy {
+      display: flex; gap: 8px; margin-bottom: 16px;
+    }
+    .url-copy input {
+      flex: 1; background-color: var(--elevated);
+      border: 1px solid var(--border); border-radius: var(--radius-input);
+      padding: 9px 12px; font-size: 0.78rem; color: var(--muted);
+      outline: none; font-family: monospace;
+    }
+
+    .usage-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .usage-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; background-color: var(--elevated);
+      border-radius: 8px; font-size: 0.8rem;
+    }
+    .usage-item i { color: var(--primary); font-size: 0.85rem; }
+    .usage-item .usage-text { flex: 1; }
+    .usage-item .usage-text strong { display: block; font-size: 0.82rem; }
+    .usage-item .usage-text span { color: var(--muted); font-size: 0.72rem; }
+    .usage-item .usage-badge {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 40px; background-color: rgba(0,201,130,0.12);
+      color: var(--primary);
+    }
+    .usage-item .usage-badge.warning {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
+
+    .detail-actions {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      flex-shrink: 0; background-color: var(--surface);
+    }
+    .detail-actions .btn-primary,
+    .detail-actions .btn-outline,
+    .detail-actions .btn-danger {
+      flex: 1; justify-content: center; min-width: 100px;
+    }
+
+    .detail-danger-note {
+      display: flex; gap: 10px; padding: 12px 14px;
+      background-color: rgba(224,112,112,0.06);
+      border: 1px solid rgba(224,112,112,0.25);
+      border-radius: 10px; margin-top: 16px;
+    }
+    .detail-danger-note i { color: var(--danger); margin-top: 2px; flex-shrink: 0; }
+    .detail-danger-note p { font-size: 0.75rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+    }
+    @media (max-width: 600px) {
+      .topbar-search { display: none; }
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .media-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .media-thumbnail { height: 100px; }
+      .filter-row .search-inline { min-width: 100%; }
+      .view-toggle { display: none; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+    .detail-body::-webkit-scrollbar { width: 6px; }
+    .detail-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="./Media.html" class="nav-item active"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-user">
+          <div class="admin-avatar">AD</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">Admin User</div>
+            <div class="admin-user-role">Super Administrator</div>
+          </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out"
+            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search admin records..." aria-label="Search">
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="admin-avatar">AD</div>
+            <div>
+              <div class="topbar-admin-name">Admin User</div>
+              <div class="topbar-admin-role">Super Administrator</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-photo-film"></i> Media library</div>
+          <h1>All website media</h1>
+          <p>Upload, organize, preview and reuse images across CampusNaija.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-label">Total files <i class="fas fa-image"></i></div>
+            <div class="stat-mini-value">—</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Used in content <i class="fas fa-link"></i></div>
+            <div class="stat-mini-value">—</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Unused <i class="fas fa-unlink"></i></div>
+            <div class="stat-mini-value">—</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Storage used <i class="fas fa-database gold"></i></div>
+            <div class="stat-mini-value">—</div>
+          </div>
+        </div>
+
+        <!-- Upload zone -->
+        <div class="upload-zone" onclick="toast('Upload dialog opened (demo).')">
+          <div class="uz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+          <h3>Upload media</h3>
+          <p>Add images, logos, banners and approved media files to the central library.</p>
+          <div class="upload-formats">
+            <span class="format-tag">JPG</span>
+            <span class="format-tag">PNG</span>
+            <span class="format-tag">WebP</span>
+            <span class="format-tag">SVG (where permitted)</span>
+          </div>
+        </div>
+
+        <!-- Category cards -->
+        <div class="category-grid">
+          <div class="category-card" onclick="setCategoryFilter('school')">
+            <div class="category-thumb" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=60');"></div>
+            <div class="category-body">
+              <h4>School images and logos</h4>
+              <p>University logos, campus buildings, faculties, lecture halls and institution galleries.</p>
+              <span class="category-count"><i class="fas fa-image"></i> Select from school editor</span>
+            </div>
+          </div>
+          <div class="category-card" onclick="setCategoryFilter('news')">
+            <div class="category-thumb" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=60');"></div>
+            <div class="category-body">
+              <h4>News and Trending images</h4>
+              <p>Article cover images, story thumbnails, inline article pictures and homepage news cards.</p>
+              <span class="category-count"><i class="fas fa-image"></i> Select from article editor</span>
+            </div>
+          </div>
+          <div class="category-card" onclick="setCategoryFilter('scholarship')">
+            <div class="category-thumb" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format&fit=crop&q=60');"></div>
+            <div class="category-body">
+              <h4>Scholarship images</h4>
+              <p>Sponsor logos, scholarship illustrations, funding opportunity banners and supporting images.</p>
+              <span class="category-count"><i class="fas fa-image"></i> Select from scholarship editor</span>
+            </div>
+          </div>
+          <div class="category-card" onclick="setCategoryFilter('exam')">
+            <div class="category-thumb" style="background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=60');"></div>
+            <div class="category-body">
+              <h4>Exam and admission media</h4>
+              <p>Examination guides, admission notices, official document previews and educational illustrations.</p>
+              <span class="category-count"><i class="fas fa-image"></i> Select from exam/admission editor</span>
+            </div>
+          </div>
+          <div class="category-card" onclick="setCategoryFilter('general')">
+            <div class="category-thumb" style="background-image: url('https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=600&auto=format&fit=crop&q=60');"></div>
+            <div class="category-body">
+              <h4>Homepage and general media</h4>
+              <p>Hero backgrounds, promotional illustrations, category thumbnails, default placeholders and approved decorative assets.</p>
+              <span class="category-count"><i class="fas fa-image"></i> Select from page editors</span>
+            </div>
+          </div>
+          <div class="category-card" onclick="toast('Add media category (demo).')">
+            <div class="category-thumb" style="background-color: var(--surface); border: 1px dashed var(--border);">
+              <i class="fas fa-plus" style="color: var(--primary);"></i>
+            </div>
+            <div class="category-body">
+              <h4>Add media category</h4>
+              <p>Create a new media category for organizing files.</p>
+              <span class="category-count"><i class="fas fa-plus"></i> New category</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <button class="btn-primary" onclick="toast('Upload dialog opened (demo).')">
+            <i class="fas fa-cloud-arrow-up"></i> Upload
+          </button>
+          <div class="view-toggle">
+            <button class="active" id="gridViewBtn" onclick="setView('grid')"><i class="fas fa-grip"></i></button>
+            <button id="listViewBtn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+          </div>
+          <div class="filter-row">
+            <div class="search-inline">
+              <i class="fas fa-search"></i>
+              <input type="text" id="mediaSearch" placeholder="Search by filename, title or tag..." oninput="filterMedia()">
+            </div>
+            <select id="typeFilter" onchange="filterMedia()">
+              <option value="">All media types</option>
+              <option value="image">Images</option>
+              <option value="logo">Logos</option>
+              <option value="document">Documents</option>
+            </select>
+            <select id="categoryFilter" onchange="filterMedia()">
+              <option value="">All categories</option>
+              <option value="school">School</option>
+              <option value="news">News</option>
+              <option value="scholarship">Scholarship</option>
+              <option value="exam">Exam / Admission</option>
+              <option value="general">General</option>
+            </select>
+            <select id="usageFilter" onchange="filterMedia()">
+              <option value="">All usage</option>
+              <option value="used">Used in content</option>
+              <option value="unused">Unused</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Gallery header -->
+        <div class="gallery-header">
+          <div class="gallery-title"><i class="fas fa-photo-film"></i> Your media</div>
+          <div class="gallery-count" id="mediaCount">Showing 0 files</div>
+        </div>
+
+        <!-- Media grid (populated by JS) -->
+        <div class="media-grid" id="mediaGrid"></div>
+
+        <!-- Media list (populated by JS) -->
+        <div class="media-list" id="mediaList" style="display:none;"></div>
+
+        <p class="footnote">
+          <i class="fas fa-circle-info"></i> Preview gallery only. The live gallery will display files uploaded to your storage.
+        </p>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== DETAIL PANEL ==================== -->
+  <div class="detail-overlay" id="detailOverlay"></div>
+  <aside class="detail-panel" id="detailPanel" aria-label="Media details">
+    <div class="detail-header">
+      <h3>Media details</h3>
+      <button class="detail-close" onclick="closeDetail()" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="detail-body" id="detailBody">
+      <!-- Populated by JS -->
+    </div>
+    <div class="detail-actions" id="detailActions">
+      <!-- Populated by JS -->
+    </div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Saved</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO MEDIA DATA                                              */
+      /* ============================================================ */
+      let mediaFiles = [
+        {
+          id: 'm1',
+          name: 'unilag-campus.jpg',
+          displayName: 'UNILAG Campus Main Gate',
+          type: 'image',
+          category: 'school',
+          size: '2.4 MB',
+          dimensions: '1920 × 1080',
+          uploaded: '2026-05-20',
+          alt: 'University of Lagos main campus gate',
+          caption: 'Main entrance to the University of Lagos campus',
+          tags: ['unilag', 'campus', 'lagos'],
+          url: '/media/schools/unilag-campus.jpg',
+          usedBy: [
+            { page: 'Schools.html', record: 'University of Lagos', status: 'Published' },
+            { page: 'Home.html', record: 'Featured Schools', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm2',
+          name: 'jamb-utme-2026.jpg',
+          displayName: 'JAMB UTME 2026 Guide Cover',
+          type: 'image',
+          category: 'exam',
+          size: '1.8 MB',
+          dimensions: '1600 × 900',
+          uploaded: '2026-05-18',
+          alt: 'Students preparing for JAMB UTME examination',
+          caption: 'Cover image for the JAMB UTME 2026 examination guide',
+          tags: ['jamb', 'utme', 'exam'],
+          url: '/media/exams/jamb-utme-2026.jpg',
+          usedBy: [
+            { page: 'Exams.html', record: 'JAMB UTME 2026', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm3',
+          name: 'mtn-foundation-logo.png',
+          displayName: 'MTN Foundation Logo',
+          type: 'logo',
+          category: 'scholarship',
+          size: '45 KB',
+          dimensions: '512 × 512',
+          uploaded: '2026-05-15',
+          alt: 'MTN Foundation logo',
+          caption: 'Official sponsor logo for MTN Foundation Scholarship',
+          tags: ['mtn', 'sponsor', 'logo'],
+          url: '/media/logos/mtn-foundation-logo.png',
+          usedBy: [
+            { page: 'Scholarships.html', record: 'MTN Foundation Scholarship', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm4',
+          name: 'admission-notice.jpg',
+          displayName: 'Admission Notice Banner',
+          type: 'image',
+          category: 'exam',
+          size: '1.2 MB',
+          dimensions: '1200 × 628',
+          uploaded: '2026-05-12',
+          alt: 'Admission notice announcement',
+          caption: 'Generic banner for admission notices',
+          tags: ['admission', 'notice', 'banner'],
+          url: '/media/admissions/admission-notice.jpg',
+          usedBy: [
+            { page: 'Admissions.html', record: 'University of Abuja UTME', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm5',
+          name: 'students-studying.jpg',
+          displayName: 'Students Studying Together',
+          type: 'image',
+          category: 'news',
+          size: '2.1 MB',
+          dimensions: '1920 × 1280',
+          uploaded: '2026-05-10',
+          alt: 'Nigerian students studying together on campus',
+          caption: 'Students collaborating on a group study session',
+          tags: ['students', 'study', 'campus'],
+          url: '/media/news/students-studying.jpg',
+          usedBy: [
+            { page: 'Trending.html', record: 'Guides and opportunities for student success', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm6',
+          name: 'scholarship-banner.jpg',
+          displayName: 'Scholarship Opportunities Banner',
+          type: 'image',
+          category: 'scholarship',
+          size: '1.6 MB',
+          dimensions: '1600 × 800',
+          uploaded: '2026-05-08',
+          alt: 'Scholarship opportunities illustration',
+          caption: 'Banner for scholarship and funding opportunities',
+          tags: ['scholarship', 'funding', 'banner'],
+          url: '/media/scholarships/scholarship-banner.jpg',
+          usedBy: []
+        },
+        {
+          id: 'm7',
+          name: 'hero-bg-home.jpg',
+          displayName: 'Homepage Hero Background',
+          type: 'image',
+          category: 'general',
+          size: '3.2 MB',
+          dimensions: '2560 × 1440',
+          uploaded: '2026-05-05',
+          alt: 'Nigerian university campus hero image',
+          caption: 'Main hero background for the CampusNaija homepage',
+          tags: ['hero', 'homepage', 'background'],
+          url: '/media/general/hero-bg-home.jpg',
+          usedBy: [
+            { page: 'Home.html', record: 'Hero Section', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm8',
+          name: 'waec-timetable.pdf',
+          displayName: 'WAEC 2026 Timetable',
+          type: 'document',
+          category: 'exam',
+          size: '850 KB',
+          dimensions: '—',
+          uploaded: '2026-05-02',
+          alt: 'WAEC 2026 examination timetable document',
+          caption: 'Official WAEC 2026 examination timetable',
+          tags: ['waec', 'timetable', 'pdf'],
+          url: '/media/exams/waec-timetable.pdf',
+          usedBy: [
+            { page: 'Exams.html', record: 'WAEC 2026', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm9',
+          name: 'biu-logo.png',
+          displayName: 'Benson Idahosa University Logo',
+          type: 'logo',
+          category: 'school',
+          size: '38 KB',
+          dimensions: '400 × 400',
+          uploaded: '2026-04-28',
+          alt: 'Benson Idahosa University logo',
+          caption: 'Official logo for Benson Idahosa University',
+          tags: ['biu', 'logo', 'university'],
+          url: '/media/logos/biu-logo.png',
+          usedBy: [
+            { page: 'Schools.html', record: 'Benson Idahosa University', status: 'Published' }
+          ]
+        },
+        {
+          id: 'm10',
+          name: 'news-placeholder.jpg',
+          displayName: 'News Placeholder Image',
+          type: 'image',
+          category: 'general',
+          size: '120 KB',
+          dimensions: '800 × 450',
+          uploaded: '2026-04-20',
+          alt: 'Placeholder image for news articles',
+          caption: 'Default placeholder used when no cover image is selected',
+          tags: ['placeholder', 'default', 'news'],
+          url: '/media/general/news-placeholder.jpg',
+          usedBy: []
+        }
+      ];
+
+      let currentView = 'grid';
+      let selectedMediaId = null;
+      let currentCategoryFilter = '';
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      function formatType(type) {
+        if (type === 'logo') return 'Logo';
+        if (type === 'document') return 'Document';
+        return 'Image';
+      }
+
+      function typeIcon(type) {
+        if (type === 'logo') return 'fa-image';
+        if (type === 'document') return 'fa-file-pdf';
+        return 'fa-image';
+      }
+
+      /* ============================================================ */
+      /* RENDER GALLERY                                               */
+      /* ============================================================ */
+      function filterMedia() {
+        const query = (document.getElementById('mediaSearch').value || '').toLowerCase().trim();
+        const type = document.getElementById('typeFilter').value;
+        const category = document.getElementById('categoryFilter').value;
+        const usage = document.getElementById('usageFilter').value;
+
+        const filtered = mediaFiles.filter(m => {
+          const matchQ = !query ||
+            m.name.toLowerCase().includes(query) ||
+            m.displayName.toLowerCase().includes(query) ||
+            m.tags.some(t => t.includes(query));
+          const matchT = !type || m.type === type;
+          const matchC = !category || m.category === category;
+          const matchU = !usage ||
+            (usage === 'used' && m.usedBy.length > 0) ||
+            (usage === 'unused' && m.usedBy.length === 0);
+          return matchQ && matchT && matchC && matchU;
+        });
+
+        document.getElementById('mediaCount').textContent = `Showing ${filtered.length} of ${mediaFiles.length} files`;
+
+        if (currentView === 'grid') {
+          renderGrid(filtered);
+        } else {
+          renderList(filtered);
+        }
+      }
+
+      function renderGrid(files) {
+        const grid = document.getElementById('mediaGrid');
+        grid.style.display = 'grid';
+        document.getElementById('mediaList').style.display = 'none';
+
+        if (files.length === 0) {
+          grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <i class="fas fa-photo-film"></i>
+              <h3>No media files match your filters</h3>
+              <p>Try adjusting the search or filter options.</p>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = files.map(m => `
+          <div class="media-item ${selectedMediaId === m.id ? 'selected' : ''}" onclick="openDetail('${m.id}')">
+            <div class="media-thumbnail" style="background-image: url('${getThumbUrl(m)}');">
+              <span class="media-type-badge">${formatType(m.type)}</span>
+              ${m.usedBy.length > 0 ? `<span class="media-usage-badge"><i class="fas fa-link"></i> ${m.usedBy.length}</span>` : ''}
+            </div>
+            <div class="media-info">
+              <div class="media-name">${m.displayName}</div>
+              <div class="media-meta">
+                <span>${m.size}</span>
+                <span>·</span>
+                <span>${m.dimensions}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderList(files) {
+        const list = document.getElementById('mediaList');
+        list.style.display = 'flex';
+        document.getElementById('mediaGrid').style.display = 'none';
+
+        if (files.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-photo-film"></i>
+              <h3>No media files match your filters</h3>
+              <p>Try adjusting the search or filter options.</p>
+            </div>`;
+          return;
+        }
+
+        list.innerHTML = files.map(m => `
+          <div class="media-list-row ${selectedMediaId === m.id ? 'selected' : ''}" onclick="openDetail('${m.id}')">
+            <div class="mlr-thumb" style="background-image: url('${getThumbUrl(m)}');">
+              ${!getThumbUrl(m) ? `<i class="fas ${typeIcon(m.type)}"></i>` : ''}
+            </div>
+            <div class="mlr-main">
+              <div class="mlr-name">${m.displayName}</div>
+              <div class="mlr-meta">${m.name} · ${formatType(m.type)}</div>
+            </div>
+            <div class="mlr-cell">
+              <div class="mlr-label">Size</div>
+              <div class="mlr-value">${m.size}</div>
+            </div>
+            <div class="mlr-cell">
+              <div class="mlr-label">Dimensions</div>
+              <div class="mlr-value">${m.dimensions}</div>
+            </div>
+            <div class="mlr-cell">
+              <div class="mlr-label">Uploaded</div>
+              <div class="mlr-value">${m.uploaded}</div>
+            </div>
+            <div class="mlr-cell">
+              <div class="mlr-label">Used by</div>
+              <div class="mlr-value ${m.usedBy.length > 0 ? 'gold' : ''}">${m.usedBy.length} records</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function getThumbUrl(m) {
+        // Use unsplash thumbnails for demo images
+        const map = {
+          'm1': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&auto=format&fit=crop&q=60',
+          'm2': 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=60',
+          'm3': '',
+          'm4': 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&auto=format&fit=crop&q=60',
+          'm5': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&auto=format&fit=crop&q=60',
+          'm6': 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=400&auto=format&fit=crop&q=60',
+          'm7': 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&auto=format&fit=crop&q=60',
+          'm8': '',
+          'm9': '',
+          'm10': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&auto=format&fit=crop&q=60'
+        };
+        return map[m.id] || '';
+      }
+
+      function setView(view) {
+        currentView = view;
+        document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
+        document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
+        filterMedia();
+      }
+
+      function setCategoryFilter(cat) {
+        currentCategoryFilter = cat;
+        document.getElementById('categoryFilter').value = cat;
+        filterMedia();
+      }
+
+      /* ============================================================ */
+      /* DETAIL PANEL                                                 */
+      /* ============================================================ */
+      function openDetail(id) {
+        selectedMediaId = id;
+        const m = mediaFiles.find(x => x.id === id);
+        if (!m) return;
+
+        const body = document.getElementById('detailBody');
+        const actions = document.getElementById('detailActions');
+
+        const usageHtml = m.usedBy.length > 0
+          ? m.usedBy.map(u => `
+              <div class="usage-item">
+                <i class="fas fa-file-lines"></i>
+                <div class="usage-text">
+                  <strong>${u.record}</strong>
+                  <span>${u.page}</span>
+                </div>
+                <span class="usage-badge ${u.status === 'Published' ? '' : 'warning'}">${u.status}</span>
+              </div>
+            `).join('')
+          : `<div class="empty-state" style="padding: 20px; background: transparent; border: none;">
+               <p style="font-size:0.8rem;">Not currently used in any content.</p>
+             </div>`;
+
+        body.innerHTML = `
+          <div class="detail-preview" style="background-image: url('${getThumbUrl(m)}');">
+            ${!getThumbUrl(m) ? `<i class="fas ${typeIcon(m.type)}"></i>` : ''}
+          </div>
+
+          <div class="detail-form-group">
+            <label>Display name</label>
+            <input type="text" id="editDisplayName" value="${m.displayName}">
+          </div>
+
+          <div class="detail-form-group">
+            <label>Alternative text (accessibility)</label>
+            <input type="text" id="editAlt" value="${m.alt}" placeholder="Describe the image for screen readers">
+          </div>
+
+          <div class="detail-form-group">
+            <label>Caption</label>
+            <textarea id="editCaption" placeholder="Optional caption">${m.caption}</textarea>
+          </div>
+
+          <div class="detail-form-group">
+            <label>Category</label>
+            <select id="editCategory">
+              <option value="school" ${m.category === 'school' ? 'selected' : ''}>School</option>
+              <option value="news" ${m.category === 'news' ? 'selected' : ''}>News</option>
+              <option value="scholarship" ${m.category === 'scholarship' ? 'selected' : ''}>Scholarship</option>
+              <option value="exam" ${m.category === 'exam' ? 'selected' : ''}>Exam / Admission</option>
+              <option value="general" ${m.category === 'general' ? 'selected' : ''}>General</option>
+            </select>
+          </div>
+
+          <div class="detail-form-group">
+            <label>Tags (comma-separated)</label>
+            <input type="text" id="editTags" value="${m.tags.join(', ')}">
+          </div>
+
+          <div class="url-copy">
+            <input type="text" value="${m.url}" readonly id="mediaUrlInput">
+            <button class="btn-outline" style="padding: 8px 12px;" onclick="copyUrl()" title="Copy URL">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+
+          <div class="meta-info">
+            <div class="meta-info-row"><span class="mi-label">Filename</span><span class="mi-value">${m.name}</span></div>
+            <div class="meta-info-row"><span class="mi-label">File type</span><span class="mi-value">${formatType(m.type)}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Dimensions</span><span class="mi-value">${m.dimensions}</span></div>
+            <div class="meta-info-row"><span class="mi-label">File size</span><span class="mi-value">${m.size}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Uploaded</span><span class="mi-value">${m.uploaded}</span></div>
+          </div>
+
+          <div style="margin-bottom: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);">
+            Used in ${m.usedBy.length} ${m.usedBy.length === 1 ? 'record' : 'records'}
+          </div>
+          <div class="usage-list">${usageHtml}</div>
+
+          ${m.usedBy.some(u => u.status === 'Published') ? `
+            <div class="detail-danger-note">
+              <i class="fas fa-triangle-exclamation"></i>
+              <p>This file is used by published content. Deleting it will break those pages. Replacing it will update every record that references it.</p>
+            </div>
+          ` : ''}
+        `;
+
+        actions.innerHTML = `
+          <button class="btn-primary" onclick="saveMediaChanges('${m.id}')"><i class="fas fa-save"></i> Save</button>
+          <button class="btn-outline" onclick="toast('Replace dialog opened (demo).')"><i class="fas fa-arrows-rotate"></i> Replace</button>
+          <button class="btn-outline" onclick="toast('Download started (demo).')"><i class="fas fa-download"></i></button>
+          <button class="btn-danger" onclick="deleteMedia('${m.id}')"><i class="fas fa-trash"></i></button>
+        `;
+
+        document.getElementById('detailOverlay').classList.add('active');
+        document.getElementById('detailPanel').classList.add('open');
+      }
+
+      function closeDetail() {
+        document.getElementById('detailPanel').classList.remove('open');
+        document.getElementById('detailOverlay').classList.remove('active');
+        selectedMediaId = null;
+        filterMedia();
+      }
+
+      function copyUrl() {
+        const input = document.getElementById('mediaUrlInput');
+        if (input) {
+          input.select();
+          try { document.execCommand('copy'); toast('Media URL copied to clipboard.'); }
+          catch (e) { toast('Copy failed. Please copy manually.'); }
+        }
+      }
+
+      function saveMediaChanges(id) {
+        const m = mediaFiles.find(x => x.id === id);
+        if (!m) return;
+        const dn = document.getElementById('editDisplayName');
+        const alt = document.getElementById('editAlt');
+        const cap = document.getElementById('editCaption');
+        const cat = document.getElementById('editCategory');
+        const tags = document.getElementById('editTags');
+        if (dn) m.displayName = dn.value.trim() || m.displayName;
+        if (alt) m.alt = alt.value.trim();
+        if (cap) m.caption = cap.value.trim();
+        if (cat) m.category = cat.value;
+        if (tags) m.tags = tags.value.split(',').map(t => t.trim()).filter(Boolean);
+        toast('Media details saved (demo).');
+        filterMedia();
+      }
+
+      function deleteMedia(id) {
+        const m = mediaFiles.find(x => x.id === id);
+        if (!m) return;
+        const usedInPublished = m.usedBy.some(u => u.status === 'Published');
+        const warning = usedInPublished
+          ? `This file is used by ${m.usedBy.length} published record(s). Deleting it will break those pages.\n\nAre you sure you want to delete "${m.displayName}"?`
+          : `Delete "${m.displayName}"? This cannot be undone.`;
+        if (!confirm(warning)) return;
+        mediaFiles = mediaFiles.filter(x => x.id !== id);
+        closeDetail();
+        toast('Media deleted (demo).');
+      }
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSidebar(); closeDetail(); } });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* Detail overlay close */
+      document.getElementById('detailOverlay').addEventListener('click', closeDetail);
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        filterMedia();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

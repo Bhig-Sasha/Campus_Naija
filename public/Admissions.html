@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Admission Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --radius-card: 16px;
+      --radius-btn: 12px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* ----- HEADER ----- */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background-color: rgba(7, 10, 9, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+    .logo span { color: var(--primary); }
+    .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
+    .btn-explore {
+      display: none; background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
+    }
+    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
+    .mobile-nav {
+      display: none; background-color: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted);
+    }
+    .mobile-nav.active { display: flex; }
+    @media (min-width: 1024px) {
+      .nav-links { display: flex; }
+      .btn-explore { display: inline-block; }
+      .hamburger { display: none; }
+      .mobile-nav { display: none !important; }
+    }
+
+    /* ----- VIEW SWITCHING ----- */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ============================================================ */
+    /* DIRECTORY VIEW                                               */
+    /* ============================================================ */
+    .directory-hero { padding: 40px 0 24px; }
+    .directory-hero .eyebrow {
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
+    .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
+
+    /* Search + filter bar */
+    .search-filter-bar { margin: 24px 0 32px; }
+    .search-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+    }
+    .search-wrapper {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 60px; padding: 6px 6px 6px 20px; display: flex;
+      align-items: center; gap: 8px; flex: 1; min-width: 240px;
+    }
+    .search-wrapper:focus-within { border-color: var(--primary); }
+    .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
+    .search-wrapper input {
+      flex: 1; background: transparent; border: none; padding: 12px 0;
+      font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none;
+    }
+    .search-wrapper input::placeholder { color: #6b7c74; }
+    .search-wrapper button {
+      background-color: var(--primary); border: none; border-radius: 40px;
+      padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer;
+      white-space: nowrap;
+    }
+    .select-wrap {
+      display: flex; gap: 12px; flex-wrap: wrap; flex: 1;
+    }
+    .select-wrap select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif;
+      font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer;
+      min-width: 150px; flex: 1;
+    }
+    .select-wrap select:focus { border-color: var(--primary); }
+
+    .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
+    .filter-tab {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.85rem; font-weight: 600;
+      padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s;
+    }
+    .filter-tab:hover { border-color: var(--primary); color: var(--text); }
+    .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
+
+    /* Admission categories */
+    .admission-categories {
+      display: grid; grid-template-columns: 1fr; gap: 16px; padding: 8px 0 32px;
+    }
+    @media (min-width: 600px) { .admission-categories { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .admission-categories { grid-template-columns: repeat(4, 1fr); } }
+    .category-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 22px 20px; transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .category-card:hover { border-color: var(--primary); }
+    .category-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 14px; display: inline-block; }
+    .category-card h4 { font-size: 1rem; margin-bottom: 6px; }
+    .category-card p { font-size: 0.85rem; color: var(--muted); }
+
+    /* Section headers */
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title { font-size: 1.8rem; }
+    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+
+    /* Admission cards grid */
+    .admissions-grid {
+      display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 24px;
+    }
+    @media (min-width: 600px) { .admissions-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .admissions-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .admission-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 22px; display: flex; flex-direction: column;
+      transition: border-color 0.2s; cursor: pointer;
+    }
+    .admission-card:hover { border-color: var(--primary); }
+    .admission-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .admission-logo {
+      width: 44px; height: 44px; border-radius: 10px; background-color: var(--elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: var(--primary); flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .admission-card-top .ac-text { flex: 1; }
+    .admission-inst { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .admission-programme { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .admission-level { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+    .admission-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .meta-line { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+    .meta-line i { color: var(--muted); width: 16px; text-align: center; font-size: 0.8rem; }
+    .meta-line .meta-label { color: var(--muted); }
+    .meta-line .meta-value { font-weight: 600; }
+    .meta-line .meta-value.gold { color: var(--accent); }
+    .meta-line .meta-value.green { color: var(--primary); }
+    .admission-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+      margin-top: auto; align-self: flex-start;
+    }
+    .status-open { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .status-closing { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .status-upcoming { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .status-closed { background-color: rgba(200,80,80,0.12); color: #e07070; }
+    .admission-action {
+      font-weight: 600; font-size: 0.85rem; color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+    }
+
+    /* Closing soon strip */
+    .closing-soon-strip { padding: 32px 0 64px; }
+    .closing-soon-inner {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; padding: 28px 24px;
+    }
+    .closing-soon-inner h2 { font-size: 1.5rem; margin-bottom: 8px; }
+    .closing-soon-inner > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    .deadline-list { display: flex; flex-direction: column; gap: 12px; }
+    .deadline-item {
+      display: flex; align-items: center; gap: 16px; padding: 14px 16px;
+      background-color: var(--elevated); border-radius: var(--radius-card);
+      border-left: 3px solid var(--accent); cursor: pointer; transition: border-color 0.2s;
+    }
+    .deadline-item:hover { border-left-color: var(--primary); }
+    .deadline-item i { color: var(--accent); font-size: 1rem; }
+    .deadline-item .dl-text { flex: 1; }
+    .deadline-item .dl-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
+    .deadline-item .dl-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .deadline-item .dl-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+    /* ============================================================ */
+    /* ADMISSION DETAIL VIEW                                        */
+    /* ============================================================ */
+    .back-to-directory {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 0.9rem; font-weight: 500;
+      padding: 24px 0 8px; cursor: pointer;
+    }
+    .back-to-directory:hover { color: var(--primary); }
+
+    .admission-detail-hero { padding: 8px 0 16px; }
+    .admission-detail-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+    }
+    .admission-detail-header {
+      padding: 32px 24px; display: flex; flex-direction: column; gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .admission-detail-title-row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .admission-detail-title-row h1 { font-size: 2rem; }
+    .admission-badge {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+      font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px;
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+    }
+    .admission-badge.gold { background-color: rgba(245,185,66,0.15); color: var(--accent); }
+    .admission-badge.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .admission-detail-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .admission-detail-sub .dot { font-size: 0.4rem; }
+    .admission-detail-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem;
+      border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .admission-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .admission-tab-list {
+      display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content;
+    }
+    .admission-tab-item {
+      padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted);
+      cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .admission-tab-item:hover { color: var(--text); }
+    .admission-tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .admission-tab-panel { display: none; }
+    .admission-tab-panel.active { display: block; }
+
+    .admission-profile-content { padding: 0 0 64px; }
+    .admission-profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+    @media (min-width: 900px) { .admission-profile-grid { grid-template-columns: 2fr 1fr; } }
+
+    .info-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px;
+    }
+    .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--muted); }
+    .info-value { font-weight: 600; text-align: right; }
+    .info-value a { color: var(--primary); }
+    .info-value.gold { color: var(--accent); }
+
+    .admission-section { margin-bottom: 40px; }
+    .admission-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
+    .admission-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
+    .admission-section p { color: var(--muted); margin-bottom: 16px; }
+
+    .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead { background-color: var(--elevated); }
+    th { text-align: left; padding: 14px 16px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); white-space: nowrap; }
+    td { padding: 14px 16px; border-top: 1px solid var(--border); }
+    tr:hover td { background-color: rgba(255,255,255,0.02); }
+    .badge-soft {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+    .badge-gold {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+    .badge-muted {
+      background-color: rgba(155,169,161,0.12); color: var(--muted);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+
+    .checklist { display: flex; flex-direction: column; gap: 12px; }
+    .checklist-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      background-color: var(--elevated); border-radius: 10px; padding: 14px 16px;
+    }
+    .checklist-item i { color: var(--primary); margin-top: 3px; font-size: 1rem; }
+    .checklist-item .cl-text { flex: 1; }
+    .checklist-item .cl-text h4 { font-size: 0.9rem; margin-bottom: 2px; }
+    .checklist-item .cl-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .checklist-item .cl-check {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--border); flex-shrink: 0; margin-top: 2px;
+    }
+
+    .update-list { display: flex; flex-direction: column; gap: 16px; }
+    .update-item {
+      background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px;
+      border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start;
+    }
+    .update-item i { color: var(--accent); margin-top: 4px; }
+    .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
+    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
+    .update-meta a { color: var(--primary); }
+
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+    .resource-item {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px; transition: border-color 0.2s;
+    }
+    .resource-item:hover { border-color: var(--primary); }
+    .resource-item i { color: var(--primary); font-size: 1.2rem; width: 24px; text-align: center; }
+    .resource-item .res-text { flex: 1; }
+    .resource-item .res-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
+    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .resource-item .res-action { color: var(--primary); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+
+    .countdown-box {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 20px; text-align: center;
+    }
+    .countdown-box .cd-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    .source-note { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 8px; }
+
+    .scam-warning {
+      background-color: rgba(245,185,66,0.08); border: 1px solid rgba(245,185,66,0.3);
+      border-radius: var(--radius-card); padding: 16px 18px; display: flex; gap: 12px;
+    }
+    .scam-warning i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
+    .scam-warning p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+    .scam-warning strong { color: var(--accent); }
+
+    .related-list { display: flex; flex-direction: column; gap: 12px; }
+    .related-item {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px; transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .related-item:hover { border-color: var(--primary); }
+    .related-item i { color: var(--primary); font-size: 1rem; }
+    .related-item .rel-text { flex: 1; }
+    .related-item .rel-text h4 { font-size: 0.9rem; margin-bottom: 2px; }
+    .related-item .rel-text p { font-size: 0.75rem; color: var(--muted); margin: 0; }
+
+    /* Footer */
+    .site-footer {
+      background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+    @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+    .footer-brand p { color: var(--muted); font-size: 0.9rem; margin: 16px 0 20px; max-width: 280px; }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a { color: var(--muted); font-size: 1.2rem; }
+    .social-links a:hover { color: var(--primary); }
+    .footer-links h4 { font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--muted); font-size: 0.9rem; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 24px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .footer-legal { display: flex; gap: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo" onclick="showDirectory()" style="cursor: pointer;">Campus<span>Naija</span></div>
+    <nav class="nav-links">
+      <a href="./Home.html">Home</a>
+      <a href="./Schools.html">Schools</a>
+      <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
+      <a href="./Exams.html">Exams</a>
+      <a href="./Scholarships.html">Scholarships</a>
+      <a href="./Trending.html">Trending</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
+      <button class="btn-explore" onclick="showDirectory()">Explore</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="./Home.html">Home</a>
+    <a href="./Schools.html">Schools</a>
+    <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
+    <a href="./Exams.html">Exams</a>
+    <a href="./Scholarships.html">Scholarships</a>
+    <a href="./Trending.html">Trending</a>
+  </div>
+</header>
+
+<!-- ==================== DIRECTORY VIEW ==================== -->
+<div id="view-directory" class="view active">
+  <main class="container">
+    <section class="directory-hero">
+      <div class="eyebrow">Admission centre</div>
+      <h1>Your next chapter starts here.</h1>
+      <p>Discover admission opportunities, check requirements, track deadlines and find official application links for Nigerian institutions.</p>
+    </section>
+
+    <!-- Search + filter -->
+    <section class="search-filter-bar">
+      <div class="search-row">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" id="admissionSearch" placeholder="Search schools, courses or admission types...">
+          <button onclick="filterAdmissions()">Find Admissions</button>
+        </div>
+        <div class="select-wrap">
+          <select id="stateFilter" onchange="filterAdmissions()">
+            <option value="">All states</option>
+            <option value="Abuja">Abuja (FCT)</option>
+            <option value="Lagos">Lagos</option>
+            <option value="Edo">Edo</option>
+            <option value="Kaduna">Kaduna</option>
+            <option value="Kano">Kano</option>
+          </select>
+          <select id="levelFilter" onchange="filterAdmissions()">
+            <option value="">All levels</option>
+            <option value="undergraduate">Undergraduate</option>
+            <option value="postgraduate">Postgraduate</option>
+            <option value="diploma">Diploma / ND / HND</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-tabs" id="admissionFilters">
+        <button class="filter-tab active" data-status="all" onclick="setAdmissionFilter('all', this)">All admissions</button>
+        <button class="filter-tab" data-status="open" onclick="setAdmissionFilter('open', this)">Open</button>
+        <button class="filter-tab" data-status="closing" onclick="setAdmissionFilter('closing', this)">Closing soon</button>
+        <button class="filter-tab" data-status="upcoming" onclick="setAdmissionFilter('upcoming', this)">Upcoming</button>
+        <button class="filter-tab" data-status="closed" onclick="setAdmissionFilter('closed', this)">Closed</button>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section>
+      <div class="section-header">
+        <div class="section-title">Admission categories</div>
+      </div>
+      <div class="admission-categories">
+        <div class="category-card" onclick="setLevelFilter('undergraduate')">
+          <i class="fas fa-graduation-cap"></i>
+          <h4>Undergraduate</h4>
+          <p>UTME and Direct Entry</p>
+        </div>
+        <div class="category-card" onclick="setLevelFilter('postgraduate')">
+          <i class="fas fa-user-graduate"></i>
+          <h4>Postgraduate</h4>
+          <p>PGD, Master's and PhD</p>
+        </div>
+        <div class="category-card" onclick="setLevelFilter('diploma')">
+          <i class="fas fa-certificate"></i>
+          <h4>Diploma &amp; ND/HND</h4>
+          <p>Polytechnics and colleges</p>
+        </div>
+        <div class="category-card">
+          <i class="fas fa-arrows-turn-to-dots"></i>
+          <h4>Transfer &amp; Others</h4>
+          <p>Special entry routes</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admission cards -->
+    <section>
+      <div class="section-header">
+        <div class="section-title">Explore admission opportunities</div>
+        <a href="#" class="view-all">Browse all <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="admissions-grid" id="admissionsGrid">
+        <!-- UNIABUJA UTME -->
+        <div class="admission-card" data-status="open" data-level="undergraduate" data-state="Abuja" data-name="University of Abuja" data-programme="UTME Admission" onclick="openAdmission('uniabuja-utme')">
+          <div class="admission-card-top">
+            <div class="admission-logo">UA</div>
+            <div class="ac-text">
+              <div class="admission-inst">University of Abuja</div>
+              <div class="admission-programme">UTME Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">Undergraduate · 2026/2027</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">UTME</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closes:</span><span class="meta-value gold">15 Sep 2026</span></div>
+          </div>
+          <span class="admission-status status-open"><i class="fas fa-check-circle"></i> Open</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+
+        <!-- UNILAG Direct Entry -->
+        <div class="admission-card" data-status="closing" data-level="undergraduate" data-state="Lagos" data-name="University of Lagos" data-programme="Direct Entry Admission" onclick="openAdmission('unilag-de')">
+          <div class="admission-card-top">
+            <div class="admission-logo">UL</div>
+            <div class="ac-text">
+              <div class="admission-inst">University of Lagos</div>
+              <div class="admission-programme">Direct Entry Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">Undergraduate · 2026/2027</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">Direct Entry</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closes:</span><span class="meta-value gold">30 Jun 2026</span></div>
+          </div>
+          <span class="admission-status status-closing"><i class="fas fa-clock"></i> Closing soon</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+
+        <!-- BIU Postgraduate -->
+        <div class="admission-card" data-status="open" data-level="postgraduate" data-state="Edo" data-name="Benson Idahosa University" data-programme="Postgraduate Admission" onclick="openAdmission('biu-pg')">
+          <div class="admission-card-top">
+            <div class="admission-logo">BI</div>
+            <div class="ac-text">
+              <div class="admission-inst">Benson Idahosa University</div>
+              <div class="admission-programme">Postgraduate Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">Postgraduate · 2026/2027</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">PGD / Master's / PhD</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closes:</span><span class="meta-value gold">31 Aug 2026</span></div>
+          </div>
+          <span class="admission-status status-open"><i class="fas fa-check-circle"></i> Open</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+
+        <!-- YABATECH ND -->
+        <div class="admission-card" data-status="upcoming" data-level="diploma" data-state="Lagos" data-name="Yaba College of Technology" data-programme="ND Admission" onclick="openAdmission('yabatech-nd')">
+          <div class="admission-card-top">
+            <div class="admission-logo">YT</div>
+            <div class="ac-text">
+              <div class="admission-inst">Yaba College of Technology</div>
+              <div class="admission-programme">ND Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">Diploma · 2026/2027</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">UTME</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Opens:</span><span class="meta-value">1 Jul 2026</span></div>
+          </div>
+          <span class="admission-status status-upcoming"><i class="fas fa-hourglass-half"></i> Upcoming</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+
+        <!-- FCE Kano NCE -->
+        <div class="admission-card" data-status="open" data-level="diploma" data-state="Kano" data-name="Federal College of Education" data-programme="NCE Admission" onclick="openAdmission('fce-nce')">
+          <div class="admission-card-top">
+            <div class="admission-logo">FC</div>
+            <div class="ac-text">
+              <div class="admission-inst">Federal College of Education</div>
+              <div class="admission-programme">NCE Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">College · 2026/2027</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">UTME / Direct Entry</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closes:</span><span class="meta-value gold">30 Sep 2026</span></div>
+          </div>
+          <span class="admission-status status-open"><i class="fas fa-check-circle"></i> Open</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+
+        <!-- ABU Zaria UTME -->
+        <div class="admission-card" data-status="closed" data-level="undergraduate" data-state="Kaduna" data-name="Ahmadu Bello University" data-programme="UTME Admission" onclick="openAdmission('abu-utme')">
+          <div class="admission-card-top">
+            <div class="admission-logo">AB</div>
+            <div class="ac-text">
+              <div class="admission-inst">Ahmadu Bello University</div>
+              <div class="admission-programme">UTME Admission</div>
+            </div>
+          </div>
+          <div class="admission-level">Undergraduate · 2025/2026</div>
+          <div class="admission-meta">
+            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">UTME</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closed:</span><span class="meta-value">28 Feb 2026</span></div>
+          </div>
+          <span class="admission-status status-closed"><i class="fas fa-xmark"></i> Closed</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing soon strip -->
+    <section class="closing-soon-strip">
+      <div class="closing-soon-inner">
+        <h2>Closing soon</h2>
+        <p>Admission opportunities with verified deadlines that are approaching.</p>
+        <div class="deadline-list">
+          <div class="deadline-item" onclick="openAdmission('unilag-de')">
+            <i class="fas fa-clock"></i>
+            <div class="dl-text">
+              <h4>University of Lagos — Direct Entry</h4>
+              <p>Undergraduate · 2026/2027</p>
+            </div>
+            <span class="dl-date">30 Jun 2026</span>
+          </div>
+          <div class="deadline-item" onclick="openAdmission('biu-pg')">
+            <i class="fas fa-clock"></i>
+            <div class="dl-text">
+              <h4>Benson Idahosa University — Postgraduate</h4>
+              <p>Postgraduate · 2026/2027</p>
+            </div>
+            <span class="dl-date">31 Aug 2026</span>
+          </div>
+          <div class="deadline-item" onclick="openAdmission('uniabuja-utme')">
+            <i class="fas fa-clock"></i>
+            <div class="dl-text">
+              <h4>University of Abuja — UTME</h4>
+              <p>Undergraduate · 2026/2027</p>
+            </div>
+            <span class="dl-date">15 Sep 2026</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== ADMISSION DETAIL VIEW ==================== -->
+<div id="view-admission-detail" class="view">
+  <main class="container">
+    <div class="back-to-directory" onclick="showDirectory()">
+      <i class="fas fa-arrow-left"></i> Back to all admissions
+    </div>
+
+    <!-- Hero -->
+    <section class="admission-detail-hero">
+      <div class="admission-detail-card">
+        <div class="admission-detail-header">
+          <div class="admission-detail-title-row">
+            <h1 id="admissionDetailName">University of Abuja — UTME Admission</h1>
+            <span class="admission-badge" id="admissionDetailBadge">Open</span>
+          </div>
+          <div class="admission-detail-sub" id="admissionDetailSub">
+            <span><i class="fas fa-building"></i> University of Abuja</span>
+            <span class="dot">●</span>
+            <span>Undergraduate</span>
+            <span class="dot">●</span>
+            <span>2026/2027</span>
+          </div>
+          <p style="color: var(--muted); max-width: 720px;" id="admissionDetailTagline">Undergraduate admission through UTME for the 2026/2027 academic session.</p>
+          <div class="admission-detail-actions">
+            <button class="btn-primary"><i class="fas fa-external-link-alt"></i> Visit Official Application Portal</button>
+            <button class="btn-outline"><i class="fas fa-globe"></i> Institution Profile</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="admission-tabs">
+      <ul class="admission-tab-list" id="admissionTabs">
+        <li class="admission-tab-item active" data-tab="overview">Overview</li>
+        <li class="admission-tab-item" data-tab="requirements">Requirements</li>
+        <li class="admission-tab-item" data-tab="dates">Important Dates</li>
+        <li class="admission-tab-item" data-tab="process">Application Process</li>
+      </ul>
+    </div>
+
+    <!-- ===== TAB: OVERVIEW ===== -->
+    <div class="admission-tab-panel active" id="admission-panel-overview">
+      <div class="admission-profile-grid">
+        <div>
+          <div class="admission-section">
+            <h2>Admission overview</h2>
+            <p id="admissionOverviewText">The University of Abuja invites applications from suitably qualified candidates for admission into its undergraduate programmes for the 2026/2027 academic session through the Unified Tertiary Matriculation Examination (UTME).</p>
+          </div>
+
+          <div class="admission-section">
+            <h3>Key details</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Detail</th><th>Information</th></tr>
+                </thead>
+                <tbody id="admissionKeyFacts">
+                  <tr><td>Institution</td><td>University of Abuja</td></tr>
+                  <tr><td>Programme level</td><td>Undergraduate</td></tr>
+                  <tr><td>Entry route</td><td>UTME</td></tr>
+                  <tr><td>Academic session</td><td>2026/2027</td></tr>
+                  <tr><td>Application status</td><td><span class="badge-soft">Open</span></td></tr>
+                  <tr><td>Official portal</td><td><a href="#">uniabuja.edu.ng</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admission-section">
+            <h3>Eligible applicants</h3>
+            <p id="admissionEligibleText">Candidates who sat for the 2026 UTME and obtained a minimum score of 180, with five O'Level credits including English Language and Mathematics in not more than two sittings.</p>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Admission information</h3>
+            <div class="info-row"><span class="info-label">Institution</span><span class="info-value" id="sideInst">University of Abuja</span></div>
+            <div class="info-row"><span class="info-label">Level</span><span class="info-value" id="sideLevel">Undergraduate</span></div>
+            <div class="info-row"><span class="info-label">Route</span><span class="info-value" id="sideRoute">UTME</span></div>
+            <div class="info-row"><span class="info-label">Session</span><span class="info-value" id="sideSession">2026/2027</span></div>
+            <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge-soft" id="sideStatus">Open</span></span></div>
+            <div class="info-row"><span class="info-label">Last verified</span><span class="info-value" id="sideVerified">20 May 2026</span></div>
+          </div>
+
+          <div class="countdown-box" id="countdownBox">
+            <div class="cd-label">Application closes in</div>
+            <div class="cd-value" id="countdownValue">--</div>
+            <div class="cd-sub" id="countdownSub">15 Sep 2026</div>
+          </div>
+
+          <div class="info-card" style="margin-top: 24px;">
+            <h3>Quick actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn-primary" style="width: 100%; justify-content: center;"><i class="fas fa-paper-plane"></i> Apply on official portal</button>
+              <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchAdmissionTab('requirements')"><i class="fas fa-list-check"></i> Check requirements</button>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>Official links</h3>
+            <div class="resource-list" style="margin-top: 0;">
+              <div class="resource-item">
+                <i class="fas fa-globe"></i>
+                <div class="res-text">
+                  <h4>Institution website</h4>
+                  <p id="sideWebsite">uniabuja.edu.ng</p>
+                </div>
+                <span class="res-action">Open</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-pen-to-square"></i>
+                <div class="res-text">
+                  <h4>Application portal</h4>
+                  <p>Official admissions portal</p>
+                </div>
+                <span class="res-action">Apply</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: REQUIREMENTS ===== -->
+    <div class="admission-tab-panel" id="admission-panel-requirements">
+      <div class="admission-profile-grid">
+        <div>
+          <div class="admission-section">
+            <h2>Requirements</h2>
+            <p>General and programme-specific requirements for this admission opportunity.</p>
+          </div>
+
+          <div class="admission-section">
+            <h3>O'Level requirements</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Subject</th><th>Requirement</th></tr>
+                </thead>
+                <tbody id="olevelTable">
+                  <tr><td>English Language</td><td>Credit (minimum C6)</td></tr>
+                  <tr><td>Mathematics</td><td>Credit (minimum C6)</td></tr>
+                  <tr><td>Other subjects</td><td>Three relevant credits</td></tr>
+                  <tr><td>Sittings</td><td>Not more than two sittings</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admission-section">
+            <h3>UTME requirements</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Requirement</th><th>Detail</th></tr>
+                </thead>
+                <tbody id="utmeTable">
+                  <tr><td>UTME score</td><td>Minimum 180</td></tr>
+                  <tr><td>Subject combination</td><td>English + 3 relevant subjects</td></tr>
+                  <tr><td>Post-UTME</td><td>Required where applicable</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admission-section">
+            <h3>Supporting documents</h3>
+            <div class="checklist" id="documentsChecklist">
+              <div class="checklist-item">
+                <i class="fas fa-file-alt"></i>
+                <div class="cl-text">
+                  <h4>O'Level result</h4>
+                  <p>WAEC, NECO, or NABTEB result</p>
+                </div>
+                <div class="cl-check"></div>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-file-alt"></i>
+                <div class="cl-text">
+                  <h4>UTME result slip</h4>
+                  <p>2026 JAMB UTME result</p>
+                </div>
+                <div class="cl-check"></div>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-id-card"></i>
+                <div class="cl-text">
+                  <h4>Birth certificate or age declaration</h4>
+                  <p>Proof of age</p>
+                </div>
+                <div class="cl-check"></div>
+              </div>
+              <div class="checklist-item">
+                <i class="fas fa-map-pin"></i>
+                <div class="cl-text">
+                  <h4>Certificate of origin</h4>
+                  <p>Local government of origin</p>
+                </div>
+                <div class="cl-check"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Requirements summary</h3>
+            <div class="info-row"><span class="info-label">O'Level</span><span class="info-value">5 credits</span></div>
+            <div class="info-row"><span class="info-label">UTME score</span><span class="info-value">180+</span></div>
+            <div class="info-row"><span class="info-label">Sittings</span><span class="info-value">Max 2</span></div>
+            <div class="info-row"><span class="info-label">Post-UTME</span><span class="info-value">Required</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Related</h3>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchAdmissionTab('dates')"><i class="fas fa-calendar"></i> Important dates</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchAdmissionTab('process')"><i class="fas fa-file-lines"></i> Application process</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: IMPORTANT DATES ===== -->
+    <div class="admission-tab-panel" id="admission-panel-dates">
+      <div class="admission-profile-grid">
+        <div>
+          <div class="admission-section">
+            <h2>Important dates</h2>
+            <p>Application opening and closing dates, and other relevant timelines.</p>
+          </div>
+
+          <div class="admission-section">
+            <h3>Timeline</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Event</th><th>Date</th><th>Status</th></tr>
+                </thead>
+                <tbody id="datesTable">
+                  <tr><td>Application opens</td><td>1 Jul 2026</td><td><span class="badge-soft">Open</span></td></tr>
+                  <tr><td>Application closes</td><td>15 Sep 2026</td><td><span class="badge-gold">Closing soon</span></td></tr>
+                  <tr><td>Post-UTME screening</td><td>Oct 2026 <span class="badge-gold">est.</span></td><td><span class="badge-muted">Scheduled</span></td></tr>
+                  <tr><td>Admission list released</td><td>Nov 2026 <span class="badge-gold">est.</span></td><td><span class="badge-muted">Scheduled</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source-note"><i class="fas fa-info-circle"></i> Dates marked <span class="badge-gold">est.</span> are estimates. Confirm with the official admission portal.</p>
+          </div>
+
+          <div class="admission-section">
+            <h3>Official notice</h3>
+            <div class="update-list">
+              <div class="update-item">
+                <i class="fas fa-bullhorn"></i>
+                <div class="update-content">
+                  <h4>2026/2027 UTME admission now open</h4>
+                  <p>Applications are invited from qualified candidates for admission into undergraduate programmes.</p>
+                  <div class="update-meta">
+                    <span><i class="far fa-calendar-alt"></i> 1 Jul 2026</span>
+                    <span><a href="#">Official portal</a></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Dates summary</h3>
+            <div class="info-row"><span class="info-label">Opens</span><span class="info-value">1 Jul 2026</span></div>
+            <div class="info-row"><span class="info-label">Closes</span><span class="info-value gold">15 Sep 2026</span></div>
+            <div class="info-row"><span class="info-label">Last verified</span><span class="info-value">20 May 2026</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Related</h3>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchAdmissionTab('requirements')"><i class="fas fa-list-check"></i> Requirements</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchAdmissionTab('process')"><i class="fas fa-file-lines"></i> Application process</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: APPLICATION PROCESS ===== -->
+    <div class="admission-tab-panel" id="admission-panel-process">
+      <div class="admission-profile-grid">
+        <div>
+          <div class="admission-section">
+            <h2>Application process</h2>
+            <p>Step-by-step instructions for applying to this admission opportunity.</p>
+          </div>
+
+          <div class="admission-section">
+            <h3>Steps to apply</h3>
+            <div class="update-list" id="applicationSteps">
+              <div class="update-item">
+                <i class="fas fa-1"></i>
+                <div class="update-content">
+                  <h4>Visit the official application portal</h4>
+                  <p>Go to the institution's official admission portal.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-2"></i>
+                <div class="update-content">
+                  <h4>Create an account and complete the form</h4>
+                  <p>Provide accurate personal and academic information.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-3"></i>
+                <div class="update-content">
+                  <h4>Upload required documents</h4>
+                  <p>Upload your O'Level result, UTME result, and other required documents.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-4"></i>
+                <div class="update-content">
+                  <h4>Pay the application fee</h4>
+                  <p>Pay the application fee through the official payment channel.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-5"></i>
+                <div class="update-content">
+                  <h4>Submit and monitor your application</h4>
+                  <p>Submit your application and monitor your status on the portal.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admission-section">
+            <h3>Application fee</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Item</th><th>Amount</th><th>Notes</th></tr>
+                </thead>
+                <tbody id="feesTable">
+                  <tr><td>Application fee</td><td>₦10,000 <span class="badge-gold">sample</span></td><td>Paid on official portal</td></tr>
+                  <tr><td>Post-UTME screening</td><td>₦2,000 <span class="badge-gold">sample</span></td><td>Where applicable</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source-note"><i class="fas fa-info-circle"></i> Fees shown are sample data. Confirm the exact amount on the official portal before payment.</p>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Application summary</h3>
+            <div class="info-row"><span class="info-label">Application fee</span><span class="info-value">₦10,000</span></div>
+            <div class="info-row"><span class="info-label">Portal</span><span class="info-value"><a href="#">Apply here</a></span></div>
+            <div class="info-row"><span class="info-label">Payment</span><span class="info-value">Official channel only</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Scam awareness</h3>
+            <div class="scam-warning">
+              <i class="fas fa-triangle-exclamation"></i>
+              <p><strong>Never pay to gain admission.</strong> Admission is not for sale. Only use the official portal for all payments.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#">Schools</a></li>
+          <li><a href="#" onclick="showDirectory()">Admissions</a></li>
+          <li><a href="#">Exams</a></li>
+          <li><a href="#">Scholarships</a></li>
+          <li><a href="#">Trending</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CampusNaija. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ============================================================ */
+  /* DATA: ADMISSION PROFILES                                     */
+  /* ============================================================ */
+  const admissionData = {
+    'uniabuja-utme': {
+      name: 'University of Abuja — UTME Admission',
+      badge: 'Open',
+      badgeClass: '',
+      institution: 'University of Abuja',
+      level: 'Undergraduate',
+      route: 'UTME',
+      session: '2026/2027',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      verified: '20 May 2026',
+      website: 'uniabuja.edu.ng',
+      tagline: 'Undergraduate admission through UTME for the 2026/2027 academic session.',
+      overview: 'The University of Abuja invites applications from suitably qualified candidates for admission into its undergraduate programmes for the 2026/2027 academic session through the Unified Tertiary Matriculation Examination (UTME).',
+      eligible: "Candidates who sat for the 2026 UTME and obtained a minimum score of 180, with five O'Level credits including English Language and Mathematics in not more than two sittings.",
+      keyFacts: [
+        { label: 'Institution', value: 'University of Abuja' },
+        { label: 'Programme level', value: 'Undergraduate' },
+        { label: 'Entry route', value: 'UTME' },
+        { label: 'Academic session', value: '2026/2027' },
+        { label: 'Application status', value: '<span class="badge-soft">Open</span>' },
+        { label: 'Official portal', value: '<a href="#">uniabuja.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: 'English Language', req: 'Credit (minimum C6)' },
+        { subject: 'Mathematics', req: 'Credit (minimum C6)' },
+        { subject: 'Other subjects', req: 'Three relevant credits' },
+        { subject: 'Sittings', req: 'Not more than two sittings' }
+      ],
+      utme: [
+        { req: 'UTME score', detail: 'Minimum 180' },
+        { req: 'Subject combination', detail: 'English + 3 relevant subjects' },
+        { req: 'Post-UTME', detail: 'Required where applicable' }
+      ],
+      documents: [
+        { title: "O'Level result", desc: 'WAEC, NECO, or NABTEB result' },
+        { title: 'UTME result slip', desc: '2026 JAMB UTME result' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' },
+        { title: 'Certificate of origin', desc: 'Local government of origin' }
+      ],
+      dates: [
+        { event: 'Application opens', date: '1 Jul 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Application closes', date: '15 Sep 2026', status: 'Closing soon', statusClass: 'badge-gold' },
+        { event: 'Post-UTME screening', date: 'Oct 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' },
+        { event: 'Admission list released', date: 'Nov 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2026/2027 UTME admission now open',
+        text: 'Applications are invited from qualified candidates for admission into undergraduate programmes.',
+        date: '1 Jul 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official application portal', desc: "Go to the institution's official admission portal." },
+        { title: 'Create an account and complete the form', desc: 'Provide accurate personal and academic information.' },
+        { title: 'Upload required documents', desc: "Upload your O'Level result, UTME result, and other required documents." },
+        { title: 'Pay the application fee', desc: 'Pay the application fee through the official payment channel.' },
+        { title: 'Submit and monitor your application', desc: 'Submit your application and monitor your status on the portal.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦10,000', notes: 'Paid on official portal' },
+        { item: 'Post-UTME screening', amount: '₦2,000', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 Jul 2026', closes: '15 Sep 2026', lastVerified: '20 May 2026' }
+    },
+    'unilag-de': {
+      name: 'University of Lagos — Direct Entry Admission',
+      badge: 'Closing soon',
+      badgeClass: 'gold',
+      institution: 'University of Lagos',
+      level: 'Undergraduate',
+      route: 'Direct Entry',
+      session: '2026/2027',
+      status: 'Closing soon',
+      statusClass: 'badge-gold',
+      verified: '22 May 2026',
+      website: 'unilag.edu.ng',
+      tagline: 'Direct Entry admission for the 2026/2027 academic session.',
+      overview: 'The University of Lagos invites applications from candidates with A-Level, NCE, or ND qualifications for Direct Entry admission into its undergraduate programmes for the 2026/2027 academic session.',
+      eligible: 'Candidates with a minimum of Lower Credit in ND, or A-Level passes in relevant subjects, and five O\'Level credits including English Language and Mathematics.',
+      keyFacts: [
+        { label: 'Institution', value: 'University of Lagos' },
+        { label: 'Programme level', value: 'Undergraduate' },
+        { label: 'Entry route', value: 'Direct Entry' },
+        { label: 'Academic session', value: '2026/2027' },
+        { label: 'Application status', value: '<span class="badge-gold">Closing soon</span>' },
+        { label: 'Official portal', value: '<a href="#">unilag.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: 'English Language', req: 'Credit (minimum C6)' },
+        { subject: 'Mathematics', req: 'Credit (minimum C6)' },
+        { subject: 'Other subjects', req: 'Three relevant credits' },
+        { subject: 'Sittings', req: 'Not more than two sittings' }
+      ],
+      utme: [
+        { req: 'Direct Entry qualification', detail: 'A-Level / NCE / ND with minimum Lower Credit' },
+        { req: 'Subject combination', detail: 'Relevant to chosen course' },
+        { req: 'Post-DE screening', detail: 'Required where applicable' }
+      ],
+      documents: [
+        { title: "O'Level result", desc: 'WAEC, NECO, or NABTEB result' },
+        { title: 'Direct Entry qualification', desc: 'A-Level, NCE, or ND certificate' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' },
+        { title: 'Certificate of origin', desc: 'Local government of origin' }
+      ],
+      dates: [
+        { event: 'Application opens', date: '1 May 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Application closes', date: '30 Jun 2026', status: 'Closing soon', statusClass: 'badge-gold' },
+        { event: 'Screening', date: 'Aug 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' },
+        { event: 'Admission list released', date: 'Sep 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2026/2027 Direct Entry admission open',
+        text: 'Applications are invited from qualified Direct Entry candidates.',
+        date: '1 May 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official application portal', desc: 'Go to the UNILAG admission portal.' },
+        { title: 'Complete the online application', desc: 'Provide accurate personal and academic information.' },
+        { title: 'Upload documents', desc: 'Upload your Direct Entry qualification and O\'Level result.' },
+        { title: 'Pay the application fee', desc: 'Pay the application fee through the official channel.' },
+        { title: 'Submit and monitor', desc: 'Submit your application and monitor your status.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦15,000', notes: 'Paid on official portal' },
+        { item: 'Screening fee', amount: '₦2,000', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 May 2026', closes: '30 Jun 2026', lastVerified: '22 May 2026' }
+    },
+    'biu-pg': {
+      name: 'Benson Idahosa University — Postgraduate Admission',
+      badge: 'Open',
+      badgeClass: '',
+      institution: 'Benson Idahosa University',
+      level: 'Postgraduate',
+      route: "PGD / Master's / PhD",
+      session: '2026/2027',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      verified: '25 May 2026',
+      website: 'biu.edu.ng',
+      tagline: 'Postgraduate admission for the 2026/2027 academic session.',
+      overview: 'Benson Idahosa University invites applications from qualified candidates for admission into its postgraduate programmes (PGD, Master\'s, and PhD) for the 2026/2027 academic session.',
+      eligible: 'Candidates with a bachelor\'s degree in a relevant field from a recognized university, with a minimum of Second Class Lower for Master\'s programmes, and a Master\'s degree for PhD programmes.',
+      keyFacts: [
+        { label: 'Institution', value: 'Benson Idahosa University' },
+        { label: 'Programme level', value: 'Postgraduate' },
+        { label: 'Entry route', value: "PGD / Master's / PhD" },
+        { label: 'Academic session', value: '2026/2027' },
+        { label: 'Application status', value: '<span class="badge-soft">Open</span>' },
+        { label: 'Official portal', value: '<a href="#">biu.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: "O'Level requirements", req: 'Five credits including English and Mathematics' },
+        { subject: 'Bachelor\'s degree', req: 'Relevant field, minimum Second Class Lower' },
+        { subject: "Master's degree", req: 'Required for PhD programmes' }
+      ],
+      utme: [
+        { req: 'PGD', detail: 'Bachelor\'s degree or HND' },
+        { req: "Master's", detail: 'Bachelor\'s degree with minimum Second Class Lower' },
+        { req: 'PhD', detail: 'Master\'s degree in a relevant field' }
+      ],
+      documents: [
+        { title: 'Degree certificate', desc: 'Bachelor\'s or Master\'s degree certificate' },
+        { title: 'Academic transcript', desc: 'Official transcript from your institution' },
+        { title: 'NYSC discharge certificate', desc: 'For Nigerian graduates' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' }
+      ],
+      dates: [
+        { event: 'Application opens', date: '1 Jun 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Application closes', date: '31 Aug 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Screening', date: 'Sep 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' },
+        { event: 'Admission list released', date: 'Oct 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2026/2027 postgraduate admission open',
+        text: 'Applications are invited from qualified candidates for postgraduate programmes.',
+        date: '1 Jun 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official postgraduate portal', desc: 'Go to the BIU postgraduate admission page.' },
+        { title: 'Complete the online application', desc: 'Provide personal and academic information.' },
+        { title: 'Upload documents', desc: 'Upload your degree certificate and transcript.' },
+        { title: 'Pay the application fee', desc: 'Pay through the official payment channel.' },
+        { title: 'Submit and monitor', desc: 'Submit your application and await screening.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦20,000', notes: 'Paid on official portal' },
+        { item: 'Screening fee', amount: '₦5,000', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 Jun 2026', closes: '31 Aug 2026', lastVerified: '25 May 2026' }
+    },
+    'yabatech-nd': {
+      name: 'Yaba College of Technology — ND Admission',
+      badge: 'Upcoming',
+      badgeClass: 'muted',
+      institution: 'Yaba College of Technology',
+      level: 'Diploma',
+      route: 'UTME',
+      session: '2026/2027',
+      status: 'Upcoming',
+      statusClass: 'badge-muted',
+      verified: '20 May 2026',
+      website: 'yabatech.edu.ng',
+      tagline: 'National Diploma admission for the 2026/2027 academic session.',
+      overview: 'Yaba College of Technology invites applications from qualified candidates for admission into its National Diploma (ND) programmes for the 2026/2027 academic session.',
+      eligible: 'Candidates who sat for the 2026 UTME and obtained a minimum score of 120, with five O\'Level credits including English Language and Mathematics.',
+      keyFacts: [
+        { label: 'Institution', value: 'Yaba College of Technology' },
+        { label: 'Programme level', value: 'Diploma (ND)' },
+        { label: 'Entry route', value: 'UTME' },
+        { label: 'Academic session', value: '2026/2027' },
+        { label: 'Application status', value: '<span class="badge-muted">Upcoming</span>' },
+        { label: 'Official portal', value: '<a href="#">yabatech.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: 'English Language', req: 'Credit (minimum C6)' },
+        { subject: 'Mathematics', req: 'Credit (minimum C6)' },
+        { subject: 'Other subjects', req: 'Three relevant credits' },
+        { subject: 'Sittings', req: 'Not more than two sittings' }
+      ],
+      utme: [
+        { req: 'UTME score', detail: 'Minimum 120' },
+        { req: 'Subject combination', detail: 'English + 3 relevant subjects' },
+        { req: 'Post-UTME', detail: 'Required where applicable' }
+      ],
+      documents: [
+        { title: "O'Level result", desc: 'WAEC, NECO, or NABTEB result' },
+        { title: 'UTME result slip', desc: '2026 JAMB UTME result' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' },
+        { title: 'Certificate of origin', desc: 'Local government of origin' }
+      ],
+      dates: [
+        { event: 'Application opens', date: '1 Jul 2026 <span class="badge-gold">est.</span>', status: 'Upcoming', statusClass: 'badge-muted' },
+        { event: 'Application closes', date: '30 Sep 2026 <span class="badge-gold">est.</span>', status: 'Upcoming', statusClass: 'badge-muted' },
+        { event: 'Screening', date: 'Oct 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2026/2027 ND admission coming soon',
+        text: 'Applications for ND programmes will open soon. Monitor the official portal.',
+        date: '20 May 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official application portal', desc: 'Go to the YABATECH admission portal.' },
+        { title: 'Complete the online application', desc: 'Provide accurate personal and academic information.' },
+        { title: 'Upload documents', desc: 'Upload your O\'Level result and UTME result.' },
+        { title: 'Pay the application fee', desc: 'Pay the application fee through the official channel.' },
+        { title: 'Submit and monitor', desc: 'Submit your application and monitor your status.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦5,000', notes: 'Paid on official portal' },
+        { item: 'Post-UTME screening', amount: '₦1,500', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 Jul 2026 (est.)', closes: '30 Sep 2026 (est.)', lastVerified: '20 May 2026' }
+    },
+    'fce-nce': {
+      name: 'Federal College of Education — NCE Admission',
+      badge: 'Open',
+      badgeClass: '',
+      institution: 'Federal College of Education, Kano',
+      level: 'College',
+      route: 'UTME / Direct Entry',
+      session: '2026/2027',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      verified: '18 May 2026',
+      website: 'fcekano.edu.ng',
+      tagline: 'Nigeria Certificate in Education (NCE) admission for the 2026/2027 academic session.',
+      overview: 'The Federal College of Education, Kano, invites applications from qualified candidates for admission into its Nigeria Certificate in Education (NCE) programmes for the 2026/2027 academic session.',
+      eligible: 'Candidates with five O\'Level credits including English Language and Mathematics, and a minimum UTME score of 100, or Direct Entry qualifications.',
+      keyFacts: [
+        { label: 'Institution', value: 'Federal College of Education, Kano' },
+        { label: 'Programme level', value: 'College (NCE)' },
+        { label: 'Entry route', value: 'UTME / Direct Entry' },
+        { label: 'Academic session', value: '2026/2027' },
+        { label: 'Application status', value: '<span class="badge-soft">Open</span>' },
+        { label: 'Official portal', value: '<a href="#">fcekano.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: 'English Language', req: 'Credit (minimum C6)' },
+        { subject: 'Mathematics', req: 'Credit (minimum C6)' },
+        { subject: 'Other subjects', req: 'Three relevant credits' },
+        { subject: 'Sittings', req: 'Not more than two sittings' }
+      ],
+      utme: [
+        { req: 'UTME score', detail: 'Minimum 100' },
+        { req: 'Subject combination', detail: 'English + 3 relevant subjects' },
+        { req: 'Direct Entry', detail: 'A-Level / NCE / ND with minimum Pass' }
+      ],
+      documents: [
+        { title: "O'Level result", desc: 'WAEC, NECO, or NABTEB result' },
+        { title: 'UTME result slip', desc: '2026 JAMB UTME result (if applicable)' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' },
+        { title: 'Certificate of origin', desc: 'Local government of origin' }
+      ],
+      dates: [
+        { event: 'Application opens', date: '1 Jun 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Application closes', date: '30 Sep 2026', status: 'Open', statusClass: 'badge-soft' },
+        { event: 'Screening', date: 'Oct 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' },
+        { event: 'Admission list released', date: 'Nov 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2026/2027 NCE admission now open',
+        text: 'Applications are invited from qualified candidates for NCE programmes.',
+        date: '1 Jun 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official application portal', desc: 'Go to the FCE Kano admission portal.' },
+        { title: 'Complete the online application', desc: 'Provide accurate personal and academic information.' },
+        { title: 'Upload documents', desc: 'Upload your O\'Level result and other required documents.' },
+        { title: 'Pay the application fee', desc: 'Pay the application fee through the official channel.' },
+        { title: 'Submit and monitor', desc: 'Submit your application and monitor your status.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦3,000', notes: 'Paid on official portal' },
+        { item: 'Screening fee', amount: '₦1,000', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 Jun 2026', closes: '30 Sep 2026', lastVerified: '18 May 2026' }
+    },
+    'abu-utme': {
+      name: 'Ahmadu Bello University — UTME Admission',
+      badge: 'Closed',
+      badgeClass: 'muted',
+      institution: 'Ahmadu Bello University',
+      level: 'Undergraduate',
+      route: 'UTME',
+      session: '2025/2026',
+      status: 'Closed',
+      statusClass: 'badge-muted',
+      verified: '10 Feb 2026',
+      website: 'abu.edu.ng',
+      tagline: 'UTME admission for the 2025/2026 academic session.',
+      overview: 'Ahmadu Bello University invites applications from suitably qualified candidates for admission into its undergraduate programmes for the 2025/2026 academic session through the Unified Tertiary Matriculation Examination (UTME).',
+      eligible: "Candidates who sat for the 2025 UTME and obtained a minimum score of 180, with five O'Level credits including English Language and Mathematics.",
+      keyFacts: [
+        { label: 'Institution', value: 'Ahmadu Bello University' },
+        { label: 'Programme level', value: 'Undergraduate' },
+        { label: 'Entry route', value: 'UTME' },
+        { label: 'Academic session', value: '2025/2026' },
+        { label: 'Application status', value: '<span class="badge-muted">Closed</span>' },
+        { label: 'Official portal', value: '<a href="#">abu.edu.ng</a>' }
+      ],
+      olevel: [
+        { subject: 'English Language', req: 'Credit (minimum C6)' },
+        { subject: 'Mathematics', req: 'Credit (minimum C6)' },
+        { subject: 'Other subjects', req: 'Three relevant credits' },
+        { subject: 'Sittings', req: 'Not more than two sittings' }
+      ],
+      utme: [
+        { req: 'UTME score', detail: 'Minimum 180' },
+        { req: 'Subject combination', detail: 'English + 3 relevant subjects' },
+        { req: 'Post-UTME', detail: 'Required where applicable' }
+      ],
+      documents: [
+        { title: "O'Level result", desc: 'WAEC, NECO, or NABTEB result' },
+        { title: 'UTME result slip', desc: '2025 JAMB UTME result' },
+        { title: 'Birth certificate or age declaration', desc: 'Proof of age' },
+        { title: 'Certificate of origin', desc: 'Local government of origin' }
+      ],
+      dates: [
+        { event: 'Application opened', date: '1 Dec 2025', status: 'Closed', statusClass: 'badge-muted' },
+        { event: 'Application closed', date: '28 Feb 2026', status: 'Closed', statusClass: 'badge-muted' }
+      ],
+      officialNotice: {
+        title: '2025/2026 UTME admission closed',
+        text: 'The application window for the 2025/2026 UTME admission has closed.',
+        date: '28 Feb 2026',
+        link: 'Official portal'
+      },
+      applicationSteps: [
+        { title: 'Visit the official application portal', desc: 'Go to the ABU admission portal.' },
+        { title: 'Complete the online application', desc: 'Provide accurate personal and academic information.' },
+        { title: 'Upload documents', desc: 'Upload your O\'Level result and UTME result.' },
+        { title: 'Pay the application fee', desc: 'Pay the application fee through the official channel.' },
+        { title: 'Submit and monitor', desc: 'Submit your application and monitor your status.' }
+      ],
+      fees: [
+        { item: 'Application fee', amount: '₦10,000', notes: 'Paid on official portal' },
+        { item: 'Post-UTME screening', amount: '₦2,000', notes: 'Where applicable' }
+      ],
+      deadlineSummary: { opens: '1 Dec 2025', closes: '28 Feb 2026', lastVerified: '10 Feb 2026' }
+    }
+  };
+
+  /* ============================================================ */
+  /* VIEW SWITCHING                                                */
+  /* ============================================================ */
+  let currentAdmissionKey = 'uniabuja-utme';
+  let currentStatusFilter = 'all';
+
+  function showDirectory() {
+    document.getElementById('view-directory').classList.add('active');
+    document.getElementById('view-admission-detail').classList.remove('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    resetAdmissionTabs();
+    history.pushState({ view: 'directory' }, '', 'Admissions.html');
+  }
+
+  function openAdmission(admissionKey) {
+    currentAdmissionKey = admissionKey;
+    const data = admissionData[admissionKey];
+    if (!data) return;
+
+    // Populate hero
+    document.getElementById('admissionDetailName').textContent = data.name;
+    document.getElementById('admissionDetailBadge').textContent = data.badge;
+    document.getElementById('admissionDetailBadge').className = 'admission-badge ' + data.badgeClass;
+    document.getElementById('admissionDetailSub').innerHTML =
+      `<span><i class="fas fa-building"></i> ${data.institution}</span>
+       <span class="dot">●</span>
+       <span>${data.level}</span>
+       <span class="dot">●</span>
+       <span>${data.session}</span>`;
+    document.getElementById('admissionDetailTagline').textContent = data.tagline;
+
+    // Overview
+    document.getElementById('admissionOverviewText').textContent = data.overview;
+    document.getElementById('admissionEligibleText').textContent = data.eligible;
+    document.getElementById('sideInst').textContent = data.institution;
+    document.getElementById('sideLevel').textContent = data.level;
+    document.getElementById('sideRoute').textContent = data.route;
+    document.getElementById('sideSession').textContent = data.session;
+    document.getElementById('sideStatus').textContent = data.status;
+    document.getElementById('sideStatus').className = data.statusClass;
+    document.getElementById('sideVerified').textContent = data.verified;
+    document.getElementById('sideWebsite').textContent = data.website;
+
+    // Key facts
+    document.getElementById('admissionKeyFacts').innerHTML = data.keyFacts.map(f => `
+      <tr><td>${f.label}</td><td>${f.value}</td></tr>
+    `).join('');
+
+    // O'Level table
+    document.getElementById('olevelTable').innerHTML = data.olevel.map(o => `
+      <tr><td>${o.subject}</td><td>${o.req}</td></tr>
+    `).join('');
+
+    // UTME table
+    document.getElementById('utmeTable').innerHTML = data.utme.map(u => `
+      <tr><td>${u.req}</td><td>${u.detail}</td></tr>
+    `).join('');
+
+    // Documents
+    document.getElementById('documentsChecklist').innerHTML = data.documents.map(d => `
+      <div class="checklist-item">
+        <i class="fas fa-file-alt"></i>
+        <div class="cl-text">
+          <h4>${d.title}</h4>
+          <p>${d.desc}</p>
+        </div>
+        <div class="cl-check"></div>
+      </div>
+    `).join('');
+
+    // Dates table
+    document.getElementById('datesTable').innerHTML = data.dates.map(d => `
+      <tr>
+        <td>${d.event}</td>
+        <td>${d.date}</td>
+        <td><span class="${d.statusClass}">${d.status}</span></td>
+      </tr>
+    `).join('');
+
+    // Official notice
+    const noticeContainer = document.querySelector('#admission-panel-dates .update-list');
+    if (noticeContainer && data.officialNotice) {
+      noticeContainer.innerHTML = `
+        <div class="update-item">
+          <i class="fas fa-bullhorn"></i>
+          <div class="update-content">
+            <h4>${data.officialNotice.title}</h4>
+            <p>${data.officialNotice.text}</p>
+            <div class="update-meta">
+              <span><i class="far fa-calendar-alt"></i> ${data.officialNotice.date}</span>
+              <span><a href="#">${data.officialNotice.link}</a></span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Application steps
+    document.getElementById('applicationSteps').innerHTML = data.applicationSteps.map((s, i) => `
+      <div class="update-item">
+        <i class="fas fa-${i + 1}"></i>
+        <div class="update-content">
+          <h4>${s.title}</h4>
+          <p>${s.desc}</p>
+        </div>
+      </div>
+    `).join('');
+
+    // Fees table
+    document.getElementById('feesTable').innerHTML = data.fees.map(f => `
+      <tr><td>${f.item}</td><td>${f.amount} <span class="badge-gold">sample</span></td><td>${f.notes}</td></tr>
+    `).join('');
+
+    // Deadline summary
+    const dlRows = document.querySelectorAll('#admission-panel-dates .info-card:first-child .info-row');
+    if (dlRows.length >= 3) {
+      dlRows[0].querySelector('.info-value').textContent = data.deadlineSummary.opens;
+      dlRows[1].querySelector('.info-value').textContent = data.deadlineSummary.closes;
+      dlRows[1].querySelector('.info-value').className = 'info-value gold';
+      dlRows[2].querySelector('.info-value').textContent = data.deadlineSummary.lastVerified;
+    }
+
+    // Countdown
+    const cdValue = document.getElementById('countdownValue');
+    const cdSub = document.getElementById('countdownSub');
+    if (data.deadlineSummary && data.deadlineSummary.closes) {
+      cdValue.textContent = data.status === 'Closed' ? 'Closed' : (data.status === 'Upcoming' ? 'Upcoming' : 'Open');
+      cdSub.textContent = data.deadlineSummary.closes;
+    }
+
+    // Show detail view
+    document.getElementById('view-directory').classList.remove('active');
+    document.getElementById('view-admission-detail').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Update URL
+    history.pushState({ view: 'detail', admission: admissionKey }, '', 'Admissions.html?admission=' + admissionKey);
+
+    // Reset tabs
+    resetAdmissionTabs();
+    document.querySelector('.admission-tab-item[data-tab="overview"]').classList.add('active');
+    document.getElementById('admission-panel-overview').classList.add('active');
+  }
+
+  /* ============================================================ */
+  /* TAB SWITCHING                                                 */
+  /* ============================================================ */
+  const admissionTabItems = document.querySelectorAll('.admission-tab-item');
+  const admissionTabPanels = {
+    overview: document.getElementById('admission-panel-overview'),
+    requirements: document.getElementById('admission-panel-requirements'),
+    dates: document.getElementById('admission-panel-dates'),
+    process: document.getElementById('admission-panel-process')
+  };
+
+  function resetAdmissionTabs() {
+    admissionTabItems.forEach(t => t.classList.remove('active'));
+    Object.values(admissionTabPanels).forEach(p => p.classList.remove('active'));
+  }
+
+  function switchAdmissionTab(tabKey) {
+    resetAdmissionTabs();
+    const targetTab = document.querySelector(`.admission-tab-item[data-tab="${tabKey}"]`);
+    if (targetTab) targetTab.classList.add('active');
+    if (admissionTabPanels[tabKey]) admissionTabPanels[tabKey].classList.add('active');
+  }
+
+  admissionTabItems.forEach(item => {
+    item.addEventListener('click', () => {
+      resetAdmissionTabs();
+      item.classList.add('active');
+      const tabKey = item.dataset.tab;
+      if (admissionTabPanels[tabKey]) {
+        admissionTabPanels[tabKey].classList.add('active');
+      }
+    });
+  });
+
+  /* ============================================================ */
+  /* DIRECTORY FILTERING                                           */
+  /* ============================================================ */
+  function setAdmissionFilter(status, btn) {
+    currentStatusFilter = status;
+    document.querySelectorAll('#admissionFilters .filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterAdmissions();
+  }
+
+  function setLevelFilter(level) {
+    document.getElementById('levelFilter').value = level;
+    filterAdmissions();
+  }
+
+  function filterAdmissions() {
+    const query = document.getElementById('admissionSearch').value.toLowerCase().trim();
+    const state = document.getElementById('stateFilter').value;
+    const level = document.getElementById('levelFilter').value;
+    const cards = document.querySelectorAll('#admissionsGrid .admission-card');
+
+    cards.forEach(card => {
+      const status = card.dataset.status || '';
+      const cardLevel = card.dataset.level || '';
+      const cardState = card.dataset.state || '';
+      const name = (card.dataset.name || '').toLowerCase();
+      const programme = (card.dataset.programme || '').toLowerCase();
+
+      const matchesStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+      const matchesState = !state || cardState === state;
+      const matchesLevel = !level || cardLevel === level;
+      const matchesQuery = !query || name.includes(query) || programme.includes(query);
+
+      if (matchesStatus && matchesState && matchesLevel && matchesQuery) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Search on enter key
+  document.getElementById('admissionSearch').addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') filterAdmissions();
+  });
+
+  /* ============================================================ */
+  /* MOBILE NAV TOGGLE                                             */
+  /* ============================================================ */
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  if (hamburger) {
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileNav.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
+        mobileNav.classList.remove('active');
+      }
+    });
+  }
+
+  /* ============================================================ */
+  /* HANDLE BROWSER BACK/FORWARD (URL state)                       */
+  /* ============================================================ */
+  window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.view === 'detail' && e.state.admission) {
+      openAdmission(e.state.admission);
+    } else {
+      showDirectory();
+    }
+  });
+
+  // Handle initial load with ?admission= in URL
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const admissionParam = params.get('admission');
+    if (admissionParam && admissionData[admissionParam]) {
+      openAdmission(admissionParam);
+    }
+  });
+
+  /* ============================================================ */
+  /* PREVENT DEFAULT ON LINKS (demo)                               */
+  /* ============================================================ */
+  document.querySelectorAll('a[href="#"]').forEach(link => {
+    link.addEventListener('click', (e) => e.preventDefault());
+  });
+
+  /* ============================================================ */
+  /* SMOOTH SCROLL TO TOP ON TAB SWITCH (mobile)                   */
+  /* ============================================================ */
+  document.querySelectorAll('.admission-tab-item').forEach(item => {
+    item.addEventListener('click', () => {
+      setTimeout(() => {
+        const tabsEl = document.querySelector('.admission-tabs');
+        if (tabsEl && window.innerWidth < 900) {
+          tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    });
+  });
+</script>
+
+</body>
+</html>

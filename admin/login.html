@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Admin Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --radius-card: 18px;
+      --radius-input: 12px;
+      --radius-btn: 12px;
+    }
+
+    /* Subtle ambient glow behind the card */
+    .bg-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(0, 201, 130, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ----- HEADER (minimal, no public nav) ----- */
+    .admin-header {
+      position: relative;
+      z-index: 2;
+      padding: 28px 0;
+    }
+    .admin-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: var(--primary); }
+
+    /* ----- MAIN / LOGIN CARD ----- */
+    .login-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 24px 48px;
+      position: relative;
+      z-index: 2;
+    }
+    .login-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 36px 36px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .card-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .card-eyebrow i { font-size: 0.75rem; }
+
+    .login-card h1 {
+      font-size: 1.9rem;
+      margin-bottom: 8px;
+    }
+    .login-card .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    /* Form fields */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper .field-icon {
+      position: absolute;
+      left: 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+    .input-wrapper input {
+      width: 100%;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 14px 16px 14px 46px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-wrapper input::placeholder { color: #6b7c74; }
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 201, 130, 0.1);
+    }
+    .input-wrapper input:focus ~ .field-icon {
+      color: var(--primary);
+    }
+    /* Password toggle */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 8px;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password:hover { color: var(--primary); }
+
+    /* Remember + Forgot row */
+    .form-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-label input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      background-color: var(--elevated);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .checkbox-label input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    .checkbox-label input:checked::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.65rem;
+      color: #070A09;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .checkbox-label:hover input { border-color: var(--primary); }
+    .forgot-link {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      transition: color 0.2s;
+    }
+    .forgot-link:hover { color: #00b374; text-decoration: underline; }
+
+    /* Submit button */
+    .btn-signin {
+      width: 100%;
+      background-color: var(--primary);
+      color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      padding: 15px 24px;
+      border: none;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 20px;
+    }
+    .btn-signin:hover { background-color: #00b374; }
+    .btn-signin:active { transform: scale(0.99); }
+    .btn-signin:disabled {
+      background-color: #1f5c47;
+      color: #9fe0c5;
+      cursor: not-allowed;
+    }
+    .btn-signin .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(7, 10, 9, 0.3);
+      border-top-color: #070A09;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .btn-signin.loading .spinner { display: inline-block; }
+    .btn-signin.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Security note */
+    .security-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      margin-bottom: 16px;
+    }
+    .security-note i {
+      color: var(--primary);
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .security-note p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Authorised notice */
+    .authorised-notice {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .authorised-notice i { color: var(--accent); font-size: 0.7rem; }
+
+    /* Error / success messages */
+    .form-message {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+    .form-message.show { display: flex; }
+    .form-message.error {
+      background-color: rgba(200, 80, 80, 0.1);
+      border: 1px solid rgba(200, 80, 80, 0.35);
+      color: #f0a0a0;
+    }
+    .form-message.error i { color: #e07070; margin-top: 2px; }
+    .form-message.success {
+      background-color: rgba(0, 201, 130, 0.08);
+      border: 1px solid rgba(0, 201, 130, 0.3);
+      color: #9fe0c5;
+    }
+    .form-message.success i { color: var(--primary); margin-top: 2px; }
+
+    /* ----- FOOTER ----- */
+    .admin-footer {
+      position: relative;
+      z-index: 2;
+      padding: 24px 0 32px;
+      text-align: center;
+    }
+    .admin-footer p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .admin-footer .divider { color: var(--border); }
+    .admin-footer a { color: var(--muted); transition: color 0.2s; }
+    .admin-footer a:hover { color: var(--primary); }
+
+    /* ----- RESPONSIVE ----- */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 32px 24px 28px;
+      }
+      .login-card h1 { font-size: 1.6rem; }
+      .admin-header { padding: 20px 0; }
+      .form-options { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .forgot-link { align-self: flex-end; }
+    }
+    @media (max-width: 360px) {
+      .login-card { padding: 28px 18px 24px; }
+      .login-card h1 { font-size: 1.4rem; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Subtle ambient glow -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Minimal admin header (no public navigation) -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="logo">Campus<span>Naija</span></div>
+    </div>
+  </header>
+
+  <!-- Login card -->
+  <main class="login-main">
+    <div class="login-card">
+      <div class="card-eyebrow">
+        <i class="fas fa-shield-halved"></i>
+        Administration Portal
+      </div>
+
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in to manage CampusNaija.</p>
+
+      <!-- Message area (error / success) -->
+      <div class="form-message error" id="formMessage" role="alert" aria-live="polite">
+        <i class="fas fa-circle-exclamation"></i>
+        <span id="formMessageText"></span>
+      </div>
+
+      <form id="loginForm" novalidate autocomplete="on">
+        <!-- Email / username -->
+        <div class="form-group">
+          <label class="form-label" for="identifier">Email address or username</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="identifier"
+              name="identifier"
+              placeholder="Enter your admin credentials"
+              autocomplete="username"
+              required
+              aria-required="true"
+              spellcheck="false"
+            >
+            <i class="fas fa-user field-icon" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              aria-required="true"
+            >
+            <i class="fas fa-lock field-icon" aria-hidden="true"></i>
+            <button
+              type="button"
+              class="toggle-password"
+              id="togglePassword"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              <i class="far fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember / Forgot -->
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            Remember me
+          </label>
+          <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-signin" id="signInBtn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-text">
+            <i class="fas fa-arrow-right-to-bracket" style="margin-right: 8px;"></i>Sign In Securely
+          </span>
+        </button>
+      </form>
+
+      <!-- Security note -->
+      <div class="security-note">
+        <i class="fas fa-shield-halved"></i>
+        <p>Protected administrative access. Authorised personnel only.</p>
+      </div>
+
+      <!-- Authorised notice -->
+      <div class="authorised-notice">
+        <i class="fas fa-circle-info"></i>
+        <span>CampusNaija · Administration</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">
+    <p>
+      <span>© 2026 CampusNaija</span>
+      <span class="divider">·</span>
+      <a href="#">Privacy</a>
+      <span class="divider">·</span>
+      <a href="#">Security</a>
+      <span class="divider">·</span>
+      <a href="#">Support</a>
+    </p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const form = document.getElementById('loginForm');
+      const identifierInput = document.getElementById('identifier');
+      const passwordInput = document.getElementById('password');
+      const togglePasswordBtn = document.getElementById('togglePassword');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const signInBtn = document.getElementById('signInBtn');
+      const formMessage = document.getElementById('formMessage');
+      const formMessageText = document.getElementById('formMessageText');
+      const forgotLink = document.getElementById('forgotLink');
+      const rememberMe = document.getElementById('rememberMe');
+
+      /* ----- Password visibility toggle ----- */
+      togglePasswordBtn.addEventListener('click', function() {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        eyeIcon.className = isPassword ? 'far fa-eye-slash' : 'far fa-eye';
+        togglePasswordBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        togglePasswordBtn.setAttribute('aria-pressed', String(isPassword));
+        passwordInput.focus();
+      });
+
+      /* ----- Message helpers ----- */
+      function showMessage(type, text) {
+        formMessage.className = 'form-message ' + type + ' show';
+        formMessageText.textContent = text;
+      }
+      function clearMessage() {
+        formMessage.className = 'form-message';
+        formMessageText.textContent = '';
+      }
+
+      /* ----- Demo credential check (front-end only) -----
+         NOTE: This is a visual demo. Real authentication must be
+         performed server-side with hashed passwords, rate limiting,
+         and secure session management. Never trust client-side checks. */
+      const DEMO_ADMIN = { identifier: 'admin', password: 'campus2026' };
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearMessage();
+
+        const identifier = identifierInput.value.trim();
+        const password = passwordInput.value;
+
+        // Basic validation
+        if (!identifier) {
+          showMessage('error', 'Please enter your email address or username.');
+          identifierInput.focus();
+          return;
+        }
+        if (!password) {
+          showMessage('error', 'Please enter your password.');
+          passwordInput.focus();
+          return;
+        }
+
+        // Loading state
+        signInBtn.classList.add('loading');
+        signInBtn.disabled = true;
+
+        // Simulate server round-trip
+        setTimeout(function() {
+          const ok =
+            identifier.toLowerCase() === DEMO_ADMIN.identifier &&
+            password === DEMO_ADMIN.password;
+
+          if (ok) {
+            showMessage('success', 'Authentication successful. Redirecting to dashboard…');
+            // In a real app: redirect to admin/index.html after secure session creation
+            setTimeout(function() {
+              // Demo: reset the form after a moment (no real redirect)
+              signInBtn.classList.remove('loading');
+              signInBtn.disabled = false;
+              // window.location.href = 'index.html';
+            }, 1200);
+          } else {
+            signInBtn.classList.remove('loading');
+            signInBtn.disabled = false;
+            showMessage('error', 'Invalid credentials. Please check your details and try again.');
+            passwordInput.value = '';
+            passwordInput.focus();
+          }
+        }, 900);
+      });
+
+      /* ----- Forgot password (demo) ----- */
+      forgotLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        clearMessage();
+        showMessage('success',
+          'If the account exists, a verified password-reset link will be sent to the registered email. Contact your administrator if you do not receive it.');
+      });
+
+      /* ----- Clear errors on input ----- */
+      [identifierInput, passwordInput].forEach(function(el) {
+        el.addEventListener('input', function() {
+          if (formMessage.classList.contains('error')) clearMessage();
+        });
+      });
+
+      /* ----- Remember me: store identifier only (never the password) ----- */
+      try {
+        const saved = localStorage.getItem('campusnaija_admin_id');
+        if (saved) {
+          identifierInput.value = saved;
+          rememberMe.checked = true;
+        }
+      } catch (err) { /* storage unavailable */ }
+
+      rememberMe.addEventListener('change', function() {
+        try {
+          if (rememberMe.checked && identifierInput.value.trim()) {
+            localStorage.setItem('campusnaija_admin_id', identifierInput.value.trim());
+          } else {
+            localStorage.removeItem('campusnaija_admin_id');
+          }
+        } catch (err) { /* ignore */ }
+      });
+
+      /* ----- Accessibility: focus first field on load ----- */
+      window.addEventListener('load', function() {
+        if (!identifierInput.value) identifierInput.focus();
+      });
+    })();
+  </script>
+
+</body>
+</html>

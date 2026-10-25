@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — School Representative Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Manrope', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 10px;
+      --radius-input: 10px;
+      --sidebar-w: 260px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60; transition: transform 0.25s ease;
+    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-brand .portal-label i { font-size: 0.7rem; }
+
+    /* Institution badge in sidebar */
+    .sidebar-institution {
+      margin: 14px 14px 0;
+      padding: 14px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .sidebar-institution .inst-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .sidebar-institution .inst-name {
+      font-size: 0.85rem; font-weight: 700; line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .sidebar-institution .inst-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 40px;
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
+    .sidebar-institution .inst-status.verified {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+    }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-group-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      transition: background 0.15s, color 0.15s; position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-badge {
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
+    }
+
+    /* Sign out sits inside the sidebar navigation area */
+    .sidebar-signout {
+      margin-top: auto;
+      padding: 12px 14px 4px;
+      border-top: 1px solid var(--border);
+    }
+    .signout-nav-btn {
+      width: 100%;
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+      text-align: left; transition: background 0.15s, color 0.15s;
+    }
+    .signout-nav-btn i {
+      width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .signout-nav-btn:hover {
+      background-color: rgba(224, 112, 112, 0.1);
+      color: var(--danger);
+    }
+
+    .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
+    .rep-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+    }
+    .rep-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #F5B942, #b88720);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+    }
+    .rep-user-info { flex: 1; min-width: 0; }
+    .rep-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rep-user-role {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ===== MAIN ===== */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
+    }
+    .menu-toggle {
+      display: none; background: transparent; border: none;
+      color: var(--text); font-size: 1.25rem; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); }
+
+    .topbar-title { display: flex; flex-direction: column; gap: 2px; }
+    .topbar-title .t-eyebrow {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--primary);
+    }
+    .topbar-title .t-name { font-size: 0.92rem; font-weight: 700; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface);
+    }
+    .icon-btn.signout-icon:hover {
+      color: var(--danger);
+      border-color: rgba(224, 112, 112, 0.4);
+      background-color: rgba(224, 112, 112, 0.08);
+    }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-rep {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+    }
+    .topbar-rep:hover { background-color: var(--elevated); }
+    .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+
+    .content { padding: 32px 24px 56px; flex: 1; }
+
+    /* ============================================================ */
+    /* PAGE HEADING                                                 */
+    /* ============================================================ */
+    .page-heading { margin-bottom: 24px; }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--accent); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+
+    /* ============================================================ */
+    /* ASSIGNED INSTITUTION BANNER                                  */
+    /* ============================================================ */
+    .institution-banner {
+      background: linear-gradient(135deg, rgba(0,201,130,0.08) 0%, rgba(17,24,21,1) 60%);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      margin-bottom: 28px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 20px;
+    }
+    .inst-logo-lg {
+      width: 64px; height: 64px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(0,201,130,0.05));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.3rem; color: var(--primary);
+      flex-shrink: 0;
+    }
+    .inst-banner-info { flex: 1; min-width: 200px; }
+    .inst-banner-info .ib-label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+    }
+    .inst-banner-info .ib-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .inst-banner-info .ib-meta {
+      font-size: 0.85rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    }
+    .inst-banner-info .ib-meta .dot { font-size: 0.4rem; }
+    .inst-banner-badges { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .badge-verified {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 40px;
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+      border: 1px solid rgba(245,185,66,0.3);
+    }
+    .badge-verified.verified {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+      border-color: rgba(0,201,130,0.3);
+    }
+    .restricted-note {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; color: var(--muted); max-width: 280px;
+      text-align: right; line-height: 1.4;
+    }
+    .restricted-note i { color: var(--accent); font-size: 0.8rem; flex-shrink: 0; }
+
+    /* ============================================================ */
+    /* STATS ROW                                                    */
+    /* ============================================================ */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+    }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    .stat-mini {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      transition: border-color 0.15s;
+    }
+    .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-value {
+      font-size: 1.7rem; font-weight: 800; color: var(--muted);
+      letter-spacing: 0.05em; line-height: 1;
+    }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+    /* ============================================================ */
+    /* DASHBOARD GRID                                               */
+    /* ============================================================ */
+    .dashboard-grid {
+      display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 28px;
+    }
+    @media (min-width: 1024px) { .dashboard-grid { grid-template-columns: 1.4fr 1fr; } }
+
+    .panel {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .panel-title i { color: var(--primary); font-size: 0.95rem; }
+    .panel-link {
+      font-size: 0.8rem; font-weight: 600; color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .panel-link:hover { text-decoration: underline; }
+
+    /* ============================================================ */
+    /* RECENT SUBMISSIONS                                           */
+    /* ============================================================ */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state i { font-size: 2rem; color: var(--border); margin-bottom: 12px; display: inline-block; }
+    .empty-state h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 6px; }
+    .empty-state p { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; }
+
+    /* ============================================================ */
+    /* QUICK ACTIONS                                                */
+    /* ============================================================ */
+    .quick-actions { display: flex; flex-direction: column; gap: 10px; }
+    .quick-action {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.15s; cursor: pointer;
+    }
+    .quick-action:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.03); }
+    .quick-action-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+    .quick-action-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .quick-action-text { flex: 1; min-width: 0; }
+    .quick-action-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
+    .quick-action-desc {
+      font-size: 0.75rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .quick-action-arrow {
+      color: var(--muted); font-size: 0.75rem;
+      transition: transform 0.15s, color 0.15s; flex-shrink: 0;
+    }
+    .quick-action:hover .quick-action-arrow { color: var(--primary); transform: translateX(3px); }
+
+    /* ============================================================ */
+    /* SUPPORT CARD                                                 */
+    /* ============================================================ */
+    .support-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-card);
+      padding: 20px 22px;
+      display: flex; gap: 16px; align-items: flex-start;
+      margin-top: 24px;
+    }
+    .support-card i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
+    .support-card .support-text { flex: 1; }
+    .support-card h4 { font-size: 0.9rem; margin-bottom: 4px; }
+    .support-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .support-card .support-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 700; color: var(--primary);
+      margin-top: 8px;
+    }
+    .support-card .support-link:hover { text-decoration: underline; }
+
+    /* ============================================================ */
+    /* DASHBOARD RULES INFO                                         */
+    /* ============================================================ */
+    .rules-panel {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 22px 24px;
+      margin-top: 28px;
+    }
+    .rules-panel h3 {
+      font-size: 0.95rem; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .rules-panel h3 i { color: var(--primary); font-size: 0.9rem; }
+    .rules-list { display: flex; flex-direction: column; gap: 10px; }
+    .rule-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 0.82rem; color: var(--muted); line-height: 1.5;
+    }
+    .rule-item i { color: var(--primary); font-size: 0.72rem; margin-top: 4px; flex-shrink: 0; }
+    .rule-item strong { color: var(--text); }
+
+    .footnote {
+      font-size: 0.72rem; color: var(--muted); text-align: center;
+      padding: 24px 0 0; font-style: italic;
+    }
+
+    /* ============================================================ */
+    /* TOAST                                                        */
+    /* ============================================================ */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated); border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 24px 16px 40px; }
+      .topbar-title { display: none; }
+    }
+    @media (max-width: 600px) {
+      .topbar-rep-name, .topbar-rep-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h1 { font-size: 1.6rem; }
+      .institution-banner { padding: 20px; }
+      .inst-banner-badges { align-items: flex-start; width: 100%; }
+      .restricted-note { text-align: left; max-width: 100%; }
+      .dashboard-grid { gap: 16px; }
+      .panel { padding: 18px; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="admin-shell" style="display:flex; min-height:100vh;">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-label"><i class="fas fa-school"></i> School Administration</div>
+      </div>
+
+      <!-- Institution badge -->
+      <div class="sidebar-institution">
+        <div class="inst-label">Assigned institution</div>
+        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <span class="inst-status" id="sidebarInstStatus">
+          <i class="fas fa-clock"></i> Pending verification
+        </span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="#" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="#" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="#" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="#" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="#" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="#" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-paper-plane"></i> Submissions
+          <span class="nav-badge">—</span>
+        </a>
+      </nav>
+
+      <!-- Sign out lives inside the navigation area -->
+      <div class="sidebar-signout">
+        <button class="signout-nav-btn" onclick="signOut()">
+          <i class="fas fa-arrow-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="rep-user">
+          <div class="rep-avatar">FA</div>
+          <div class="rep-user-info">
+            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
+            <div class="rep-user-role">School Representative</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="topbar-title">
+          <span class="t-eyebrow">School representative workspace</span>
+          <span class="t-name">Dashboard</span>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-rep">
+            <div class="rep-avatar">FA</div>
+            <div>
+              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-role">School Representative</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
+          </div>
+          <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-shield-halved"></i> Restricted school access</div>
+          <h1>Dashboard</h1>
+          <p>Manage your institution's information on CampusNaija.</p>
+        </div>
+
+        <!-- Assigned institution banner -->
+        <div class="institution-banner">
+          <div class="inst-logo-lg" id="instInitials">UL</div>
+          <div class="inst-banner-info">
+            <div class="ib-label">Your assigned institution</div>
+            <div class="ib-name" id="instName">University of Lagos</div>
+            <div class="ib-meta">
+              <span><i class="fas fa-map-marker-alt"></i> Akoka, Lagos State</span>
+              <span class="dot">●</span>
+              <span>Federal University</span>
+            </div>
+          </div>
+          <div class="inst-banner-badges">
+            <span class="badge-verified" id="instBadge">
+              <i class="fas fa-clock"></i> Verification pending data
+            </span>
+            <div class="restricted-note">
+              <i class="fas fa-lock"></i>
+              <span>You can only manage the institution assigned to your account.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-label">Courses &amp; programmes <i class="fas fa-book-open"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Database count</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Pending review <i class="fas fa-clock gold"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Awaiting a decision</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Admission notices <i class="fas fa-clipboard-list"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Linked school records</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Approved updates <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-sub">Database count</div>
+          </div>
+        </div>
+
+        <!-- Dashboard grid: submissions + quick actions -->
+        <div class="dashboard-grid">
+
+          <!-- Recent submissions -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-paper-plane"></i> Recent submissions</div>
+              <a href="#" class="panel-link">View submissions <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <h3>No live submission data</h3>
+              <p>Your latest submitted changes and review decisions will appear here. Connect the submissions API to show current records.</p>
+              <button class="btn-outline" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:transparent; color:var(--text); border:1px solid var(--border); border-radius:var(--radius-btn); font-size:0.85rem; font-weight:600; cursor:pointer;" onclick="toast('Submissions page opened (demo).')">
+                <i class="fas fa-list-check"></i> View submissions
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-bolt"></i> Quick actions</div>
+            </div>
+            <div class="quick-actions">
+              <div class="quick-action" onclick="toast('School profile editor opened (demo).')">
+                <div class="quick-action-icon"><i class="fas fa-pen"></i></div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Edit profile</div>
+                  <div class="quick-action-desc">School details and contacts</div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+              </div>
+              <div class="quick-action" onclick="toast('Course management opened (demo).')">
+                <div class="quick-action-icon"><i class="fas fa-book-open"></i></div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Manage courses</div>
+                  <div class="quick-action-desc">Academic offerings</div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+              </div>
+              <div class="quick-action" onclick="toast('Admission updates opened (demo).')">
+                <div class="quick-action-icon gold"><i class="fas fa-clipboard-list"></i></div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Admission updates</div>
+                  <div class="quick-action-desc">Notices and requirements</div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+              </div>
+              <div class="quick-action" onclick="toast('Submissions tracker opened (demo).')">
+                <div class="quick-action-icon gold"><i class="fas fa-list-check"></i></div>
+                <div class="quick-action-text">
+                  <div class="quick-action-title">Track reviews</div>
+                  <div class="quick-action-desc">Approval progress</div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support card -->
+        <div class="support-card">
+          <i class="fas fa-circle-question"></i>
+          <div class="support-text">
+            <h4>Need help?</h4>
+            <p>Contact the CampusNaija platform administrator for account or school-assignment issues.</p>
+            <a href="#" class="support-link" onclick="toast('Support contact opened (demo).'); return false;">
+              <i class="fas fa-envelope"></i> Contact platform administrator
+            </a>
+          </div>
+        </div>
+
+        <!-- Dashboard rules -->
+        <div class="rules-panel">
+          <h3><i class="fas fa-shield-halved"></i> Dashboard rules</h3>
+          <div class="rules-list">
+            <div class="rule-item">
+              <i class="fas fa-circle-check"></i>
+              <div><strong>School-specific data:</strong> all records are scoped to the institution assigned to the signed-in representative.</div>
+            </div>
+            <div class="rule-item">
+              <i class="fas fa-circle-check"></i>
+              <div><strong>Review workflow:</strong> edits can be saved as drafts and submitted for review. The approved public version remains visible until changes are approved.</div>
+            </div>
+            <div class="rule-item">
+              <i class="fas fa-circle-check"></i>
+              <div><strong>Live statistics:</strong> counts and status labels must come from the database, not fixed sample numbers.</div>
+            </div>
+            <div class="rule-item">
+              <i class="fas fa-circle-check"></i>
+              <div><strong>Backend security:</strong> every API request must verify the user's identity, role and assigned school.</div>
+            </div>
+            <div class="rule-item">
+              <i class="fas fa-circle-check"></i>
+              <div><strong>Consistent design:</strong> reuses CampusNaija's <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">#070A09</code> background, <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">#0D1210</code> surfaces, <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">#00C982</code> emerald, <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">#F5B942</code> gold and <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">#F5F7F5</code> text.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="footnote">
+          <i class="fas fa-circle-info"></i> This is an interactive design preview, not a connected dashboard or saved HTML file.
+        </p>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ============================================================ */
+      /* DEMO: institution loaded from account                        */
+      /* ============================================================ */
+      const demoAccount = {
+        representative: {
+          name: 'Dr. Funmi Adeyemi',
+          initials: 'FA',
+          role: 'School Representative'
+        },
+        school: {
+          name: 'University of Lagos',
+          initials: 'UL',
+          location: 'Akoka, Lagos State',
+          type: 'Federal University',
+          verified: false
+        }
+      };
+
+      function applyAccount() {
+        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
+        const statusEl = document.getElementById('sidebarInstStatus');
+        if (demoAccount.school.verified) {
+          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          statusEl.classList.add('verified');
+        }
+
+        document.getElementById('instInitials').textContent = demoAccount.school.initials;
+        document.getElementById('instName').textContent = demoAccount.school.name;
+        document.getElementById('instName').parentElement.querySelector('.ib-meta').innerHTML =
+          `<span><i class="fas fa-map-marker-alt"></i> ${demoAccount.school.location}</span>
+           <span class="dot">●</span>
+           <span>${demoAccount.school.type}</span>`;
+
+        const badgeEl = document.getElementById('instBadge');
+        if (demoAccount.school.verified) {
+          badgeEl.className = 'badge-verified verified';
+          badgeEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+        }
+      }
+
+      /* ============================================================ */
+      /* SIGN OUT (called from sidebar nav and top bar)              */
+      /* ============================================================ */
+      window.signOut = function() {
+        if (!confirm('Sign out of the school portal?')) return;
+        // In production: clear the secure session server-side first,
+        // then redirect. Never rely on the frontend alone for auth.
+        window.location.href = 'login.html';
+      };
+
+      /* ============================================================ */
+      /* HELPERS                                                      */
+      /* ============================================================ */
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      /* ============================================================ */
+      /* MOBILE SIDEBAR                                               */
+      /* ============================================================ */
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        overlay.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+      });
+      overlay.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      /* ============================================================ */
+      /* INIT                                                         */
+      /* ============================================================ */
+      document.addEventListener('DOMContentLoaded', () => {
+        applyAccount();
+        document.querySelectorAll('a[href="#"]').forEach(a => {
+          a.addEventListener('click', e => e.preventDefault());
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

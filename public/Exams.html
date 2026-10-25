@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusNaija — Examination Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #070A09;
+      font-family: 'Manrope', sans-serif;
+      color: #F5F7F5;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --accent: #F5B942;
+      --text: #F5F7F5;
+      --muted: #9BA9A1;
+      --border: #29352F;
+      --radius-card: 16px;
+      --radius-btn: 12px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* ----- HEADER ----- */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background-color: rgba(7, 10, 9, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+    .logo span { color: var(--primary); }
+    .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
+    .btn-explore {
+      display: none; background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
+    }
+    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
+    .mobile-nav {
+      display: none; background-color: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted);
+    }
+    .mobile-nav.active { display: flex; }
+    @media (min-width: 1024px) {
+      .nav-links { display: flex; }
+      .btn-explore { display: inline-block; }
+      .hamburger { display: none; }
+      .mobile-nav { display: none !important; }
+    }
+
+    /* ----- VIEW SWITCHING ----- */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ============================================================ */
+    /* DIRECTORY VIEW                                               */
+    /* ============================================================ */
+    .directory-hero { padding: 40px 0 24px; }
+    .directory-hero .eyebrow {
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
+    .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
+
+    .search-filter-bar { margin: 24px 0 32px; }
+    .search-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+    }
+    .search-wrapper {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 60px; padding: 6px 6px 6px 20px; display: flex;
+      align-items: center; gap: 8px; flex: 1; min-width: 240px;
+    }
+    .search-wrapper:focus-within { border-color: var(--primary); }
+    .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
+    .search-wrapper input {
+      flex: 1; background: transparent; border: none; padding: 12px 0;
+      font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none;
+    }
+    .search-wrapper input::placeholder { color: #6b7c74; }
+    .search-wrapper button {
+      background-color: var(--primary); border: none; border-radius: 40px;
+      padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer;
+      white-space: nowrap;
+    }
+    .year-select {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif;
+      font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer;
+      min-width: 160px;
+    }
+    .year-select:focus { border-color: var(--primary); }
+
+    .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
+    .filter-tab {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.85rem; font-weight: 600;
+      padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s;
+    }
+    .filter-tab:hover { border-color: var(--primary); color: var(--text); }
+    .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
+
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title { font-size: 1.8rem; }
+    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+
+    .exams-grid {
+      display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 64px;
+    }
+    @media (min-width: 600px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .exams-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .exam-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .exam-card:hover { border-color: var(--primary); }
+    .exam-img {
+      height: 150px; background-size: cover; background-position: center; position: relative;
+    }
+    .exam-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, #0D1210 5%, transparent 70%);
+    }
+    .exam-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .exam-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .exam-body-tag {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--primary); font-weight: 700; margin-bottom: 8px;
+    }
+    .exam-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
+    .exam-action {
+      font-weight: 600; font-size: 0.85rem; color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px; margin-top: auto;
+    }
+
+    /* Calendar strip on directory */
+    .calendar-strip {
+      padding: 40px 0 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .calendar-strip-inner {
+      display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px;
+    }
+    .calendar-item {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0;
+      border-left: 4px solid var(--accent);
+    }
+    .calendar-item .cal-label { color: var(--accent); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .calendar-item .cal-event { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .calendar-item .cal-date { font-size: 0.85rem; color: var(--muted); }
+    .calendar-item .cal-source { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 6px; }
+
+    /* Preparation strip */
+    .prep-strip {
+      padding: 32px 0 64px;
+    }
+    .prep-inner {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; padding: 32px 24px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .prep-inner h2 { font-size: 1.6rem; margin-bottom: 8px; }
+    .prep-inner p { color: var(--muted); font-size: 0.95rem; max-width: 520px; }
+    .prep-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ============================================================ */
+    /* EXAM DETAIL VIEW                                             */
+    /* ============================================================ */
+    .back-to-directory {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 0.9rem; font-weight: 500;
+      padding: 24px 0 8px; cursor: pointer;
+    }
+    .back-to-directory:hover { color: var(--primary); }
+
+    .exam-detail-hero { padding: 8px 0 16px; }
+    .exam-detail-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+    }
+    .exam-detail-banner {
+      height: 220px; background-size: cover; background-position: center; position: relative;
+    }
+    .exam-detail-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, #0D1210 15%, transparent 80%);
+    }
+    .exam-detail-header {
+      padding: 24px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .exam-detail-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .exam-detail-title-row h1 { font-size: 2rem; }
+    .exam-badge {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+      font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .exam-badge.gold {
+      background-color: rgba(245,185,66,0.15); color: var(--accent);
+    }
+    .exam-detail-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .exam-detail-sub .dot { font-size: 0.4rem; }
+    .exam-detail-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem;
+      border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .exam-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .exam-tab-list {
+      display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content;
+    }
+    .exam-tab-item {
+      padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted);
+      cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .exam-tab-item:hover { color: var(--text); }
+    .exam-tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .exam-tab-panel { display: none; }
+    .exam-tab-panel.active { display: block; }
+
+    .exam-profile-content { padding: 0 0 64px; }
+    .exam-profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+    @media (min-width: 900px) { .exam-profile-grid { grid-template-columns: 2fr 1fr; } }
+
+    .info-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px;
+    }
+    .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--muted); }
+    .info-value { font-weight: 600; text-align: right; }
+    .info-value a { color: var(--primary); }
+
+    .exam-section { margin-bottom: 40px; }
+    .exam-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
+    .exam-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
+    .exam-section p { color: var(--muted); margin-bottom: 16px; }
+
+    .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead { background-color: var(--elevated); }
+    th { text-align: left; padding: 14px 16px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); white-space: nowrap; }
+    td { padding: 14px 16px; border-top: 1px solid var(--border); }
+    tr:hover td { background-color: rgba(255,255,255,0.02); }
+    .badge-soft {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+    .badge-gold {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+    .badge-muted {
+      background-color: rgba(155,169,161,0.12); color: var(--muted);
+      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
+    }
+
+    .update-list { display: flex; flex-direction: column; gap: 16px; }
+    .update-item {
+      background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px;
+      border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start;
+    }
+    .update-item i { color: var(--accent); margin-top: 4px; }
+    .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
+    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
+    .update-meta a { color: var(--primary); }
+
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+    .resource-item {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px; transition: border-color 0.2s;
+    }
+    .resource-item:hover { border-color: var(--primary); }
+    .resource-item i { color: var(--primary); font-size: 1.2rem; width: 24px; text-align: center; }
+    .resource-item .res-text { flex: 1; }
+    .resource-item .res-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
+    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .resource-item .res-action { color: var(--primary); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+
+    .countdown-box {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 20px; text-align: center;
+    }
+    .countdown-box .cd-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+    .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    .source-note { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 8px; }
+
+    .program-search { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .program-search input {
+      flex: 1; min-width: 180px; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 18px; font-family: 'Manrope', sans-serif;
+      font-size: 0.9rem; color: var(--text); outline: none;
+    }
+    .program-search input:focus { border-color: var(--primary); }
+
+    /* Footer */
+    .site-footer {
+      background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+    @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+    .footer-brand p { color: var(--muted); font-size: 0.9rem; margin: 16px 0 20px; max-width: 280px; }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a { color: var(--muted); font-size: 1.2rem; }
+    .social-links a:hover { color: var(--primary); }
+    .footer-links h4 { font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--muted); font-size: 0.9rem; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 24px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .footer-legal { display: flex; gap: 20px; }
+
+    /* Image helpers */
+    .bg-jamb {
+      background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&auto=format&fit=crop&q=80');
+    }
+    .bg-waec {
+      background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=80');
+    }
+    .bg-neco {
+      background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1200&auto=format&fit=crop&q=80');
+    }
+    .bg-nabteb {
+      background-image: url('https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=1200&auto=format&fit=crop&q=80');
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo" onclick="showDirectory()" style="cursor: pointer;">Campus<span>Naija</span></div>
+    <nav class="nav-links">
+      <a href="./Home.html">Home</a>
+      <a href="./Schools.html">Schools</a>
+      <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
+      <a href="./Exams.html" onclick="showDirectory()">Exams</a>
+      <a href="./Scholarships.html">Scholarships</a>
+      <a href="./Trending.html">Trending</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
+      <button class="btn-explore" onclick="showDirectory()">Explore</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="./Home.html">Home</a>
+    <a href="./Schools.html">Schools</a>
+    <a href="./Admissions.html" onclick="showDirectory()">Admissions</a>
+    <a href="./Exams.html" onclick="showDirectory()">Exams</a>
+    <a href="./Scholarships.html">Scholarships</a>
+    <a href="./Trending.html">Trending</a>
+  </div>
+</header>
+
+<!-- ==================== DIRECTORY VIEW ==================== -->
+<div id="view-directory" class="view active">
+  <main class="container">
+    <section class="directory-hero">
+      <div class="eyebrow">Examination centre</div>
+      <h1>Prepare today. Perform tomorrow.</h1>
+      <p>Find examination dates, registration information, timetables, requirements, preparation materials, and official results portals.</p>
+    </section>
+
+    <section class="search-filter-bar">
+      <div class="search-row">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" id="examSearchInput" placeholder="Search exams or subjects">
+          <button onclick="filterExams()">Search</button>
+        </div>
+        <select class="year-select" id="yearFilter" onchange="filterExams()">
+          <option value="">Select examination year</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+      <div class="filter-tabs" id="examTypeFilters">
+        <button class="filter-tab active" data-type="all" onclick="setExamTypeFilter('all', this)">All Exams</button>
+        <button class="filter-tab" data-type="jamb" onclick="setExamTypeFilter('jamb', this)">JAMB</button>
+        <button class="filter-tab" data-type="waec" onclick="setExamTypeFilter('waec', this)">WAEC</button>
+        <button class="filter-tab" data-type="neco" onclick="setExamTypeFilter('neco', this)">NECO</button>
+        <button class="filter-tab" data-type="nabteb" onclick="setExamTypeFilter('nabteb', this)">NABTEB</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <div class="section-title">Popular examinations</div>
+        <a href="#" class="view-all">Explore all <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="exams-grid" id="examsGrid">
+        <!-- JAMB UTME -->
+        <div class="exam-card" data-type="jamb" data-year="2026" data-name="JAMB UTME" data-subjects="english mathematics physics chemistry biology" onclick="openExam('jamb')">
+          <div class="exam-img bg-jamb"></div>
+          <div class="exam-info">
+            <div class="exam-body-tag">JAMB</div>
+            <div class="exam-name">JAMB UTME</div>
+            <div class="exam-desc">University admission examination</div>
+            <span class="exam-action">View details <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+        <!-- WAEC -->
+        <div class="exam-card" data-type="waec" data-year="2026" data-name="WAEC" data-subjects="english mathematics physics chemistry biology" onclick="openExam('waec')">
+          <div class="exam-img bg-waec"></div>
+          <div class="exam-info">
+            <div class="exam-body-tag">WAEC</div>
+            <div class="exam-name">WAEC</div>
+            <div class="exam-desc">Senior secondary certificate exam</div>
+            <span class="exam-action">View details <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+        <!-- NECO -->
+        <div class="exam-card" data-type="neco" data-year="2026" data-name="NECO" data-subjects="english mathematics physics chemistry biology" onclick="openExam('neco')">
+          <div class="exam-img bg-neco"></div>
+          <div class="exam-info">
+            <div class="exam-body-tag">NECO</div>
+            <div class="exam-name">NECO</div>
+            <div class="exam-desc">National certificate examinations</div>
+            <span class="exam-action">View details <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+        <!-- NABTEB -->
+        <div class="exam-card" data-type="nabteb" data-year="2026" data-name="NABTEB" data-subjects="english mathematics physics chemistry biology" onclick="openExam('nabteb')">
+          <div class="exam-img bg-nabteb"></div>
+          <div class="exam-info">
+            <div class="exam-body-tag">NABTEB</div>
+            <div class="exam-name">NABTEB</div>
+            <div class="exam-desc">Business and technical examinations</div>
+            <span class="exam-action">View details <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendar strip -->
+    <section class="calendar-strip">
+      <div class="section-header">
+        <div class="section-title">Examination calendar</div>
+        <span style="color: var(--muted); font-size: 0.85rem;">Registration periods, exam dates, result announcements</span>
+      </div>
+      <div class="calendar-strip-inner">
+        <div class="calendar-item">
+          <div class="cal-label">JAMB UTME</div>
+          <div class="cal-event">Registration opens</div>
+          <div class="cal-date">15 Jan 2026</div>
+          <div class="cal-source">Source: JAMB portal</div>
+        </div>
+        <div class="calendar-item">
+          <div class="cal-label">WAEC</div>
+          <div class="cal-event">Examination begins</div>
+          <div class="cal-date">10 May 2026 <span class="badge-gold">est.</span></div>
+          <div class="cal-source">Source: WAEC timetable (draft)</div>
+        </div>
+        <div class="calendar-item">
+          <div class="cal-label">NECO</div>
+          <div class="cal-event">Registration closes</div>
+          <div class="cal-date">30 Apr 2026</div>
+          <div class="cal-source">Source: NECO portal</div>
+        </div>
+        <div class="calendar-item">
+          <div class="cal-label">NABTEB</div>
+          <div class="cal-event">Examination begins</div>
+          <div class="cal-date">5 Jun 2026 <span class="badge-gold">est.</span></div>
+          <div class="cal-source">Source: NABTEB portal</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preparation strip -->
+    <section class="prep-strip">
+      <div class="prep-inner">
+        <div>
+          <h2>Prepare for your exams</h2>
+          <p>Subject guides, syllabuses, practice questions, revision resources, and study tips to help you succeed.</p>
+        </div>
+        <div class="prep-actions">
+          <button class="btn-primary"><i class="fas fa-book-open"></i> Practice questions</button>
+          <button class="btn-outline"><i class="fas fa-download"></i> Download syllabus</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ==================== EXAM DETAIL VIEW ==================== -->
+<div id="view-exam-detail" class="view">
+  <main class="container">
+    <div class="back-to-directory" onclick="showDirectory()">
+      <i class="fas fa-arrow-left"></i> Back to all exams
+    </div>
+
+    <!-- Hero -->
+    <section class="exam-detail-hero">
+      <div class="exam-detail-card">
+        <div class="exam-detail-banner" id="examDetailBanner"></div>
+        <div class="exam-detail-header">
+          <div class="exam-detail-title-row">
+            <h1 id="examDetailName">JAMB UTME</h1>
+            <span class="exam-badge" id="examDetailBadge">Registration open</span>
+          </div>
+          <div class="exam-detail-sub" id="examDetailSub">
+            <span><i class="fas fa-building"></i> Joint Admissions and Matriculation Board</span>
+            <span class="dot">●</span>
+            <span>University admission examination</span>
+          </div>
+          <p style="color: var(--muted); max-width: 720px;" id="examDetailTagline">The Unified Tertiary Matriculation Examination is the primary entrance examination for Nigerian universities.</p>
+          <div class="exam-detail-actions">
+            <button class="btn-primary"><i class="fas fa-pen-to-square"></i> Register now</button>
+            <button class="btn-outline"><i class="fas fa-globe"></i> Official website</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="exam-tabs">
+      <ul class="exam-tab-list" id="examTabs">
+        <li class="exam-tab-item active" data-tab="overview">Overview</li>
+        <li class="exam-tab-item" data-tab="registration">Registration &amp; Timetable</li>
+        <li class="exam-tab-item" data-tab="requirements">Requirements &amp; Subjects</li>
+        <li class="exam-tab-item" data-tab="preparation">Preparation Centre</li>
+        <li class="exam-tab-item" data-tab="results">Results &amp; Services</li>
+      </ul>
+    </div>
+
+    <!-- ===== TAB: OVERVIEW ===== -->
+    <div class="exam-tab-panel active" id="exam-panel-overview">
+      <div class="exam-profile-grid">
+        <div>
+          <div class="exam-section">
+            <h2>Exam overview</h2>
+            <p id="examOverviewText">The Unified Tertiary Matriculation Examination (UTME) is conducted by the Joint Admissions and Matriculation Board (JAMB) for admission into Nigerian universities, polytechnics, and colleges of education.</p>
+            <p>The examination tests candidates on English and three other subjects relevant to their chosen course of study.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>Key facts</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Detail</th><th>Information</th></tr>
+                </thead>
+                <tbody id="examKeyFacts">
+                  <tr><td>Examination body</td><td>Joint Admissions and Matriculation Board (JAMB)</td></tr>
+                  <tr><td>Qualification</td><td>UTME (University admission)</td></tr>
+                  <tr><td>Eligible candidates</td><td>SSS3 students, school leavers, and candidates seeking university admission</td></tr>
+                  <tr><td>Subjects</td><td>English + 3 subjects relevant to course</td></tr>
+                  <tr><td>Official website</td><td><a href="#">jamb.gov.ng</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Purpose</h3>
+            <p id="examPurposeText">The UTME serves as the primary entrance examination for Nigerian tertiary institutions, assessing candidates' readiness for higher education.</p>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Exam information</h3>
+            <div class="info-row"><span class="info-label">Body</span><span class="info-value" id="sideBody">JAMB</span></div>
+            <div class="info-row"><span class="info-label">Qualification</span><span class="info-value" id="sideQual">UTME</span></div>
+            <div class="info-row"><span class="info-label">Year</span><span class="info-value" id="sideYear">2026</span></div>
+            <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge-soft" id="sideStatus">Open</span></span></div>
+            <div class="info-row"><span class="info-label">Website</span><span class="info-value"><a href="#" id="sideWebsite">jamb.gov.ng</a></span></div>
+          </div>
+
+          <div class="countdown-box" id="countdownBox">
+            <div class="cd-label">Registration closes in</div>
+            <div class="cd-value" id="countdownValue">--</div>
+            <div class="cd-sub" id="countdownSub">15 Mar 2026</div>
+          </div>
+
+          <div class="info-card" style="margin-top: 24px;">
+            <h3>Quick actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn-primary" style="width: 100%; justify-content: center;"><i class="fas fa-paper-plane"></i> Register</button>
+              <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchExamTab('preparation')"><i class="fas fa-book"></i> Start studying</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: REGISTRATION & TIMETABLE ===== -->
+    <div class="exam-tab-panel" id="exam-panel-registration">
+      <div class="exam-profile-grid">
+        <div>
+          <div class="exam-section">
+            <h2>Registration &amp; timetable</h2>
+            <p>Registration opening and closing dates, examination schedule, timetable downloads, and important announcements.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>Registration dates</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Event</th><th>Date</th><th>Status</th><th>Source</th></tr>
+                </thead>
+                <tbody id="registrationTable">
+                  <tr>
+                    <td>Registration opens</td>
+                    <td>15 Jan 2026</td>
+                    <td><span class="badge-soft">Open</span></td>
+                    <td>JAMB portal</td>
+                  </tr>
+                  <tr>
+                    <td>Registration closes</td>
+                    <td>15 Mar 2026</td>
+                    <td><span class="badge-gold">Closing soon</span></td>
+                    <td>JAMB portal</td>
+                  </tr>
+                  <tr>
+                    <td>Examination begins</td>
+                    <td>20 Apr 2026 <span class="badge-gold">est.</span></td>
+                    <td><span class="badge-muted">Scheduled</span></td>
+                    <td>JAMB timetable (draft)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Timetable downloads</h3>
+            <div class="resource-list">
+              <div class="resource-item">
+                <i class="fas fa-file-pdf"></i>
+                <div class="res-text">
+                  <h4>2026 UTME Timetable (PDF)</h4>
+                  <p>Official examination schedule</p>
+                </div>
+                <span class="res-action">Download</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-file-pdf"></i>
+                <div class="res-text">
+                  <h4>2026 UTME Brochure</h4>
+                  <p>Full registration and examination guide</p>
+                </div>
+                <span class="res-action">Download</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Important announcements</h3>
+            <div class="update-list" id="registrationUpdates">
+              <div class="update-item">
+                <i class="fas fa-bullhorn"></i>
+                <div class="update-content">
+                  <h4>2026 UTME registration now open</h4>
+                  <p>Candidates can now register for the 2026 UTME through the JAMB portal.</p>
+                  <div class="update-meta">
+                    <span><i class="far fa-calendar-alt"></i> 15 Jan 2026</span>
+                    <span><a href="#">Official portal</a></span>
+                  </div>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-bullhorn"></i>
+                <div class="update-content">
+                  <h4>Mock examination date announced</h4>
+                  <p>The 2026 UTME mock examination will hold on 5 March 2026.</p>
+                  <div class="update-meta">
+                    <span><i class="far fa-calendar-alt"></i> 1 Feb 2026</span>
+                    <span><a href="#">Official portal</a></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Registration summary</h3>
+            <div class="info-row"><span class="info-label">Opens</span><span class="info-value">15 Jan 2026</span></div>
+            <div class="info-row"><span class="info-label">Closes</span><span class="info-value">15 Mar 2026</span></div>
+            <div class="info-row"><span class="info-label">Exam begins</span><span class="info-value">20 Apr 2026 <span class="badge-gold">est.</span></span></div>
+            <div class="info-row"><span class="info-label">Registration fee</span><span class="info-value">₦7,700 <span class="badge-gold">sample</span></span></div>
+          </div>
+          <div class="info-card">
+            <h3>Related</h3>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchExamTab('requirements')"><i class="fas fa-list-check"></i> Requirements</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchExamTab('preparation')"><i class="fas fa-book"></i> Preparation</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: REQUIREMENTS & SUBJECTS ===== -->
+    <div class="exam-tab-panel" id="exam-panel-requirements">
+      <div class="exam-profile-grid">
+        <div>
+          <div class="exam-section">
+            <h2>Requirements &amp; subjects</h2>
+            <p>Eligibility, subject combinations, syllabuses, registration documents, and examination-day instructions.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>Eligibility</h3>
+            <p>Candidates must possess a minimum of five O'Level credits including English Language and Mathematics, obtained in not more than two sittings. Candidates awaiting results may also apply.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>Subject combinations</h3>
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr><th>Course group</th><th>Required subjects</th><th>Notes</th></tr>
+                </thead>
+                <tbody id="subjectCombinations">
+                  <tr>
+                    <td>Science</td>
+                    <td>English, Mathematics, Physics, Chemistry</td>
+                    <td>For engineering, medicine, sciences</td>
+                  </tr>
+                  <tr>
+                    <td>Social Sciences</td>
+                    <td>English, Mathematics, Economics, Government</td>
+                    <td>For economics, political science, etc.</td>
+                  </tr>
+                  <tr>
+                    <td>Arts</td>
+                    <td>English, Literature, Government, CRS/IRS</td>
+                    <td>For law, languages, arts</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Examination-day instructions</h3>
+            <div class="update-list">
+              <div class="update-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="update-content">
+                  <h4>Bring your JAMB registration slip</h4>
+                  <p>You must present your printed registration slip and a valid ID to the examination centre.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="update-content">
+                  <h4>Arrive early</h4>
+                  <p>Candidates should arrive at the examination centre at least 30 minutes before the scheduled time.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-check-circle"></i>
+                <div class="update-content">
+                  <h4>No electronic devices</h4>
+                  <p>Mobile phones and other electronic devices are not allowed in the examination hall.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Registration documents</h3>
+            <div class="contact-links">
+              <a href="#"><i class="fas fa-id-card"></i> National ID or passport</a>
+              <a href="#"><i class="fas fa-file-alt"></i> O'Level results (or awaiting)</a>
+              <a href="#"><i class="fas fa-print"></i> JAMB registration slip</a>
+            </div>
+          </div>
+          <div class="info-card">
+            <h3>Syllabus</h3>
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">Download the official UTME syllabus for each subject.</p>
+            <button class="btn-outline" style="width: 100%; justify-content: center;"><i class="fas fa-download"></i> Download syllabus</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: PREPARATION CENTRE ===== -->
+    <div class="exam-tab-panel" id="exam-panel-preparation">
+      <div class="exam-profile-grid">
+        <div>
+          <div class="exam-section">
+            <h2>Preparation centre</h2>
+            <p>Practice questions, revision guides, past questions where legally available, subject resources, and mock tests.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>Practice &amp; revision resources</h3>
+            <div class="resource-list" id="preparationResources">
+              <div class="resource-item">
+                <i class="fas fa-laptop-code"></i>
+                <div class="res-text">
+                  <h4>UTME Practice Quiz</h4>
+                  <p>Test your knowledge with subject-based questions</p>
+                </div>
+                <span class="res-action">Start</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-file-lines"></i>
+                <div class="res-text">
+                  <h4>Past Questions (2010–2025)</h4>
+                  <p>Compiled past questions with answers</p>
+                </div>
+                <span class="res-action">View</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-book-open"></i>
+                <div class="res-text">
+                  <h4>Subject Revision Guides</h4>
+                  <p>Summaries and key topics for each subject</p>
+                </div>
+                <span class="res-action">Read</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-video"></i>
+                <div class="res-text">
+                  <h4>Video Tutorials</h4>
+                  <p>Watch expert-led lessons on difficult topics</p>
+                </div>
+                <span class="res-action">Watch</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Study planner</h3>
+            <div class="update-list">
+              <div class="update-item" style="border-left-color: var(--primary);">
+                <i class="fas fa-calendar-check" style="color: var(--primary);"></i>
+                <div class="update-content">
+                  <h4>Create your personal study schedule</h4>
+                  <p>Organize your revision with our free study planner tool.</p>
+                  <button class="btn-outline" style="margin-top: 8px;"><i class="fas fa-plus"></i> Create planner</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Recommended study time</h3>
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">Consistent daily revision is key to success.</p>
+            <div class="info-row"><span class="info-label">Daily target</span><span class="info-value">2–3 hours</span></div>
+            <div class="info-row"><span class="info-label">Subjects per day</span><span class="info-value">2–3 subjects</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Related</h3>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center; margin-bottom: 8px;" onclick="switchExamTab('requirements')"><i class="fas fa-list-check"></i> Requirements</a>
+            <a href="#" class="btn-outline" style="width: 100%; justify-content: center;" onclick="switchExamTab('registration')"><i class="fas fa-calendar"></i> Timetable</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== TAB: RESULTS & SERVICES ===== -->
+    <div class="exam-tab-panel" id="exam-panel-results">
+      <div class="exam-profile-grid">
+        <div>
+          <div class="exam-section">
+            <h2>Results &amp; official services</h2>
+            <p>Result-checking instructions, official portals, and certificate-related information.</p>
+          </div>
+
+          <div class="exam-section">
+            <h3>How to check your results</h3>
+            <div class="update-list">
+              <div class="update-item">
+                <i class="fas fa-1"></i>
+                <div class="update-content">
+                  <h4>Visit the official results portal</h4>
+                  <p>Go to the official JAMB results portal.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-2"></i>
+                <div class="update-content">
+                  <h4>Enter your registration number</h4>
+                  <p>Provide your JAMB registration number and other required details.</p>
+                </div>
+              </div>
+              <div class="update-item">
+                <i class="fas fa-3"></i>
+                <div class="update-content">
+                  <h4>View and print your result</h4>
+                  <p>Your result will be displayed. You can print a copy for your records.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-section">
+            <h3>Official services</h3>
+            <div class="resource-list">
+              <div class="resource-item">
+                <i class="fas fa-globe"></i>
+                <div class="res-text">
+                  <h4>Official results portal</h4>
+                  <p>Check your UTME results</p>
+                </div>
+                <span class="res-action">Open</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-certificate"></i>
+                <div class="res-text">
+                  <h4>Certificate collection</h4>
+                  <p>Information on collecting your result certificate</p>
+                </div>
+                <span class="res-action">Learn more</span>
+              </div>
+              <div class="resource-item">
+                <i class="fas fa-print"></i>
+                <div class="res-text">
+                  <h4>Result slip printing</h4>
+                  <p>Print an official copy of your result</p>
+                </div>
+                <span class="res-action">Print</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="info-card">
+            <h3>Result checking</h3>
+            <div class="info-row"><span class="info-label">Portal</span><span class="info-value"><a href="#">portal.jamb.gov.ng</a></span></div>
+            <div class="info-row"><span class="info-label">Requires</span><span class="info-value">Registration number</span></div>
+            <div class="info-row"><span class="info-label">Fee</span><span class="info-value">₦1,000 <span class="badge-gold">sample</span></span></div>
+          </div>
+          <div class="info-card">
+            <h3>Support</h3>
+            <div class="contact-links">
+              <a href="#"><i class="fas fa-phone"></i> JAMB support line</a>
+              <a href="#"><i class="fas fa-envelope"></i> support@jamb.gov.ng</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#">Schools</a></li>
+          <li><a href="#">Admissions</a></li>
+          <li><a href="#" onclick="showDirectory()">Exams</a></li>
+          <li><a href="#">Scholarships</a></li>
+          <li><a href="#">Trending</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CampusNaija. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ============================================================ */
+  /* DATA: EXAM PROFILES                                          */
+  /* ============================================================ */
+  const examData = {
+    jamb: {
+      name: 'JAMB UTME',
+      badge: 'Registration open',
+      body: 'Joint Admissions and Matriculation Board',
+      type: 'University admission examination',
+      tagline: 'The Unified Tertiary Matriculation Examination is the primary entrance examination for Nigerian universities.',
+      overview: "The Unified Tertiary Matriculation Examination (UTME) is conducted by the Joint Admissions and Matriculation Board (JAMB) for admission into Nigerian universities, polytechnics, and colleges of education. The examination tests candidates on English and three other subjects relevant to their chosen course of study.",
+      purpose: "The UTME serves as the primary entrance examination for Nigerian tertiary institutions, assessing candidates' readiness for higher education.",
+      bannerClass: 'bg-jamb',
+      website: 'jamb.gov.ng',
+      year: '2026',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      registration: {
+        closes: '15 Mar 2026',
+        opens: '15 Jan 2026',
+        examDate: '20 Apr 2026',
+        fee: '₦7,700'
+      },
+      keyFacts: [
+        { label: 'Examination body', value: 'Joint Admissions and Matriculation Board (JAMB)' },
+        { label: 'Qualification', value: 'UTME (University admission)' },
+        { label: 'Eligible candidates', value: 'SSS3 students, school leavers, and candidates seeking university admission' },
+        { label: 'Subjects', value: 'English + 3 subjects relevant to course' },
+        { label: 'Official website', value: '<a href="#">jamb.gov.ng</a>' }
+      ],
+      subjectCombinations: [
+        { group: 'Science', subjects: 'English, Mathematics, Physics, Chemistry', notes: 'For engineering, medicine, sciences' },
+        { group: 'Social Sciences', subjects: 'English, Mathematics, Economics, Government', notes: 'For economics, political science, etc.' },
+        { group: 'Arts', subjects: 'English, Literature, Government, CRS/IRS', notes: 'For law, languages, arts' }
+      ],
+      registrationTable: [
+        { event: 'Registration opens', date: '15 Jan 2026', status: 'Open', statusClass: 'badge-soft', source: 'JAMB portal' },
+        { event: 'Registration closes', date: '15 Mar 2026', status: 'Closing soon', statusClass: 'badge-gold', source: 'JAMB portal' },
+        { event: 'Examination begins', date: '20 Apr 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted', source: 'JAMB timetable (draft)' }
+      ],
+      registrationUpdates: [
+        { title: '2026 UTME registration now open', text: 'Candidates can now register for the 2026 UTME through the JAMB portal.', date: '15 Jan 2026', link: 'Official portal' },
+        { title: 'Mock examination date announced', text: 'The 2026 UTME mock examination will hold on 5 March 2026.', date: '1 Feb 2026', link: 'Official portal' }
+      ],
+      preparationResources: [
+        { icon: 'fa-laptop-code', title: 'UTME Practice Quiz', desc: 'Test your knowledge with subject-based questions', action: 'Start' },
+        { icon: 'fa-file-lines', title: 'Past Questions (2010–2025)', desc: 'Compiled past questions with answers', action: 'View' },
+        { icon: 'fa-book-open', title: 'Subject Revision Guides', desc: 'Summaries and key topics for each subject', action: 'Read' },
+        { icon: 'fa-video', title: 'Video Tutorials', desc: 'Watch expert-led lessons on difficult topics', action: 'Watch' }
+      ],
+      resultsInfo: [
+        { icon: 'fa-globe', title: 'Official results portal', desc: 'Check your UTME results', action: 'Open' },
+        { icon: 'fa-certificate', title: 'Certificate collection', desc: 'Information on collecting your result certificate', action: 'Learn more' },
+        { icon: 'fa-print', title: 'Result slip printing', desc: 'Print an official copy of your result', action: 'Print' }
+      ],
+      countdown: {
+        label: 'Registration closes in',
+        value: '---',
+        sub: '15 Mar 2026'
+      }
+    },
+    waec: {
+      name: 'WAEC',
+      badge: 'Examination scheduled',
+      body: 'West African Examinations Council',
+      type: 'Senior secondary certificate exam',
+      tagline: 'The West African Senior School Certificate Examination is the main secondary school leaving examination in Nigeria.',
+      overview: "The West African Senior School Certificate Examination (WASSCE) is conducted by the West African Examinations Council (WAEC) for students completing senior secondary school. It is required for university admission and other tertiary education.",
+      purpose: "The WASSCE certifies that candidates have completed secondary education and are prepared for tertiary studies.",
+      bannerClass: 'bg-waec',
+      website: 'waecnigeria.org',
+      year: '2026',
+      status: 'Scheduled',
+      statusClass: 'badge-gold',
+      registration: {
+        closes: '30 Apr 2026',
+        opens: '10 Feb 2026',
+        examDate: '10 May 2026',
+        fee: '₦25,000'
+      },
+      keyFacts: [
+        { label: 'Examination body', value: 'West African Examinations Council (WAEC)' },
+        { label: 'Qualification', value: 'WASSCE (Senior secondary certificate)' },
+        { label: 'Eligible candidates', value: 'SSS3 students and external candidates' },
+        { label: 'Subjects', value: 'English, Mathematics + 6 other subjects' },
+        { label: 'Official website', value: '<a href="#">waecnigeria.org</a>' }
+      ],
+      subjectCombinations: [
+        { group: 'Science', subjects: 'English, Mathematics, Physics, Chemistry, Biology', notes: 'Core science subjects' },
+        { group: 'Social Sciences', subjects: 'English, Mathematics, Economics, Government, Geography', notes: 'Social science subjects' },
+        { group: 'Arts', subjects: 'English, Literature, Government, CRS/IRS, History', notes: 'Arts and humanities' }
+      ],
+      registrationTable: [
+        { event: 'Registration opens', date: '10 Feb 2026', status: 'Open', statusClass: 'badge-soft', source: 'WAEC portal' },
+        { event: 'Registration closes', date: '30 Apr 2026', status: 'Closing soon', statusClass: 'badge-gold', source: 'WAEC portal' },
+        { event: 'Examination begins', date: '10 May 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted', source: 'WAEC timetable (draft)' }
+      ],
+      registrationUpdates: [
+        { title: '2026 WASSCE timetable released', text: 'The official timetable for the 2026 WASSCE has been released.', date: '20 Jan 2026', link: 'Official portal' },
+        { title: 'Registration now open', text: 'Candidates can now register for the 2026 WASSCE through the WAEC portal.', date: '10 Feb 2026', link: 'Official portal' }
+      ],
+      preparationResources: [
+        { icon: 'fa-file-lines', title: 'WASSCE Past Questions', desc: 'Past questions with answers from 2010–2025', action: 'View' },
+        { icon: 'fa-book-open', title: 'Subject Syllabuses', desc: 'Official syllabuses for all subjects', action: 'Download' },
+        { icon: 'fa-laptop-code', title: 'Practice Tests', desc: 'Online practice tests for each subject', action: 'Start' }
+      ],
+      resultsInfo: [
+        { icon: 'fa-globe', title: 'Results portal', desc: 'Check your WASSCE results', action: 'Open' },
+        { icon: 'fa-print', title: 'Result printing', desc: 'Print your result slip', action: 'Print' }
+      ],
+      countdown: {
+        label: 'Examination begins in',
+        value: '---',
+        sub: '10 May 2026 (est.)'
+      }
+    },
+    neco: {
+      name: 'NECO',
+      badge: 'Registration open',
+      body: 'National Examinations Council',
+      type: 'National certificate examinations',
+      tagline: 'The National Examinations Council conducts the Senior Secondary Certificate Examination for Nigerian students.',
+      overview: "The National Examinations Council (NECO) conducts the Senior Secondary Certificate Examination (SSCE) for students completing senior secondary school in Nigeria. It is an alternative to WAEC and is recognized for tertiary admission.",
+      purpose: "NECO SSCE certifies candidates' completion of secondary education and readiness for higher education.",
+      bannerClass: 'bg-neco',
+      website: 'neco.gov.ng',
+      year: '2026',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      registration: {
+        closes: '30 Apr 2026',
+        opens: '1 Mar 2026',
+        examDate: '15 Jun 2026',
+        fee: '₦20,000'
+      },
+      keyFacts: [
+        { label: 'Examination body', value: 'National Examinations Council (NECO)' },
+        { label: 'Qualification', value: 'SSCE (Senior secondary certificate)' },
+        { label: 'Eligible candidates', value: 'SSS3 students and external candidates' },
+        { label: 'Subjects', value: 'English, Mathematics + 6 other subjects' },
+        { label: 'Official website', value: '<a href="#">neco.gov.ng</a>' }
+      ],
+      subjectCombinations: [
+        { group: 'Science', subjects: 'English, Mathematics, Physics, Chemistry, Biology', notes: 'Core science subjects' },
+        { group: 'Social Sciences', subjects: 'English, Mathematics, Economics, Government, Geography', notes: 'Social science subjects' },
+        { group: 'Arts', subjects: 'English, Literature, Government, CRS/IRS, History', notes: 'Arts and humanities' }
+      ],
+      registrationTable: [
+        { event: 'Registration opens', date: '1 Mar 2026', status: 'Open', statusClass: 'badge-soft', source: 'NECO portal' },
+        { event: 'Registration closes', date: '30 Apr 2026', status: 'Closing soon', statusClass: 'badge-gold', source: 'NECO portal' },
+        { event: 'Examination begins', date: '15 Jun 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted', source: 'NECO timetable (draft)' }
+      ],
+      registrationUpdates: [
+        { title: '2026 NECO SSCE registration open', text: 'Registration for the 2026 NECO SSCE is now open.', date: '1 Mar 2026', link: 'Official portal' }
+      ],
+      preparationResources: [
+        { icon: 'fa-file-lines', title: 'NECO Past Questions', desc: 'Past questions with answers', action: 'View' },
+        { icon: 'fa-book-open', title: 'Subject Syllabuses', desc: 'Official NECO syllabuses', action: 'Download' }
+      ],
+      resultsInfo: [
+        { icon: 'fa-globe', title: 'NECO results portal', desc: 'Check your NECO results', action: 'Open' }
+      ],
+      countdown: {
+        label: 'Registration closes in',
+        value: '---',
+        sub: '30 Apr 2026'
+      }
+    },
+    nabteb: {
+      name: 'NABTEB',
+      badge: 'Registration open',
+      body: 'National Business and Technical Examinations Board',
+      type: 'Business and technical examinations',
+      tagline: 'NABTEB conducts business and technical examinations for students seeking vocational and technical qualifications.',
+      overview: "The National Business and Technical Examinations Board (NABTEB) conducts examinations for students in technical colleges and vocational institutions. It awards the National Business Certificate (NBC) and National Technical Certificate (NTC).",
+      purpose: "NABTEB examinations certify technical and vocational skills for employment and further education.",
+      bannerClass: 'bg-nabteb',
+      website: 'nabteb.gov.ng',
+      year: '2026',
+      status: 'Open',
+      statusClass: 'badge-soft',
+      registration: {
+        closes: '15 May 2026',
+        opens: '1 Mar 2026',
+        examDate: '5 Jun 2026',
+        fee: '₦15,000'
+      },
+      keyFacts: [
+        { label: 'Examination body', value: 'National Business and Technical Examinations Board (NABTEB)' },
+        { label: 'Qualification', value: 'NBC / NTC (Technical and business certificates)' },
+        { label: 'Eligible candidates', value: 'Technical college students and vocational candidates' },
+        { label: 'Subjects', value: 'English, Mathematics + trade-related subjects' },
+        { label: 'Official website', value: '<a href="#">nabteb.gov.ng</a>' }
+      ],
+      subjectCombinations: [
+        { group: 'Technical', subjects: 'English, Mathematics, Physics, Chemistry, Technical Drawing', notes: 'For technical trades' },
+        { group: 'Business', subjects: 'English, Mathematics, Economics, Commerce, Accounting', notes: 'For business trades' }
+      ],
+      registrationTable: [
+        { event: 'Registration opens', date: '1 Mar 2026', status: 'Open', statusClass: 'badge-soft', source: 'NABTEB portal' },
+        { event: 'Registration closes', date: '15 May 2026', status: 'Closing soon', statusClass: 'badge-gold', source: 'NABTEB portal' },
+        { event: 'Examination begins', date: '5 Jun 2026 <span class="badge-gold">est.</span>', status: 'Scheduled', statusClass: 'badge-muted', source: 'NABTEB timetable (draft)' }
+      ],
+      registrationUpdates: [
+        { title: '2026 NABTEB registration open', text: 'Registration for the 2026 NABTEB examinations is now open.', date: '1 Mar 2026', link: 'Official portal' }
+      ],
+      preparationResources: [
+        { icon: 'fa-file-lines', title: 'NABTEB Past Questions', desc: 'Past questions for technical and business subjects', action: 'View' },
+        { icon: 'fa-book-open', title: 'Trade Syllabuses', desc: 'Syllabuses for each trade area', action: 'Download' }
+      ],
+      resultsInfo: [
+        { icon: 'fa-globe', title: 'NABTEB results portal', desc: 'Check your NABTEB results', action: 'Open' }
+      ],
+      countdown: {
+        label: 'Registration closes in',
+        value: '---',
+        sub: '15 May 2026'
+      }
+    }
+  };
+
+  /* ============================================================ */
+  /* VIEW SWITCHING                                                */
+  /* ============================================================ */
+  let currentExamKey = 'jamb';
+  let currentExamTypeFilter = 'all';
+
+  function showDirectory() {
+    document.getElementById('view-directory').classList.add('active');
+    document.getElementById('view-exam-detail').classList.remove('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    resetExamTabs();
+    history.pushState({ view: 'directory' }, '', 'Exams.html');
+  }
+
+  function openExam(examKey) {
+    currentExamKey = examKey;
+    const data = examData[examKey];
+    if (!data) return;
+
+    // Populate hero
+    document.getElementById('examDetailName').textContent = data.name;
+    document.getElementById('examDetailBadge').textContent = data.badge;
+    document.getElementById('examDetailBadge').className = 'exam-badge ' + (data.statusClass === 'badge-gold' ? 'gold' : '');
+    document.getElementById('examDetailSub').innerHTML =
+      `<span><i class="fas fa-building"></i> ${data.body}</span>
+       <span class="dot">●</span>
+       <span>${data.type}</span>`;
+    document.getElementById('examDetailTagline').textContent = data.tagline;
+    document.getElementById('examDetailBanner').className = 'exam-detail-banner ' + data.bannerClass;
+
+    // Overview
+    document.getElementById('examOverviewText').textContent = data.overview;
+    document.getElementById('examPurposeText').textContent = data.purpose;
+    document.getElementById('sideBody').textContent = data.body.split('(')[0].trim();
+    document.getElementById('sideQual').textContent = data.keyFacts.find(f => f.label === 'Qualification')?.value || data.type;
+    document.getElementById('sideYear').textContent = data.year;
+    document.getElementById('sideStatus').textContent = data.status;
+    document.getElementById('sideStatus').className = data.statusClass;
+    document.getElementById('sideWebsite').textContent = data.website;
+
+    // Key facts table
+    document.getElementById('examKeyFacts').innerHTML = data.keyFacts.map(f => `
+      <tr><td>${f.label}</td><td>${f.value}</td></tr>
+    `).join('');
+
+    // Registration table
+    document.getElementById('registrationTable').innerHTML = data.registrationTable.map(r => `
+      <tr>
+        <td>${r.event}</td>
+        <td>${r.date}</td>
+        <td><span class="${r.statusClass}">${r.status}</span></td>
+        <td>${r.source}</td>
+      </tr>
+    `).join('');
+
+    // Registration updates
+    document.getElementById('registrationUpdates').innerHTML = data.registrationUpdates.map(u => `
+      <div class="update-item">
+        <i class="fas fa-bullhorn"></i>
+        <div class="update-content">
+          <h4>${u.title}</h4>
+          <p>${u.text}</p>
+          <div class="update-meta">
+            <span><i class="far fa-calendar-alt"></i> ${u.date}</span>
+            <span><a href="#">${u.link}</a></span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Subject combinations
+    document.getElementById('subjectCombinations').innerHTML = data.subjectCombinations.map(s => `
+      <tr>
+        <td>${s.group}</td>
+        <td>${s.subjects}</td>
+        <td>${s.notes}</td>
+      </tr>
+    `).join('');
+
+    // Preparation resources
+    document.getElementById('preparationResources').innerHTML = data.preparationResources.map(r => `
+      <div class="resource-item">
+        <i class="fas ${r.icon}"></i>
+        <div class="res-text">
+          <h4>${r.title}</h4>
+          <p>${r.desc}</p>
+        </div>
+        <span class="res-action">${r.action}</span>
+      </div>
+    `).join('');
+
+    // Results services
+    const resultsContainer = document.querySelector('#exam-panel-results .resource-list');
+    if (resultsContainer) {
+      resultsContainer.innerHTML = data.resultsInfo.map(r => `
+        <div class="resource-item">
+          <i class="fas ${r.icon}"></i>
+          <div class="res-text">
+            <h4>${r.title}</h4>
+            <p>${r.desc}</p>
+          </div>
+          <span class="res-action">${r.action}</span>
+        </div>
+      `).join('');
+    }
+
+    // Countdown
+    const cdBox = document.getElementById('countdownBox');
+    const cdValue = document.getElementById('countdownValue');
+    const cdSub = document.getElementById('countdownSub');
+    if (data.countdown) {
+      cdValue.textContent = data.countdown.value;
+      cdSub.textContent = data.countdown.sub;
+      cdBox.querySelector('.cd-label').textContent = data.countdown.label;
+    }
+
+    // Registration summary sidebar
+    const regSummary = document.querySelector('#exam-panel-registration .info-card .info-row');
+    if (regSummary) {
+      const summaryCard = regSummary.closest('.info-card');
+      if (summaryCard) {
+        const rows = summaryCard.querySelectorAll('.info-row');
+        if (rows.length >= 4) {
+          rows[0].querySelector('.info-value').textContent = data.registration.opens;
+          rows[1].querySelector('.info-value').textContent = data.registration.closes;
+          rows[2].querySelector('.info-value').innerHTML = data.registration.examDate + ' <span class="badge-gold">est.</span>';
+          rows[3].querySelector('.info-value').textContent = data.registration.fee + ' ';
+        }
+      }
+    }
+
+    // Show detail view
+    document.getElementById('view-directory').classList.remove('active');
+    document.getElementById('view-exam-detail').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Update URL
+    const slug = examKey;
+    history.pushState({ view: 'detail', exam: examKey }, '', 'Exams.html?exam=' + slug);
+
+    // Reset tabs
+    resetExamTabs();
+    document.querySelector('.exam-tab-item[data-tab="overview"]').classList.add('active');
+    document.getElementById('exam-panel-overview').classList.add('active');
+  }
+
+  /* ============================================================ */
+  /* TAB SWITCHING                                                 */
+  /* ============================================================ */
+  const examTabItems = document.querySelectorAll('.exam-tab-item');
+  const examTabPanels = {
+    overview: document.getElementById('exam-panel-overview'),
+    registration: document.getElementById('exam-panel-registration'),
+    requirements: document.getElementById('exam-panel-requirements'),
+    preparation: document.getElementById('exam-panel-preparation'),
+    results: document.getElementById('exam-panel-results')
+  };
+
+  function resetExamTabs() {
+    examTabItems.forEach(t => t.classList.remove('active'));
+    Object.values(examTabPanels).forEach(p => p.classList.remove('active'));
+  }
+
+  function switchExamTab(tabKey) {
+    resetExamTabs();
+    const targetTab = document.querySelector(`.exam-tab-item[data-tab="${tabKey}"]`);
+    if (targetTab) targetTab.classList.add('active');
+    if (examTabPanels[tabKey]) examTabPanels[tabKey].classList.add('active');
+  }
+
+  examTabItems.forEach(item => {
+    item.addEventListener('click', () => {
+      resetExamTabs();
+      item.classList.add('active');
+      const tabKey = item.dataset.tab;
+      if (examTabPanels[tabKey]) {
+        examTabPanels[tabKey].classList.add('active');
+      }
+    });
+  });
+
+  /* ============================================================ */
+  /* DIRECTORY FILTERING                                           */
+  /* ============================================================ */
+  function setExamTypeFilter(type, btn) {
+    currentExamTypeFilter = type;
+    document.querySelectorAll('#examTypeFilters .filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterExams();
+  }
+
+  function filterExams() {
+    const query = document.getElementById('examSearchInput').value.toLowerCase().trim();
+    const year = document.getElementById('yearFilter').value;
+    const cards = document.querySelectorAll('#examsGrid .exam-card');
+
+    cards.forEach(card => {
+      const type = card.dataset.type || '';
+      const cardYear = card.dataset.year || '';
+      const name = (card.dataset.name || '').toLowerCase();
+      const subjects = (card.dataset.subjects || '').toLowerCase();
+
+      const matchesType = currentExamTypeFilter === 'all' || type === currentExamTypeFilter;
+      const matchesYear = !year || cardYear === year;
+      const matchesQuery = !query || name.includes(query) || subjects.includes(query);
+
+      if (matchesType && matchesYear && matchesQuery) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Search on enter key
+  document.getElementById('examSearchInput').addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') filterExams();
+  });
+
+  /* ============================================================ */
+  /* MOBILE NAV TOGGLE                                             */
+  /* ============================================================ */
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  if (hamburger) {
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileNav.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
+        mobileNav.classList.remove('active');
+      }
+    });
+  }
+
+  /* ============================================================ */
+  /* HANDLE BROWSER BACK/FORWARD (URL state)                       */
+  /* ============================================================ */
+  window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.view === 'detail' && e.state.exam) {
+      openExam(e.state.exam);
+    } else {
+      showDirectory();
+    }
+  });
+
+  // Handle initial load with ?exam= in URL
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const examParam = params.get('exam');
+    if (examParam && examData[examParam]) {
+      openExam(examParam);
+    }
+  });
+
+  /* ============================================================ */
+  /* PREVENT DEFAULT ON LINKS (demo)                               */
+  /* ============================================================ */
+  document.querySelectorAll('a[href="#"]').forEach(link => {
+    link.addEventListener('click', (e) => e.preventDefault());
+  });
+
+  /* ============================================================ */
+  /* SMOOTH SCROLL TO TOP ON TAB SWITCH (mobile)                   */
+  /* ============================================================ */
+  document.querySelectorAll('.exam-tab-item').forEach(item => {
+    item.addEventListener('click', () => {
+      setTimeout(() => {
+        const tabsEl = document.querySelector('.exam-tabs');
+        if (tabsEl && window.innerWidth < 900) {
+          tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    });
+  });
+</script>
+
+</body>
+</html>
