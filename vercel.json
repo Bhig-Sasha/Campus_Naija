@@ -2,17 +2,17 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/", "destination": "/public/Home.html" },
 
-    { "source": "/schools", "destination": "/public/schools.html" },
-    { "source": "/schools/:slug", "destination": "/public/schools.html" },
-    { "source": "/exams", "destination": "/public/exams.html" },
-    { "source": "/exams/:id", "destination": "/public/exams.html" },
-    { "source": "/scholarships", "destination": "/public/scholarships.html" },
-    { "source": "/scholarships/:id", "destination": "/public/scholarships.html" },
-    { "source": "/admissions", "destination": "/public/admissions.html" },
-    { "source": "/trending", "destination": "/public/trending.html" },
-    { "source": "/trending/:id", "destination": "/public/trending.html" }
+    { "source": "/schools", "destination": "/public/Schools.html" },
+    { "source": "/schools/:slug", "destination": "/public/Schools.html" },
+    { "source": "/exams", "destination": "/public/Exams.html" },
+    { "source": "/exams/:id", "destination": "/public/Exams.html" },
+    { "source": "/scholarships", "destination": "/public/Scholarships.html" },
+    { "source": "/scholarships/:id", "destination": "/public/Scholarships.html" },
+    { "source": "/admissions", "destination": "/public/Admissions.html" },
+    { "source": "/trending", "destination": "/public/Trending.html" },
+    { "source": "/trending/:id", "destination": "/public/Trending.html" }
   ],
   "headers": [
     {
