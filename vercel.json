@@ -1,38 +1,83 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "trailingSlash": true,
+  "trailingSlash": false,
   "rewrites": [
-    { "source": "/", "destination": "/public/Home.html" },
-
-    { "source": "/schools", "destination": "/public/Schools.html" },
-    { "source": "/schools/:slug", "destination": "/public/Schools.html" },
-    { "source": "/exams", "destination": "/public/Exams.html" },
-    { "source": "/exams/:id", "destination": "/public/Exams.html" },
-    { "source": "/scholarships", "destination": "/public/Scholarships.html" },
-    { "source": "/scholarships/:id", "destination": "/public/Scholarships.html" },
-    { "source": "/admissions", "destination": "/public/Admissions.html" },
-    { "source": "/trending", "destination": "/public/Trending.html" },
-    { "source": "/trending/:id", "destination": "/public/Trending.html" }
+    {
+      "source": "/",
+      "destination": "/Home"
+    },
+    {
+      "source": "/schools",
+      "destination": "/Schools"
+    },
+    {
+      "source": "/schools/:slug",
+      "destination": "/Schools"
+    },
+    {
+      "source": "/exams",
+      "destination": "/Exams"
+    },
+    {
+      "source": "/exams/:id",
+      "destination": "/Exams"
+    },
+    {
+      "source": "/scholarships",
+      "destination": "/Scholarships"
+    },
+    {
+      "source": "/scholarships/:id",
+      "destination": "/Scholarships"
+    },
+    {
+      "source": "/admissions",
+      "destination": "/Admissions"
+    },
+    {
+      "source": "/trending",
+      "destination": "/Trending"
+    },
+    {
+      "source": "/trending/:id",
+      "destination": "/Trending"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     },
     {
       "source": "/admin/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/SchoolAd/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     }
   ]
