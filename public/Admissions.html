@@ -10,37 +10,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: #070A09;
-      font-family: 'Manrope', sans-serif;
-      color: #F5F7F5;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { background-color: #070A09; font-family: 'Manrope', sans-serif; color: #F5F7F5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
     a { text-decoration: none; color: inherit; }
     img { max-width: 100%; display: block; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
-      --radius-card: 16px;
-      --radius-btn: 12px;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 12px;
     }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
     /* HEADER */
-    .site-header {
-      position: sticky; top: 0; z-index: 50;
-      background-color: rgba(7, 10, 9, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
+    .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7, 10, 9, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
     .logo span { color: var(--primary); }
@@ -48,15 +31,9 @@
     .nav-links a:hover { color: var(--primary); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
     .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
-    .btn-explore {
-      display: none; background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-    }
+    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
-    .mobile-nav {
-      display: none; background-color: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted);
-    }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
     .mobile-nav.active { display: flex; }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
@@ -71,86 +48,47 @@
 
     /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; }
-    .directory-hero .eyebrow {
-      color: var(--primary); font-weight: 700; font-size: 0.85rem;
-      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px;
-    }
+    .directory-hero .eyebrow { color: var(--primary); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
     .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
     .search-filter-bar { margin: 24px 0 32px; }
     .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .search-wrapper {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 6px 6px 6px 20px; display: flex;
-      align-items: center; gap: 8px; flex: 1; min-width: 240px;
-    }
+    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; }
     .search-wrapper:focus-within { border-color: var(--primary); }
     .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
-    .search-wrapper input {
-      flex: 1; background: transparent; border: none; padding: 12px 0;
-      font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none;
-    }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
     .search-wrapper input::placeholder { color: #6b7c74; }
-    .search-wrapper button {
-      background-color: var(--primary); border: none; border-radius: 40px;
-      padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer;
-      white-space: nowrap;
-    }
+    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; }
     .select-wrap { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
-    .select-wrap select {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif;
-      font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer;
-      min-width: 150px; flex: 1;
-    }
+    .select-wrap select { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer; min-width: 150px; flex: 1; }
     .select-wrap select:focus { border-color: var(--primary); }
 
     .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
-    .filter-tab {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      color: var(--muted); font-size: 0.85rem; font-weight: 600;
-      padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s;
-    }
+    .filter-tab { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s; }
     .filter-tab:hover { border-color: var(--primary); color: var(--text); }
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
 
     .admission-categories { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 8px 0 32px; }
     @media (min-width: 600px) { .admission-categories { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .admission-categories { grid-template-columns: repeat(4, 1fr); } }
-    .category-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 22px 20px; transition: border-color 0.2s; cursor: pointer;
-    }
+    .category-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 22px 20px; transition: border-color 0.2s; cursor: pointer; }
     .category-card:hover { border-color: var(--primary); }
     .category-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 14px; display: inline-block; }
     .category-card h4 { font-size: 1rem; margin-bottom: 6px; }
     .category-card p { font-size: 0.85rem; color: var(--muted); }
 
-    .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; }
-    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
 
     .admissions-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 24px; }
     @media (min-width: 600px) { .admissions-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .admissions-grid { grid-template-columns: repeat(3, 1fr); } }
 
-    .admission-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 22px; display: flex; flex-direction: column;
-      transition: border-color 0.2s; cursor: pointer;
-    }
+    .admission-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 22px; display: flex; flex-direction: column; transition: border-color 0.2s; cursor: pointer; }
     .admission-card:hover { border-color: var(--primary); }
     .admission-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .admission-logo {
-      width: 44px; height: 44px; border-radius: 10px; background-color: var(--elevated);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 1.1rem; color: var(--primary); flex-shrink: 0;
-      border: 1px solid var(--border);
-    }
+    .admission-logo { width: 44px; height: 44px; border-radius: 10px; background-color: var(--elevated); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--primary); flex-shrink: 0; border: 1px solid var(--border); }
     .admission-card-top .ac-text { flex: 1; }
     .admission-inst { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
     .admission-programme { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
@@ -161,33 +99,19 @@
     .meta-line .meta-label { color: var(--muted); }
     .meta-line .meta-value { font-weight: 600; }
     .meta-line .meta-value.gold { color: var(--accent); }
-    .admission-status {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px;
-      margin-top: auto; align-self: flex-start;
-    }
+    .admission-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; margin-top: auto; align-self: flex-start; }
     .status-open { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .status-closing { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .status-upcoming { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .status-closed { background-color: rgba(200,80,80,0.12); color: #e07070; }
-    .admission-action {
-      font-weight: 600; font-size: 0.85rem; color: var(--primary);
-      display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
-    }
+    .admission-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; }
 
     .closing-soon-strip { padding: 32px 0 64px; }
-    .closing-soon-inner {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; padding: 28px 24px;
-    }
+    .closing-soon-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; }
     .closing-soon-inner h2 { font-size: 1.5rem; margin-bottom: 8px; }
     .closing-soon-inner > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
     .deadline-list { display: flex; flex-direction: column; gap: 12px; }
-    .deadline-item {
-      display: flex; align-items: center; gap: 16px; padding: 14px 16px;
-      background-color: var(--elevated); border-radius: var(--radius-card);
-      border-left: 3px solid var(--accent); cursor: pointer; transition: border-color 0.2s;
-    }
+    .deadline-item { display: flex; align-items: center; gap: 16px; padding: 14px 16px; background-color: var(--elevated); border-radius: var(--radius-card); border-left: 3px solid var(--accent); cursor: pointer; transition: border-color 0.2s; }
     .deadline-item:hover { border-left-color: var(--primary); }
     .deadline-item i { color: var(--accent); font-size: 1rem; }
     .deadline-item .dl-text { flex: 1; }
@@ -196,53 +120,26 @@
     .deadline-item .dl-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
 
     /* DETAIL VIEW */
-    .back-to-directory {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--muted); font-size: 0.9rem; font-weight: 500;
-      padding: 24px 0 8px; cursor: pointer;
-    }
+    .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; }
     .back-to-directory:hover { color: var(--primary); }
 
     .admission-detail-hero { padding: 8px 0 16px; }
-    .admission-detail-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; overflow: hidden;
-    }
-    .admission-detail-header {
-      padding: 32px 24px; display: flex; flex-direction: column; gap: 14px;
-      border-bottom: 1px solid var(--border);
-    }
+    .admission-detail-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .admission-detail-header { padding: 32px 24px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid var(--border); }
     .admission-detail-title-row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
     .admission-detail-title-row h1 { font-size: 2rem; }
-    .admission-badge {
-      background-color: rgba(0,201,130,0.15); color: var(--primary);
-      font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px;
-      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
-    }
+    .admission-badge { background-color: rgba(0,201,130,0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
     .admission-badge.gold { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .admission-badge.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .admission-detail-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .admission-detail-sub .dot { font-size: 0.4rem; }
     .admission-detail-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    .btn-primary {
-      background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-outline {
-      background-color: transparent; color: var(--text); font-weight: 600;
-      padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem;
-      border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-primary { background-color: var(--primary); color: #070A09; font-weight: 700; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .admission-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
     .admission-tab-list { display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content; }
-    .admission-tab-item {
-      padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted);
-      cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
-      white-space: nowrap;
-    }
+    .admission-tab-item { padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
     .admission-tab-item:hover { color: var(--text); }
     .admission-tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
 
@@ -252,22 +149,19 @@
     .admission-profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
     @media (min-width: 900px) { .admission-profile-grid { grid-template-columns: 2fr 1fr; } }
 
-    .info-card {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px;
-    }
+    .info-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; }
     .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
-    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; gap: 12px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
-    .info-value { font-weight: 600; text-align: right; }
+    .info-value { font-weight: 600; text-align: right; word-break: break-word; }
     .info-value a { color: var(--primary); }
     .info-value.gold { color: var(--accent); }
 
     .admission-section { margin-bottom: 40px; }
     .admission-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
     .admission-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
-    .admission-section p { color: var(--muted); margin-bottom: 16px; }
+    .admission-section p { color: var(--muted); margin-bottom: 16px; white-space: pre-wrap; }
 
     .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -280,73 +174,38 @@
     .badge-muted { background-color: rgba(155,169,161,0.12); color: var(--muted); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
 
     .checklist { display: flex; flex-direction: column; gap: 12px; }
-    .checklist-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      background-color: var(--elevated); border-radius: 10px; padding: 14px 16px;
-    }
+    .checklist-item { display: flex; align-items: flex-start; gap: 12px; background-color: var(--elevated); border-radius: 10px; padding: 14px 16px; }
     .checklist-item i { color: var(--primary); margin-top: 3px; font-size: 1rem; }
     .checklist-item .cl-text { flex: 1; }
     .checklist-item .cl-text h4 { font-size: 0.9rem; margin-bottom: 2px; }
-    .checklist-item .cl-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .checklist-item .cl-text p { font-size: 0.8rem; color: var(--muted); margin: 0; white-space: pre-wrap; }
 
     .update-list { display: flex; flex-direction: column; gap: 16px; }
-    .update-item {
-      background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px;
-      border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start;
-    }
+    .update-item { background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px; border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start; }
     .update-item i { color: var(--accent); margin-top: 4px; }
     .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
-    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
-    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
-    .update-meta a { color: var(--primary); }
+    .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; white-space: pre-wrap; }
+    .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .update-meta a { color: var(--primary); word-break: break-all; }
 
     .resource-list { display: flex; flex-direction: column; gap: 12px; }
-    .resource-item {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 16px 18px;
-      display: flex; align-items: center; gap: 14px; transition: border-color 0.2s;
-    }
+    .resource-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s; }
     .resource-item:hover { border-color: var(--primary); }
     .resource-item i { color: var(--primary); font-size: 1.2rem; width: 24px; text-align: center; }
-    .resource-item .res-text { flex: 1; }
+    .resource-item .res-text { flex: 1; min-width: 0; }
     .resource-item .res-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
-    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
+    .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; word-break: break-all; }
     .resource-item .res-action { color: var(--primary); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
 
-    .countdown-box {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 20px; text-align: center;
-    }
-    .countdown-box .cd-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-    .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
-    .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
-
-    .source-note { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 8px; }
-
-    .scam-warning {
-      background-color: rgba(245,185,66,0.08); border: 1px solid rgba(245,185,66,0.3);
-      border-radius: var(--radius-card); padding: 16px 18px; display: flex; gap: 12px;
-    }
+    .scam-warning { background-color: rgba(245,185,66,0.08); border: 1px solid rgba(245,185,66,0.3); border-radius: var(--radius-card); padding: 16px 18px; display: flex; gap: 12px; }
     .scam-warning i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
     .scam-warning p { font-size: 0.82rem; color: var(--muted); margin: 0; }
     .scam-warning strong { color: var(--accent); }
 
     /* STATES */
-    .loading-state, .empty-state, .error-state {
-      text-align: center; padding: 64px 24px; color: var(--muted);
-    }
-    .loading-state i, .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); }
-    .error-state i { color: #e07070; }
-    .error-state button {
-      margin-top: 16px; background-color: var(--primary); color: #070A09; border: none;
-      padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer;
-    }
-    .loading-spinner {
-      display: inline-block; width: 32px; height: 32px;
-      border: 3px solid rgba(255,255,255,0.1); border-radius: 50%;
-      border-top-color: var(--primary); animation: spin 0.8s linear infinite;
-      margin-bottom: 16px;
-    }
+    .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); }
+    .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; }
+    .loading-spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s linear infinite; margin-bottom: 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* FOOTER */
@@ -363,11 +222,7 @@
     .footer-links li { margin-bottom: 10px; }
     .footer-links a { color: var(--muted); font-size: 0.9rem; }
     .footer-links a:hover { color: var(--primary); }
-    .footer-bottom {
-      border-top: 1px solid var(--border); padding-top: 24px;
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
-      font-size: 0.8rem; color: var(--muted);
-    }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
     .footer-legal { display: flex; gap: 20px; }
   </style>
 </head>
@@ -375,28 +230,28 @@
 
 <header class="site-header">
   <div class="container header-inner">
-    <div class="logo" onclick="showDirectory()">Campus<span>Naija</span></div>
+    <a href="/Home.html" class="logo">Campus<span>Naija</span></a>
     <nav class="nav-links">
-      <a href="./Home.html">Home</a>
-      <a href="./Schools.html">Schools</a>
-      <a href="./Admissions.html" onclick="showDirectory(); return false;">Admissions</a>
-      <a href="./Exams.html">Exams</a>
-      <a href="./Scholarships.html">Scholarships</a>
-      <a href="./Trending.html">Trending</a>
+      <a href="/Home.html">Home</a>
+      <a href="/Schools.html">Schools</a>
+      <a href="/Admissions.html">Admissions</a>
+      <a href="/Exams.html">Exams</a>
+      <a href="/Scholarships.html">Scholarships</a>
+      <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
-      <button class="btn-explore" onclick="showDirectory()">Explore</button>
+      <button class="search-icon-btn" aria-label="Search" onclick="document.getElementById('admissionSearch').focus()"><i class="fas fa-search"></i></button>
+      <a class="btn-explore" href="/Schools.html">Explore</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
-    <a href="./Home.html">Home</a>
-    <a href="./Schools.html">Schools</a>
-    <a href="./Admissions.html" onclick="showDirectory(); return false;">Admissions</a>
-    <a href="./Exams.html">Exams</a>
-    <a href="./Scholarships.html">Scholarships</a>
-    <a href="./Trending.html">Trending</a>
+    <a href="/Home.html">Home</a>
+    <a href="/Schools.html">Schools</a>
+    <a href="/Admissions.html">Admissions</a>
+    <a href="/Exams.html">Exams</a>
+    <a href="/Scholarships.html">Scholarships</a>
+    <a href="/Trending.html">Trending</a>
   </div>
 </header>
 
@@ -413,16 +268,17 @@
       <div class="search-row">
         <div class="search-wrapper">
           <i class="fas fa-search"></i>
-          <input type="text" id="admissionSearch" placeholder="Search schools, courses or admission types..." oninput="debouncedFilterAdmissions()">
+          <input type="text" id="admissionSearch" placeholder="Search schools, courses or admission types..." aria-label="Search admissions">
           <button onclick="filterAdmissions()">Find Admissions</button>
         </div>
         <div class="select-wrap">
-          <select id="stateFilter" onchange="filterAdmissions()">
+          <select id="stateFilter" onchange="filterAdmissions()" aria-label="Filter by state">
             <option value="">All states</option>
           </select>
-          <select id="levelFilter" onchange="filterAdmissions()">
-            <option value="">All levels</option>
-            <option value="undergraduate">Undergraduate</option>
+          <select id="levelFilter" onchange="filterAdmissions()" aria-label="Filter by entry route">
+            <option value="">All routes</option>
+            <option value="utme">UTME</option>
+            <option value="direct entry">Direct Entry</option>
             <option value="postgraduate">Postgraduate</option>
             <option value="diploma">Diploma / ND / HND</option>
           </select>
@@ -438,37 +294,25 @@
     </section>
 
     <section>
-      <div class="section-header">
-        <div class="section-title">Admission categories</div>
-      </div>
+      <div class="section-header"><div class="section-title">Admission categories</div></div>
       <div class="admission-categories">
-        <div class="category-card" onclick="setLevelFilter('undergraduate')">
-          <i class="fas fa-graduation-cap"></i>
-          <h4>Undergraduate</h4>
-          <p>UTME and Direct Entry</p>
+        <div class="category-card" onclick="setLevelFilter('utme')">
+          <i class="fas fa-graduation-cap"></i><h4>Undergraduate</h4><p>UTME and Direct Entry</p>
         </div>
         <div class="category-card" onclick="setLevelFilter('postgraduate')">
-          <i class="fas fa-user-graduate"></i>
-          <h4>Postgraduate</h4>
-          <p>PGD, Master's and PhD</p>
+          <i class="fas fa-user-graduate"></i><h4>Postgraduate</h4><p>PGD, Master's and PhD</p>
         </div>
         <div class="category-card" onclick="setLevelFilter('diploma')">
-          <i class="fas fa-certificate"></i>
-          <h4>Diploma &amp; ND/HND</h4>
-          <p>Polytechnics and colleges</p>
+          <i class="fas fa-certificate"></i><h4>Diploma &amp; ND/HND</h4><p>Polytechnics and colleges</p>
         </div>
-        <div class="category-card">
-          <i class="fas fa-arrows-turn-to-dots"></i>
-          <h4>Transfer &amp; Others</h4>
-          <p>Special entry routes</p>
+        <div class="category-card" onclick="setLevelFilter('direct entry')">
+          <i class="fas fa-arrows-turn-to-dots"></i><h4>Direct Entry</h4><p>Advanced entry routes</p>
         </div>
       </div>
     </section>
 
     <section>
-      <div class="section-header">
-        <div class="section-title" id="admissionCount">Explore admission opportunities</div>
-      </div>
+      <div class="section-header"><div class="section-title" id="admissionCount">Explore admission opportunities</div></div>
       <div class="admissions-grid" id="admissionsGrid">
         <div class="loading-state" id="admissionsLoading">
           <span class="loading-spinner"></span>
@@ -502,9 +346,8 @@
             <span class="admission-badge" id="admissionDetailBadge"></span>
           </div>
           <div class="admission-detail-sub" id="admissionDetailSub"></div>
-          <p style="color: var(--muted); max-width: 720px;" id="admissionDetailTagline"></p>
           <div class="admission-detail-actions">
-            <button class="btn-primary" id="officialApplyBtn"><i class="fas fa-external-link-alt"></i> Visit Official Application Portal</button>
+            <button class="btn-primary" id="officialApplyBtn" disabled><i class="fas fa-external-link-alt"></i> Visit Official Application Portal</button>
           </div>
         </div>
       </div>
@@ -531,9 +374,7 @@
             <div class="data-table-wrapper">
               <table>
                 <thead><tr><th>Detail</th><th>Information</th></tr></thead>
-                <tbody id="admissionKeyFacts">
-                  <tr><td colspan="2" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
+                <tbody id="admissionKeyFacts"><tr><td colspan="2" style="text-align:center; color:var(--muted);">Loading...</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -546,23 +387,13 @@
           <div class="info-card">
             <h3>Admission information</h3>
             <div class="info-row"><span class="info-label">Institution</span><span class="info-value" id="sideInst">—</span></div>
-            <div class="info-row"><span class="info-label">Level</span><span class="info-value" id="sideLevel">—</span></div>
             <div class="info-row"><span class="info-label">Route</span><span class="info-value" id="sideRoute">—</span></div>
             <div class="info-row"><span class="info-label">Session</span><span class="info-value" id="sideSession">—</span></div>
             <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge-soft" id="sideStatus">—</span></span></div>
           </div>
           <div class="info-card">
             <h3>Official links</h3>
-            <div class="resource-list">
-              <div class="resource-item">
-                <i class="fas fa-globe"></i>
-                <div class="res-text">
-                  <h4>Institution website</h4>
-                  <p id="sideWebsite">—</p>
-                </div>
-                <span class="res-action">Open</span>
-              </div>
-            </div>
+            <div class="resource-list" id="sideLinks"></div>
           </div>
         </aside>
       </div>
@@ -573,46 +404,17 @@
         <div>
           <div class="admission-section">
             <h2>Requirements</h2>
-            <p>General and programme-specific requirements for this admission opportunity.</p>
+            <p>Official requirements as published by the institution.</p>
           </div>
           <div class="admission-section">
-            <h3>O'Level requirements</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead><tr><th>Subject</th><th>Requirement</th></tr></thead>
-                <tbody id="olevelTable">
-                  <tr><td colspan="2" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="admission-section">
-            <h3>Entry requirements</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
-                <tbody id="utmeTable">
-                  <tr><td colspan="2" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="admission-section">
-            <h3>Supporting documents</h3>
-            <div class="checklist" id="documentsChecklist">
-              <div class="checklist-item">
-                <i class="fas fa-file-alt"></i>
-                <div class="cl-text"><h4>Loading documents...</h4></div>
-              </div>
-            </div>
+            <h3>Requirements (as published)</h3>
+            <div class="checklist" id="documentsChecklist"></div>
           </div>
         </div>
         <aside>
           <div class="info-card">
-            <h3>Requirements summary</h3>
-            <div id="requirementsSummary">
-              <div class="info-row"><span class="info-label">Loading</span><span class="info-value">—</span></div>
-            </div>
+            <h3>Eligibility summary</h3>
+            <div id="requirementsSummary"></div>
           </div>
         </aside>
       </div>
@@ -623,24 +425,20 @@
         <div>
           <div class="admission-section">
             <h2>Important dates</h2>
-            <p>Application opening and closing dates, and other relevant timelines.</p>
+            <p>Application opening and closing dates, and any extensions.</p>
           </div>
           <div class="admission-section">
             <h3>Timeline</h3>
             <div class="data-table-wrapper">
               <table>
                 <thead><tr><th>Event</th><th>Date</th><th>Status</th></tr></thead>
-                <tbody id="datesTable">
-                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
+                <tbody id="datesTable"><tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr></tbody>
               </table>
             </div>
           </div>
           <div class="admission-section">
             <h3>Official notice</h3>
-            <div class="update-list" id="officialNoticeContainer">
-              <div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">Loading...</p></div></div>
-            </div>
+            <div class="update-list" id="officialNoticeContainer"></div>
           </div>
         </div>
         <aside>
@@ -648,7 +446,6 @@
             <h3>Dates summary</h3>
             <div class="info-row"><span class="info-label">Opens</span><span class="info-value" id="datesSummaryOpens">—</span></div>
             <div class="info-row"><span class="info-label">Closes</span><span class="info-value gold" id="datesSummaryCloses">—</span></div>
-            <div class="info-row"><span class="info-label">Last verified</span><span class="info-value" id="datesSummaryVerified">—</span></div>
           </div>
         </aside>
       </div>
@@ -659,24 +456,11 @@
         <div>
           <div class="admission-section">
             <h2>Application process</h2>
-            <p>Step-by-step instructions for applying to this admission opportunity.</p>
+            <p>Submit your application through the institution's official portal. Never pay admission fees to anyone outside the portal.</p>
           </div>
           <div class="admission-section">
-            <h3>Steps to apply</h3>
-            <div class="update-list" id="applicationSteps">
-              <div class="update-item"><i class="fas fa-1"></i><div class="update-content"><p style="color:var(--muted);">Loading...</p></div></div>
-            </div>
-          </div>
-          <div class="admission-section">
-            <h3>Application fee</h3>
-            <div class="data-table-wrapper">
-              <table>
-                <thead><tr><th>Item</th><th>Amount</th><th>Notes</th></tr></thead>
-                <tbody id="feesTable">
-                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
-                </tbody>
-              </table>
-            </div>
+            <h3>Official application</h3>
+            <div class="update-list" id="applicationSteps"></div>
           </div>
         </div>
         <aside>
@@ -684,7 +468,7 @@
             <h3>Scam awareness</h3>
             <div class="scam-warning">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Never pay to gain admission.</strong> Admission is not for sale. Only use the official portal for all payments.</p>
+              <p><strong>Never pay to gain admission.</strong> Admission is not for sale. Only use the official portal linked above for all payments.</p>
             </div>
           </div>
         </aside>
@@ -700,84 +484,112 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
       <div class="footer-links">
         <h4>Explore</h4>
         <ul>
-          <li><a href="#">Schools</a></li>
-          <li><a href="#" onclick="showDirectory(); return false;">Admissions</a></li>
-          <li><a href="#">Exams</a></li>
-          <li><a href="#">Scholarships</a></li>
-          <li><a href="#">Trending</a></li>
+          <li><a href="/Schools.html">Schools</a></li>
+          <li><a href="/Admissions.html">Admissions</a></li>
+          <li><a href="/Exams.html">Exams</a></li>
+          <li><a href="/Scholarships.html">Scholarships</a></li>
+          <li><a href="/Trending.html">Trending</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Company</h4>
         <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">FAQ</a></li>
+          <li><a href="/About.html">About</a></li>
+          <li><a href="/Contact.html">Contact</a></li>
+          <li><a href="/FAQ.html">FAQ</a></li>
         </ul>
       </div>
       <div class="footer-links">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="/Privacy.html">Privacy Policy</a></li>
+          <li><a href="/Terms.html">Terms of Service</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 CampusNaija. All rights reserved.</span>
+      <span>© <span id="year"></span> CampusNaija. All rights reserved.</span>
       <div class="footer-legal">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/Privacy.html">Privacy</a>
+        <a href="/Terms.html">Terms</a>
+        <a href="/Cookies.html">Cookies</a>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  /* ============================================================ */
-  /* CONFIGURATION                                                */
-  /* ============================================================ */
-  const API_URL = 'https://campus-naija.onrender.com';
+(function () {
+  'use strict';
 
-  /* ============================================================ */
-  /* STATE                                                        */
-  /* ============================================================ */
-  let admissionsCache = [];
+  const API_URL = 'https://campus-naija.onrender.com';
+  const CLOSING_SOON_DAYS = 14;
+
+  let admissionsCache = [];   // full admission objects with .school attached
   let currentStatusFilter = 'all';
 
-  /* ============================================================ */
-  /* UTILITIES                                                    */
-  /* ============================================================ */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- helpers ---------- */
+  const escapeHtml = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const safeUrl = (u) => {
+    if (!u) return null;
+    return /^https?:\/\//i.test(u) ? u : null;
+  };
+
   function debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), delay);
     };
   }
-  const debouncedFilterAdmissions = debounce(() => filterAdmissions(), 300);
+  const debouncedFilterAdmissions = debounce(filterAdmissions, 300);
 
-  function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str).replace(/[&<>"']/g, function(m) {
-      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m];
+  async function apiGet(path) {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      mode: 'cors',
+      credentials: 'omit',
     });
+    if (!res.ok) throw new Error(`HTTP ${res.status} on ${path}`);
+    return res.json();
+  }
+
+  /* ---------- status derivation from dates ---------- */
+  function computeStatus(openDate, closeDate) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const open = openDate ? new Date(openDate) : null;
+    const close = closeDate ? new Date(closeDate) : null;
+
+    if (close && close < today) return 'closed';
+    if (open && open > today) return 'upcoming';
+    if (close) {
+      const daysLeft = Math.ceil((close - today) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= CLOSING_SOON_DAYS) return 'closing';
+      return 'open';
+    }
+    if (open) return 'open';
+    return 'open'; // no dates published — treat as informational "open"
   }
 
   function statusInfo(status) {
-    switch ((status || '').toLowerCase()) {
+    switch (status) {
       case 'open': return { label: 'Open', cls: 'status-open', icon: 'check-circle' };
-      case 'closing': case 'closing soon': return { label: 'Closing soon', cls: 'status-closing', icon: 'clock' };
+      case 'closing': return { label: 'Closing soon', cls: 'status-closing', icon: 'clock' };
       case 'upcoming': return { label: 'Upcoming', cls: 'status-upcoming', icon: 'hourglass-half' };
       case 'closed': return { label: 'Closed', cls: 'status-closed', icon: 'xmark' };
       default: return { label: status || 'Unknown', cls: 'status-upcoming', icon: 'circle-info' };
@@ -785,53 +597,43 @@
   }
 
   function badgeClassFor(status) {
-    switch ((status || '').toLowerCase()) {
+    switch (status) {
       case 'open': return 'badge-soft';
-      case 'closing': case 'closing soon': return 'badge-gold';
-      case 'upcoming': return 'badge-muted';
-      case 'closed': return 'badge-muted';
+      case 'closing': return 'badge-gold';
       default: return 'badge-muted';
     }
   }
 
-  /* ============================================================ */
-  /* API FETCH                                                    */
-  /* ============================================================ */
-  async function fetchWithTimeout(url, timeout = 12000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-      const response = await fetch(url, { signal: controller.signal });
-      clearTimeout(id);
-      return response;
-    } catch (error) {
-      clearTimeout(id);
-      throw error;
-    }
+  function formatDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    if (isNaN(dt)) return '—';
+    return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  /* ---------- data loading ---------- */
   async function loadAdmissions() {
     const grid = document.getElementById('admissionsGrid');
-    grid.innerHTML = `<div class="loading-state" id="admissionsLoading">
-      <span class="loading-spinner"></span><p>Loading admission opportunities...</p></div>`;
+    grid.innerHTML = `<div class="loading-state" id="admissionsLoading"><span class="loading-spinner"></span><p>Loading admission opportunities...</p></div>`;
 
     try {
-      const response = await fetchWithTimeout(`${API_URL}/api/admissions?limit=100`);
-      if (!response.ok) throw new Error(`Request failed (${response.status})`);
+      // 1) Fetch all published schools (which now include their published admissions via /api/public/schools/:slug
+      //    individually — but we can do better: fetch the flat admissions list endpoint.
+      //    Your server has GET /api/public/admissions which returns all published admissions joined to schools.
+      const data = await apiGet('/api/public/admissions');
+      const admissions = Array.isArray(data.admissions) ? data.admissions : [];
 
-      const data = await response.json();
-      const list = Array.isArray(data) ? data : (data.admissions || data.data || []);
+      admissionsCache = admissions.map((a) => {
+        const status = computeStatus(a.open_date, a.close_date);
+        return { ...a, _status: status };
+      });
 
-      if (!Array.isArray(list)) throw new Error('Invalid response format');
-      admissionsCache = list;
-
-      renderAdmissions(list);
-      renderClosingSoon(list);
-      populateStateFilter(list);
+      renderAdmissions(admissionsCache);
+      renderClosingSoon(admissionsCache);
+      populateStateFilter(admissionsCache);
     } catch (err) {
-      console.error('Failed to load admissions:', err);
+      console.error('[admissions]', err);
       grid.innerHTML = `<div class="error-state">
-        <i class="fas fa-triangle-exclamation"></i>
         <p>We could not load admission opportunities right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadAdmissions()">Try again</button>
@@ -841,24 +643,12 @@
     }
   }
 
-  async function loadAdmissionDetail(id) {
-    const response = await fetchWithTimeout(`${API_URL}/api/admissions/${encodeURIComponent(id)}`);
-    if (!response.ok) throw new Error(`Request failed (${response.status})`);
-    return await response.json();
-  }
-
-  /* ============================================================ */
-  /* RENDER ADMISSIONS GRID                                       */
-  /* ============================================================ */
+  /* ---------- rendering ---------- */
   function renderAdmissions(list) {
     const grid = document.getElementById('admissionsGrid');
 
-    if (!list || list.length === 0) {
-      grid.innerHTML = `<div class="empty-state">
-        <i class="fas fa-file-circle-exclamation"></i>
-        <p>No admission opportunities have been published yet.</p>
-        <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
-      </div>`;
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty-state"><p>No admission opportunities have been published yet.</p><p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p></div>`;
       document.getElementById('admissionCount').textContent = 'No admissions yet';
       return;
     }
@@ -866,118 +656,93 @@
     document.getElementById('admissionCount').textContent =
       `${list.length} admission opportunit${list.length === 1 ? 'y' : 'ies'}`;
 
-    grid.innerHTML = list.map(item => {
-      const id = item.id || item._id || '';
-      const institution = item.institution || item.school || item.schoolName || '—';
-      const programme = item.programme || item.program || item.title || 'Admission';
-      const level = item.level || '—';
-      const levelKey = (item.levelKey || item.level || '').toString().toLowerCase();
-      const route = item.route || item.entryRoute || '—';
-      const status = (item.status || '').toString();
+    grid.innerHTML = list.map((a) => {
+      const school = a.school_name || 'Institution';
+      const route = a.entry_route || '—';
+      const session = a.session || '';
+      const status = a._status;
       const st = statusInfo(status);
-      const closes = item.closes || item.deadline || item.closingDate || '—';
-      const short = item.institutionShort || institution.substring(0, 2).toUpperCase();
-      const session = item.session || '';
-      const stateVal = item.state || '';
+      const initials = school.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'CN';
+      const closes = formatDate(a.close_date);
+      const opens = formatDate(a.open_date);
+      const state = (a.school_state || '').toLowerCase();
 
       return `
         <div class="admission-card"
-             data-id="${escapeHtml(id)}"
-             data-status="${escapeHtml(status.toLowerCase())}"
-             data-level="${escapeHtml(levelKey)}"
-             data-state="${escapeHtml(stateVal)}"
-             data-name="${escapeHtml(institution.toLowerCase())}"
-             data-programme="${escapeHtml(programme.toLowerCase())}"
-             onclick="openAdmission('${escapeHtml(id)}')">
+             data-id="${escapeHtml(a.id)}"
+             data-status="${escapeHtml(status)}"
+             data-route="${escapeHtml(route.toLowerCase())}"
+             data-state="${escapeHtml(state)}"
+             data-name="${escapeHtml(school.toLowerCase())}"
+             data-title="${escapeHtml((a.title || '').toLowerCase())}"
+             onclick="openAdmission('${escapeHtml(a.id)}')">
           <div class="admission-card-top">
-            <div class="admission-logo">${escapeHtml(short)}</div>
+            <div class="admission-logo">${escapeHtml(initials)}</div>
             <div class="ac-text">
-              <div class="admission-inst">${escapeHtml(institution)}</div>
-              <div class="admission-programme">${escapeHtml(programme)}</div>
+              <div class="admission-inst">${escapeHtml(school)}</div>
+              <div class="admission-programme">${escapeHtml(a.title || 'Admission')}</div>
             </div>
           </div>
-          <div class="admission-level">${escapeHtml(level)}${session ? ' · ' + escapeHtml(session) : ''}</div>
+          <div class="admission-level">${escapeHtml(route)}${session ? ' · ' + escapeHtml(session) : ''}</div>
           <div class="admission-meta">
             <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">${escapeHtml(route)}</span></div>
-            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Closes:</span><span class="meta-value gold">${escapeHtml(closes)}</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Opens:</span><span class="meta-value">${escapeHtml(opens)}</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-xmark"></i><span class="meta-label">Closes:</span><span class="meta-value gold">${escapeHtml(closes)}</span></div>
           </div>
           <span class="admission-status ${st.cls}"><i class="fas fa-${st.icon}"></i> ${escapeHtml(st.label)}</span>
           <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
-  /* ============================================================ */
-  /* CLOSING SOON                                                 */
-  /* ============================================================ */
   function renderClosingSoon(list) {
     const section = document.getElementById('closingSoonSection');
     const container = document.getElementById('closingSoonList');
 
-    const closing = (list || []).filter(item =>
-      (item.status || '').toString().toLowerCase() === 'closing'
-    );
+    const closing = list
+      .filter((a) => a._status === 'closing' && a.close_date)
+      .sort((a, b) => new Date(a.close_date) - new Date(b.close_date));
 
-    if (closing.length === 0) {
-      section.style.display = 'none';
-      return;
-    }
+    if (!closing.length) { section.style.display = 'none'; return; }
 
     section.style.display = 'block';
-    container.innerHTML = closing.map(item => {
-      const id = item.id || item._id || '';
-      const institution = item.institution || item.school || '—';
-      const programme = item.programme || item.title || 'Admission';
-      const level = item.level || '—';
-      const closes = item.closes || item.deadline || '—';
-      const session = item.session || '';
-
+    container.innerHTML = closing.map((a) => {
+      const school = a.school_name || 'Institution';
+      const route = a.entry_route || '—';
+      const closes = formatDate(a.close_date);
       return `
-        <div class="deadline-item" onclick="openAdmission('${escapeHtml(id)}')">
+        <div class="deadline-item" onclick="openAdmission('${escapeHtml(a.id)}')">
           <i class="fas fa-clock"></i>
           <div class="dl-text">
-            <h4>${escapeHtml(institution)} — ${escapeHtml(programme)}</h4>
-            <p>${escapeHtml(level)}${session ? ' · ' + escapeHtml(session) : ''}</p>
+            <h4>${escapeHtml(school)} — ${escapeHtml(a.title || 'Admission')}</h4>
+            <p>${escapeHtml(route)}${a.session ? ' · ' + escapeHtml(a.session) : ''}</p>
           </div>
           <span class="dl-date">${escapeHtml(closes)}</span>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
-  /* ============================================================ */
-  /* STATE FILTER POPULATION                                      */
-  /* ============================================================ */
   function populateStateFilter(list) {
     const select = document.getElementById('stateFilter');
-    const states = [...new Set((list || [])
-      .map(i => i.state)
-      .filter(Boolean)
-      .map(s => s.toString())
-    )].sort();
-
+    const states = [...new Set(list.map((a) => a.school_state).filter(Boolean))].sort();
     const current = select.value;
     select.innerHTML = '<option value="">All states</option>' +
-      states.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      states.map((s) => `<option value="${escapeHtml(s.toLowerCase())}">${escapeHtml(s)}</option>`).join('');
     select.value = current;
   }
 
-  /* ============================================================ */
-  /* VIEW SWITCHING                                               */
-  /* ============================================================ */
+  /* ---------- views ---------- */
   function showDirectory() {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-admission-detail').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetAdmissionTabs();
-    history.pushState({ view: 'directory' }, '', 'Admissions.html');
+    history.pushState({ view: 'directory' }, '', '/Admissions.html');
   }
 
   async function openAdmission(id) {
     if (!id) return;
 
-    // Switch to detail view immediately with loading state
     document.getElementById('view-directory').classList.remove('active');
     document.getElementById('view-admission-detail').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -986,307 +751,268 @@
     document.getElementById('admissionDetailBadge').textContent = '';
     document.getElementById('admissionDetailBadge').className = 'admission-badge';
     document.getElementById('admissionDetailSub').innerHTML = '';
-    document.getElementById('admissionDetailTagline').textContent = '';
-
     resetAdmissionTabs();
     document.querySelector('.admission-tab-item[data-tab="overview"]').classList.add('active');
     document.getElementById('admission-panel-overview').classList.add('active');
 
-    history.pushState({ view: 'detail', admission: id }, '', 'Admissions.html?admission=' + encodeURIComponent(id));
+    history.pushState({ view: 'detail', admission: id }, '', `/Admissions.html?admission=${encodeURIComponent(id)}`);
 
+    const cached = admissionsCache.find((a) => String(a.id) === String(id));
+    if (cached) { renderAdmissionDetail(cached); return; }
+
+    // Fallback: reload from API and find by id (e.g. direct deep link)
     try {
-      const data = await loadAdmissionDetail(id);
-      renderAdmissionDetail(data);
+      const data = await apiGet('/api/public/admissions');
+      const list = Array.isArray(data.admissions) ? data.admissions : [];
+      const match = list.find((a) => String(a.id) === String(id));
+      if (match) {
+        const enriched = { ...match, _status: computeStatus(match.open_date, match.close_date) };
+        renderAdmissionDetail(enriched);
+      } else {
+        renderError('Admission not found.');
+      }
     } catch (err) {
-      console.error('Failed to load admission detail:', err);
-      document.getElementById('admissionDetailName').textContent = 'Admission unavailable';
-      document.getElementById('admissionDetailTagline').textContent =
-        'We could not load this admission right now. Please try again later.';
-      document.getElementById('admissionOverviewText').textContent = err.message;
+      renderError(err.message);
     }
   }
 
-  function renderAdmissionDetail(data) {
-    if (!data || typeof data !== 'object') {
-      document.getElementById('admissionDetailName').textContent = 'Admission not found';
-      return;
-    }
+  function renderError(msg) {
+    document.getElementById('admissionDetailName').textContent = 'Admission unavailable';
+    document.getElementById('admissionOverviewText').textContent = msg;
+    document.getElementById('admissionDetailBadge').textContent = '';
+  }
 
-    const institution = data.institution || data.school || '—';
-    const programme = data.programme || data.title || 'Admission';
-    const level = data.level || '—';
-    const session = data.session || '';
-    const route = data.route || '—';
-    const status = (data.status || '').toString();
+  function renderAdmissionDetail(a) {
+    const school = a.school_name || 'Institution';
+    const route = a.entry_route || '—';
+    const session = a.session || '';
+    const status = a._status;
     const st = statusInfo(status);
-    const badgeCls = status.toLowerCase() === 'closing' ? 'gold'
-      : (status.toLowerCase() === 'open' ? '' : 'muted');
+    const badgeCls = status === 'closing' ? 'gold' : (status === 'open' ? '' : 'muted');
 
-    document.getElementById('admissionDetailName').textContent = `${institution} — ${programme}`;
+    document.getElementById('admissionDetailName').textContent = `${school} — ${a.title || 'Admission'}`;
     const badge = document.getElementById('admissionDetailBadge');
     badge.textContent = st.label;
     badge.className = 'admission-badge ' + badgeCls;
 
     document.getElementById('admissionDetailSub').innerHTML = `
-      <span><i class="fas fa-building"></i> ${escapeHtml(institution)}</span>
+      <span><i class="fas fa-building"></i> ${escapeHtml(school)}</span>
       <span class="dot">●</span>
-      <span>${escapeHtml(level)}</span>
+      <span>${escapeHtml(route)}</span>
       ${session ? `<span class="dot">●</span><span>${escapeHtml(session)}</span>` : ''}
     `;
 
-    document.getElementById('admissionDetailTagline').textContent = data.tagline || '';
-
-    // Official apply button
+    // Apply button
     const applyBtn = document.getElementById('officialApplyBtn');
-    const portalUrl = data.portalUrl || data.applyUrl || data.website;
+    const portalUrl = safeUrl(a.application_url);
     if (portalUrl) {
-      applyBtn.onclick = () => window.open(portalUrl.startsWith('http') ? portalUrl : 'https://' + portalUrl, '_blank');
+      applyBtn.disabled = false;
+      applyBtn.onclick = () => window.open(portalUrl, '_blank', 'noopener');
     } else {
+      applyBtn.disabled = true;
       applyBtn.onclick = null;
     }
 
     // Overview
-    document.getElementById('admissionOverviewText').textContent = data.overview || data.description || '—';
-    document.getElementById('admissionEligibleText').textContent = data.eligible || '—';
+    const overviewParts = [];
+    if (a.notes) overviewParts.push(a.notes);
+    if (a.extension_note) overviewParts.push(`Extension: ${a.extension_note}`);
+    document.getElementById('admissionOverviewText').textContent =
+      overviewParts.join('\n\n') || 'No additional description has been published for this admission.';
+
+    document.getElementById('admissionEligibleText').textContent =
+      a.eligibility || 'See the official source for eligibility details.';
 
     // Side info
-    document.getElementById('sideInst').textContent = institution;
-    document.getElementById('sideLevel').textContent = level;
+    document.getElementById('sideInst').textContent = school;
     document.getElementById('sideRoute').textContent = route;
     document.getElementById('sideSession').textContent = session || '—';
     const sideStatus = document.getElementById('sideStatus');
     sideStatus.textContent = st.label;
     sideStatus.className = badgeClassFor(status);
-    document.getElementById('sideWebsite').textContent = data.website || '—';
 
-    // Key facts table
-    const keyFacts = [
-      { label: 'Institution', value: institution },
-      { label: 'Programme level', value: level },
-      { label: 'Entry route', value: route },
-      { label: 'Academic session', value: session || '—' },
-      { label: 'Application status', value: `<span class="${badgeClassFor(status)}">${escapeHtml(st.label)}</span>` },
-      { label: 'Official portal', value: data.website ? `<a href="https://${escapeHtml(data.website)}" target="_blank">${escapeHtml(data.website)}</a>` : '—' }
+    // Official links
+    const linksHtml = [];
+    if (portalUrl) {
+      linksHtml.push(`<a class="resource-item" href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">
+        <i class="fas fa-globe"></i>
+        <div class="res-text"><h4>Application portal</h4><p>${escapeHtml(portalUrl)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    const sourceUrl = safeUrl(a.source_url);
+    if (sourceUrl) {
+      linksHtml.push(`<a class="resource-item" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">
+        <i class="fas fa-file-shield"></i>
+        <div class="res-text"><h4>Official source notice</h4><p>${escapeHtml(sourceUrl)}</p></div>
+        <span class="res-action">Open</span></a>`);
+    }
+    document.getElementById('sideLinks').innerHTML = linksHtml.length
+      ? linksHtml.join('')
+      : '<div class="info-row"><span class="info-label">No links</span><span class="info-value">—</span></div>';
+
+    // Key facts
+    const facts = [
+      ['Institution', school],
+      ['Route', route],
+      ['Session', session || '—'],
+      ['Opens', formatDate(a.open_date)],
+      ['Closes', formatDate(a.close_date)],
+      ['Status', `<span class="${badgeClassFor(status)}">${escapeHtml(st.label)}</span>`],
+      ['Verification', a.verification || '—'],
     ];
-    document.getElementById('admissionKeyFacts').innerHTML = keyFacts
-      .map(f => `<tr><td>${escapeHtml(f.label)}</td><td>${f.value}</td></tr>`).join('');
+    document.getElementById('admissionKeyFacts').innerHTML = facts
+      .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${typeof v === 'string' && v.startsWith('<') ? v : escapeHtml(v)}</td></tr>`)
+      .join('');
 
-    // O'Level table
-    const olevel = Array.isArray(data.olevel) ? data.olevel : [];
-    document.getElementById('olevelTable').innerHTML = olevel.length
-      ? olevel.map(o => `<tr><td>${escapeHtml(o.subject || '—')}</td><td>${escapeHtml(o.req || o.requirement || '—')}</td></tr>`).join('')
-      : '<tr><td colspan="2" style="text-align:center; color:var(--muted);">No O\'Level requirements specified.</td></tr>';
-
-    // Entry requirements table
-    const entry = Array.isArray(data.utme) ? data.utme
-      : Array.isArray(data.entryRequirements) ? data.entryRequirements
-      : [];
-    document.getElementById('utmeTable').innerHTML = entry.length
-      ? entry.map(e => `<tr><td>${escapeHtml(e.req || e.requirement || '—')}</td><td>${escapeHtml(e.detail || e.value || '—')}</td></tr>`).join('')
-      : '<tr><td colspan="2" style="text-align:center; color:var(--muted);">No entry requirements specified.</td></tr>';
-
-    // Documents
-    const docs = Array.isArray(data.documents) ? data.documents : [];
-    document.getElementById('documentsChecklist').innerHTML = docs.length
-      ? docs.map(d => `
-          <div class="checklist-item">
-            <i class="fas fa-file-alt"></i>
-            <div class="cl-text">
-              <h4>${escapeHtml(d.title || '—')}</h4>
-              <p>${escapeHtml(d.desc || d.description || '')}</p>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="checklist-item"><i class="fas fa-file-alt"></i><div class="cl-text"><h4>No documents specified.</h4></div></div>';
+    // Requirements
+    const docItems = [];
+    if (a.requirements) {
+      docItems.push(`<div class="checklist-item"><i class="fas fa-list-check"></i><div class="cl-text"><h4>Programme requirements</h4><p>${escapeHtml(a.requirements)}</p></div></div>`);
+    }
+    if (a.eligibility) {
+      docItems.push(`<div class="checklist-item"><i class="fas fa-user-check"></i><div class="cl-text"><h4>Eligibility</h4><p>${escapeHtml(a.eligibility)}</p></div></div>`);
+    }
+    if (!docItems.length) {
+      docItems.push(`<div class="checklist-item"><i class="fas fa-info-circle"></i><div class="cl-text"><h4>No requirements published</h4><p>Check the official source notice for details.</p></div></div>`);
+    }
+    document.getElementById('documentsChecklist').innerHTML = docItems.join('');
 
     // Requirements summary
-    const summary = Array.isArray(data.requirementsSummary) ? data.requirementsSummary : [];
-    document.getElementById('requirementsSummary').innerHTML = summary.length
-      ? summary.map(s => `<div class="info-row"><span class="info-label">${escapeHtml(s.label || '—')}</span><span class="info-value">${escapeHtml(s.value || '—')}</span></div>`).join('')
-      : '<div class="info-row"><span class="info-label">Summary</span><span class="info-value">—</span></div>';
+    const reqSummary = [
+      ['Route', route],
+      ['Session', session || '—'],
+      ['Verification', a.verification || '—'],
+    ];
+    document.getElementById('requirementsSummary').innerHTML = reqSummary
+      .map(([k, v]) => `<div class="info-row"><span class="info-label">${escapeHtml(k)}</span><span class="info-value">${escapeHtml(v)}</span></div>`)
+      .join('');
 
-    // Dates
-    const dates = Array.isArray(data.dates) ? data.dates : [];
-    document.getElementById('datesTable').innerHTML = dates.length
-      ? dates.map(d => `
-          <tr>
-            <td>${escapeHtml(d.event || '—')}</td>
-            <td>${escapeHtml(d.date || '—')}</td>
-            <td><span class="${badgeClassFor(d.status)}">${escapeHtml(d.status || '—')}</span></td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates specified.</td></tr>';
+    // Dates table
+    const rows = [];
+    if (a.open_date) rows.push({ event: 'Applications open', date: formatDate(a.open_date), status: '—' });
+    if (a.close_date) rows.push({ event: 'Applications close', date: formatDate(a.close_date), status: statusInfo(computeStatus(null, a.close_date)).label });
+    if (a.extension_note) rows.push({ event: 'Extension note', date: a.extension_note, status: '—' });
+    document.getElementById('datesTable').innerHTML = rows.length
+      ? rows.map((r) => `<tr><td>${escapeHtml(r.event)}</td><td>${escapeHtml(r.date)}</td><td><span class="${badgeClassFor(status)}">${escapeHtml(r.status)}</span></td></tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
     // Official notice
-    const notice = data.officialNotice;
-    document.getElementById('officialNoticeContainer').innerHTML = notice
-      ? `<div class="update-item">
-          <i class="fas fa-bullhorn"></i>
-          <div class="update-content">
-            <h4>${escapeHtml(notice.title || 'Notice')}</h4>
-            <p>${escapeHtml(notice.text || '')}</p>
-            <div class="update-meta">
-              <span><i class="far fa-calendar-alt"></i> ${escapeHtml(notice.date || '')}</span>
-              ${notice.link ? `<span>${escapeHtml(notice.link)}</span>` : ''}
-            </div>
-          </div>
-        </div>`
-      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">No official notice.</p></div></div>';
+    const noticeHtml = sourceUrl
+      ? `<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><h4>Official source</h4><p>This admission was verified against the institution's official publication.</p><div class="update-meta"><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div></div></div>`
+      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">No official source link published.</p></div></div>';
+    document.getElementById('officialNoticeContainer').innerHTML = noticeHtml;
 
     // Dates summary
-    document.getElementById('datesSummaryOpens').textContent = data.opens || '—';
-    document.getElementById('datesSummaryCloses').textContent = data.closes || data.deadline || '—';
-    document.getElementById('datesSummaryVerified').textContent = data.verified || '—';
+    document.getElementById('datesSummaryOpens').textContent = formatDate(a.open_date);
+    document.getElementById('datesSummaryCloses').textContent = formatDate(a.close_date);
 
-    // Steps
-    const steps = Array.isArray(data.applicationSteps) ? data.applicationSteps : [];
-    document.getElementById('applicationSteps').innerHTML = steps.length
-      ? steps.map((s, i) => `
-          <div class="update-item">
-            <i class="fas fa-${i + 1}"></i>
-            <div class="update-content">
-              <h4>${escapeHtml(s.title || '')}</h4>
-              <p>${escapeHtml(s.desc || s.description || '')}</p>
-            </div>
-          </div>
-        `).join('')
-      : '<div class="update-item"><i class="fas fa-1"></i><div class="update-content"><p style="color:var(--muted);">No steps specified.</p></div></div>';
-
-    // Fees
-    const fees = Array.isArray(data.fees) ? data.fees : [];
-    document.getElementById('feesTable').innerHTML = fees.length
-      ? fees.map(f => `<tr><td>${escapeHtml(f.item || '—')}</td><td>${escapeHtml(f.amount || '—')}</td><td>${escapeHtml(f.notes || '')}</td></tr>`).join('')
-      : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No fee information available.</td></tr>';
+    // Application steps
+    const stepHtml = portalUrl
+      ? `<div class="update-item"><i class="fas fa-1"></i><div class="update-content"><h4>Visit the official portal</h4><p>Open the institution's application portal using the button below.</p><div class="update-meta"><a href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">${escapeHtml(portalUrl)}</a></div></div></div>
+         <div class="update-item"><i class="fas fa-2"></i><div class="update-content"><h4>Create an account and submit</h4><p>Follow the portal's instructions to create your applicant profile and submit your application.</p></div></div>
+         <div class="update-item"><i class="fas fa-3"></i><div class="update-content"><h4>Pay only through the portal</h4><p>All application fees must be paid through the official portal. Never pay anyone directly.</p></div></div>`
+      : '<div class="update-item"><i class="fas fa-circle-info"></i><div class="update-content"><p style="color:var(--muted);">No application portal link is available yet.</p></div></div>';
+    document.getElementById('applicationSteps').innerHTML = stepHtml;
   }
 
-  /* ============================================================ */
-  /* TABS                                                         */
-  /* ============================================================ */
-  const admissionTabItems = document.querySelectorAll('.admission-tab-item');
-  const admissionTabPanels = {
+  /* ---------- tabs ---------- */
+  const tabItems = document.querySelectorAll('.admission-tab-item');
+  const tabPanels = {
     overview: document.getElementById('admission-panel-overview'),
     requirements: document.getElementById('admission-panel-requirements'),
     dates: document.getElementById('admission-panel-dates'),
-    process: document.getElementById('admission-panel-process')
+    process: document.getElementById('admission-panel-process'),
   };
-
   function resetAdmissionTabs() {
-    admissionTabItems.forEach(t => t.classList.remove('active'));
-    Object.values(admissionTabPanels).forEach(p => p.classList.remove('active'));
+    tabItems.forEach((t) => t.classList.remove('active'));
+    Object.values(tabPanels).forEach((p) => p.classList.remove('active'));
   }
-
-  function switchAdmissionTab(tabKey) {
-    resetAdmissionTabs();
-    const targetTab = document.querySelector(`.admission-tab-item[data-tab="${tabKey}"]`);
-    if (targetTab) targetTab.classList.add('active');
-    if (admissionTabPanels[tabKey]) admissionTabPanels[tabKey].classList.add('active');
-  }
-
-  admissionTabItems.forEach(item => {
+  tabItems.forEach((item) => {
     item.addEventListener('click', () => {
       resetAdmissionTabs();
       item.classList.add('active');
-      const tabKey = item.dataset.tab;
-      if (admissionTabPanels[tabKey]) admissionTabPanels[tabKey].classList.add('active');
+      const key = item.dataset.tab;
+      if (tabPanels[key]) tabPanels[key].classList.add('active');
     });
   });
 
-  /* ============================================================ */
-  /* FILTERING                                                    */
-  /* ============================================================ */
+  /* ---------- filters ---------- */
   function setAdmissionFilter(status, btn) {
     currentStatusFilter = status;
-    document.querySelectorAll('#admissionFilters .filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#admissionFilters .filter-tab').forEach((t) => t.classList.remove('active'));
     btn.classList.add('active');
     filterAdmissions();
   }
-
   function setLevelFilter(level) {
     document.getElementById('levelFilter').value = level;
     filterAdmissions();
   }
-
   function filterAdmissions() {
     const query = document.getElementById('admissionSearch').value.toLowerCase().trim();
     const state = document.getElementById('stateFilter').value.toLowerCase();
-    const level = document.getElementById('levelFilter').value;
+    const route = document.getElementById('levelFilter').value.toLowerCase();
     const cards = document.querySelectorAll('#admissionsGrid .admission-card');
     let visible = 0;
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const status = card.dataset.status || '';
-      const cardLevel = card.dataset.level || '';
-      const cardState = (card.dataset.state || '').toLowerCase();
+      const cardRoute = card.dataset.route || '';
+      const cardState = card.dataset.state || '';
       const name = card.dataset.name || '';
-      const programme = card.dataset.programme || '';
+      const title = card.dataset.title || '';
 
-      const matchesStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
-      const matchesState = !state || cardState === state;
-      const matchesLevel = !level || cardLevel === level;
-      const matchesQuery = !query || name.includes(query) || programme.includes(query);
+      const okStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+      const okState = !state || cardState === state;
+      const okRoute = !route || cardRoute.includes(route);
+      const okQuery = !query || name.includes(query) || title.includes(query);
 
-      if (matchesStatus && matchesState && matchesLevel && matchesQuery) {
-        card.style.display = '';
-        visible++;
-      } else {
-        card.style.display = 'none';
-      }
+      if (okStatus && okState && okRoute && okQuery) { card.style.display = ''; visible++; }
+      else { card.style.display = 'none'; }
     });
 
     const countEl = document.getElementById('admissionCount');
-    if (admissionsCache.length === 0) {
-      countEl.textContent = 'No admissions yet';
-    } else {
-      countEl.textContent = visible === 1 ? '1 admission opportunity' : `${visible} admission opportunities`;
-    }
+    if (!admissionsCache.length) countEl.textContent = 'No admissions yet';
+    else countEl.textContent = visible === 1 ? '1 admission opportunity' : `${visible} admission opportunities`;
   }
 
-  document.getElementById('admissionSearch').addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') filterAdmissions();
-  });
+  document.getElementById('admissionSearch').addEventListener('input', debouncedFilterAdmissions);
+  document.getElementById('admissionSearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterAdmissions(); });
 
-  /* ============================================================ */
-  /* MOBILE NAV                                                   */
-  /* ============================================================ */
+  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileNav.classList.toggle('active');
-    });
+    hamburger.addEventListener('click', (e) => { e.stopPropagation(); mobileNav.classList.toggle('active'); });
     document.addEventListener('click', (e) => {
-      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
-        mobileNav.classList.remove('active');
-      }
+      if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) mobileNav.classList.remove('active');
     });
   }
 
-  /* ============================================================ */
-  /* HISTORY                                                      */
-  /* ============================================================ */
+  /* ---------- history ---------- */
+  let initialised = false;
   window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.view === 'detail' && e.state.admission) {
-      openAdmission(e.state.admission);
-    } else {
-      showDirectory();
-    }
+    if (!initialised) return;
+    if (e.state && e.state.view === 'detail' && e.state.admission) openAdmission(e.state.admission);
+    else showDirectory();
   });
 
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    const admissionParam = params.get('admission');
-
+    const idParam = params.get('admission');
     loadAdmissions().then(() => {
-      if (admissionParam) {
-        openAdmission(admissionParam);
-      }
+      initialised = true;
+      if (idParam) openAdmission(idParam);
     });
   });
 
-  document.querySelectorAll('a[href="#"]').forEach(link => {
-    link.addEventListener('click', (e) => e.preventDefault());
-  });
+  // Expose a few functions used in inline onclick attributes
+  window.showDirectory = showDirectory;
+  window.openAdmission = openAdmission;
+  window.filterAdmissions = filterAdmissions;
+  window.setAdmissionFilter = setAdmissionFilter;
+  window.setLevelFilter = setLevelFilter;
+  window.loadAdmissions = loadAdmissions;
+})();
 </script>
 
 </body>

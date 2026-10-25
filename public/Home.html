@@ -4,982 +4,272 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusNaija — Your education. Your next move.</title>
-  <!-- Google Fonts: Manrope + Font Awesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #070A09; font-family: 'Manrope', sans-serif; color: #F5F7F5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
 
-    body {
-      background-color: #070A09;
-      font-family: 'Manrope', sans-serif;
-      color: #F5F7F5;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    h1, h2, h3, h4 {
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    /* ----- UTILITY & VARIABLES ----- */
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
-      --radius-card: 16px;
-      --radius-btn: 12px;
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ----- HEADER (sticky) ----- */
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background-color: rgba(7, 10, 9, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 72px;
-    }
-
-    .logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text);
-    }
-
-    .logo span {
-      color: var(--primary);
-    }
-
-    .nav-links {
-      display: none;
-      gap: 32px;
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .nav-links a:hover {
-      color: var(--primary);
-      transition: color 0.2s;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .search-icon-btn {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 1.25rem;
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 8px;
-    }
-
-    .search-icon-btn:hover {
-      color: var(--primary);
-    }
-
-    .btn-explore {
-      display: none;
-      background-color: var(--primary);
-      color: #070A09;
-      font-weight: 700;
-      padding: 10px 22px;
-      border-radius: var(--radius-btn);
-      font-size: 0.9rem;
-      transition: background 0.2s;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-explore:hover {
-      background-color: #00b374;
-    }
-
-    .hamburger {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 1.6rem;
-      cursor: pointer;
-      padding: 6px;
-    }
-
-    /* Mobile nav drawer (simple hidden by default) */
-    .mobile-nav {
-      display: none;
-      background-color: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 24px 24px;
-      flex-direction: column;
-      gap: 16px;
-      font-weight: 500;
-      color: var(--muted);
-    }
-
-    .mobile-nav a:hover {
-      color: var(--primary);
-    }
-
-    .mobile-nav.active {
-      display: flex;
-    }
-
-    /* ----- HERO ----- */
-    .hero {
-      padding: 40px 0 48px;
-      position: relative;
-    }
-
-    .hero-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .hero-content {
-      max-width: 620px;
-    }
-
-    .hero-eyebrow {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 16px;
-    }
-
-    .hero h1 .highlight {
-      color: var(--primary);
-    }
-
-    .hero-description {
-      color: var(--muted);
-      font-size: 1.05rem;
-      margin-bottom: 28px;
-      max-width: 540px;
-    }
-
-    .search-wrapper {
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 60px;
-      padding: 6px 6px 6px 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 24px;
-      transition: border-color 0.2s;
-    }
-
-    .search-wrapper:focus-within {
-      border-color: var(--primary);
-    }
-
-    .search-wrapper i {
-      color: var(--muted);
-      font-size: 1.1rem;
-    }
-
-    .search-wrapper input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      padding: 12px 0;
-      font-family: 'Manrope', sans-serif;
-      font-size: 1rem;
-      color: var(--text);
-      outline: none;
-    }
-
-    .search-wrapper input::placeholder {
-      color: #6b7c74;
-    }
-
-    .search-wrapper button {
-      background-color: var(--primary);
-      border: none;
-      border-radius: 40px;
-      padding: 12px 24px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: #070A09;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
-
-    .search-wrapper button:hover {
-      background-color: #00b374;
-    }
-
-    .quick-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 8px 18px;
-      border-radius: 40px;
-      transition: all 0.15s;
-      cursor: pointer;
-    }
-
-    .chip:hover {
-      border-color: var(--primary);
-      color: var(--text);
-      background-color: #1a221e;
-    }
-
-    .hero-image {
-      border-radius: 24px;
-      overflow: hidden;
-      position: relative;
-      background: #0D1210;
-      min-height: 220px;
-    }
-
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(0.75) saturate(0.9);
-    }
-
-    .hero-image::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, #070A09 0%, transparent 70%);
-    }
-
-    /* ----- QUICK DISCOVERY STRIP ----- */
-    .discovery-strip {
-      padding: 48px 0 24px;
-    }
-
-    .discovery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
-    }
-
-    .discovery-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 20px 16px;
-      transition: border-color 0.2s, transform 0.1s;
-    }
-
-    .discovery-card:hover {
-      border-color: var(--primary);
-    }
-
-    .discovery-card i {
-      font-size: 1.6rem;
-      color: var(--primary);
-      margin-bottom: 16px;
-      display: inline-block;
-    }
-
-    .discovery-card h4 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .discovery-card p {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 14px;
-    }
-
-    .card-link {
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .card-link i {
-      font-size: 0.7rem;
-      color: var(--primary);
-      margin-bottom: 0;
-    }
-
-    /* ----- SECTION HEADINGS ----- */
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .section-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-
-    .section-sub {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-top: 4px;
-    }
-
-    .view-all {
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .view-all i {
-      font-size: 0.75rem;
-    }
-
-    /* ----- FEATURED SCHOOLS ----- */
-    .schools-section {
-      padding: 40px 0;
-    }
-
-    .schools-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-
-    .school-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-
-    .school-card:hover {
-      border-color: var(--primary);
-    }
-
-    .school-img {
-      height: 160px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-
-    .school-img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, #0D1210 5%, transparent 70%);
-    }
-
-    .school-info {
-      padding: 18px;
-    }
-
-    .school-type {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--primary);
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .school-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .school-location {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .school-location i {
-      font-size: 0.75rem;
-    }
-
-    .school-action {
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: var(--primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ----- NEWS SECTION ----- */
-    .news-section {
-      padding: 40px 0;
-    }
-
-    .news-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-
-    .news-featured {
-      background-color: var(--surface);
-      border-radius: var(--radius-card);
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
-
-    .news-featured .news-img {
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-
-    .news-featured .news-img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, #0D1210 10%, transparent 70%);
-    }
-
-    .news-featured .news-content {
-      padding: 20px;
-    }
-
-    .news-category {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-
-    .news-featured h3 {
-      font-size: 1.3rem;
-      margin-bottom: 8px;
-    }
-
-    .news-meta {
-      color: var(--muted);
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-top: 12px;
-    }
-
-    .news-small-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .news-small-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 16px;
-      display: flex;
-      gap: 16px;
-    }
-
-    .news-small-thumb {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      background-size: cover;
-      background-position: center;
-      flex-shrink: 0;
-    }
-
-    .news-small-content .news-category {
-      font-size: 0.65rem;
-      margin-bottom: 4px;
-    }
-
-    .news-small-content h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .news-small-content .news-meta {
-      margin-top: 6px;
-      font-size: 0.75rem;
-    }
-
-    /* ----- TOOLS SECTION ----- */
-    .tools-section {
-      padding: 40px 0;
-    }
-
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 16px;
-    }
-
-    .tool-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 20px 16px;
-      text-align: center;
-      transition: border-color 0.2s;
-    }
-
-    .tool-card:hover {
-      border-color: var(--primary);
-    }
-
-    .tool-card i {
-      font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-
-    .tool-card h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .tool-card p {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* ----- OPPORTUNITIES (gold accent) ----- */
-    .opportunities-section {
-      padding: 40px 0 64px;
-    }
-
-    .opps-container {
-      background-color: var(--surface);
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      padding: 32px 24px;
-    }
-
-    .opps-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .opps-header h2 {
-      font-size: 1.8rem;
-    }
-
-    .opps-header .badge {
-      background-color: rgba(245, 185, 66, 0.15);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 40px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .opps-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-
-    .opp-card {
-      background-color: var(--elevated);
-      border-radius: 14px;
-      padding: 18px;
-      border-left: 4px solid var(--accent);
-    }
-
-    .opp-card .opp-title {
-      font-weight: 700;
-      font-size: 1.05rem;
-      margin-bottom: 6px;
-    }
-
-    .opp-card .opp-eligibility {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 12px;
-    }
-
-    .opp-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 16px;
-      font-size: 0.8rem;
-    }
-
-    .opp-deadline {
-      color: var(--accent);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .opp-apply {
-      color: var(--primary);
-      font-weight: 600;
-      margin-left: auto;
-    }
-
-    /* ----- FOOTER ----- */
-    .site-footer {
-      background-color: #0A0F0D;
-      border-top: 1px solid var(--border);
-      padding: 48px 0 32px;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 32px;
-      margin-bottom: 40px;
-    }
-
-    .footer-brand p {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin: 16px 0 20px;
-      max-width: 280px;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 16px;
-    }
-
-    .social-links a {
-      color: var(--muted);
-      font-size: 1.2rem;
-    }
-
-    .social-links a:hover {
-      color: var(--primary);
-    }
-
-    .footer-links h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    .footer-links ul {
-      list-style: none;
-    }
-
-    .footer-links li {
-      margin-bottom: 10px;
-    }
-
-    .footer-links a {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .footer-links a:hover {
-      color: var(--primary);
-    }
-
-    .footer-bottom {
-      border-top: 1px solid var(--border);
-      padding-top: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 16px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .footer-legal {
-      display: flex;
-      gap: 20px;
-    }
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 12px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
+    .logo span { color: var(--primary); }
+    .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); transition: color 0.2s; }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; padding: 6px; border-radius: 8px; }
+    .search-icon-btn:hover { color: var(--primary); }
+    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; transition: background 0.2s; border: none; cursor: pointer; }
+    .btn-explore:hover { background-color: #00b374; }
+    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; padding: 6px; }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
+    .mobile-nav a:hover { color: var(--primary); }
+    .mobile-nav.active { display: flex; }
+
+    /* Hero */
+    .hero { padding: 40px 0 48px; position: relative; }
+    .hero-grid { display: flex; flex-direction: column; gap: 32px; }
+    .hero-content { max-width: 620px; }
+    .hero-eyebrow { color: var(--primary); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+    .hero h1 .highlight { color: var(--primary); }
+    .hero-description { color: var(--muted); font-size: 1.05rem; margin-bottom: 28px; max-width: 540px; }
+    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; margin-bottom: 24px; transition: border-color 0.2s; }
+    .search-wrapper:focus-within { border-color: var(--primary); }
+    .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
+    .search-wrapper input::placeholder { color: #6b7c74; }
+    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+    .search-wrapper button:hover { background-color: #00b374; }
+    .quick-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 18px; border-radius: 40px; transition: all 0.15s; cursor: pointer; }
+    .chip:hover { border-color: var(--primary); color: var(--text); background-color: #1a221e; }
+    .hero-image { border-radius: 24px; overflow: hidden; position: relative; background: #0D1210; min-height: 220px; }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75) saturate(0.9); }
+    .hero-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #070A09 0%, transparent 70%); }
+
+    /* Discovery strip */
+    .discovery-strip { padding: 48px 0 24px; }
+    .discovery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+    .discovery-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px 16px; transition: border-color 0.2s; }
+    .discovery-card:hover { border-color: var(--primary); }
+    .discovery-card i { font-size: 1.6rem; color: var(--primary); margin-bottom: 16px; display: inline-block; }
+    .discovery-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .discovery-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; }
+    .card-link { color: var(--primary); font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; }
+    .card-link i { font-size: 0.7rem; color: var(--primary); margin-bottom: 0; }
+
+    /* Section headings */
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .section-title { font-size: 1.8rem; font-weight: 700; }
+    .section-sub { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+    .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+    .view-all i { font-size: 0.75rem; }
+
+    /* Schools */
+    .schools-section { padding: 40px 0; }
+    .schools-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .school-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; }
+    .school-card:hover { border-color: var(--primary); }
+    .school-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
+    .school-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
+    .school-info { padding: 18px; }
+    .school-type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+    .school-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .school-location { color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+    .school-location i { font-size: 0.75rem; }
+    .school-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; }
+
+    /* News */
+    .news-section { padding: 40px 0; }
+    .news-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    .news-featured { background-color: var(--surface); border-radius: var(--radius-card); border: 1px solid var(--border); overflow: hidden; }
+    .news-featured .news-img { height: 200px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
+    .news-featured .news-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 10%, transparent 70%); }
+    .news-featured .news-content { padding: 20px; }
+    .news-category { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .news-featured h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .news-meta { color: var(--muted); font-size: 0.8rem; display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+    .news-small-list { display: flex; flex-direction: column; gap: 16px; }
+    .news-small-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px; display: flex; gap: 16px; }
+    .news-small-thumb { width: 80px; height: 80px; border-radius: 10px; background-size: cover; background-position: center; flex-shrink: 0; background-color: #1a221e; }
+    .news-small-content .news-category { font-size: 0.65rem; margin-bottom: 4px; }
+    .news-small-content h4 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .news-small-content .news-meta { margin-top: 6px; font-size: 0.75rem; }
+
+    /* Tools */
+    .tools-section { padding: 40px 0; }
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+    .tool-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px 16px; text-align: center; transition: border-color 0.2s; }
+    .tool-card:hover { border-color: var(--primary); }
+    .tool-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 12px; }
+    .tool-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .tool-card p { font-size: 0.8rem; color: var(--muted); }
+
+    /* Opportunities */
+    .opportunities-section { padding: 40px 0 64px; }
+    .opps-container { background-color: var(--surface); border-radius: 24px; border: 1px solid var(--border); padding: 32px 24px; }
+    .opps-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+    .opps-header h2 { font-size: 1.8rem; }
+    .opps-header .badge { background-color: rgba(245,185,66,0.15); color: var(--accent); font-size: 0.75rem; font-weight: 700; padding: 6px 14px; border-radius: 40px; display: inline-flex; align-items: center; gap: 8px; }
+    .opps-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .opp-card { background-color: var(--elevated); border-radius: 14px; padding: 18px; border-left: 4px solid var(--accent); }
+    .opp-card .opp-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+    .opp-card .opp-eligibility { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
+    .opp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; font-size: 0.8rem; }
+    .opp-deadline { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .opp-apply { color: var(--primary); font-weight: 600; margin-left: auto; }
+
+    /* Footer */
+    .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+    .footer-brand p { color: var(--muted); font-size: 0.9rem; margin: 16px 0 20px; max-width: 280px; }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a { color: var(--muted); font-size: 1.2rem; }
+    .social-links a:hover { color: var(--primary); }
+    .footer-links h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--muted); font-size: 0.9rem; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 20px; }
+
+    /* States */
+    .empty-state { color: var(--muted); font-size: 0.9rem; padding: 32px 16px; text-align: center; grid-column: 1 / -1; border: 1px dashed var(--border); border-radius: var(--radius-card); }
+    .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* ----- RESPONSIVE (tablet & desktop) ----- */
     @media (min-width: 600px) {
-      .hero h1 {
-        font-size: 3rem;
-      }
-      .discovery-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .schools-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .news-grid {
-        grid-template-columns: 1.2fr 0.8fr;
-      }
-      .news-small-list {
-        display: flex;
-      }
-      .tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .opps-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .footer-grid {
-        grid-template-columns: 1fr 1fr;
-      }
+      .hero h1 { font-size: 3rem; }
+      .discovery-grid { grid-template-columns: repeat(2, 1fr); }
+      .schools-grid { grid-template-columns: repeat(2, 1fr); }
+      .news-grid { grid-template-columns: 1.2fr 0.8fr; }
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+      .opps-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
     }
-
     @media (min-width: 1024px) {
-      .header-inner {
-        height: 80px;
-      }
-      .nav-links {
-        display: flex;
-      }
-      .btn-explore {
-        display: inline-block;
-      }
-      .hamburger {
-        display: none;
-      }
-      .mobile-nav {
-        display: none !important;
-      }
-      .hero {
-        padding: 64px 0 72px;
-      }
-      .hero-grid {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .hero-content {
-        flex: 1;
-        max-width: 540px;
-      }
-      .hero-image {
-        flex: 1;
-        max-width: 540px;
-        min-height: 380px;
-      }
-      .hero h1 {
-        font-size: 3.6rem;
-      }
-      .discovery-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-      .schools-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .news-grid {
-        grid-template-columns: 1.4fr 1fr;
-      }
-      .tools-grid {
-        grid-template-columns: repeat(5, 1fr);
-      }
-      .opps-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .footer-grid {
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-      }
+      .header-inner { height: 80px; }
+      .nav-links { display: flex; }
+      .btn-explore { display: inline-block; }
+      .hamburger { display: none; }
+      .mobile-nav { display: none !important; }
+      .hero { padding: 64px 0 72px; }
+      .hero-grid { flex-direction: row; align-items: center; justify-content: space-between; }
+      .hero-content { flex: 1; max-width: 540px; }
+      .hero-image { flex: 1; max-width: 540px; min-height: 380px; }
+      .hero h1 { font-size: 3.6rem; }
+      .discovery-grid { grid-template-columns: repeat(4, 1fr); }
+      .schools-grid { grid-template-columns: repeat(3, 1fr); }
+      .news-grid { grid-template-columns: 1.4fr 1fr; }
+      .tools-grid { grid-template-columns: repeat(5, 1fr); }
+      .opps-grid { grid-template-columns: repeat(3, 1fr); }
+      .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
     }
-
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      * {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-
-    /* ----- Small tweaks for images (placeholder data) ----- */
-    .bg-school1 {
-      background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=60');
-    }
-    .bg-school2 {
-      background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=60');
-    }
-    .bg-school3 {
-      background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=60');
-    }
-    .bg-news1 {
-      background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&auto=format&fit=crop&q=60');
-    }
-    .bg-news2 {
-      background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=60');
-    }
-    .bg-news3 {
-      background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format&fit=crop&q=60');
+      * { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 <body>
-  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="logo">Campus<span>Naija</span></div>
+      <a href="/Home.html" class="logo">Campus<span>Naija</span></a>
       <nav class="nav-links">
-        <a href="./Home.html">Home</a>
-        <a href="./Schools.html">Schools</a>
-        <a href="./Admissions.html">Admissions</a>
-        <a href="./Exams.html">Exams</a>
-        <a href="./Scholarships.html">Scholarships</a>
-        <a href="./Trending.html">Trending</a>
+        <a href="/Home.html">Home</a>
+        <a href="/Schools.html">Schools</a>
+        <a href="/Admissions.html">Admissions</a>
+        <a href="/Exams.html">Exams</a>
+        <a href="/Scholarships.html">Scholarships</a>
+        <a href="/Trending.html">Trending</a>
       </nav>
       <div class="header-actions">
-        <button class="search-icon-btn" aria-label="Search"><i class="fas fa-search"></i></button>
-        <button class="btn-explore">Explore</button>
+        <button class="search-icon-btn" aria-label="Search" id="headerSearchBtn"><i class="fas fa-search"></i></button>
+        <a href="/Schools.html" class="btn-explore">Explore</a>
         <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
       </div>
     </div>
-    <!-- mobile nav drawer -->
     <div class="mobile-nav" id="mobileNav">
-      <a href="./Home.html">Home</a>
-      <a href="./Schools.html">Schools</a>
-      <a href="./Admissions.html">Admissions</a>
-      <a href="./Exams.html">Exams</a>
-      <a href="./Scholarships.html">Scholarships</a>
-      <a href="./Trending.html">Trending</a>
+      <a href="/Home.html">Home</a>
+      <a href="/Schools.html">Schools</a>
+      <a href="/Admissions.html">Admissions</a>
+      <a href="/Exams.html">Exams</a>
+      <a href="/Scholarships.html">Scholarships</a>
+      <a href="/Trending.html">Trending</a>
     </div>
   </header>
 
   <main>
-    <!-- HERO -->
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-content">
           <div class="hero-eyebrow"><i class="fas fa-graduation-cap" style="margin-right:8px;"></i>YOUR FUTURE STARTS HERE</div>
           <h1>Find your school.<br><span class="highlight">Discover your next opportunity.</span></h1>
           <p class="hero-description">Explore Nigerian universities, admission updates, examinations and scholarships — all in one place.</p>
-          <div class="search-wrapper">
+          <form class="search-wrapper" id="heroSearchForm" role="search">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search schools, courses, exams...">
-            <button id="searchBtn">Search</button>
-          </div>
+            <input type="text" id="searchInput" placeholder="Search schools, courses, exams..." aria-label="Search">
+            <button type="submit">Search</button>
+          </form>
           <div class="quick-chips">
-            <span class="chip">Universities</span>
-            <span class="chip">JAMB</span>
-            <span class="chip">Scholarships</span>
-            <span class="chip">Admission Updates</span>
+            <a class="chip" href="/Schools.html">Universities</a>
+            <a class="chip" href="/Exams.html">JAMB</a>
+            <a class="chip" href="/Scholarships.html">Scholarships</a>
+            <a class="chip" href="/Admissions.html">Admission Updates</a>
           </div>
         </div>
         <div class="hero-image">
-          <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80" alt="Nigerian university campus">
+          <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80" alt="" loading="lazy" referrerpolicy="no-referrer">
         </div>
       </div>
     </section>
 
-    <!-- QUICK DISCOVERY STRIP -->
     <section class="discovery-strip">
       <div class="container">
         <div class="discovery-grid">
-          <div class="discovery-card">
+          <a class="discovery-card" href="/Schools.html">
             <i class="fas fa-building"></i>
             <h4>Find a School</h4>
             <p>Universities, polytechnics & colleges</p>
             <span class="card-link">Browse <i class="fas fa-arrow-right"></i></span>
-          </div>
-          <div class="discovery-card">
+          </a>
+          <a class="discovery-card" href="/Admissions.html">
             <i class="fas fa-clipboard-list"></i>
             <h4>Check Admissions</h4>
             <p>Latest admission lists & updates</p>
             <span class="card-link">Check <i class="fas fa-arrow-right"></i></span>
-          </div>
-          <div class="discovery-card">
+          </a>
+          <a class="discovery-card" href="/Exams.html">
             <i class="fas fa-pen-to-square"></i>
             <h4>Explore Exams</h4>
             <p>JAMB, WAEC, NECO & more</p>
             <span class="card-link">Explore <i class="fas fa-arrow-right"></i></span>
-          </div>
-          <div class="discovery-card">
+          </a>
+          <a class="discovery-card" href="/Scholarships.html">
             <i class="fas fa-award"></i>
             <h4>Find Scholarships</h4>
             <p>Local & international opportunities</p>
             <span class="card-link">Discover <i class="fas fa-arrow-right"></i></span>
-          </div>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- FEATURED SCHOOLS -->
     <section class="schools-section">
       <div class="container">
         <div class="section-header">
@@ -987,44 +277,16 @@
             <div class="section-title">Explore Institutions</div>
             <div class="section-sub">Discover top schools across Nigeria</div>
           </div>
-          <a href="#" class="view-all">View all schools <i class="fas fa-arrow-right"></i></a>
+          <a href="/Schools.html" class="view-all">View all schools <i class="fas fa-arrow-right"></i></a>
         </div>
-        <div class="schools-grid">
-          <!-- School 1 -->
-          <div class="school-card">
-            <div class="school-img bg-school1"></div>
-            <div class="school-info">
-              <div class="school-type">Public University</div>
-              <div class="school-name">University of Lagos</div>
-              <div class="school-location"><i class="fas fa-map-marker-alt"></i> Lagos, Nigeria</div>
-              <a href="#" class="school-action">View details <i class="fas fa-arrow-right"></i></a>
-            </div>
-          </div>
-          <!-- School 2 -->
-          <div class="school-card">
-            <div class="school-img bg-school2"></div>
-            <div class="school-info">
-              <div class="school-type">Federal University</div>
-              <div class="school-name">Ahmadu Bello University</div>
-              <div class="school-location"><i class="fas fa-map-marker-alt"></i> Zaria, Nigeria</div>
-              <a href="#" class="school-action">View details <i class="fas fa-arrow-right"></i></a>
-            </div>
-          </div>
-          <!-- School 3 -->
-          <div class="school-card">
-            <div class="school-img bg-school3"></div>
-            <div class="school-info">
-              <div class="school-type">State University</div>
-              <div class="school-name">University of Ibadan</div>
-              <div class="school-location"><i class="fas fa-map-marker-alt"></i> Ibadan, Nigeria</div>
-              <a href="#" class="school-action">View details <i class="fas fa-arrow-right"></i></a>
-            </div>
-          </div>
+        <div class="schools-grid" id="schoolsGrid">
+          <div class="skeleton" style="height:280px;"></div>
+          <div class="skeleton" style="height:280px;"></div>
+          <div class="skeleton" style="height:280px;"></div>
         </div>
       </div>
     </section>
 
-    <!-- LATEST EDUCATION NEWS -->
     <section class="news-section">
       <div class="container">
         <div class="section-header">
@@ -1032,81 +294,33 @@
             <div class="section-title">Latest Education News</div>
             <div class="section-sub">Stay informed with admission and exam updates</div>
           </div>
-          <a href="#" class="view-all">See all updates <i class="fas fa-arrow-right"></i></a>
+          <a href="/Trending.html" class="view-all">See all updates <i class="fas fa-arrow-right"></i></a>
         </div>
-        <div class="news-grid">
-          <!-- Featured story -->
-          <div class="news-featured">
-            <div class="news-img bg-news1"></div>
-            <div class="news-content">
-              <div class="news-category">Admission Update</div>
-              <h3>JAMB announces 2026 UTME registration dates</h3>
-              <div class="news-meta">
-                <span><i class="far fa-calendar-alt"></i> 15 May 2026</span>
-                <span><i class="far fa-clock"></i> 3 min read</span>
-              </div>
-            </div>
-          </div>
-          <!-- Small stories -->
-          <div class="news-small-list">
-            <div class="news-small-card">
-              <div class="news-small-thumb bg-news2"></div>
-              <div class="news-small-content">
-                <div class="news-category">Examination</div>
-                <h4>WAEC releases 2026 timetable</h4>
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 10 May 2026</span></div>
-              </div>
-            </div>
-            <div class="news-small-card">
-              <div class="news-small-thumb bg-news3"></div>
-              <div class="news-small-content">
-                <div class="news-category">Scholarship</div>
-                <h4>NNPC/Shell scholarship opens for 2026</h4>
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 8 May 2026</span></div>
-              </div>
-            </div>
+        <div class="news-grid" id="newsGrid">
+          <div class="skeleton" style="height:340px;"></div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="skeleton" style="height:112px;"></div>
+            <div class="skeleton" style="height:112px;"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- STUDENT TOOLS -->
     <section class="tools-section">
       <div class="container">
         <div class="section-header">
           <div class="section-title">Student Tools</div>
         </div>
         <div class="tools-grid">
-          <div class="tool-card">
-            <i class="fas fa-calculator"></i>
-            <h4>JAMB Score Calculator</h4>
-            <p>Calculate your aggregate</p>
-          </div>
-          <div class="tool-card">
-            <i class="fas fa-chart-simple"></i>
-            <h4>GPA/CGPA Calculator</h4>
-            <p>Track your academic standing</p>
-          </div>
-          <div class="tool-card">
-            <i class="fas fa-list-check"></i>
-            <h4>Admission Checklist</h4>
-            <p>Never miss a document</p>
-          </div>
-          <div class="tool-card">
-            <i class="fas fa-calendar-check"></i>
-            <h4>Deadline Tracker</h4>
-            <p>Stay ahead of important dates</p>
-          </div>
-          <div class="tool-card">
-            <i class="fas fa-book-open"></i>
-            <h4>Exam Preparation</h4>
-            <p>Practice with past questions</p>
-          </div>
+          <div class="tool-card"><i class="fas fa-calculator"></i><h4>JAMB Score Calculator</h4><p>Calculate your aggregate</p></div>
+          <div class="tool-card"><i class="fas fa-chart-simple"></i><h4>GPA/CGPA Calculator</h4><p>Track your academic standing</p></div>
+          <div class="tool-card"><i class="fas fa-list-check"></i><h4>Admission Checklist</h4><p>Never miss a document</p></div>
+          <div class="tool-card"><i class="fas fa-calendar-check"></i><h4>Deadline Tracker</h4><p>Stay ahead of important dates</p></div>
+          <div class="tool-card"><i class="fas fa-book-open"></i><h4>Exam Preparation</h4><p>Practice with past questions</p></div>
         </div>
       </div>
     </section>
 
-    <!-- OPPORTUNITIES SPOTLIGHT -->
     <section class="opportunities-section">
       <div class="container">
         <div class="opps-container">
@@ -1114,38 +328,16 @@
             <h2>Scholarships & Opportunities</h2>
             <span class="badge"><i class="fas fa-star"></i> Verified deadlines</span>
           </div>
-          <div class="opps-grid">
-            <div class="opp-card">
-              <div class="opp-title">MTN Foundation Scholarship</div>
-              <div class="opp-eligibility">Undergraduates in Nigerian public universities</div>
-              <div class="opp-meta">
-                <span class="opp-deadline"><i class="fas fa-calendar-alt"></i> Closes 30 June 2026</span>
-                <a href="#" class="opp-apply">Apply →</a>
-              </div>
-            </div>
-            <div class="opp-card">
-              <div class="opp-title">Chevening Scholarship</div>
-              <div class="opp-eligibility">Nigerian graduates with leadership potential</div>
-              <div class="opp-meta">
-                <span class="opp-deadline"><i class="fas fa-calendar-alt"></i> Closes 15 July 2026</span>
-                <a href="#" class="opp-apply">Apply →</a>
-              </div>
-            </div>
-            <div class="opp-card">
-              <div class="opp-title">NNPC/Total Scholarship</div>
-              <div class="opp-eligibility">Students in engineering & geosciences</div>
-              <div class="opp-meta">
-                <span class="opp-deadline"><i class="fas fa-calendar-alt"></i> Closes 5 August 2026</span>
-                <a href="#" class="opp-apply">Apply →</a>
-              </div>
-            </div>
+          <div class="opps-grid" id="oppsGrid">
+            <div class="skeleton" style="height:120px;"></div>
+            <div class="skeleton" style="height:120px;"></div>
+            <div class="skeleton" style="height:120px;"></div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -1153,151 +345,233 @@
           <div class="logo">Campus<span>Naija</span></div>
           <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
           <div class="social-links">
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
           </div>
         </div>
         <div class="footer-links">
           <h4>Explore</h4>
           <ul>
-            <li><a href="#">Schools</a></li>
-            <li><a href="#">Admissions</a></li>
-            <li><a href="#">Exams</a></li>
-            <li><a href="#">Scholarships</a></li>
-            <li><a href="#">Trending</a></li>
+            <li><a href="/Schools.html">Schools</a></li>
+            <li><a href="/Admissions.html">Admissions</a></li>
+            <li><a href="/Exams.html">Exams</a></li>
+            <li><a href="/Scholarships.html">Scholarships</a></li>
+            <li><a href="/Trending.html">Trending</a></li>
           </ul>
         </div>
         <div class="footer-links">
           <h4>Company</h4>
           <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">FAQ</a></li>
+            <li><a href="/About.html">About</a></li>
+            <li><a href="/Contact.html">Contact</a></li>
+            <li><a href="/FAQ.html">FAQ</a></li>
           </ul>
         </div>
         <div class="footer-links">
           <h4>Legal</h4>
           <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li><a href="/Privacy.html">Privacy Policy</a></li>
+            <li><a href="/Terms.html">Terms of Service</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 CampusNaija. All rights reserved.</span>
+        <span>© <span id="year"></span> CampusNaija. All rights reserved.</span>
         <div class="footer-legal">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Cookies</a>
+          <a href="/Privacy.html">Privacy</a>
+          <a href="/Terms.html">Terms</a>
+          <a href="/Cookies.html">Cookies</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Production Script with API integration -->
   <script>
-    (function() {
-      // Configuration — replace with your actual API base URL
-      const API_URL = 'https://campus-naija.onrender.com';
+    (function () {
+      'use strict';
 
-      // ---- Mobile nav toggle ----
+      // ── API base ─────────────────────────────────────────────
+      // Your Render backend. Change this one line if the host changes.
+      const API_BASE = 'https://campus-naija.onrender.com';
+      // ─────────────────────────────────────────────────────────
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      /* ---------- Mobile nav ---------- */
       const hamburger = document.getElementById('hamburgerBtn');
       const mobileNav = document.getElementById('mobileNav');
       if (hamburger && mobileNav) {
-        hamburger.addEventListener('click', function(e) {
+        hamburger.addEventListener('click', (e) => {
           e.stopPropagation();
           mobileNav.classList.toggle('active');
         });
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', (e) => {
           if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) {
             mobileNav.classList.remove('active');
           }
         });
       }
 
-      // ---- Search functionality (production) ----
-      const searchInput = document.getElementById('searchInput');
-      const searchBtn = document.getElementById('searchBtn');
-
-      // Debounce helper
-      function debounce(fn, delay) {
-        let timeout;
-        return function(...args) {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => fn.apply(this, args), delay);
-        };
+      /* ---------- Safe API helper ---------- */
+      async function apiGet(path) {
+        const res = await fetch(`${API_BASE}${path}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          mode: 'cors',
+          credentials: 'omit',
+        });
+        if (!res.ok) throw new Error(`API ${path} failed: HTTP ${res.status}`);
+        return res.json();
       }
 
-      async function performSearch(query) {
-        if (!query.trim()) return;
+      const escapeHtml = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 
-        // Optionally navigate to search results page:
-        // window.location.href = `./search.html?q=${encodeURIComponent(query)}`;
+      const truncate = (s, n) => {
+        const str = String(s || '').trim();
+        return str.length > n ? str.slice(0, n - 1).trimEnd() + '…' : str;
+      };
 
-        // For now, just show an alert (replace with actual search page redirect or API call)
-        // But we can also call the API to demonstrate integration.
+      const formatDate = (d) => {
+        if (!d) return '';
+        const dt = new Date(d);
+        if (isNaN(dt)) return '';
+        return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+      };
+
+      const bgStyle = (url) => {
+        if (!url) return '';
+        // Only allow http(s) or relative paths in the inline style
+        const safe = /^(https?:)?\//i.test(url) ? url : '';
+        return safe ? `style="background-image:url('${encodeURI(safe)}');"` : '';
+      };
+
+      /* ---------- Search ---------- */
+      const searchForm = document.getElementById('heroSearchForm');
+      const searchInput = document.getElementById('searchInput');
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const q = searchInput.value.trim();
+        if (!q) return;
+        window.location.href = `/Schools.html?q=${encodeURIComponent(q)}`;
+      });
+      document.getElementById('headerSearchBtn').addEventListener('click', () => {
+        document.getElementById('searchInput').focus();
+      });
+
+      /* ---------- Featured schools (from DB) ---------- */
+      async function loadSchools() {
+        const grid = document.getElementById('schoolsGrid');
         try {
-          // Example: fetch schools matching query from your API
-          const response = await fetch(`${API_URL}/api/schools?search=${encodeURIComponent(query)}`);
-          if (!response.ok) throw new Error('Network response was not ok');
-          const data = await response.json();
-          console.log('Search results:', data);
-          // In production, you would render the results or redirect.
-          // For demonstration, we'll alert the number of results (if data is array).
-          if (Array.isArray(data)) {
-            alert(`Found ${data.length} result(s) for "${query}". Check console for details.`);
-          } else {
-            alert(`Search initiated for "${query}". (API response logged to console)`);
+          const data = await apiGet('/api/public/schools');
+          const list = Array.isArray(data.schools) ? data.schools.slice(0, 6) : [];
+          if (!list.length) {
+            grid.innerHTML = `<div class="empty-state">No schools are published yet.</div>`;
+            return;
           }
-        } catch (error) {
-          console.error('Search error:', error);
-          // Fallback: redirect to search page anyway
-          // window.location.href = `./search.html?q=${encodeURIComponent(query)}`;
-          alert(`Searching for "${query}". (API currently unavailable, redirecting...)`);
+          grid.innerHTML = list.map((s) => {
+            const slug = s.slug || s.id;
+            const cover = s.cover_url || s.logo_url || '';
+            const location = [s.city, s.state].filter(Boolean).join(', ');
+            return `
+              <article class="school-card">
+                <div class="school-img" ${bgStyle(cover)}></div>
+                <div class="school-info">
+                  <div class="school-type">${escapeHtml(s.type || 'Institution')}</div>
+                  <div class="school-name">${escapeHtml(s.name || 'Untitled')}</div>
+                  <div class="school-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(location || 'Nigeria')}</div>
+                  <a href="/Schools.html?slug=${encodeURIComponent(slug)}" class="school-action">View details <i class="fas fa-arrow-right"></i></a>
+                </div>
+              </article>`;
+          }).join('');
+        } catch (err) {
+          console.error('[schools]', err);
+          grid.innerHTML = `<div class="empty-state">Unable to load schools right now.</div>`;
         }
       }
 
-      // Trigger on button click
-      if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-          const query = searchInput.value.trim();
-          performSearch(query);
-        });
+      /* ---------- News (from DB) ---------- */
+      async function loadNews() {
+        const grid = document.getElementById('newsGrid');
+        try {
+          const data = await apiGet('/api/public/trending');
+          const list = Array.isArray(data.stories) ? data.stories.slice(0, 3) : [];
+          if (!list.length) {
+            grid.innerHTML = `<div class="empty-state">No stories published yet.</div>`;
+            return;
+          }
+          const featured = list[0];
+          const rest = list.slice(1, 3);
+
+          const featuredHtml = `
+            <a class="news-featured" href="/Trending.html?id=${encodeURIComponent(featured.id)}">
+              <div class="news-img" ${bgStyle(featured.cover_url || '')}></div>
+              <div class="news-content">
+                <div class="news-category">${escapeHtml(featured.category || 'Update')}</div>
+                <h3>${escapeHtml(truncate(featured.title, 90))}</h3>
+                <div class="news-meta">
+                  <span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(featured.published_at || featured.created_at))}</span>
+                  <span><i class="far fa-user"></i> ${escapeHtml(featured.author || 'CampusNaija')}</span>
+                </div>
+              </div>
+            </a>`;
+
+          const smallHtml = rest.length
+            ? `<div class="news-small-list">${rest.map((s) => `
+                <a class="news-small-card" href="/Trending.html?id=${encodeURIComponent(s.id)}">
+                  <div class="news-small-thumb" ${bgStyle(s.cover_url || '')}></div>
+                  <div class="news-small-content">
+                    <div class="news-category">${escapeHtml(s.category || 'Update')}</div>
+                    <h4>${escapeHtml(truncate(s.title, 70))}</h4>
+                    <div class="news-meta"><span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(s.published_at || s.created_at))}</span></div>
+                  </div>
+                </a>`).join('')}</div>`
+            : '';
+
+          grid.innerHTML = featuredHtml + smallHtml;
+        } catch (err) {
+          console.error('[news]', err);
+          grid.innerHTML = `<div class="empty-state">Unable to load updates right now.</div>`;
+        }
       }
 
-      // Trigger on Enter key
-      if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            performSearch(query);
+      /* ---------- Scholarships (from DB) ---------- */
+      async function loadOpps() {
+        const grid = document.getElementById('oppsGrid');
+        try {
+          const data = await apiGet('/api/public/scholarships');
+          const list = Array.isArray(data.scholarships) ? data.scholarships.slice(0, 3) : [];
+          if (!list.length) {
+            grid.innerHTML = `<div class="empty-state">No scholarships published yet.</div>`;
+            return;
           }
-        });
+          grid.innerHTML = list.map((s) => {
+            const deadline = s.close_date || s.deadline;
+            const eligibility = s.eligibility || s.coverage || '';
+            const applyUrl = s.apply_url || '#';
+            return `
+              <div class="opp-card">
+                <div class="opp-title">${escapeHtml(s.title || 'Scholarship')}</div>
+                <div class="opp-eligibility">${escapeHtml(truncate(eligibility, 120))}</div>
+                <div class="opp-meta">
+                  <span class="opp-deadline"><i class="fas fa-calendar-alt"></i> ${deadline ? 'Closes ' + escapeHtml(formatDate(deadline)) : 'See details'}</span>
+                  <a href="${escapeHtml(applyUrl)}" class="opp-apply" target="_blank" rel="noopener noreferrer">Apply →</a>
+                </div>
+              </div>`;
+          }).join('');
+        } catch (err) {
+          console.error('[scholarships]', err);
+          grid.innerHTML = `<div class="empty-state">Unable to load scholarships right now.</div>`;
+        }
       }
 
-      // ---- Chips quick filter (optional) ----
-      const chips = document.querySelectorAll('.chip');
-      chips.forEach(chip => {
-        chip.addEventListener('click', function() {
-          const text = this.textContent.trim();
-          if (searchInput) {
-            searchInput.value = text;
-            performSearch(text);
-          }
-        });
-      });
-
-      // ---- Example: Health check / ping API (optional) ----
-      // You can remove this or use it for monitoring
-      fetch(`${API_URL}/api/health`)
-        .then(res => {
-          if (res.ok) console.log('CampusNaija API is reachable.');
-          else console.warn('API health check returned status:', res.status);
-        })
-        .catch(err => console.warn('API health check failed:', err.message));
-
+      /* ---------- Run ---------- */
+      loadSchools();
+      loadNews();
+      loadOpps();
     })();
   </script>
 </body>
