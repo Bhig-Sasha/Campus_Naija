@@ -32,10 +32,6 @@
     .nav-links a { transition: color 0.2s, transform 0.2s; display: inline-block; }
     .nav-links a:hover { color: var(--primary); transform: translateY(-1px); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
-    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; transition: color 0.2s, transform 0.2s; }
-    .search-icon-btn:hover { color: var(--primary); transform: scale(1.1); }
-    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; }
-    .btn-explore:hover { background-color: #00b374; transform: translateY(-1px); }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; transition: color 0.2s; }
     .hamburger:hover { color: var(--primary); }
     .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); animation: slideDown 0.25s ease; }
@@ -45,7 +41,6 @@
     @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
-      .btn-explore { display: inline-block; }
       .hamburger { display: none; }
       .mobile-nav { display: none !important; }
     }
@@ -285,8 +280,6 @@
       <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="search-icon-btn" aria-label="Search" onclick="document.getElementById('examSearchInput').focus()"><i class="fas fa-search"></i></button>
-      <a class="btn-explore" href="/Schools.html">Explore</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </div>
@@ -700,7 +693,6 @@
     const p = resolvePlacement(list, 'featured_banner', null);
 
     if (!p || !p.public_url) {
-      // Nothing assigned in the admin — hide the section entirely.
       section.classList.remove('has-image');
       img.removeAttribute('src');
       img.alt = '';

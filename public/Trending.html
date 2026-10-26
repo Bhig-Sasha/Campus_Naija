@@ -31,10 +31,6 @@
     .nav-links a { transition: color 0.2s, transform 0.2s; display: inline-block; }
     .nav-links a:hover { color: var(--primary); transform: translateY(-1px); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
-    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; transition: color 0.2s, transform 0.2s; }
-    .search-icon-btn:hover { color: var(--primary); transform: scale(1.1); }
-    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; }
-    .btn-explore:hover { background-color: #00b374; transform: translateY(-1px); }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; transition: color 0.2s; }
     .hamburger:hover { color: var(--primary); }
     .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); animation: slideDown 0.25s ease; }
@@ -44,7 +40,6 @@
     @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
-      .btn-explore { display: inline-block; }
       .hamburger { display: none; }
       .mobile-nav { display: none !important; }
     }
@@ -211,8 +206,6 @@
       <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="search-icon-btn" aria-label="Search" onclick="document.getElementById('newsSearch').focus()"><i class="fas fa-search"></i></button>
-      <a class="btn-explore" href="/Admissions.html">Explore</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </div>
@@ -437,11 +430,6 @@
     }
   }
 
-  // Resolve the cover image for a story:
-  // 1. Placement scoped to story id (article_cover + content_ref = story.id)
-  // 2. Global article_cover placement (content_ref IS NULL)
-  // 3. The story's own cover_url from the DB
-  // 4. Empty string → card shows background color, no image
   function coverForStory(story) {
     if (!story) return '';
     const idStr = String(story.id);
@@ -464,7 +452,6 @@
     `;
 
     try {
-      // Fetch stories and placements in parallel.
       const [data] = await Promise.all([
         apiGet('/api/public/trending'),
         loadTrendingPlacements(),
@@ -487,7 +474,6 @@
     }
   }
 
-  /* ---------- render featured ---------- */
   function renderFeatured(list) {
     const container = document.getElementById('featuredContainer');
 
@@ -520,7 +506,6 @@
       </div>`;
   }
 
-  /* ---------- render grid ---------- */
   function renderNewsGrid(list) {
     const grid = document.getElementById('newsGrid');
 
@@ -565,7 +550,6 @@
     }).join('');
   }
 
-  /* ---------- trending list ---------- */
   function renderTrendingList(list) {
     const strip = document.getElementById('trendingStrip');
     const container = document.getElementById('trendingList');
@@ -594,7 +578,6 @@
     }).join('');
   }
 
-  /* ---------- category filters ---------- */
   function populateCategoryFilters(list) {
     const tabs = document.getElementById('newsFilters');
     const cats = [...new Set(list.map((s) => s.category).filter(Boolean))].sort();
@@ -637,7 +620,6 @@
   document.getElementById('newsSearch').addEventListener('input', debouncedFilterNews);
   document.getElementById('newsSearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterNews(); });
 
-  /* ---------- views ---------- */
   function showFeed() {
     document.getElementById('view-feed').classList.add('active');
     document.getElementById('view-article').classList.remove('active');
@@ -785,7 +767,6 @@
     };
   }
 
-  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -795,7 +776,6 @@
     });
   }
 
-  /* ---------- history ---------- */
   let initialised = false;
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
