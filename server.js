@@ -37,11 +37,8 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 }
 
 /* ============================================================
- * PLACEMENT REGISTRY — what images can appear where on the site
- * ============================================================
- * Add new pages/slots here when you extend the public website.
- * The API validates against these so typos never reach the DB.
- */
+ * PLACEMENT REGISTRY
+ * ============================================================ */
 const PLACEMENT_PAGES = ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'];
 
 const PLACEMENT_SLOTS = {
@@ -53,8 +50,6 @@ const PLACEMENT_SLOTS = {
   trending:     ['article_cover'],
 };
 
-// Slots that must be bound to a specific record (school.id, story.id, …)
-// because they affect one item and not the whole page.
 const PLACEMENTS_REQUIRING_REF = new Set([
   'schools:school_cover',
   'schools:school_logo',
@@ -410,26 +405,52 @@ router.get('/public/settings', asyncH(async (req, res) => {
 }));
 
 /* ---------- PUBLIC: media placements ---------- */
-// Used by Home.html, Schools.html, Admissions.html, … to fetch the assigned
-// image for a given page/slot (optionally scoped to a specific record).
+/*
+ * Used by Home.html, Schools.html, Admissions.html, … to fetch the assigned
+ * image for a given page/slot (optionally scoped to a specific record).
+ *
+ * Query params:
+ *   page        – required filter (home / schools / admissions / exams / scholarships / trending)
+ *   slot        – optional filter (hero / school_cover / …)
+ *   content_ref – OPTIONAL. Behaviour:
+ *                 • missing      → return ALL active placements for the page
+ *                                  (frontend filters per-record client-side)
+ *                 • empty ('')   → return only GLOBAL placements (content_ref IS NULL)
+ *                 • value        → return only placements for that specific record
+ *
+ * The "missing vs empty" distinction is critical: Home / Schools / Trending
+ * pages call `?page=X` without a content_ref and then match client-side.
+ * If we force `content_ref IS NULL` on a missing param, per-record covers
+ * (school covers, article covers) get stripped before reaching the browser.
+ */
 router.get('/public/placements', asyncH(async (req, res) => {
   const { page, slot, content_ref } = req.query;
   const clauses = ['p.is_active = true'];
   const params = [];
-  if (page)       { params.push(page);                 clauses.push(`p.page = $${params.length}`); }
-  if (slot)       { params.push(slot);                 clauses.push(`p.slot = $${params.length}`); }
-  if (content_ref){ params.push(String(content_ref));  clauses.push(`p.content_ref = $${params.length}`); }
-  else            { clauses.push(`p.content_ref IS NULL`); }
+
+  if (page) { params.push(page); clauses.push(`p.page = $${params.length}`); }
+  if (slot) { params.push(slot); clauses.push(`p.slot = $${params.length}`); }
+
+  if (content_ref !== undefined) {
+    if (content_ref === '' || content_ref === 'null') {
+      clauses.push('p.content_ref IS NULL');
+    } else {
+      params.push(String(content_ref));
+      clauses.push(`p.content_ref = $${params.length}`);
+    }
+  }
 
   const rows = await many(
-    `select p.id, p.page, p.slot, p.content_ref, p.media_id,
+    `select p.id, p.page, p.slot, p.content_ref, p.media_id, p.is_active,
+            p.created_at, p.updated_at,
             m.public_url, m.alt_text, m.caption, m.display_name
        from public.media_placements p
-       join public.media_assets m on m.id = p.media_id
+       left join public.media_assets m on m.id = p.media_id
       where ${clauses.join(' and ')}
       order by p.updated_at desc`,
     params
   );
+
   res.json({ placements: rows });
 }));
 
@@ -1075,7 +1096,7 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   res.status(201).json({ media: row });
 }));
 
-// GET /media — now enriched with placements[] per file
+// GET /media — enriched with placements[] per file
 router.get('/media', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const clauses = []; const params = [];
   if (req.user.role === 'school_manager') { params.push(req.user.school_id); clauses.push(`school_id = $${params.length}`); }
@@ -1086,8 +1107,6 @@ router.get('/media', authenticate, requireRole('owner','admin','editor','reviewe
     params
   );
 
-  // Attach active placements to each media record so the admin can see
-  // "Placed on Home → Hero" without a second request.
   if (rows.length) {
     const ids = rows.map(r => r.id);
     const placements = await many(
@@ -1133,8 +1152,6 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   if (req.user.role === 'school_manager' && row.school_id !== req.user.school_id)
     throw httpError(403, 'You can only delete media for your assigned institution.');
 
-  // Refuse deletion if this media is actively placed anywhere on the site.
-  // The admin must first unassign or replace it from the Media page.
   const activePlacements = await many(
     `select id, page, slot, content_ref from public.media_placements
       where media_id = $1 and is_active = true`,
@@ -1162,15 +1179,6 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
 }));
 
 /* ---------- MEDIA PLACEMENTS ---------- */
-/*
- * A placement binds a media_assets row to a specific (page, slot) —
- * optionally scoped to a content record via content_ref.
- * Rules:
- *   - Only one ACTIVE placement per (page, slot, content_ref).
- *   - Posting a new placement for the same triple deactivates the old one
- *     and creates the new one, so admins can "swap" images without cleanup.
- *   - Deleting a placement removes the row entirely (soft delete optional).
- */
 router.get('/media/placements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { page, slot, media_id } = req.query;
   const clauses = ['p.is_active = true'];
@@ -1209,7 +1217,6 @@ router.post('/media/placements', authenticate, requireRole('owner','admin'), asy
   if (!placementNeedsRef(page, slot) && ref)
     throw httpError(400, `This slot is global and does not accept a content_ref.`);
 
-  // Deactivate the existing active placement for the same (page, slot, ref).
   await run(
     `update public.media_placements
         set is_active = false, updated_at = now()
@@ -1436,13 +1443,13 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.5.0', media: 'supabase-storage', placements: true });
+    res.json({ ok: true, time: r.rows[0].now, version: '1.5.1', media: 'supabase-storage', placements: true });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.5.0',
+      version: '1.5.1',
     });
   }
 }));
