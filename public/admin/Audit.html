@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Audit Log</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,29 +24,60 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 8px;
+    }
+    .skeleton-row {
+      display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;
+      padding: 16px 20px; border-radius: 14px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .skeleton-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; }
+    .skeleton-text { height: 12px; margin-bottom: 8px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w40 { width: 40%; }
+    .skeleton-text.w80 { width: 80%; }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
+      transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
@@ -56,8 +87,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
-
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
       display: flex; flex-direction: column; gap: 4px;
@@ -80,12 +109,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
       display: flex; align-items: center; gap: 12px;
@@ -106,6 +129,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -114,9 +138,8 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
-
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -152,11 +175,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -165,13 +183,9 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
-
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -192,7 +206,8 @@
 
     /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -206,28 +221,11 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
-    }
-    .stat-mini-sub {
-      font-size: 0.7rem; color: var(--muted); margin-top: 4px;
-    }
+    .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
-    }
-    .btn-primary {
-      background-color: var(--primary); color: #070A09; font-weight: 700;
-      padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-      transition: background 0.15s;
-    }
-    .btn-primary:hover { background-color: #00b374; }
+    /* Toolbar */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -236,14 +234,7 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-gold {
-      background-color: transparent; color: var(--accent); font-weight: 600;
-      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
-      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: all 0.15s;
-    }
-    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
@@ -261,9 +252,7 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* ============================================================ */
-    /* EVENT LIST                                                   */
-    /* ============================================================ */
+    /* Event list */
     .section-header {
       display: flex; align-items: baseline; justify-content: space-between;
       margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
@@ -337,44 +326,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* INFO PANELS (What this page records + security rules)        */
-    /* ============================================================ */
-    .info-grid {
-      display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 40px;
-    }
-    @media (min-width: 900px) { .info-grid { grid-template-columns: 1fr 1fr; } }
-
-    .info-panel {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 24px;
-    }
-    .info-panel h2 {
-      font-size: 1.1rem; margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .info-panel h2 i { color: var(--primary); font-size: 0.95rem; }
-    .info-panel.security h2 i { color: var(--accent); }
-
-    .info-list { display: flex; flex-direction: column; gap: 10px; }
-    .info-item {
-      display: flex; gap: 10px; align-items: flex-start;
-      font-size: 0.85rem; color: var(--muted); line-height: 1.5;
-    }
-    .info-item i {
-      color: var(--primary); font-size: 0.8rem; margin-top: 3px; flex-shrink: 0;
-    }
-    .info-panel.security .info-item i { color: var(--accent); }
-    .info-item strong { color: var(--text); font-weight: 700; }
-
-    /* ============================================================ */
-    /* DETAIL PANEL                                                 */
-    /* ============================================================ */
+    /* Detail panel */
     .detail-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 100;
@@ -439,40 +391,6 @@
     }
     .detail-section-title i { color: var(--primary); font-size: 0.8rem; }
 
-    .diff-box {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 10px; overflow: hidden; margin-bottom: 16px;
-    }
-    .diff-row {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px; border-bottom: 1px solid var(--border);
-      font-size: 0.82rem;
-    }
-    .diff-row:last-child { border-bottom: none; }
-    .diff-field {
-      width: 110px; flex-shrink: 0; color: var(--muted); font-weight: 600;
-    }
-    .diff-values { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-    .diff-before, .diff-after {
-      display: flex; align-items: flex-start; gap: 8px;
-      padding: 4px 8px; border-radius: 5px;
-      font-family: monospace; font-size: 0.76rem; word-break: break-word;
-    }
-    .diff-before {
-      background-color: rgba(224,112,112,0.08); color: #f0a0a0;
-      border-left: 2px solid var(--danger);
-    }
-    .diff-after {
-      background-color: rgba(0,201,130,0.08); color: #9fe0c5;
-      border-left: 2px solid var(--primary);
-    }
-    .diff-label {
-      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; flex-shrink: 0;
-    }
-    .diff-before .diff-label { color: var(--danger); }
-    .diff-after .diff-label { color: var(--primary); }
-
     .detail-note {
       display: flex; gap: 10px; padding: 12px 14px;
       background-color: rgba(245,185,66,0.06);
@@ -490,6 +408,14 @@
     }
     .detail-actions .btn-outline { flex: 1; justify-content: center; }
 
+    /* JSON details box */
+    .json-box {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px; font-family: monospace;
+      font-size: 0.75rem; color: var(--muted); line-height: 1.5;
+      max-height: 260px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+    }
+
     /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
@@ -500,20 +426,42 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 360px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
+    /* Footer */
+    .admin-footer {
+      margin-top: 40px;
+      padding: 28px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 16px; font-size: 0.75rem; color: var(--muted);
+    }
+    .footer-left {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; color: var(--text);
+    }
+    .footer-left i { color: var(--primary); font-size: 0.85rem; }
+    .footer-left .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); box-shadow: 0 0 8px var(--primary);
+    }
+    .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .footer-right a { color: var(--muted); transition: color 0.15s ease; }
+    .footer-right a:hover { color: var(--primary); }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -521,6 +469,11 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
+      .admin-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -533,6 +486,7 @@
       .filter-row .search-inline { min-width: 100%; }
       .detail-panel { max-width: 100%; }
       .owner-badge { display: inline-flex; margin-left: 0; margin-top: 6px; }
+      .footer-right { width: 100%; justify-content: space-between; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -545,11 +499,15 @@
 </head>
 <body>
 
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -571,20 +529,18 @@
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Platform Owner</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -593,67 +549,63 @@
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search audit records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search audit records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Platform Owner</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-list-check"></i> Platform administration</div>
           <h1>Audit Log <span class="owner-badge"><i class="fas fa-crown"></i> Owner access</span></h1>
-          <p>Track platform activity, publishing decisions and security events. This page is restricted to the platform owner and specifically authorized administrators.</p>
+          <p>Track platform activity, publishing decisions and security events. This page is restricted to the platform owner.</p>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Recorded events <i class="fas fa-list-check"></i></div>
-            <div class="stat-mini-value">—</div>
+            <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             <div class="stat-mini-sub">Live database count</div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Security events <i class="fas fa-shield-halved gold"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Live database count</div>
+            <div class="stat-mini-value" id="statSecurity"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+            <div class="stat-mini-sub">Login failures & auth</div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Publishing actions <i class="fas fa-bullhorn"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Live database count</div>
+            <div class="stat-mini-value" id="statPublish"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+            <div class="stat-mini-sub">Publish / unpublish / archive</div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Account changes <i class="fas fa-users"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Live database count</div>
+            <div class="stat-mini-value" id="statAccount"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+            <div class="stat-mini-sub">Create / approve / suspend</div>
           </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
           <button class="btn-outline" onclick="resetFilters()"><i class="fas fa-rotate-left"></i> Reset filters</button>
-          <button class="btn-gold" onclick="exportAudit()"><i class="fas fa-file-export"></i> Export audit log</button>
+          <button class="btn-outline" id="refreshBtn" onclick="loadAudit()"><i class="fas fa-rotate"></i> Refresh</button>
           <div class="filter-row">
             <div class="search-inline">
               <i class="fas fa-search"></i>
-              <input type="text" id="auditSearch" placeholder="Search actor, action, record or event ID..." oninput="filterEvents()">
+              <input type="text" id="auditSearch" placeholder="Search actor, action, or record..." oninput="filterEvents()">
             </div>
             <select id="categoryFilter" onchange="filterEvents()">
-              <option value="">All events</option>
+              <option value="">All categories</option>
               <option value="publish">Publishing</option>
               <option value="submit">Submissions</option>
               <option value="update">Content updates</option>
@@ -668,97 +620,75 @@
               <option value="month">Past 30 days</option>
             </select>
             <select id="actorFilter" onchange="filterEvents()">
-              <option value="">All actors</option>
-              <option value="admin">Platform Administrator</option>
-              <option value="school-manager">School Manager</option>
+              <option value="">All roles</option>
+              <option value="owner">Owner</option>
+              <option value="admin">Administrator</option>
               <option value="editor">Content Editor</option>
               <option value="reviewer">Reviewer</option>
+              <option value="school_manager">School Manager</option>
               <option value="security">Security event</option>
             </select>
           </div>
         </div>
 
-        <!-- Activity list header -->
         <div class="section-header">
           <div class="section-title"><i class="fas fa-clock-rotate-left"></i> Activity records</div>
-          <div class="section-count" id="eventCount">Showing 0 records</div>
+          <div class="section-count" id="eventCount">Loading…</div>
         </div>
 
-        <!-- Event list -->
         <div class="event-list" id="eventList">
-          <!-- Populated by JS -->
-        </div>
-
-        <p class="footnote">
-          <i class="fas fa-circle-info"></i> Illustrative entries to demonstrate the layout. Actual records must come from the backend. The filters and sample entries above are for demonstrating the interface; the live version should use real database records rather than fixed sample counts.
-        </p>
-
-        <!-- Info panels -->
-        <div class="info-grid">
-          <!-- What this page records -->
-          <div class="info-panel">
-            <h2><i class="fas fa-clipboard-list"></i> What this page must record</h2>
-            <div class="info-list">
-              <div class="info-item">
-                <i class="fas fa-pen"></i>
-                <div><strong>Content changes:</strong> creation, edits, publication, unpublishing, archiving and deletion requests.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-school"></i>
-                <div><strong>School management:</strong> school-manager submissions, review decisions and approved profile changes.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-key"></i>
-                <div><strong>Account security:</strong> login successes and failures, password-reset events, role changes and account suspension.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-gear"></i>
-                <div><strong>Administrative actions:</strong> settings changes, permission updates and significant system operations.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-code-compare"></i>
-                <div><strong>Change details:</strong> actor, timestamp, event ID, affected record, action outcome and before/after values where appropriate.</div>
-              </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
             </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
           </div>
-
-          <!-- Security rules -->
-          <div class="info-panel security">
-            <h2><i class="fas fa-shield-halved"></i> Important security rules</h2>
-            <div class="info-list">
-              <div class="info-item">
-                <i class="fas fa-lock"></i>
-                <div><strong>Append-only records.</strong> Normal administrators must not be able to edit or delete historical events.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-server"></i>
-                <div><strong>Server-side recording.</strong> Record events on the server, not just in browser JavaScript.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-eye-slash"></i>
-                <div><strong>No secrets.</strong> Never log passwords, authentication tokens, or other secrets.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-user-shield"></i>
-                <div><strong>Restricted access.</strong> Restrict audit access to the platform owner and specifically authorized administrators.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-file-export"></i>
-                <div><strong>Controlled exports.</strong> Make exports permission-controlled and record when an audit export occurs.</div>
-              </div>
-              <div class="info-item">
-                <i class="fas fa-shield"></i>
-                <div><strong>Retention &amp; privacy.</strong> Apply retention and privacy policies to IP addresses and device information.</div>
-              </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
             </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
+            </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
+            </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
           </div>
         </div>
+
+        <footer class="admin-footer">
+          <div class="footer-left">
+            <span class="dot" aria-hidden="true"></span>
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>CampusNaija Administration</span>
+          </div>
+          <div class="footer-right">
+            <span id="footerYear">©</span>
+            <a href="/Privacy.html">Privacy</a>
+            <a href="/Terms.html">Terms</a>
+            <a href="mailto:support@campusnaija.ng">Support</a>
+          </div>
+        </footer>
 
       </main>
     </div>
   </div>
 
-  <!-- ==================== DETAIL PANEL ==================== -->
   <div class="detail-overlay" id="detailOverlay"></div>
   <aside class="detail-panel" id="detailPanel" aria-label="Event details">
     <div class="detail-header">
@@ -767,15 +697,10 @@
         <i class="fas fa-xmark"></i>
       </button>
     </div>
-    <div class="detail-body" id="detailBody">
-      <!-- Populated by JS -->
-    </div>
-    <div class="detail-actions" id="detailActions">
-      <!-- Populated by JS -->
-    </div>
+    <div class="detail-body" id="detailBody"></div>
+    <div class="detail-actions" id="detailActions"></div>
   </aside>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Copied</span>
@@ -785,301 +710,335 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO EVENTS DATA                                             */
-      /* ============================================================ */
-      let events = [
-        {
-          id: 'evt_2f8a1c9d',
-          category: 'publish',
-          action: 'Published content',
-          actionLabel: 'Published',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'University of Lagos — Direct Entry Admission',
-          targetType: 'Admission notice',
-          timestamp: '2026-05-24 10:42:18',
-          relativeTime: '12 minutes ago',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'status', before: 'draft', after: 'published' },
-            { field: 'verified_at', before: 'null', after: '2026-05-24 10:42' }
-          ]
-        },
-        {
-          id: 'evt_9c4b2a7e',
-          category: 'submit',
-          action: 'Submitted changes',
-          actionLabel: 'Submitted',
-          actor: 'Dr. Funmi Adeyemi',
-          actorRole: 'School Manager',
-          actorType: 'school-manager',
-          target: 'University of Lagos — School profile',
-          targetType: 'School record',
-          timestamp: '2026-05-24 09:15:03',
-          relativeTime: '1 hour ago',
-          outcome: 'Pending review',
-          ip: '197.210.x.x',
-          changes: [
-            { field: 'fees.100L', before: '₦150,000', after: '₦160,000' },
-            { field: 'fees.source', before: 'estimate', after: 'official' }
-          ]
-        },
-        {
-          id: 'evt_4d1f8b6a',
-          category: 'update',
-          action: 'Updated article',
-          actionLabel: 'Updated',
-          actor: 'Aisha Bello',
-          actorRole: 'Content Editor',
-          actorType: 'editor',
-          target: 'JAMB announces key dates for 2026 UTME',
-          targetType: 'Trending article',
-          timestamp: '2026-05-24 08:30:11',
-          relativeTime: '2 hours ago',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'title', before: 'JAMB 2026 dates', after: 'JAMB announces key dates for 2026 UTME' },
-            { field: 'body', before: '(draft)', after: '(revised, 3 paragraphs added)' }
-          ]
-        },
-        {
-          id: 'evt_7a2e5c1b',
-          category: 'permission',
-          action: 'Changed permissions',
-          actionLabel: 'Permissions',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'Account: Tunde Ogunlesi (Reviewer)',
-          targetType: 'Platform account',
-          timestamp: '2026-05-23 16:08:45',
-          relativeTime: 'Yesterday',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'scope.scholarships', before: 'false', after: 'true' },
-            { field: 'scope.exams', before: 'false', after: 'false' }
-          ]
-        },
-        {
-          id: 'evt_1b8c3d9f',
-          category: 'security',
-          action: 'Failed login',
-          actionLabel: 'Security',
-          actor: 'Unknown / unverified',
-          actorRole: 'Security event',
-          actorType: 'security',
-          target: 'Admin authentication',
-          targetType: 'Authentication',
-          timestamp: '2026-05-23 02:14:30',
-          relativeTime: 'Yesterday',
-          outcome: 'Rejected',
-          ip: '45.155.x.x',
-          changes: []
-        },
-        {
-          id: 'evt_6e9a4b2d',
-          category: 'publish',
-          action: 'Unpublished content',
-          actionLabel: 'Unpublished',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'Ahmadu Bello University — UTME Admission 2025/2026',
-          targetType: 'Admission notice',
-          timestamp: '2026-05-22 14:20:09',
-          relativeTime: '2 days ago',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'status', before: 'published', after: 'archived' },
-            { field: 'reason', before: 'null', after: 'session expired' }
-          ]
-        },
-        {
-          id: 'evt_3c7f1e5a',
-          category: 'settings',
-          action: 'Updated platform settings',
-          actionLabel: 'Settings',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'Content review workflow',
-          targetType: 'Platform settings',
-          timestamp: '2026-05-22 11:05:22',
-          relativeTime: '2 days ago',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'require_review_for_fees', before: 'false', after: 'true' }
-          ]
-        },
-        {
-          id: 'evt_8b5d2f4c',
-          category: 'security',
-          action: 'Password reset requested',
-          actionLabel: 'Security',
-          actor: 'Bola Martins',
-          actorRole: 'Content Editor',
-          actorType: 'security',
-          target: 'Account recovery',
-          targetType: 'Authentication',
-          timestamp: '2026-05-21 19:40:15',
-          relativeTime: '3 days ago',
-          outcome: 'Success',
-          ip: '197.210.x.x',
-          changes: []
-        },
-        {
-          id: 'evt_5a3e7b1d',
-          category: 'submit',
-          action: 'Rejected submission',
-          actionLabel: 'Rejected',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'Benson Idahosa University — Postgraduate admission',
-          targetType: 'Admission notice',
-          timestamp: '2026-05-21 10:12:33',
-          relativeTime: '3 days ago',
-          outcome: 'Returned for correction',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'status', before: 'pending', after: 'draft' },
-            { field: 'reviewer_note', before: 'null', after: 'Source URL missing' }
-          ]
-        },
-        {
-          id: 'evt_2d6c8f3a',
-          category: 'update',
-          action: 'Archived scholarship',
-          actionLabel: 'Archived',
-          actor: 'Platform Administrator',
-          actorRole: 'Administrator',
-          actorType: 'admin',
-          target: 'Commonwealth Research Grant',
-          targetType: 'Scholarship',
-          timestamp: '2026-05-20 15:48:01',
-          relativeTime: '4 days ago',
-          outcome: 'Success',
-          ip: '102.89.x.x',
-          changes: [
-            { field: 'status', before: 'expired', after: 'archived' }
-          ]
-        }
-      ];
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
+      let token = null;
+      let currentUser = null;
+      let events = [];
       let selectedEventId = null;
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function toast(msg) {
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const formatTime = (iso) => {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return '—';
+        return d.toLocaleString('en-GB', {
+          year: 'numeric', month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+      };
+
+      const relativeTime = (iso) => {
+        if (!iso) return '';
+        const then = new Date(iso).getTime();
+        if (isNaN(then)) return '';
+        const diff = Math.max(0, Date.now() - then);
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return mins + 'm ago';
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h ago';
+        const days = Math.floor(hrs / 24);
+        if (days < 30) return days + 'd ago';
+        return formatTime(iso);
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
+      /* Category derivation from action string */
+      function categorize(action, targetType) {
+        const a = (action || '').toLowerCase();
+        const t = (targetType || '').toLowerCase();
+        if (/login|logout|password|auth|fail|forgot/i.test(a)) return 'security';
+        if (/publish|unpublish|archive|verify|approve/.test(a)) return 'publish';
+        if (/submit|review|reject|decision/.test(a)) return 'submit';
+        if (/create|update|edit|delete/.test(a)) {
+          if (t === 'user') return 'permission';
+          if (t === 'settings') return 'settings';
+          return 'update';
+        }
+        if (t === 'user') return 'permission';
+        if (t === 'settings') return 'settings';
+        return 'update';
+      }
+
       function categoryIcon(cat) {
-        if (cat === 'publish') return 'fa-bullhorn';
-        if (cat === 'submit') return 'fa-paper-plane';
-        if (cat === 'update') return 'fa-pen';
-        if (cat === 'permission') return 'fa-shield-halved';
-        if (cat === 'security') return 'fa-key';
-        if (cat === 'settings') return 'fa-gear';
-        return 'fa-circle-info';
+        return {
+          publish: 'fa-bullhorn',
+          submit: 'fa-paper-plane',
+          update: 'fa-pen',
+          permission: 'fa-shield-halved',
+          security: 'fa-key',
+          settings: 'fa-gear'
+        }[cat] || 'fa-circle-info';
       }
 
       function iconClass(cat) {
-        if (cat === 'publish') return 'ev-publish';
-        if (cat === 'submit') return 'ev-submit';
-        if (cat === 'update') return 'ev-update';
-        if (cat === 'permission') return 'ev-permission';
-        if (cat === 'security') return 'ev-security';
-        return 'ev-settings';
+        return {
+          publish: 'ev-publish',
+          submit: 'ev-submit',
+          update: 'ev-update',
+          permission: 'ev-permission',
+          security: 'ev-security',
+          settings: 'ev-settings'
+        }[cat] || 'ev-settings';
       }
 
       function badgeClass(cat) {
-        if (cat === 'publish') return 'ab-publish';
-        if (cat === 'submit') return 'ab-submit';
-        if (cat === 'update') return 'ab-update';
-        if (cat === 'permission') return 'ab-permission';
-        if (cat === 'security') return 'ab-security';
-        return 'ab-settings';
+        return {
+          publish: 'ab-publish',
+          submit: 'ab-submit',
+          update: 'ab-update',
+          permission: 'ab-permission',
+          security: 'ab-security',
+          settings: 'ab-settings'
+        }[cat] || 'ab-settings';
       }
 
-      /* ============================================================ */
-      /* RENDER                                                       */
-      /* ============================================================ */
+      /* AUTH */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
+      }
+
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
+      }
+
+      /* DATA */
+      async function loadAudit() {
+        const list = document.getElementById('eventList');
+        list.innerHTML = `
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
+            </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
+            </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-icon"></div>
+            <div style="flex:1;min-width:220px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w80"></div>
+            </div>
+            <div style="min-width:130px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+          </div>`;
+
+        try {
+          const data = await api('/api/audit');
+          events = Array.isArray(data.audit) ? data.audit : [];
+          renderStats();
+          filterEvents();
+        } catch (e) {
+          if (/403|Forbidden/i.test(e.message)) {
+            list.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-lock"></i>
+                <h3>Owner access required</h3>
+                <p>Only the platform owner can view the audit log.</p>
+              </div>`;
+            document.getElementById('eventCount').textContent = 'Forbidden';
+            return;
+          }
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-triangle-exclamation"></i>
+              <h3>Failed to load audit log</h3>
+              <p>${esc(e.message)}</p>
+            </div>`;
+          document.getElementById('eventCount').textContent = 'Error loading';
+        }
+      }
+
+      function renderStats() {
+        const set = (id, val) => { document.getElementById(id).textContent = val; };
+        set('statTotal', events.length);
+        set('statSecurity', events.filter(e => {
+          const a = (e.action || '').toLowerCase();
+          return /login|logout|password|auth|fail|forgot/.test(a);
+        }).length);
+        set('statPublish', events.filter(e => {
+          const a = (e.action || '').toLowerCase();
+          return /publish|unpublish|archive|verify|approve/.test(a);
+        }).length);
+        set('statAccount', events.filter(e => {
+          const t = (e.target_type || '').toLowerCase();
+          return t === 'user';
+        }).length);
+      }
+
       function filterEvents() {
         const query = (document.getElementById('auditSearch').value || '').toLowerCase().trim();
         const category = document.getElementById('categoryFilter').value;
         const time = document.getElementById('timeFilter').value;
         const actor = document.getElementById('actorFilter').value;
 
-        const now = new Date('2026-05-24T12:00:00');
+        const now = Date.now();
         const filtered = events.filter(e => {
+          const action = (e.action || '').toLowerCase();
+          const actorName = (e.actor_name || '').toLowerCase();
+          const targetLabel = (e.target_label || '').toLowerCase();
+          const targetType = (e.target_type || '').toLowerCase();
           const matchQ = !query ||
-            e.actor.toLowerCase().includes(query) ||
-            e.action.toLowerCase().includes(query) ||
-            e.target.toLowerCase().includes(query) ||
-            e.id.toLowerCase().includes(query);
-          const matchCat = !category || e.category === category;
-          const matchActor = !actor || e.actorType === actor;
+            action.includes(query) ||
+            actorName.includes(query) ||
+            targetLabel.includes(query) ||
+            targetType.includes(query);
+          const cat = categorize(e.action, e.target_type);
+          const matchCat = !category || cat === category;
+
+          let matchActor = true;
+          if (actor) {
+            if (actor === 'security') {
+              matchActor = cat === 'security';
+            } else {
+              matchActor = (e.actor_role || '') === actor;
+            }
+          }
+
           let matchTime = true;
           if (time) {
-            const evDate = new Date(e.timestamp.replace(' ', 'T'));
-            const diffDays = (now - evDate) / (1000 * 60 * 60 * 24);
-            if (time === 'today') matchTime = diffDays < 1;
-            else if (time === 'week') matchTime = diffDays < 7;
-            else if (time === 'month') matchTime = diffDays < 30;
+            const evDate = new Date(e.created_at).getTime();
+            if (!isNaN(evDate)) {
+              const diffDays = (now - evDate) / (1000 * 60 * 60 * 24);
+              if (time === 'today') matchTime = diffDays < 1;
+              else if (time === 'week') matchTime = diffDays < 7;
+              else if (time === 'month') matchTime = diffDays < 30;
+            }
           }
           return matchQ && matchCat && matchActor && matchTime;
         });
 
-        document.getElementById('eventCount').textContent = `Showing ${filtered.length} of ${events.length} records`;
+        document.getElementById('eventCount').textContent =
+          `Showing ${filtered.length} of ${events.length} records`;
 
         const list = document.getElementById('eventList');
         if (filtered.length === 0) {
           list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-list-check"></i>
-              <h3>No audit records match your filters</h3>
-              <p>Try adjusting the search or filter options.</p>
+              <h3>No audit records</h3>
+              <p>${events.length === 0 ? 'The audit log is empty. Events are recorded automatically when you perform actions.' : 'Try adjusting your filters.'}</p>
             </div>`;
           return;
         }
 
-        list.innerHTML = filtered.map(e => `
-          <div class="event-row" onclick="openDetail('${e.id}')">
-            <div class="event-icon ${iconClass(e.category)}">
-              <i class="fas ${categoryIcon(e.category)}"></i>
-            </div>
-            <div class="event-main">
-              <div class="event-title-row">
-                <span class="event-title">${e.action}</span>
-                <span class="event-action-badge ${badgeClass(e.category)}">${e.actionLabel}</span>
+        list.innerHTML = filtered.map(e => {
+          const cat = categorize(e.action, e.target_type);
+          const actorRole = e.actor_role || 'unknown';
+          const targetLabel = e.target_label || e.target_type || '—';
+          const actorName = e.actor_name || 'System';
+          return `
+            <div class="event-row" onclick="openDetail('${esc(e.id)}')">
+              <div class="event-icon ${iconClass(cat)}">
+                <i class="fas ${categoryIcon(cat)}"></i>
               </div>
-              <div class="event-sub">
-                <span class="actor">${e.actor}</span>
-                <span class="sep">·</span>
-                <span>${e.actorRole}</span>
-                <span class="sep">·</span>
-                <span>${e.target}</span>
+              <div class="event-main">
+                <div class="event-title-row">
+                  <span class="event-title">${esc(e.action || 'Event')}</span>
+                  <span class="event-action-badge ${badgeClass(cat)}">${esc(cat)}</span>
+                </div>
+                <div class="event-sub">
+                  <span class="actor">${esc(actorName)}</span>
+                  <span class="sep">·</span>
+                  <span>${esc(actorRole)}</span>
+                  <span class="sep">·</span>
+                  <span>${esc(targetLabel)}</span>
+                </div>
               </div>
-            </div>
-            <div class="event-meta-cell">
-              <div class="event-time"><i class="far fa-clock"></i> ${e.relativeTime}</div>
-              <div class="event-id">${e.id}</div>
-            </div>
-          </div>
-        `).join('');
+              <div class="event-meta-cell">
+                <div class="event-time"><i class="far fa-clock"></i> ${relativeTime(e.created_at)}</div>
+                <div class="event-id">${esc((e.id || '').slice(0, 12))}…</div>
+              </div>
+            </div>`;
+        }).join('');
       }
 
       function resetFilters() {
@@ -1091,64 +1050,63 @@
         toast('Filters reset.');
       }
 
-      function exportAudit() {
-        if (!confirm('Export the audit log? This action will be recorded in the audit trail and the export will be permission-controlled.')) return;
-        toast('Export initiated · this export event will be logged.');
-      }
-
-      /* ============================================================ */
-      /* DETAIL PANEL                                                 */
-      /* ============================================================ */
+      /* DETAIL */
       function openDetail(id) {
         selectedEventId = id;
         const e = events.find(x => x.id === id);
         if (!e) return;
 
-        const changesHtml = e.changes && e.changes.length > 0
-          ? e.changes.map(c => `
-              <div class="diff-row">
-                <div class="diff-field">${c.field}</div>
-                <div class="diff-values">
-                  <div class="diff-before"><span class="diff-label">Before</span>${c.before}</div>
-                  <div class="diff-after"><span class="diff-label">After</span>${c.after}</div>
-                </div>
-              </div>
-            `).join('')
-          : `<div style="padding: 16px; text-align: center; color: var(--muted); font-size: 0.82rem;">No field changes recorded for this event.</div>`;
+        const cat = categorize(e.action, e.target_type);
+
+        let detailsHtml = '';
+        if (e.details) {
+          let detailsJson = e.details;
+          if (typeof detailsJson === 'string') {
+            try { detailsJson = JSON.parse(detailsJson); } catch (_) {}
+          }
+          if (typeof detailsJson === 'object' && detailsJson !== null) {
+            detailsHtml = `<div class="json-box">${esc(JSON.stringify(detailsJson, null, 2))}</div>`;
+          } else {
+            detailsHtml = `<div class="json-box">${esc(String(detailsJson))}</div>`;
+          }
+        } else {
+          detailsHtml = `<div class="json-box" style="color:var(--muted);">No additional details recorded.</div>`;
+        }
 
         document.getElementById('detailBody').innerHTML = `
           <div class="detail-event-header">
-            <div class="event-icon ${iconClass(e.category)}">
-              <i class="fas ${categoryIcon(e.category)}"></i>
+            <div class="event-icon ${iconClass(cat)}">
+              <i class="fas ${categoryIcon(cat)}"></i>
             </div>
             <div>
-              <div class="deh-title">${e.action}</div>
-              <div class="deh-sub">${e.actionLabel} · ${e.outcome}</div>
+              <div class="deh-title">${esc(e.action || 'Event')}</div>
+              <div class="deh-sub">${esc(cat)} · ${relativeTime(e.created_at)}</div>
             </div>
           </div>
 
           <div class="meta-info">
-            <div class="meta-info-row"><span class="mi-label">Event ID</span><span class="mi-value mono">${e.id}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Actor</span><span class="mi-value">${e.actor}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Role</span><span class="mi-value">${e.actorRole}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Affected record</span><span class="mi-value">${e.target}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Record type</span><span class="mi-value">${e.targetType}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Timestamp</span><span class="mi-value">${e.timestamp}</span></div>
-            <div class="meta-info-row"><span class="mi-label">Outcome</span><span class="mi-value">${e.outcome}</span></div>
-            <div class="meta-info-row"><span class="mi-label">IP address</span><span class="mi-value mono">${e.ip}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Event ID</span><span class="mi-value mono">${esc(e.id)}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Actor</span><span class="mi-value">${esc(e.actor_name || 'System')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Role</span><span class="mi-value">${esc(e.actor_role || '—')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Action</span><span class="mi-value">${esc(e.action || '—')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Target type</span><span class="mi-value">${esc(e.target_type || '—')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Target</span><span class="mi-value">${esc(e.target_label || '—')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Target ID</span><span class="mi-value mono">${esc(e.target_id || '—')}</span></div>
+            <div class="meta-info-row"><span class="mi-label">Timestamp</span><span class="mi-value">${formatTime(e.created_at)}</span></div>
+            <div class="meta-info-row"><span class="mi-label">IP address</span><span class="mi-value mono">${esc(e.ip || '—')}</span></div>
           </div>
 
-          <div class="detail-section-title"><i class="fas fa-code-compare"></i> Before / after values</div>
-          <div class="diff-box">${changesHtml}</div>
+          <div class="detail-section-title"><i class="fas fa-code"></i> Details</div>
+          ${detailsHtml}
 
-          <div class="detail-note">
+          <div class="detail-note" style="margin-top:20px;">
             <i class="fas fa-lock"></i>
             <div><strong>Append-only record.</strong> This audit entry cannot be edited or deleted by normal administrators. It is stored server-side and retained per your data-retention policy.</div>
           </div>
         `;
 
         document.getElementById('detailActions').innerHTML = `
-          <button class="btn-outline" onclick="toast('Event ID copied to clipboard.')"><i class="fas fa-copy"></i> Copy event ID</button>
+          <button class="btn-outline" onclick="copyId('${esc(e.id)}')"><i class="fas fa-copy"></i> Copy event ID</button>
           <button class="btn-outline" onclick="closeDetail()">Close</button>
         `;
 
@@ -1162,9 +1120,25 @@
         selectedEventId = null;
       }
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      function copyId(id) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(id).then(() => toast('Event ID copied.')).catch(() => toast('Copy failed.', true));
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = id;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); toast('Event ID copied.'); }
+            catch (_) { toast('Copy failed.', true); }
+            document.body.removeChild(ta);
+          }
+        } catch (_) {
+          toast('Copy failed.', true);
+        }
+      }
+
+      /* SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1179,32 +1153,39 @@
         overlay.classList.toggle('active', open);
         menuToggle.setAttribute('aria-expanded', String(open));
       });
-
-      overlay.addEventListener('click', () => {
-        closeSidebar();
-        closeDetail();
-      });
-
-      document.getElementById('detailOverlay').addEventListener('click', closeDetail);
-
+      overlay.addEventListener('click', () => { closeSidebar(); closeDetail(); });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          closeSidebar();
-          closeDetail();
-        }
+        if (e.key === 'Escape') { closeSidebar(); closeDetail(); }
       });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        filterEvents();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
+      document.getElementById('detailOverlay').addEventListener('click', closeDetail);
+
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
+      document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
+
+      /* BOOT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await loadAudit();
+      })();
+
+      window.filterEvents = filterEvents;
+      window.resetFilters = resetFilters;
+      window.loadAudit = loadAudit;
+      window.openDetail = openDetail;
+      window.closeDetail = closeDetail;
+      window.copyId = copyId;
     })();
   </script>
 

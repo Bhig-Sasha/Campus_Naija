@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Users & Permissions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,29 +24,60 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 8px;
+    }
+    .skeleton-text { height: 12px; margin-bottom: 8px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w40 { width: 40%; }
+    .skeleton-circle { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; }
+    .skeleton-pill { height: 22px; width: 90px; border-radius: 40px; }
+    .skeleton-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      padding: 18px 20px; border-radius: 14px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
+      transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
@@ -56,8 +87,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
-
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
       display: flex; flex-direction: column; gap: 4px;
@@ -80,13 +109,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
-
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
       display: flex; align-items: center; gap: 12px;
@@ -107,6 +129,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -115,9 +138,8 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
-
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -153,11 +175,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -166,15 +183,9 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
-    .view { display: none; }
-    .view.active { display: block; }
-
-    /* ============================================================ */
-    /* PAGE HEADING & STATS                                         */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -184,8 +195,10 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
+    /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -199,14 +212,9 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
-    }
+    .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
 
-    /* ============================================================ */
-    /* PENDING APPROVALS (gold callout)                            */
-    /* ============================================================ */
+    /* Pending callout */
     .pending-callout {
       background-color: rgba(245,185,66,0.05);
       border: 1px solid rgba(245,185,66,0.3);
@@ -247,33 +255,25 @@
       display: inline-flex; align-items: center; gap: 5px;
       transition: all 0.15s;
     }
-    .pending-btn.approve {
-      color: var(--primary); border-color: rgba(0,201,130,0.4);
-    }
+    .pending-btn.approve { color: var(--primary); border-color: rgba(0,201,130,0.4); }
     .pending-btn.approve:hover { background-color: var(--primary); color: #070A09; }
-    .pending-btn.reject {
-      color: var(--danger); border-color: rgba(224,112,112,0.4);
-    }
+    .pending-btn.reject { color: var(--danger); border-color: rgba(224,112,112,0.4); }
     .pending-btn.reject:hover { background-color: var(--danger); color: #070A09; }
-    .pending-btn.view {
-      color: var(--text); border-color: var(--border);
-    }
+    .pending-btn.view { color: var(--text); border-color: var(--border); }
     .pending-btn.view:hover { border-color: var(--primary); color: var(--primary); }
+    .pending-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
-    }
+    /* Toolbar */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
       padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { background-color: #1f5c47; color: #9fe0c5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -282,6 +282,15 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 240px; }
@@ -299,9 +308,7 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* ============================================================ */
-    /* USER LIST                                                    */
-    /* ============================================================ */
+    /* User list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -316,6 +323,7 @@
       font-weight: 800; font-size: 1rem; color: #070A09;
       flex-shrink: 0;
     }
+    .av-owner { background: linear-gradient(135deg, #00C982, #008f5c); }
     .av-admin { background: linear-gradient(135deg, #00C982, #008f5c); }
     .av-school { background: linear-gradient(135deg, #F5B942, #b88720); }
     .av-editor { background: linear-gradient(135deg, #8ab5ff, #4a78b5); }
@@ -335,6 +343,7 @@
       font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
       border-radius: 40px;
     }
+    .role-owner { background-color: rgba(0,201,130,0.15); color: var(--primary); border: 1px solid rgba(0,201,130,0.4); }
     .role-admin { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .role-school { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .role-editor { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
@@ -356,6 +365,7 @@
     }
     .icon-action:hover { color: var(--primary); border-color: var(--primary); }
     .icon-action.danger:hover { color: var(--danger); border-color: var(--danger); }
+    .icon-action:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .empty-state {
       text-align: center; padding: 56px 20px;
@@ -366,14 +376,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* CREATE / EDIT USER MODAL                                    */
-    /* ============================================================ */
+    /* Modal */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.7); z-index: 150;
@@ -405,7 +408,6 @@
     }
 
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    @media (min-width: 560px) { .form-grid.two { grid-template-columns: 1fr 1fr; } }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
     .form-group label {
@@ -429,7 +431,6 @@
     .form-group textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 
-    /* Role cards inside modal */
     .role-cards { display: grid; grid-template-columns: 1fr; gap: 8px; }
     @media (min-width: 560px) { .role-cards { grid-template-columns: 1fr 1fr; } }
     .role-card {
@@ -445,9 +446,7 @@
     .role-card .rc-title { font-size: 0.82rem; font-weight: 700; }
     .role-card .rc-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
 
-    /* ============================================================ */
-    /* PERMISSIONS PANEL (viewed from detail)                       */
-    /* ============================================================ */
+    /* Detail panel */
     .detail-panel {
       position: fixed; top: 0; right: 0; bottom: 0;
       width: 100%; max-width: 480px;
@@ -470,16 +469,15 @@
       display: flex; align-items: center; justify-content: center;
     }
     .detail-close:hover { color: var(--danger); border-color: var(--danger); }
-    .detail-body {
-      flex: 1; overflow-y: auto; padding: 24px;
-    }
+    .detail-body { flex: 1; overflow-y: auto; padding: 24px; }
     .detail-actions {
       display: flex; gap: 8px; flex-wrap: wrap;
       padding: 16px 24px; border-top: 1px solid var(--border);
       flex-shrink: 0;
     }
     .detail-actions .btn-primary,
-    .detail-actions .btn-outline { flex: 1; justify-content: center; min-width: 100px; }
+    .detail-actions .btn-outline,
+    .detail-actions .btn-danger { flex: 1; justify-content: center; min-width: 100px; }
 
     .user-detail-header {
       display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
@@ -488,44 +486,14 @@
     .user-detail-header .user-detail-name { font-size: 1.1rem; font-weight: 700; }
     .user-detail-header .user-detail-email { font-size: 0.82rem; color: var(--muted); }
 
-    .perm-section-title {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted);
-      margin: 20px 0 10px; display: flex; align-items: center; gap: 8px;
-    }
-    .perm-section-title i { color: var(--primary); font-size: 0.8rem; }
-
-    .perm-row {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 10px 0;
-      border-bottom: 1px solid var(--border);
+    .info-row-display {
+      display: flex; justify-content: space-between; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
       font-size: 0.85rem;
     }
-    .perm-row:last-child { border-bottom: none; }
-    .perm-row .perm-label { color: var(--text); }
-    .perm-row .perm-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-    .perm-toggle {
-      width: 40px; height: 22px; border-radius: 40px;
-      background-color: var(--border); position: relative;
-      cursor: pointer; transition: background 0.2s; flex-shrink: 0;
-    }
-    .perm-toggle.on { background-color: var(--primary); }
-    .perm-toggle::after {
-      content: ''; position: absolute; top: 3px; left: 3px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background-color: var(--text); transition: transform 0.2s;
-    }
-    .perm-toggle.on::after { transform: translateX(18px); background-color: #070A09; }
-
-    .scope-box {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
-      display: flex; align-items: center; gap: 10px; font-size: 0.82rem;
-    }
-    .scope-box i { color: var(--accent); flex-shrink: 0; }
-    .scope-box .scope-text { flex: 1; }
-    .scope-box .scope-text strong { display: block; margin-bottom: 1px; }
-    .scope-box .scope-text span { font-size: 0.72rem; color: var(--muted); }
+    .info-row-display:last-child { border-bottom: none; }
+    .info-label-display { color: var(--muted); }
+    .info-value-display { font-weight: 600; text-align: right; word-break: break-word; }
 
     /* Toast */
     .toast {
@@ -537,20 +505,42 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 360px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
+    /* Footer */
+    .admin-footer {
+      margin-top: 40px;
+      padding: 28px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 16px; font-size: 0.75rem; color: var(--muted);
+    }
+    .footer-left {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; color: var(--text);
+    }
+    .footer-left i { color: var(--primary); font-size: 0.85rem; }
+    .footer-left .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); box-shadow: 0 0 8px var(--primary);
+    }
+    .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .footer-right a { color: var(--muted); transition: color 0.15s ease; }
+    .footer-right a:hover { color: var(--primary); }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -558,6 +548,11 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
+      .admin-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -568,6 +563,7 @@
       .record-actions { width: 100%; justify-content: flex-end; }
       .filter-row .search-inline { min-width: 100%; }
       .detail-panel { max-width: 100%; }
+      .footer-right { width: 100%; justify-content: space-between; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -582,11 +578,15 @@
 </head>
 <body>
 
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -608,137 +608,156 @@
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
-
       <header class="topbar">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
           <i class="fas fa-bars"></i>
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search admin records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search admin records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
       <main class="content">
-
-        <!-- ============================================================ -->
-        <!-- DIRECTORY VIEW                                               -->
-        <!-- ============================================================ -->
-        <div id="view-directory" class="view active">
-          <div class="page-heading">
-            <div class="eyebrow"><i class="fas fa-users"></i> Users &amp; access</div>
-            <h1>Users &amp; Permissions</h1>
-            <p>Manage platform accounts, school representatives and staff access. There is no public registration for platform administrators — only the platform owner can create and approve accounts.</p>
-          </div>
-
-          <!-- Stats -->
-          <div class="stats-row">
-            <div class="stat-mini">
-              <div class="stat-mini-label">All accounts <i class="fas fa-users"></i></div>
-              <div class="stat-mini-value">—</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">School managers <i class="fas fa-school"></i></div>
-              <div class="stat-mini-value">—</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Pending approvals <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value">—</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Suspended <i class="fas fa-ban"></i></div>
-              <div class="stat-mini-value">—</div>
-            </div>
-          </div>
-
-          <!-- Pending school manager approvals -->
-          <div class="pending-callout" id="pendingCallout">
-            <div class="pending-callout-header">
-              <i class="fas fa-triangle-exclamation"></i>
-              <h3>School manager applications awaiting approval</h3>
-              <span class="count-badge" id="pendingCount">2</span>
-            </div>
-            <div class="pending-list" id="pendingList">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-
-          <!-- Toolbar -->
-          <div class="toolbar">
-            <button class="btn-primary" onclick="openCreateModal()">
-              <i class="fas fa-user-plus"></i> Create Account
-            </button>
-            <div class="filter-row">
-              <div class="search-inline">
-                <i class="fas fa-search"></i>
-                <input type="text" id="userSearch" placeholder="Search name, email or institution..." oninput="filterUsers()">
-              </div>
-              <select id="roleFilter" onchange="filterUsers()">
-                <option value="">All roles</option>
-                <option value="admin">Administrator</option>
-                <option value="school-manager">School Manager</option>
-                <option value="editor">Content Editor</option>
-                <option value="reviewer">Reviewer</option>
-              </select>
-              <select id="statusFilter" onchange="filterUsers()">
-                <option value="">All statuses</option>
-                <option value="active">Active</option>
-                <option value="pending">Pending</option>
-                <option value="suspended">Suspended</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- List header -->
-          <div class="panel-header" style="margin: 8px 0 14px; display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-            <div style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
-              <i class="fas fa-list" style="color:var(--primary); font-size:0.95rem;"></i> Platform accounts
-            </div>
-            <span style="font-size:0.78rem; color: var(--muted);" id="userCount">Showing 0 records</span>
-          </div>
-
-          <div class="record-list" id="userList">
-            <!-- Populated by JS -->
-          </div>
-
-          <p class="footnote">
-            <i class="fas fa-circle-info"></i> Illustrative accounts only, not real users. School representatives can request access, but an authorized platform administrator must verify and approve their account before they can manage school information.
-          </p>
+        <div class="page-heading">
+          <div class="eyebrow"><i class="fas fa-users"></i> Users &amp; access</div>
+          <h1>Users &amp; Permissions</h1>
+          <p>Manage platform accounts, school representatives and staff access. Only the platform owner can create and approve accounts.</p>
         </div>
 
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-label">All accounts <i class="fas fa-users"></i></div>
+            <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">School managers <i class="fas fa-school"></i></div>
+            <div class="stat-mini-value" id="statSchool"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Pending approvals <i class="fas fa-clock gold"></i></div>
+            <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Suspended <i class="fas fa-ban"></i></div>
+            <div class="stat-mini-value" id="statSuspended"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+          </div>
+        </div>
+
+        <div class="pending-callout" id="pendingCallout" style="display:none;">
+          <div class="pending-callout-header">
+            <i class="fas fa-triangle-exclamation"></i>
+            <h3>School managers awaiting approval</h3>
+            <span class="count-badge" id="pendingCount">0</span>
+          </div>
+          <div class="pending-list" id="pendingList"></div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn-primary" onclick="openCreateModal()">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+          <div class="filter-row">
+            <div class="search-inline">
+              <i class="fas fa-search"></i>
+              <input type="text" id="userSearch" placeholder="Search name or email..." oninput="filterUsers()">
+            </div>
+            <select id="roleFilter" onchange="filterUsers()">
+              <option value="">All roles</option>
+              <option value="owner">Owner</option>
+              <option value="admin">Administrator</option>
+              <option value="editor">Content Editor</option>
+              <option value="reviewer">Reviewer</option>
+              <option value="school_manager">School Manager</option>
+            </select>
+            <select id="statusFilter" onchange="filterUsers()">
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin: 8px 0 14px; flex-wrap:wrap; gap:12px;">
+          <div style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-list" style="color:var(--primary); font-size:0.95rem;"></i> Platform accounts
+          </div>
+          <span style="font-size:0.78rem; color: var(--muted);" id="userCount">Loading…</span>
+        </div>
+
+        <div class="record-list" id="userList">
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-circle"></div>
+            <div style="flex:1;min-width:200px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w40"></div>
+            </div>
+            <div class="skeleton skeleton-pill"></div>
+            <div class="skeleton skeleton-pill"></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-circle"></div>
+            <div style="flex:1;min-width:200px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w40"></div>
+            </div>
+            <div class="skeleton skeleton-pill"></div>
+            <div class="skeleton skeleton-pill"></div>
+          </div>
+          <div class="skeleton-row">
+            <div class="skeleton skeleton-circle"></div>
+            <div style="flex:1;min-width:200px;">
+              <div class="skeleton skeleton-text w60"></div>
+              <div class="skeleton skeleton-text w40"></div>
+            </div>
+            <div class="skeleton skeleton-pill"></div>
+            <div class="skeleton skeleton-pill"></div>
+          </div>
+        </div>
+
+        <footer class="admin-footer">
+          <div class="footer-left">
+            <span class="dot" aria-hidden="true"></span>
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>CampusNaija Administration</span>
+          </div>
+          <div class="footer-right">
+            <span id="footerYear">©</span>
+            <a href="/Privacy.html">Privacy</a>
+            <a href="/Terms.html">Terms</a>
+            <a href="mailto:support@campusnaija.ng">Support</a>
+          </div>
+        </footer>
       </main>
     </div>
   </div>
 
-  <!-- ==================== CREATE / EDIT USER MODAL ==================== -->
   <div class="modal-overlay" id="userModal" aria-hidden="true">
     <div class="modal">
       <div class="modal-header">
@@ -756,19 +775,19 @@
           <div class="form-group full">
             <label>Email address <span class="req">*</span></label>
             <input type="email" id="newUserEmail" placeholder="name@institution.edu.ng">
-            <span class="form-hint">An invitation with a secure account setup link will be sent to this address.</span>
+            <span class="form-hint">An initial password will be generated and shown to you — share it securely.</span>
           </div>
 
           <div class="form-group full">
             <label>Role <span class="req">*</span></label>
             <div class="role-cards">
-              <div class="role-card selected" data-role="school-manager" onclick="selectRole('school-manager', this)">
+              <div class="role-card selected" data-role="school_manager" onclick="selectRole('school_manager', this)">
                 <div class="rc-top"><i class="fas fa-school"></i><span class="rc-title">School Manager</span></div>
-                <div class="rc-desc">Manages their own institution only. Limited to assigned school.</div>
+                <div class="rc-desc">Manages their own institution only. Requires approval.</div>
               </div>
               <div class="role-card" data-role="editor" onclick="selectRole('editor', this)">
                 <div class="rc-top"><i class="fas fa-pen-fancy"></i><span class="rc-title">Content Editor</span></div>
-                <div class="rc-desc">Manages assigned articles and media. Cannot administer users.</div>
+                <div class="rc-desc">Manages assigned articles and media.</div>
               </div>
               <div class="role-card" data-role="reviewer" onclick="selectRole('reviewer', this)">
                 <div class="rc-top"><i class="fas fa-magnifying-glass"></i><span class="rc-title">Reviewer</span></div>
@@ -776,7 +795,7 @@
               </div>
               <div class="role-card" data-role="admin" onclick="selectRole('admin', this)">
                 <div class="rc-top"><i class="fas fa-shield-halved"></i><span class="rc-title">Administrator</span></div>
-                <div class="rc-desc">Full platform access. Only grant to trusted staff.</div>
+                <div class="rc-desc">Full platform access. Only for trusted staff.</div>
               </div>
             </div>
           </div>
@@ -784,25 +803,9 @@
           <div class="form-group full" id="schoolScopeGroup">
             <label>Assigned school <span class="req">*</span></label>
             <select id="newUserSchool">
-              <option value="">Select institution</option>
-              <option value="uniabuja">University of Abuja</option>
-              <option value="unilag">University of Lagos</option>
-              <option value="biu">Benson Idahosa University</option>
-              <option value="yabatech">Yaba College of Technology</option>
-              <option value="abu">Ahmadu Bello University</option>
-              <option value="fce">Federal College of Education, Kano</option>
+              <option value="">Loading schools…</option>
             </select>
             <span class="form-hint">The account will only be able to manage this specific institution.</span>
-          </div>
-
-          <div class="form-group full" id="contentScopeGroup" style="display:none;">
-            <label>Content scope</label>
-            <select id="newUserContentScope">
-              <option value="news">News &amp; Trending</option>
-              <option value="scholarships">Scholarships</option>
-              <option value="exams">Exams</option>
-              <option value="all-content">All content areas</option>
-            </select>
           </div>
 
           <div class="form-group full">
@@ -813,28 +816,24 @@
       </div>
       <div class="modal-footer">
         <button class="btn-outline" onclick="closeCreateModal()">Cancel</button>
-        <button class="btn-primary" onclick="createUser()"><i class="fas fa-paper-plane"></i> Send invite</button>
+        <button class="btn-primary" id="createUserBtn" onclick="createUser()">
+          <i class="fas fa-user-plus"></i> Create account
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== PERMISSIONS DETAIL PANEL ==================== -->
-  <aside class="detail-panel" id="detailPanel" aria-label="Account permissions">
+  <aside class="detail-panel" id="detailPanel" aria-label="Account details">
     <div class="detail-header">
-      <h3>Account permissions</h3>
+      <h3>Account details</h3>
       <button class="detail-close" onclick="closeDetail()" aria-label="Close">
         <i class="fas fa-xmark"></i>
       </button>
     </div>
-    <div class="detail-body" id="detailBody">
-      <!-- Populated by JS -->
-    </div>
-    <div class="detail-actions" id="detailActions">
-      <!-- Populated by JS -->
-    </div>
+    <div class="detail-body" id="detailBody"></div>
+    <div class="detail-actions" id="detailActions"></div>
   </aside>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Saved</span>
@@ -844,172 +843,212 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO DATA                                                    */
-      /* ============================================================ */
-      let users = [
-        {
-          id: 'u1',
-          name: 'Admin User',
-          email: 'admin@campusnaija.ng',
-          role: 'admin',
-          roleLabel: 'Administrator',
-          status: 'active',
-          scope: 'Full platform access',
-          lastActive: 'Today, 10:42 AM',
-          joined: '2025-01-10',
-          notes: 'Platform owner.'
-        },
-        {
-          id: 'u2',
-          name: 'Dr. Funmi Adeyemi',
-          email: 'f.adeyemi@unilag.edu.ng',
-          role: 'school-manager',
-          roleLabel: 'School Manager',
-          status: 'active',
-          scope: 'University of Lagos',
-          lastActive: 'Today, 9:15 AM',
-          joined: '2026-02-14',
-          notes: 'Verified representative from UNILAG ICT office.'
-        },
-        {
-          id: 'u3',
-          name: 'Emeka Nwosu',
-          email: 'e.nwosu@biu.edu.ng',
-          role: 'school-manager',
-          roleLabel: 'School Manager',
-          status: 'pending',
-          scope: 'Benson Idahosa University',
-          lastActive: '—',
-          joined: '2026-05-22',
-          notes: 'Awaiting verification of staff ID and appointment letter.'
-        },
-        {
-          id: 'u4',
-          name: 'Aisha Bello',
-          email: 'aisha.b@campusnaija.ng',
-          role: 'editor',
-          roleLabel: 'Content Editor',
-          status: 'active',
-          scope: 'News & Trending',
-          lastActive: 'Yesterday, 4:20 PM',
-          joined: '2026-01-20',
-          notes: 'Manages news and article drafts.'
-        },
-        {
-          id: 'u5',
-          name: 'Tunde Ogunlesi',
-          email: 'tunde.o@campusnaija.ng',
-          role: 'reviewer',
-          roleLabel: 'Reviewer',
-          status: 'active',
-          scope: 'Admissions & Scholarships',
-          lastActive: 'Yesterday, 2:05 PM',
-          joined: '2026-02-02',
-          notes: 'Verifies official sources and deadlines.'
-        },
-        {
-          id: 'u6',
-          name: 'Ngozi Eze',
-          email: 'n.eze@fcekano.edu.ng',
-          role: 'school-manager',
-          roleLabel: 'School Manager',
-          status: 'pending',
-          scope: 'Federal College of Education, Kano',
-          lastActive: '—',
-          joined: '2026-05-24',
-          notes: 'Awaiting confirmation from institution registrar.'
-        },
-        {
-          id: 'u7',
-          name: 'Bola Martins',
-          email: 'bola.m@campusnaija.ng',
-          role: 'editor',
-          roleLabel: 'Content Editor',
-          status: 'suspended',
-          scope: 'Scholarships',
-          lastActive: '3 weeks ago',
-          joined: '2025-11-05',
-          notes: 'Suspended pending review of editing activity.'
-        }
-      ];
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
-      let currentViewRole = 'school-manager';
+      let token = null;
+      let currentUser = null;
+      let users = [];
+      let schools = [];
+      let currentViewRole = 'school_manager';
       let selectedUserId = null;
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function toast(msg) {
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const formatDate = (iso) => {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return '—';
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      const roleLabel = (r) => ({
+        owner: 'Owner',
+        admin: 'Administrator',
+        editor: 'Content Editor',
+        reviewer: 'Reviewer',
+        school_manager: 'School Manager'
+      }[r] || r);
+
+      const avatarClass = (r) => ({
+        owner: 'av-owner',
+        admin: 'av-admin',
+        editor: 'av-editor',
+        reviewer: 'av-reviewer',
+        school_manager: 'av-school'
+      }[r] || 'av-admin');
+
+      const rolePillClass = (r) => ({
+        owner: 'role-owner',
+        admin: 'role-admin',
+        editor: 'role-editor',
+        reviewer: 'role-reviewer',
+        school_manager: 'role-school'
+      }[r] || 'role-admin');
+
+      const roleIcon = (r) => ({
+        owner: 'fa-crown',
+        admin: 'fa-shield-halved',
+        editor: 'fa-pen-fancy',
+        reviewer: 'fa-magnifying-glass',
+        school_manager: 'fa-school'
+      }[r] || 'fa-user');
+
+      const statusPillClass = (s) => ({
+        active: 'status-active',
+        pending: 'status-pending',
+        suspended: 'status-suspended'
+      }[s] || 'status-active');
+
+      const statusLabel = (s) => ({
+        active: 'Active',
+        pending: 'Pending',
+        suspended: 'Suspended'
+      }[s] || s);
+
+      const statusIcon = (s) => ({
+        active: 'fa-circle-check',
+        pending: 'fa-clock',
+        suspended: 'fa-ban'
+      }[s] || 'fa-circle');
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      function initials(name) {
-        return name.split(' ').filter(w => w.length > 1).slice(0, 2)
-          .map(w => w[0].toUpperCase()).join('');
+      /* AUTH */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
       }
 
-      function avatarClass(role) {
-        if (role === 'admin') return 'av-admin';
-        if (role === 'school-manager') return 'av-school';
-        if (role === 'editor') return 'av-editor';
-        if (role === 'reviewer') return 'av-reviewer';
-        return 'av-admin';
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
       }
 
-      function rolePillClass(role) {
-        if (role === 'admin') return 'role-admin';
-        if (role === 'school-manager') return 'role-school';
-        if (role === 'editor') return 'role-editor';
-        if (role === 'reviewer') return 'role-reviewer';
-        return 'role-admin';
+      /* DATA */
+      async function loadUsers() {
+        try {
+          const res = await api('/api/users');
+          users = Array.isArray(res.users) ? res.users : [];
+          renderStats();
+          renderDirectory();
+        } catch (e) {
+          document.getElementById('userList').innerHTML =
+            `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Failed to load</h3><p>${esc(e.message)}</p></div>`;
+          document.getElementById('userCount').textContent = 'Error loading';
+        }
       }
 
-      function roleIcon(role) {
-        if (role === 'admin') return 'fa-shield-halved';
-        if (role === 'school-manager') return 'fa-school';
-        if (role === 'editor') return 'fa-pen-fancy';
-        if (role === 'reviewer') return 'fa-magnifying-glass';
-        return 'fa-user';
+      async function loadSchoolsForCreate() {
+        try {
+          const res = await api('/api/schools');
+          schools = Array.isArray(res.schools) ? res.schools : [];
+          const sel = document.getElementById('newUserSchool');
+          sel.innerHTML = '<option value="">Select institution</option>' +
+            schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+        } catch (e) {
+          console.error('[schools]', e);
+        }
       }
 
-      function statusPillClass(status) {
-        if (status === 'active') return 'status-active';
-        if (status === 'pending') return 'status-pending';
-        if (status === 'suspended') return 'status-suspended';
-        return 'status-active';
+      function renderStats() {
+        const set = (id, val) => { document.getElementById(id).textContent = val; };
+        set('statTotal', users.length);
+        set('statSchool', users.filter(u => u.role === 'school_manager').length);
+        set('statPending', users.filter(u => u.status === 'pending').length);
+        set('statSuspended', users.filter(u => u.status === 'suspended').length);
       }
 
-      function statusLabel(status) {
-        if (status === 'active') return 'Active';
-        if (status === 'pending') return 'Pending';
-        if (status === 'suspended') return 'Suspended';
-        return status;
-      }
-
-      /* ============================================================ */
-      /* RENDER                                                       */
-      /* ============================================================ */
       function filterUsers() {
         const query = (document.getElementById('userSearch').value || '').toLowerCase().trim();
         const role = document.getElementById('roleFilter').value;
         const status = document.getElementById('statusFilter').value;
 
         const filtered = users.filter(u => {
-          const matchQ = !query ||
-            u.name.toLowerCase().includes(query) ||
-            u.email.toLowerCase().includes(query) ||
-            u.scope.toLowerCase().includes(query);
+          const name = (u.name || '').toLowerCase();
+          const email = (u.email || '').toLowerCase();
+          const matchQ = !query || name.includes(query) || email.includes(query);
           const matchR = !role || u.role === role;
           const matchS = !status || u.status === status;
           return matchQ && matchR && matchS;
         });
 
-        document.getElementById('userCount').textContent = `Showing ${filtered.length} of ${users.length} records`;
+        document.getElementById('userCount').textContent =
+          `Showing ${filtered.length} of ${users.length} records`;
 
         const list = document.getElementById('userList');
         if (filtered.length === 0) {
@@ -1022,54 +1061,59 @@
           return;
         }
 
-        list.innerHTML = filtered.map(u => `
-          <div class="record-row">
-            <div class="user-avatar ${avatarClass(u.role)}">${initials(u.name)}</div>
-            <div class="record-main">
-              <div class="record-title-row">
-                <span class="user-name">${u.name}</span>
+        list.innerHTML = filtered.map(u => {
+          const isOwner = u.role === 'owner';
+          const isMe = u.id === (currentUser && currentUser.id);
+          return `
+            <div class="record-row">
+              <div class="user-avatar ${avatarClass(u.role)}">${initials(u.name)}</div>
+              <div class="record-main">
+                <div class="record-title-row">
+                  <span class="user-name">${esc(u.name || 'Unnamed')}</span>
+                  ${isMe ? '<span class="status-pill status-active" style="font-size:0.6rem;padding:1px 6px;"><i class="fas fa-user"></i> You</span>' : ''}
+                </div>
+                <div class="user-email">${esc(u.email || '—')}</div>
               </div>
-              <div class="user-email">${u.email}</div>
-            </div>
-            <div class="record-meta-cell">
-              <div class="meta-label-sm">Role</div>
-              <span class="role-pill ${rolePillClass(u.role)}"><i class="fas ${roleIcon(u.role)}"></i> ${u.roleLabel}</span>
-            </div>
-            <div class="record-meta-cell">
-              <div class="meta-label-sm">Scope</div>
-              <div class="meta-value-sm">${u.scope}</div>
-            </div>
-            <div class="record-meta-cell">
-              <div class="meta-label-sm">Last active</div>
-              <div class="meta-value-sm">${u.lastActive}</div>
-            </div>
-            <div class="record-meta-cell">
-              <div class="meta-label-sm">Status</div>
-              <span class="status-pill ${statusPillClass(u.status)}">
-                <i class="fas ${u.status === 'active' ? 'fa-circle-check' : u.status === 'pending' ? 'fa-clock' : 'fa-ban'}"></i>
-                ${statusLabel(u.status)}
-              </span>
-            </div>
-            <div class="record-actions">
-              <button class="icon-action" onclick="openDetail('${u.id}')" title="Manage permissions"><i class="fas fa-shield-halved"></i> Permissions</button>
-              ${u.status === 'pending' ? `
-                <button class="icon-action" onclick="approveUser('${u.id}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);"><i class="fas fa-check"></i> Approve</button>
-              ` : u.status === 'active' ? `
-                <button class="icon-action danger" onclick="suspendUser('${u.id}')" title="Suspend"><i class="fas fa-ban"></i></button>
-              ` : `
-                <button class="icon-action" onclick="reactivateUser('${u.id}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);"><i class="fas fa-rotate-right"></i> Reactivate</button>
-              `}
-            </div>
-          </div>
-        `).join('');
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Role</div>
+                <span class="role-pill ${rolePillClass(u.role)}"><i class="fas ${roleIcon(u.role)}"></i> ${roleLabel(u.role)}</span>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Status</div>
+                <span class="status-pill ${statusPillClass(u.status)}">
+                  <i class="fas ${statusIcon(u.status)}"></i> ${statusLabel(u.status)}
+                </span>
+              </div>
+              <div class="record-meta-cell">
+                <div class="meta-label-sm">Joined</div>
+                <div class="meta-value-sm">${formatDate(u.created_at)}</div>
+              </div>
+              <div class="record-actions">
+                <button class="icon-action" onclick="openDetail('${esc(u.id)}')" title="View details">
+                  <i class="fas fa-eye"></i> Details
+                </button>
+                ${!isOwner && !isMe ? `
+                  ${u.status === 'pending' ? `
+                    <button class="icon-action" onclick="approveUser('${esc(u.id)}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                  ` : u.status === 'active' ? `
+                    <button class="icon-action danger" onclick="suspendUser('${esc(u.id)}')" title="Suspend">
+                      <i class="fas fa-ban"></i> Suspend
+                    </button>
+                  ` : `
+                    <button class="icon-action" onclick="reactivateUser('${esc(u.id)}')" style="color:var(--primary); border-color:rgba(0,201,130,0.4);">
+                      <i class="fas fa-rotate-right"></i> Reactivate
+                    </button>
+                  `}
+                ` : ''}
+              </div>
+            </div>`;
+        }).join('');
       }
 
-      /* ============================================================ */
-      /* PENDING APPROVALS                                            */
-      /* ============================================================ */
       function renderPending() {
-        const pending = users.filter(u => u.status === 'pending');
-        const list = document.getElementById('pendingList');
+        const pending = users.filter(u => u.status === 'pending' && u.role === 'school_manager');
         const callout = document.getElementById('pendingCallout');
         document.getElementById('pendingCount').textContent = pending.length;
 
@@ -1079,57 +1123,24 @@
         }
         callout.style.display = 'block';
 
-        list.innerHTML = pending.map(u => `
-          <div class="pending-item">
-            <div class="pending-icon"><i class="fas fa-user-clock"></i></div>
-            <div class="pending-text">
-              <h4>${u.name}</h4>
-              <p>${u.roleLabel} · ${u.scope} · Requested ${u.joined}</p>
-            </div>
-            <div class="pending-actions">
-              <button class="pending-btn view" onclick="openDetail('${u.id}')"><i class="fas fa-eye"></i> Review</button>
-              <button class="pending-btn approve" onclick="approveUser('${u.id}')"><i class="fas fa-check"></i> Approve</button>
-              <button class="pending-btn reject" onclick="rejectUser('${u.id}')"><i class="fas fa-xmark"></i> Reject</button>
-            </div>
-          </div>
-        `).join('');
-      }
+        const schoolMap = {};
+        schools.forEach(s => { schoolMap[s.id] = s.name; });
 
-      function approveUser(id) {
-        const u = users.find(x => x.id === id);
-        if (!u) return;
-        if (!confirm(`Approve ${u.name} as ${u.roleLabel} for ${u.scope}?\n\nThey will receive an email with a secure account setup link.`)) return;
-        u.status = 'active';
-        u.lastActive = 'Never';
-        renderDirectory();
-        toast(`${u.name} approved · invite sent and audit recorded.`);
-      }
-
-      function rejectUser(id) {
-        const u = users.find(x => x.id === id);
-        if (!u) return;
-        if (!confirm(`Reject this school manager application from ${u.name}?`)) return;
-        users = users.filter(x => x.id !== id);
-        renderDirectory();
-        toast('Application rejected and removed.');
-      }
-
-      function suspendUser(id) {
-        const u = users.find(x => x.id === id);
-        if (!u) return;
-        if (!confirm(`Suspend ${u.name}? They will be signed out and cannot sign in until reactivated.`)) return;
-        u.status = 'suspended';
-        renderDirectory();
-        toast(`${u.name} suspended · logged to audit trail.`);
-      }
-
-      function reactivateUser(id) {
-        const u = users.find(x => x.id === id);
-        if (!u) return;
-        if (!confirm(`Reactivate ${u.name}? They will be able to sign in again.`)) return;
-        u.status = 'active';
-        renderDirectory();
-        toast(`${u.name} reactivated · logged to audit trail.`);
+        document.getElementById('pendingList').innerHTML = pending.map(u => {
+          const schoolName = u.school_id ? (schoolMap[u.school_id] || 'School #' + u.school_id) : 'Unassigned';
+          return `
+            <div class="pending-item">
+              <div class="pending-icon"><i class="fas fa-user-clock"></i></div>
+              <div class="pending-text">
+                <h4>${esc(u.name)}</h4>
+                <p>${roleLabel(u.role)} · ${esc(schoolName)} · Requested ${formatDate(u.created_at)}</p>
+              </div>
+              <div class="pending-actions">
+                <button class="pending-btn view" onclick="openDetail('${esc(u.id)}')"><i class="fas fa-eye"></i> Review</button>
+                <button class="pending-btn approve" onclick="approveUser('${esc(u.id)}')"><i class="fas fa-check"></i> Approve</button>
+              </div>
+            </div>`;
+        }).join('');
       }
 
       function renderDirectory() {
@@ -1137,142 +1148,125 @@
         renderPending();
       }
 
-      /* ============================================================ */
-      /* DETAIL / PERMISSIONS PANEL                                   */
-      /* ============================================================ */
+      /* ACTIONS */
+      async function approveUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Approve ${u.name} as ${roleLabel(u.role)}?\n\nThey will be able to sign in immediately.`)) return;
+
+        try {
+          await api('/api/users/' + encodeURIComponent(id) + '/approve', { method: 'POST' });
+          await loadUsers();
+          toast(`${u.name} approved.`);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      async function suspendUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Suspend ${u.name}? They will be signed out and cannot sign in until reactivated.`)) return;
+
+        try {
+          await api('/api/users/' + encodeURIComponent(id) + '/suspend', { method: 'POST' });
+          await loadUsers();
+          toast(`${u.name} suspended.`);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      async function reactivateUser(id) {
+        const u = users.find(x => x.id === id);
+        if (!u) return;
+        if (!confirm(`Reactivate ${u.name}?`)) return;
+
+        try {
+          await api('/api/users/' + encodeURIComponent(id) + '/reactivate', { method: 'POST' });
+          await loadUsers();
+          toast(`${u.name} reactivated.`);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* DETAIL */
       function openDetail(id) {
         selectedUserId = id;
         const u = users.find(x => x.id === id);
         if (!u) return;
 
-        const isSchoolManager = u.role === 'school-manager';
-        const isEditor = u.role === 'editor';
-        const isAdmin = u.role === 'admin';
+        const schoolMap = {};
+        schools.forEach(s => { schoolMap[s.id] = s.name; });
+        const schoolName = u.school_id ? (schoolMap[u.school_id] || 'School #' + u.school_id) : '—';
+        const isMe = u.id === (currentUser && currentUser.id);
+        const isOwner = u.role === 'owner';
 
-        const permRow = (label, desc, on) => `
-          <div class="perm-row">
-            <div>
-              <div class="perm-label">${label}</div>
-              <div class="perm-desc">${desc}</div>
-            </div>
-            <div class="perm-toggle ${on ? 'on' : ''}"></div>
-          </div>
-        `;
-
-        let permHtml = '';
-
-        if (isAdmin) {
-          permHtml = `
-            ${permRow('Manage schools', 'Create, edit, verify, archive schools', true)}
-            ${permRow('Manage admissions', 'Create and publish admission notices', true)}
-            ${permRow('Manage exams', 'Create and publish exam records', true)}
-            ${permRow('Manage scholarships', 'Create and publish scholarships', true)}
-            ${permRow('Manage content', 'Create and publish news articles', true)}
-            ${permRow('Manage media', 'Upload and organize media files', true)}
-            ${permRow('Manage users', 'Create, approve and suspend accounts', true)}
-            ${permRow('Manage settings', 'Platform-wide configuration', true)}
-          `;
-        } else if (isSchoolManager) {
-          permHtml = `
-            <div class="scope-box">
-              <i class="fas fa-school"></i>
-              <div class="scope-text">
-                <strong>Assigned institution</strong>
-                <span>${u.scope}</span>
-              </div>
-            </div>
-            <div class="perm-section-title"><i class="fas fa-lock"></i> Restricted permissions</div>
-            ${permRow('Edit school profile', 'Name, description, contact details', true)}
-            ${permRow('Manage courses & fees', 'Within the assigned institution only', true)}
-            ${permRow('Upload campus gallery', 'Logo and campus pictures', true)}
-            ${permRow('Submit admission notices', 'For platform admin review before publishing', true)}
-            ${permRow('Manage academic calendar', 'Publish verified dates', true)}
-            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
-            ${permRow('Edit other schools', 'Strictly forbidden at the backend', false)}
-            ${permRow('Manage platform users', 'Reserved for administrators', false)}
-            ${permRow('Publish sensitive fees', 'Requires admin approval', false)}
-          `;
-        } else if (isEditor) {
-          permHtml = `
-            <div class="scope-box">
-              <i class="fas fa-folder-open"></i>
-              <div class="scope-text">
-                <strong>Content scope</strong>
-                <span>${u.scope}</span>
-              </div>
-            </div>
-            <div class="perm-section-title"><i class="fas fa-check"></i> Content permissions</div>
-            ${permRow('Create articles', 'Draft news and trending stories', true)}
-            ${permRow('Edit own articles', 'Within their content scope', true)}
-            ${permRow('Upload media', 'Select from the central media library', true)}
-            ${permRow('Submit for review', 'Send drafts to a reviewer', true)}
-            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
-            ${permRow('Publish without approval', 'Requires reviewer approval', false)}
-            ${permRow('Manage users', 'Reserved for administrators', false)}
-            ${permRow('Edit school profiles', 'Reserved for school managers', false)}
-          `;
-        } else if (u.role === 'reviewer') {
-          permHtml = `
-            <div class="scope-box">
-              <i class="fas fa-magnifying-glass"></i>
-              <div class="scope-text">
-                <strong>Review scope</strong>
-                <span>${u.scope}</span>
-              </div>
-            </div>
-            <div class="perm-section-title"><i class="fas fa-check"></i> Review permissions</div>
-            ${permRow('Verify official sources', 'Confirm links, dates and requirements', true)}
-            ${permRow('Approve or return content', 'For correction before publication', true)}
-            ${permRow('Review school information', 'Verify school records', true)}
-            ${permRow('Review admissions', 'Verify deadlines and requirements', true)}
-            <div class="perm-section-title"><i class="fas fa-ban"></i> Blocked actions</div>
-            ${permRow('Publish directly', 'Must pass through admin publishing', false)}
-            ${permRow('Manage users', 'Reserved for administrators', false)}
-          `;
-        }
-
-        const body = document.getElementById('detailBody');
-        body.innerHTML = `
+        document.getElementById('detailBody').innerHTML = `
           <div class="user-detail-header">
             <div class="user-avatar ${avatarClass(u.role)}">${initials(u.name)}</div>
             <div>
-              <div class="user-detail-name">${u.name}</div>
-              <div class="user-detail-email">${u.email}</div>
+              <div class="user-detail-name">${esc(u.name)}</div>
+              <div class="user-detail-email">${esc(u.email)}</div>
             </div>
           </div>
 
-          <div class="meta-info" style="display:flex; flex-direction:column; gap:8px; padding:14px; background-color:var(--elevated); border-radius:10px; margin-bottom:18px; font-size:0.82rem;">
-            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Role</span><span class="role-pill ${rolePillClass(u.role)}" style="font-size:0.68rem;"><i class="fas ${roleIcon(u.role)}"></i> ${u.roleLabel}</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Status</span><span class="status-pill ${statusPillClass(u.status)}" style="font-size:0.68rem;"><i class="fas ${u.status === 'active' ? 'fa-circle-check' : u.status === 'pending' ? 'fa-clock' : 'fa-ban'}"></i> ${statusLabel(u.status)}</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Joined</span><span style="font-weight:600;">${u.joined}</span></div>
-            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted);">Last active</span><span style="font-weight:600;">${u.lastActive}</span></div>
+          <div class="info-row-display">
+            <span class="info-label-display">Role</span>
+            <span class="role-pill ${rolePillClass(u.role)}"><i class="fas ${roleIcon(u.role)}"></i> ${roleLabel(u.role)}</span>
           </div>
-
-          ${permHtml}
-
-          <div class="perm-section-title"><i class="fas fa-note-sticky"></i> Internal notes</div>
-          <p style="font-size:0.82rem; color:var(--muted); line-height:1.5; margin-bottom:12px;">${u.notes || 'No notes.'}</p>
-
-          <div class="perm-section-title"><i class="fas fa-triangle-exclamation" style="color:var(--accent);"></i> Permission enforcement</div>
-          <div style="background-color:rgba(245,185,66,0.06); border:1px solid rgba(245,185,66,0.25); border-radius:10px; padding:12px 14px; font-size:0.75rem; color:var(--muted); line-height:1.5;">
-            All permissions shown here must also be enforced on the backend. Hiding a button is not sufficient — the server must check roles and scopes on every request, especially for school managers (who must only ever access their assigned institution).
+          <div class="info-row-display">
+            <span class="info-label-display">Status</span>
+            <span class="status-pill ${statusPillClass(u.status)}"><i class="fas ${statusIcon(u.status)}"></i> ${statusLabel(u.status)}</span>
           </div>
+          ${u.role === 'school_manager' ? `
+            <div class="info-row-display">
+              <span class="info-label-display">Assigned school</span>
+              <span class="info-value-display">${esc(schoolName)}</span>
+            </div>
+          ` : ''}
+          <div class="info-row-display">
+            <span class="info-label-display">Created</span>
+            <span class="info-value-display">${formatDate(u.created_at)}</span>
+          </div>
+          <div class="info-row-display">
+            <span class="info-label-display">Last updated</span>
+            <span class="info-value-display">${formatDate(u.updated_at)}</span>
+          </div>
+          ${u.must_change_password ? `
+            <div class="info-row-display">
+              <span class="info-label-display">Password</span>
+              <span class="info-value-display" style="color:var(--accent);">Must change on next sign-in</span>
+            </div>
+          ` : ''}
+          ${u.notes ? `
+            <div style="margin-top:16px;">
+              <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px;">Internal notes</div>
+              <p style="font-size:0.85rem; color:var(--text); line-height:1.5; padding:12px 14px; background-color:var(--elevated); border-radius:10px; border:1px solid var(--border); margin:0;">${esc(u.notes)}</p>
+            </div>
+          ` : ''}
         `;
 
-        document.getElementById('detailActions').innerHTML = `
-          ${u.status === 'pending' ? `
-            <button class="btn-primary" onclick="approveUser('${u.id}')"><i class="fas fa-check"></i> Approve</button>
-            <button class="btn-outline" onclick="rejectUser('${u.id}')"><i class="fas fa-xmark"></i> Reject</button>
-          ` : u.status === 'active' ? `
-            <button class="btn-outline" onclick="suspendUser('${u.id}')"><i class="fas fa-ban"></i> Suspend</button>
-            <button class="btn-outline" onclick="toast('Password reset email sent (demo).')"><i class="fas fa-key"></i> Reset access</button>
-          ` : `
-            <button class="btn-primary" onclick="reactivateUser('${u.id}')"><i class="fas fa-rotate-right"></i> Reactivate</button>
-          `}
-          <button class="btn-outline" onclick="closeDetail()">Close</button>
-        `;
+        let actionsHtml = '';
+        if (!isOwner && !isMe) {
+          if (u.status === 'pending') {
+            actionsHtml = `
+              <button class="btn-primary" onclick="approveUser('${esc(u.id)}'); closeDetail();"><i class="fas fa-check"></i> Approve</button>
+            `;
+          } else if (u.status === 'active') {
+            actionsHtml = `
+              <button class="btn-outline" onclick="suspendUser('${esc(u.id)}'); closeDetail();"><i class="fas fa-ban"></i> Suspend</button>
+            `;
+          } else {
+            actionsHtml = `
+              <button class="btn-primary" onclick="reactivateUser('${esc(u.id)}'); closeDetail();"><i class="fas fa-rotate-right"></i> Reactivate</button>
+            `;
+          }
+        }
+        actionsHtml += `<button class="btn-outline" onclick="closeDetail()">Close</button>`;
+        document.getElementById('detailActions').innerHTML = actionsHtml;
 
-        document.getElementById('userModal').classList.remove('active');
         document.getElementById('detailPanel').classList.add('open');
         document.getElementById('sidebarOverlay').classList.add('active');
       }
@@ -1283,19 +1277,16 @@
         selectedUserId = null;
       }
 
-      /* ============================================================ */
-      /* CREATE MODAL                                                 */
-      /* ============================================================ */
+      /* CREATE */
       function openCreateModal() {
         document.getElementById('modalTitle').textContent = 'Create account';
         document.getElementById('newUserName').value = '';
         document.getElementById('newUserEmail').value = '';
         document.getElementById('newUserNotes').value = '';
         document.getElementById('newUserSchool').value = '';
-        document.getElementById('newUserContentScope').value = 'news';
-        currentViewRole = 'school-manager';
+        currentViewRole = 'school_manager';
         document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
-        const defaultCard = document.querySelector('.role-card[data-role="school-manager"]');
+        const defaultCard = document.querySelector('.role-card[data-role="school_manager"]');
         if (defaultCard) defaultCard.classList.add('selected');
         updateScopeFields();
         document.getElementById('userModal').classList.add('active');
@@ -1315,78 +1306,68 @@
 
       function updateScopeFields() {
         const schoolGroup = document.getElementById('schoolScopeGroup');
-        const contentGroup = document.getElementById('contentScopeGroup');
-        if (currentViewRole === 'school-manager') {
-          schoolGroup.style.display = 'flex';
-          contentGroup.style.display = 'none';
-        } else if (currentViewRole === 'editor' || currentViewRole === 'reviewer') {
-          schoolGroup.style.display = 'none';
-          contentGroup.style.display = 'flex';
-        } else {
-          schoolGroup.style.display = 'none';
-          contentGroup.style.display = 'none';
-        }
+        schoolGroup.style.display = currentViewRole === 'school_manager' ? 'flex' : 'none';
       }
 
-      function createUser() {
+      async function createUser() {
         const name = document.getElementById('newUserName').value.trim();
         const email = document.getElementById('newUserEmail').value.trim();
         const role = currentViewRole;
         const notes = document.getElementById('newUserNotes').value.trim();
 
-        if (!name) { toast('Please enter the full name.'); return; }
-        if (!email) { toast('Please enter an email address.'); return; }
-        try { new RegExp('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$').test(email); } catch (e) {}
-
-        let scope = '';
-        if (role === 'school-manager') {
-          const schoolSel = document.getElementById('newUserSchool');
-          if (!schoolSel.value) { toast('Please select the assigned school.'); return; }
-          scope = schoolSel.options[schoolSel.selectedIndex].text;
-        } else if (role === 'editor' || role === 'reviewer') {
-          const scopeSel = document.getElementById('newUserContentScope');
-          scope = scopeSel.options[scopeSel.selectedIndex].text;
-        } else {
-          scope = 'Full platform access';
+        if (!name) { toast('Please enter the full name.', true); return; }
+        if (!email) { toast('Please enter an email address.', true); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          toast('Please enter a valid email address.', true);
+          return;
         }
 
-        const roleLabel = {
-          'admin': 'Administrator',
-          'school-manager': 'School Manager',
-          'editor': 'Content Editor',
-          'reviewer': 'Reviewer'
-        }[role];
+        let schoolId = null;
+        if (role === 'school_manager') {
+          const sel = document.getElementById('newUserSchool');
+          if (!sel.value) { toast('Please select the assigned school.', true); return; }
+          schoolId = sel.value;
+        }
 
-        // School managers require approval; other roles are created directly by admin
-        const status = role === 'school-manager' ? 'pending' : 'active';
+        const btn = document.getElementById('createUserBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating…';
 
-        const newUser = {
-          id: 'u' + Date.now(),
-          name: name,
-          email: email,
-          role: role,
-          roleLabel: roleLabel,
-          status: status,
-          scope: scope,
-          lastActive: status === 'active' ? 'Never' : '—',
-          joined: new Date().toISOString().split('T')[0],
-          notes: notes
-        };
+        try {
+          const body = {
+            name, email, role,
+            school_id: schoolId,
+            notes: notes || null
+          };
+          const res = await api('/api/users', { method: 'POST', body: JSON.stringify(body) });
 
-        users.unshift(newUser);
-        closeCreateModal();
-        renderDirectory();
+          const tempPwd = res.initial_password;
+          closeCreateModal();
+          await loadUsers();
 
-        if (status === 'pending') {
-          toast(`${name} invited · school manager application awaits your approval.`);
-        } else {
-          toast(`${name} invited · account created and invite email sent.`);
+          if (tempPwd) {
+            toast(`Account created. Share the initial password securely: ${tempPwd}`, false);
+            // Also show in a more durable way
+            setTimeout(() => {
+              alert(
+                `Account created for ${name} (${email}).\n\n` +
+                `Initial password:\n${tempPwd}\n\n` +
+                `Share this password with ${name} through a secure channel. ` +
+                `They will be required to change it after first sign-in.`
+              );
+            }, 400);
+          } else {
+            toast('Account created.', false);
+          }
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-user-plus"></i> Create account';
         }
       }
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1401,36 +1382,46 @@
         overlay.classList.toggle('active', open);
         menuToggle.setAttribute('aria-expanded', String(open));
       });
-
-      overlay.addEventListener('click', () => {
-        closeSidebar();
-        closeDetail();
-      });
-
+      overlay.addEventListener('click', () => { closeSidebar(); closeDetail(); });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          closeSidebar();
-          closeCreateModal();
-          closeDetail();
-        }
+        if (e.key === 'Escape') { closeSidebar(); closeCreateModal(); closeDetail(); }
       });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* Close modal on overlay click */
       document.getElementById('userModal').addEventListener('click', e => {
         if (e.target === document.getElementById('userModal')) closeCreateModal();
       });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        renderDirectory();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
+      document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
+
+      /* BOOT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await Promise.all([loadUsers(), loadSchoolsForCreate()]);
+        renderPending();
+      })();
+
+      window.filterUsers = filterUsers;
+      window.openDetail = openDetail;
+      window.closeDetail = closeDetail;
+      window.openCreateModal = openCreateModal;
+      window.closeCreateModal = closeCreateModal;
+      window.selectRole = selectRole;
+      window.createUser = createUser;
+      window.approveUser = approveUser;
+      window.suspendUser = suspendUser;
+      window.reactivateUser = reactivateUser;
     })();
   </script>
 
