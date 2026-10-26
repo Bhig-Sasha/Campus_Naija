@@ -22,7 +22,6 @@
     }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-    /* HEADER */
     .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; transition: transform 0.2s; }
@@ -54,7 +53,6 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* FEED */
     .feed-hero { padding: 40px 0 24px; animation: fadeInUp 0.5s ease; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .feed-hero .eyebrow { color: var(--primary); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
@@ -126,7 +124,6 @@
     .trending-item .tr-text p { font-size: 0.78rem; color: var(--muted); margin: 0; }
     .trending-item .tr-meta { font-size: 0.7rem; color: var(--accent); font-weight: 700; white-space: nowrap; }
 
-    /* ARTICLE */
     .back-to-feed { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; transition: color 0.2s, gap 0.2s; }
     .back-to-feed:hover { color: var(--primary); gap: 12px; }
 
@@ -169,17 +166,14 @@
     @media (min-width: 600px) { .related-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .related-grid { grid-template-columns: repeat(3, 1fr); } }
 
-    /* SKELETON */
     .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* STATES */
     .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
     .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); animation: fadeIn 0.5s ease; }
     .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
     .error-state button:hover { background-color: #00b374; transform: translateY(-1px); }
 
-    /* FOOTER */
     .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
     .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
     @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
@@ -379,6 +373,7 @@
   const API_URL = 'https://campus-naija.onrender.com';
 
   let storiesCache = [];
+  let trendingPlacements = [];
   let currentStory = null;
   let currentCategoryFilter = 'all';
 
@@ -431,6 +426,34 @@
     return res.json();
   }
 
+  /* ---------- placement helper (cached) ---------- */
+  async function loadTrendingPlacements() {
+    try {
+      const data = await apiGet('/api/public/placements?page=trending');
+      trendingPlacements = Array.isArray(data.placements) ? data.placements : [];
+    } catch (err) {
+      console.warn('[placements trending]', err.message);
+      trendingPlacements = [];
+    }
+  }
+
+  // Resolve the cover image for a story:
+  // 1. Placement scoped to story id (article_cover + content_ref = story.id)
+  // 2. Global article_cover placement (content_ref IS NULL)
+  // 3. The story's own cover_url from the DB
+  // 4. Empty string → card shows background color, no image
+  function coverForStory(story) {
+    if (!story) return '';
+    const idStr = String(story.id);
+    const scoped = trendingPlacements.find(p =>
+      p.slot === 'article_cover' && p.content_ref && String(p.content_ref) === idStr
+    );
+    if (scoped && scoped.public_url) return scoped.public_url;
+    const global = trendingPlacements.find(p => p.slot === 'article_cover' && !p.content_ref);
+    if (global && global.public_url) return global.public_url;
+    return story.cover_url || '';
+  }
+
   /* ---------- load list ---------- */
   async function loadStories() {
     const grid = document.getElementById('newsGrid');
@@ -441,7 +464,11 @@
     `;
 
     try {
-      const data = await apiGet('/api/public/trending');
+      // Fetch stories and placements in parallel.
+      const [data] = await Promise.all([
+        apiGet('/api/public/trending'),
+        loadTrendingPlacements(),
+      ]);
       storiesCache = Array.isArray(data.stories) ? data.stories : [];
 
       renderFeatured(storiesCache);
@@ -474,7 +501,7 @@
     }
 
     const featured = list.find((s) => s.featured) || list[0];
-    const cover = safeUrl(featured.cover_url);
+    const cover = safeUrl(coverForStory(featured));
     const date = featured.published_at || featured.created_at || featured.source_date;
 
     container.innerHTML = `
@@ -512,7 +539,7 @@
     }
 
     grid.innerHTML = rest.map((s, i) => {
-      const cover = safeUrl(s.cover_url);
+      const cover = safeUrl(coverForStory(s));
       const date = s.published_at || s.created_at || s.source_date;
       const cat = (s.category || 'Story').toLowerCase();
       const isGold = /admission|exam|jamb|scholarship/i.test(cat);
@@ -625,7 +652,6 @@
     document.getElementById('view-article').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // skeleton state
     document.getElementById('articleTitle').textContent = 'Loading...';
     document.getElementById('articleCategory').innerHTML = '<i class="fas fa-newspaper"></i> Loading...';
     document.getElementById('articleMeta').innerHTML = '';
@@ -660,7 +686,7 @@
     const cat = s.category || 'Story';
     const isGold = /admission|exam|jamb|scholarship/i.test(cat.toLowerCase());
     const date = s.published_at || s.created_at || s.source_date;
-    const cover = safeUrl(s.cover_url);
+    const cover = safeUrl(coverForStory(s));
     const source = safeUrl(s.source_url);
 
     document.getElementById('articleCategory').innerHTML = `<i class="fas fa-newspaper"></i> ${escapeHtml(cat)}`;
@@ -679,7 +705,6 @@
 
     document.getElementById('articleCaption').textContent = s.caption || s.alt_text || '';
 
-    // Body
     const bodyText = String(s.body || 'No content available.').trim();
     if (/<[a-z][\s\S]*>/i.test(bodyText)) {
       const safeBody = bodyText
@@ -695,7 +720,6 @@
         .join('');
     }
 
-    // Source
     const srcBox = document.getElementById('articleSource');
     if (source) {
       srcBox.style.display = '';
@@ -706,7 +730,6 @@
       srcBox.style.display = 'none';
     }
 
-    // Tags
     const tags = [cat];
     if (s.source_date) tags.push(formatDate(s.source_date));
     if (s.verification === 'verified') tags.push('Verified');
@@ -714,7 +737,6 @@
       .map((t) => `<span class="article-tag">${escapeHtml(t)}</span>`)
       .join('');
 
-    // Related
     const related = storiesCache
       .filter((x) => String(x.id) !== String(s.id))
       .sort((a, b) => {
@@ -727,7 +749,7 @@
 
     document.getElementById('relatedGrid').innerHTML = related.length
       ? related.map((r, i) => {
-          const rcover = safeUrl(r.cover_url);
+          const rcover = safeUrl(coverForStory(r));
           const rdate = r.published_at || r.created_at || r.source_date;
           const risGold = /admission|exam|jamb|scholarship/i.test((r.category || '').toLowerCase());
           const delay = Math.min(i * 0.05, 0.4);
@@ -747,7 +769,6 @@
         }).join('')
       : '<div class="empty-state"><p>No related stories.</p></div>';
 
-    // Share
     const pageUrl = window.location.href;
     const shareTitle = encodeURIComponent(s.title || 'CampusNaija story');
     const shareUrl = encodeURIComponent(pageUrl);

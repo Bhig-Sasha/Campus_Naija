@@ -142,7 +142,6 @@
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; animation: fadeIn 0.35s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .profile-content { padding: 0 0 64px; }
     .profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
@@ -213,7 +212,6 @@
     .footer-legal a { transition: color 0.2s; }
     .footer-legal a:hover { color: var(--primary); }
 
-    /* prefers-reduced-motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
@@ -277,7 +275,6 @@
         <div class="section-title" id="directoryCount">Loading schools...</div>
       </div>
       <div class="schools-grid" id="directoryGrid">
-        <!-- skeleton cards -->
         <div class="skeleton" style="height:300px;"></div>
         <div class="skeleton" style="height:300px;"></div>
         <div class="skeleton" style="height:300px;"></div>
@@ -322,7 +319,6 @@
       </ul>
     </div>
 
-    <!-- OVERVIEW -->
     <div class="tab-panel active" id="panel-overview">
       <div class="profile-grid">
         <div>
@@ -352,7 +348,6 @@
       </div>
     </div>
 
-    <!-- COURSES -->
     <div class="tab-panel" id="panel-courses">
       <div class="profile-section">
         <h2>Courses &amp; programmes</h2>
@@ -373,7 +368,6 @@
       </div>
     </div>
 
-    <!-- FEES -->
     <div class="tab-panel" id="panel-fees">
       <div class="profile-section">
         <h2>Fees</h2>
@@ -391,7 +385,6 @@
       </div>
     </div>
 
-    <!-- ADMISSIONS -->
     <div class="tab-panel" id="panel-admissions">
       <div class="profile-section">
         <h2>Admissions</h2>
@@ -410,7 +403,6 @@
       </div>
     </div>
 
-    <!-- CALENDAR -->
     <div class="tab-panel" id="panel-calendar">
       <div class="profile-section">
         <h2>Academic calendar</h2>
@@ -428,7 +420,6 @@
       </div>
     </div>
 
-    <!-- VERIFICATION -->
     <div class="tab-panel" id="panel-verification">
       <div class="profile-section">
         <h2>Verification &amp; sources</h2>
@@ -506,6 +497,7 @@
   const API_URL = 'https://campus-naija.onrender.com';
 
   let schoolsCache = [];
+  let schoolPlacements = [];   // placements for page = 'schools'
   let currentTypeFilter = 'all';
   let currentSchool = null;
 
@@ -578,10 +570,41 @@
     return { label: 'Open', cls: 'badge-soft' };
   }
 
+  /* ---------- placement helpers ---------- */
+  async function loadPlacementsForSchools() {
+    try {
+      const data = await apiGet('/api/public/placements?page=schools');
+      schoolPlacements = Array.isArray(data.placements) ? data.placements : [];
+    } catch (err) {
+      console.warn('[placements schools]', err.message);
+      schoolPlacements = [];
+    }
+  }
+
+  // Resolve a placement for a specific school + slot.
+  // Scoped (content_ref = school.id) wins over global (content_ref = null).
+  function resolveSchoolPlacement(slot, schoolId) {
+    const idStr = schoolId != null ? String(schoolId) : null;
+    if (idStr) {
+      const scoped = schoolPlacements.find(p =>
+        p.slot === slot && p.content_ref && String(p.content_ref) === idStr
+      );
+      if (scoped) return scoped;
+    }
+    return schoolPlacements.find(p => p.slot === slot && !p.content_ref) || null;
+  }
+
+  function coverForSchool(s) {
+    const idStr = String(s.id);
+    const coverP = resolveSchoolPlacement('school_cover', idStr);
+    const logoP  = resolveSchoolPlacement('school_logo', idStr);
+    // placement first, then record's own cover_url / logo_url (DB-only, no mocks)
+    return (coverP && coverP.public_url) || s.cover_url || (logoP && logoP.public_url) || s.logo_url || '';
+  }
+
   /* ---------- load list ---------- */
   async function loadSchools() {
     const grid = document.getElementById('directoryGrid');
-    // skeleton cards
     grid.innerHTML = `
       <div class="skeleton" style="height:300px;"></div>
       <div class="skeleton" style="height:300px;"></div>
@@ -590,7 +613,11 @@
     `;
 
     try {
-      const data = await apiGet('/api/public/schools');
+      // Load placements and schools in parallel.
+      const [data] = await Promise.all([
+        apiGet('/api/public/schools'),
+        loadPlacementsForSchools(),
+      ]);
       schoolsCache = Array.isArray(data.schools) ? data.schools : [];
       renderSchoolCards(schoolsCache);
       populateFilters(schoolsCache);
@@ -630,7 +657,7 @@
       const desc = s.description || `${type} in ${location}.`;
       const typeKey = (s.type || '').toLowerCase();
       const slug = s.slug || s.id;
-      const cover = s.cover_url || s.logo_url || '';
+      const cover = coverForSchool(s);
       const isVerified = s.verification === 'verified';
       const delay = Math.min(i * 0.05, 0.4);
 
@@ -701,7 +728,6 @@
       if (okType && okState && okQuery) {
         card.style.display = '';
         card.style.animation = 'none';
-        // force reflow then reapply animation for smooth reveal
         void card.offsetWidth;
         card.style.animation = 'cardIn 0.35s ease both';
         visible++;
@@ -734,7 +760,6 @@
     document.getElementById('view-profile').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // skeleton state for profile
     document.getElementById('profileName').textContent = 'Loading...';
     document.getElementById('profileStatus').textContent = '';
     document.getElementById('profileStatus').className = 'profile-badge';
@@ -778,7 +803,6 @@
     const email = school.email || '';
     const address = school.address || '';
 
-    // Hero
     document.getElementById('profileName').textContent = name;
     const statusBadge = document.getElementById('profileStatus');
     if (school.verification === 'verified') {
@@ -798,12 +822,12 @@
       <span>${escapeHtml(type)}</span>
     `;
 
+    // Banner: placement wins, then school record's own cover_url / logo_url
     const banner = document.getElementById('profileBanner');
-    const cover = school.cover_url || school.logo_url;
+    const cover = coverForSchool(school);
     if (cover) banner.style.backgroundImage = `url('${encodeURI(cover)}')`;
     else banner.style.backgroundImage = '';
 
-    // Buttons
     const admBtn = document.getElementById('viewAdmissionsBtn');
     admBtn.disabled = admissions.length === 0;
     admBtn.onclick = () => switchTab('admissions');
@@ -817,7 +841,6 @@
       siteBtn.onclick = null;
     }
 
-    // Overview
     document.getElementById('overviewText').textContent =
       school.description || 'No description has been published for this institution.';
 
@@ -827,7 +850,6 @@
     document.getElementById('infoEstablished').textContent = school.established || '—';
     document.getElementById('infoVerification').innerHTML = verificationBadge(school.verification);
 
-    // Contact links
     const websiteLink = document.getElementById('infoWebsiteLink');
     if (website) {
       websiteLink.href = website;
@@ -858,7 +880,6 @@
       document.getElementById('infoAddress').textContent = 'Not available';
     }
 
-    // Courses
     const programBody = document.getElementById('programTableBody');
     if (courses.length) {
       programBody.innerHTML = courses.map((c) => `
@@ -873,7 +894,6 @@
       programBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No courses published for this institution yet.</td></tr>';
     }
 
-    // Fees
     const feesBody = document.getElementById('feesTableBody');
     if (fees.length) {
       feesBody.innerHTML = fees.map((f) => {
@@ -891,7 +911,6 @@
       feesBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted);">No published fees for this institution yet.</td></tr>';
     }
 
-    // Admissions
     const admBody = document.getElementById('admissionsTableBody');
     const linksContainer = document.getElementById('admissionLinks');
 
@@ -927,7 +946,6 @@
       linksContainer.innerHTML = '';
     }
 
-    // Calendar
     const calBody = document.getElementById('calendarTableBody');
     if (calendar.length) {
       calBody.innerHTML = calendar.map((ev) => {
@@ -946,7 +964,6 @@
       calBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--muted);">No calendar events published yet.</td></tr>';
     }
 
-    // Verification tab
     document.getElementById('verifInstitution').innerHTML = verificationBadge(school.verification);
     document.getElementById('verifPublication').innerHTML = statusLabel(school.publication);
 

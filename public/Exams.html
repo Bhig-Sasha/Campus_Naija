@@ -54,6 +54,39 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* FEATURED BANNER (from placements) */
+    .featured-banner-section { padding: 32px 0 8px; display: none; animation: fadeInUp 0.5s ease; }
+    .featured-banner-section.has-image { display: block; }
+    .featured-banner {
+      position: relative; width: 100%; height: 320px;
+      border-radius: 24px; overflow: hidden;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.25s;
+    }
+    .featured-banner:hover { border-color: var(--primary); }
+    .featured-banner img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; filter: brightness(0.85) saturate(1.05);
+      transition: transform 0.5s ease;
+    }
+    .featured-banner:hover img { transform: scale(1.02); }
+    .featured-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,10,9,0.75) 0%, rgba(7,10,9,0.1) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .featured-banner-caption {
+      position: absolute; left: 24px; right: 24px; bottom: 20px;
+      color: var(--text); font-size: 0.9rem; font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      z-index: 2;
+    }
+    @media (max-width: 600px) {
+      .featured-banner { height: 220px; border-radius: 18px; }
+      .featured-banner-caption { left: 16px; right: 16px; bottom: 14px; font-size: 0.82rem; }
+    }
+
     /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; animation: fadeInUp 0.5s ease; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -102,7 +135,6 @@
     .exam-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; transition: gap 0.2s; }
     .exam-card:hover .exam-action { gap: 10px; }
 
-    /* Calendar strip */
     .calendar-strip { padding: 40px 0 16px; border-top: 1px solid var(--border); margin-top: 8px; animation: fadeInUp 0.5s ease 0.2s both; }
     .calendar-strip-inner { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; }
     .calendar-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0; border-left: 4px solid var(--accent); transition: border-color 0.2s, transform 0.2s; }
@@ -112,7 +144,6 @@
     .calendar-item .cal-date { font-size: 0.85rem; color: var(--muted); }
     .calendar-item .cal-source { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 6px; }
 
-    /* Prep strip */
     .prep-strip { padding: 32px 0 64px; animation: fadeInUp 0.5s ease 0.25s both; }
     .prep-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; transition: border-color 0.2s; }
     .prep-inner:hover { border-color: var(--primary); }
@@ -120,7 +151,6 @@
     .prep-inner p { color: var(--muted); font-size: 0.95rem; max-width: 520px; }
     .prep-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-    /* DETAIL */
     .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; transition: color 0.2s, gap 0.2s; }
     .back-to-directory:hover { color: var(--primary); gap: 12px; }
 
@@ -210,17 +240,14 @@
     .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
     .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
-    /* SKELETON */
     .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* STATES */
     .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
     .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); animation: fadeIn 0.5s ease; }
     .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
     .error-state button:hover { background-color: #00b374; transform: translateY(-1px); }
 
-    /* FOOTER */
     .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
     .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
     @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
@@ -282,6 +309,14 @@
       <p>Find examination dates, registration information, timetables, requirements, preparation resources and official results portals.</p>
     </section>
 
+    <!-- Featured banner (populated from /api/public/placements — exams / featured_banner) -->
+    <section class="featured-banner-section" id="featuredBannerSection">
+      <div class="featured-banner" id="featuredBanner">
+        <img id="featuredBannerImg" src="" alt="">
+        <div class="featured-banner-caption" id="featuredBannerCaption"></div>
+      </div>
+    </section>
+
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
@@ -301,7 +336,6 @@
     <section>
       <div class="section-header"><div class="section-title" id="examCount">Examinations</div></div>
       <div class="exams-grid" id="examsGrid">
-        <!-- skeleton cards -->
         <div class="skeleton" style="height:280px;"></div>
         <div class="skeleton" style="height:280px;"></div>
         <div class="skeleton" style="height:280px;"></div>
@@ -368,7 +402,6 @@
       </ul>
     </div>
 
-    <!-- OVERVIEW -->
     <div class="exam-tab-panel active" id="exam-panel-overview">
       <div class="exam-profile-grid">
         <div>
@@ -410,7 +443,6 @@
       </div>
     </div>
 
-    <!-- REGISTRATION -->
     <div class="exam-tab-panel" id="exam-panel-registration">
       <div class="exam-profile-grid">
         <div>
@@ -449,7 +481,6 @@
       </div>
     </div>
 
-    <!-- REQUIREMENTS -->
     <div class="exam-tab-panel" id="exam-panel-requirements">
       <div class="exam-profile-grid">
         <div>
@@ -475,7 +506,6 @@
       </div>
     </div>
 
-    <!-- PORTAL -->
     <div class="exam-tab-panel" id="exam-panel-portal">
       <div class="exam-profile-grid">
         <div>
@@ -632,6 +662,60 @@
     }
   }
 
+  /* ---------- placement helper ---------- */
+  const placementCache = {};
+
+  async function getPlacementsForPage(page) {
+    if (placementCache[page]) return placementCache[page];
+    try {
+      const data = await apiGet(`/api/public/placements?page=${encodeURIComponent(page)}`);
+      const list = Array.isArray(data.placements) ? data.placements : [];
+      placementCache[page] = list;
+      return list;
+    } catch (err) {
+      console.warn('[placements]', page, err.message);
+      placementCache[page] = [];
+      return [];
+    }
+  }
+
+  function resolvePlacement(list, slot, contentRef) {
+    const refStr = contentRef != null ? String(contentRef) : null;
+    if (refStr) {
+      const scoped = list.find(p =>
+        p.slot === slot && p.content_ref && String(p.content_ref) === refStr
+      );
+      if (scoped) return scoped;
+    }
+    return list.find(p => p.slot === slot && !p.content_ref) || null;
+  }
+
+  /* ---------- Featured banner (DB-only, no fallback) ---------- */
+  async function loadFeaturedBanner() {
+    const section = document.getElementById('featuredBannerSection');
+    const img = document.getElementById('featuredBannerImg');
+    const captionEl = document.getElementById('featuredBannerCaption');
+
+    const list = await getPlacementsForPage('exams');
+    const p = resolvePlacement(list, 'featured_banner', null);
+
+    if (!p || !p.public_url) {
+      // Nothing assigned in the admin — hide the section entirely.
+      section.classList.remove('has-image');
+      img.removeAttribute('src');
+      img.alt = '';
+      captionEl.textContent = '';
+      return;
+    }
+
+    img.src = p.public_url;
+    img.alt = p.alt_text || '';
+    img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    captionEl.textContent = p.caption || '';
+    section.classList.add('has-image');
+  }
+
   /* ---------- load list ---------- */
   async function loadExams() {
     const grid = document.getElementById('examsGrid');
@@ -665,7 +749,6 @@
     }
   }
 
-  /* ---------- render grid ---------- */
   function renderExams(list) {
     const grid = document.getElementById('examsGrid');
 
@@ -709,7 +792,6 @@
     }).join('');
   }
 
-  /* ---------- filters ---------- */
   function populateExamTypeFilters(list) {
     const container = document.getElementById('examTypeFilters');
     const types = [...new Set(list.map((e) => (e.type || '').trim()).filter(Boolean))].sort();
@@ -772,7 +854,6 @@
     }).join('');
   }
 
-  /* ---------- filter logic ---------- */
   function setExamTypeFilter(type, btn) {
     currentExamTypeFilter = type;
     document.querySelectorAll('#examTypeFilters .filter-tab').forEach((t) => t.classList.remove('active'));
@@ -815,7 +896,6 @@
   document.getElementById('examSearchInput').addEventListener('input', debouncedFilterExams);
   document.getElementById('examSearchInput').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterExams(); });
 
-  /* ---------- views ---------- */
   function showDirectory() {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-exam-detail').classList.remove('active');
@@ -831,7 +911,6 @@
     document.getElementById('view-exam-detail').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // skeleton state
     document.getElementById('examDetailName').textContent = 'Loading...';
     document.getElementById('examDetailBadge').textContent = '';
     document.getElementById('examDetailBadge').className = 'exam-badge';
@@ -879,7 +958,6 @@
     document.getElementById('examOverviewText').textContent = msg;
   }
 
-  /* ---------- render detail ---------- */
   function renderExamDetail(e) {
     const body = e.body || '—';
     const type = e.type || '—';
@@ -899,7 +977,6 @@
       ${session ? `<span class="dot">●</span><span>${escapeHtml(session)}</span>` : ''}
     `;
 
-    // Buttons
     const siteBtn = document.getElementById('registerBtn');
     const website = safeUrl(e.website);
     if (website) {
@@ -920,13 +997,11 @@
       sourceBtn.onclick = null;
     }
 
-    // Overview
     document.getElementById('examOverviewText').textContent =
       e.description || 'No overview has been published for this examination.';
     document.getElementById('examEligibleText').textContent =
       e.eligibility || 'See the official website for eligibility details.';
 
-    // Side info
     document.getElementById('sideBody').textContent = body;
     document.getElementById('sideType').textContent = type;
     document.getElementById('sideSession').textContent = session || '—';
@@ -937,12 +1012,10 @@
     if (website) { sideWebsite.textContent = website; sideWebsite.href = website; }
     else { sideWebsite.textContent = '—'; sideWebsite.href = '#'; }
 
-    // Countdown
     document.getElementById('countdownValue').textContent = session || st.label;
     document.getElementById('countdownSub').textContent =
       e.close_date ? `Closes ${formatDate(e.close_date)}` : (e.open_date ? `Opens ${formatDate(e.open_date)}` : 'Dates pending');
 
-    // Key facts
     const facts = [
       ['Examination body', body],
       ['Type', type],
@@ -956,12 +1029,10 @@
       .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${typeof v === 'string' && v.startsWith('<') ? v : escapeHtml(v)}</td></tr>`)
       .join('');
 
-    // Registration summary
     document.getElementById('regOpens').textContent = formatDate(e.open_date);
     document.getElementById('regCloses').textContent = formatDate(e.close_date);
     document.getElementById('regSession').textContent = session || '—';
 
-    // Registration table
     const regRows = [];
     if (e.open_date) regRows.push({ event: 'Registration opens', date: formatDate(e.open_date), status: computeStatus(e.open_date, null) });
     if (e.close_date) regRows.push({ event: 'Registration closes', date: formatDate(e.close_date), status: computeStatus(null, e.close_date) });
@@ -972,7 +1043,6 @@
         }).join('')
       : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
-    // Timetable
     const ttParts = [];
     const ttUrl = safeUrl(e.timetable_url);
     if (ttUrl) {
@@ -988,17 +1058,14 @@
       ? ttParts.join('')
       : '<div class="resource-item"><i class="fas fa-file-pdf"></i><div class="res-text"><h4>No timetable available yet</h4></div></div>';
 
-    // Instructions
     document.getElementById('examInstructions').innerHTML = e.instructions
       ? `<div class="update-item"><i class="fas fa-check-circle"></i><div class="update-content"><h4>Examination instructions</h4><p>${escapeHtml(e.instructions)}</p></div></div>`
       : '<div class="update-item"><i class="fas fa-info-circle"></i><div class="update-content"><p style="color:var(--muted);">No specific instructions have been published.</p></div></div>';
 
-    // Requirements
     document.getElementById('eligibilityText').textContent =
       e.eligibility || 'See the official website for eligibility details.';
     document.getElementById('verifStatus').textContent = e.verification || '—';
 
-    // Resources
     const resParts = [];
     if (e.resources) {
       resParts.push(`<div class="update-item"><i class="fas fa-book-open"></i><div class="update-content"><h4>Resources</h4><p>${escapeHtml(e.resources)}</p></div></div>`);
@@ -1014,7 +1081,6 @@
       ? resParts.join('')
       : '<div class="update-item"><i class="fas fa-info-circle"></i><div class="update-content"><p style="color:var(--muted);">No preparation resources have been published.</p></div></div>';
 
-    // Official services
     const services = [];
     if (website) {
       services.push(`<a class="resource-item" href="${escapeHtml(website)}" target="_blank" rel="noopener">
@@ -1039,7 +1105,6 @@
       : '<div class="resource-item"><i class="fas fa-globe"></i><div class="res-text"><h4>No official links available</h4></div></div>';
   }
 
-  /* ---------- tabs ---------- */
   const tabItems = document.querySelectorAll('.exam-tab-item');
   const tabPanels = {
     overview: document.getElementById('exam-panel-overview'),
@@ -1060,7 +1125,6 @@
     });
   });
 
-  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -1070,7 +1134,6 @@
     });
   }
 
-  /* ---------- history ---------- */
   let initialised = false;
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
@@ -1081,13 +1144,14 @@
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const examParam = params.get('exam');
+
+    loadFeaturedBanner();
     loadExams().then(() => {
       initialised = true;
       if (examParam) openExam(examParam);
     });
   });
 
-  // Expose functions used by inline handlers
   window.showDirectory = showDirectory;
   window.openExam = openExam;
   window.filterExams = filterExams;

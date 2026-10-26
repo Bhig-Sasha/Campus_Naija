@@ -55,6 +55,39 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* FEATURED BANNER (from placements) */
+    .featured-banner-section { padding: 32px 0 8px; display: none; animation: fadeInUp 0.5s ease; }
+    .featured-banner-section.has-image { display: block; }
+    .featured-banner {
+      position: relative; width: 100%; height: 320px;
+      border-radius: 24px; overflow: hidden;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .featured-banner:hover { border-color: var(--primary); }
+    .featured-banner img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; filter: brightness(0.85) saturate(1.05);
+      transition: transform 0.5s ease;
+    }
+    .featured-banner:hover img { transform: scale(1.02); }
+    .featured-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,10,9,0.75) 0%, rgba(7,10,9,0.1) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .featured-banner-caption {
+      position: absolute; left: 24px; right: 24px; bottom: 20px;
+      color: var(--text); font-size: 0.9rem; font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      z-index: 2;
+    }
+    @media (max-width: 600px) {
+      .featured-banner { height: 220px; border-radius: 18px; }
+      .featured-banner-caption { left: 16px; right: 16px; bottom: 14px; font-size: 0.82rem; }
+    }
+
     /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; animation: fadeInUp 0.5s ease; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -263,7 +296,6 @@
     .footer-legal a { transition: color 0.2s; }
     .footer-legal a:hover { color: var(--primary); }
 
-    /* prefers-reduced-motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
@@ -305,6 +337,14 @@
       <div class="eyebrow">Admission centre</div>
       <h1>Your next chapter starts here.</h1>
       <p>Discover admission opportunities, check requirements, track deadlines and find official application links for Nigerian institutions.</p>
+    </section>
+
+    <!-- Featured banner (populated from /api/public/placements — admissions / featured_banner) -->
+    <section class="featured-banner-section" id="featuredBannerSection">
+      <div class="featured-banner" id="featuredBanner">
+        <img id="featuredBannerImg" src="" alt="">
+        <div class="featured-banner-caption" id="featuredBannerCaption"></div>
+      </div>
     </section>
 
     <section class="search-filter-bar">
@@ -357,7 +397,6 @@
     <section>
       <div class="section-header"><div class="section-title" id="admissionCount">Explore admission opportunities</div></div>
       <div class="admissions-grid" id="admissionsGrid">
-        <!-- skeleton cards -->
         <div class="skeleton" style="height:260px;"></div>
         <div class="skeleton" style="height:260px;"></div>
         <div class="skeleton" style="height:260px;"></div>
@@ -615,6 +654,34 @@
     return res.json();
   }
 
+  /* ---------- Placement helper (cached per page) ---------- */
+  const placementCache = {};
+
+  async function getPlacementsForPage(page) {
+    if (placementCache[page]) return placementCache[page];
+    try {
+      const data = await apiGet(`/api/public/placements?page=${encodeURIComponent(page)}`);
+      const list = Array.isArray(data.placements) ? data.placements : [];
+      placementCache[page] = list;
+      return list;
+    } catch (err) {
+      console.warn('[placements]', page, err.message);
+      placementCache[page] = [];
+      return [];
+    }
+  }
+
+  function resolvePlacement(list, slot, contentRef) {
+    const refStr = contentRef != null ? String(contentRef) : null;
+    if (refStr) {
+      const scoped = list.find(p =>
+        p.slot === slot && p.content_ref && String(p.content_ref) === refStr
+      );
+      if (scoped) return scoped;
+    }
+    return list.find(p => p.slot === slot && !p.content_ref) || null;
+  }
+
   /* ---------- status derivation from dates ---------- */
   function computeStatus(openDate, closeDate) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -655,6 +722,32 @@
     const dt = new Date(d);
     if (isNaN(dt)) return '—';
     return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  /* ---------- Featured banner (DB-only, no fallback) ---------- */
+  async function loadFeaturedBanner() {
+    const section = document.getElementById('featuredBannerSection');
+    const img = document.getElementById('featuredBannerImg');
+    const captionEl = document.getElementById('featuredBannerCaption');
+
+    const list = await getPlacementsForPage('admissions');
+    const p = resolvePlacement(list, 'featured_banner', null);
+
+    if (!p || !p.public_url) {
+      // Nothing assigned in the admin — hide the section entirely.
+      section.classList.remove('has-image');
+      img.removeAttribute('src');
+      img.alt = '';
+      captionEl.textContent = '';
+      return;
+    }
+
+    img.src = p.public_url;
+    img.alt = p.alt_text || '';
+    img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    captionEl.textContent = p.caption || '';
+    section.classList.add('has-image');
   }
 
   /* ---------- data loading ---------- */
@@ -804,7 +897,6 @@
     document.getElementById('view-admission-detail').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // skeleton state
     document.getElementById('admissionDetailName').textContent = 'Loading...';
     document.getElementById('admissionDetailBadge').textContent = '';
     document.getElementById('admissionDetailBadge').className = 'admission-badge';
@@ -872,7 +964,6 @@
       ${session ? `<span class="dot">●</span><span>${escapeHtml(session)}</span>` : ''}
     `;
 
-    // Apply button
     const applyBtn = document.getElementById('officialApplyBtn');
     const portalUrl = safeUrl(a.application_url);
     if (portalUrl) {
@@ -883,7 +974,6 @@
       applyBtn.onclick = null;
     }
 
-    // Overview
     const overviewParts = [];
     if (a.notes) overviewParts.push(a.notes);
     if (a.extension_note) overviewParts.push(`Extension: ${a.extension_note}`);
@@ -893,7 +983,6 @@
     document.getElementById('admissionEligibleText').textContent =
       a.eligibility || 'See the official source for eligibility details.';
 
-    // Side info
     document.getElementById('sideInst').textContent = school;
     document.getElementById('sideRoute').textContent = route;
     document.getElementById('sideSession').textContent = session || '—';
@@ -901,7 +990,6 @@
     sideStatus.textContent = st.label;
     sideStatus.className = badgeClassFor(status);
 
-    // Official links
     const linksHtml = [];
     if (portalUrl) {
       linksHtml.push(`<a class="resource-item" href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">
@@ -920,7 +1008,6 @@
       ? linksHtml.join('')
       : '<div class="info-row"><span class="info-label">No links</span><span class="info-value">—</span></div>';
 
-    // Key facts
     const facts = [
       ['Institution', school],
       ['Route', route],
@@ -934,7 +1021,6 @@
       .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${typeof v === 'string' && v.startsWith('<') ? v : escapeHtml(v)}</td></tr>`)
       .join('');
 
-    // Requirements
     const docItems = [];
     if (a.requirements) {
       docItems.push(`<div class="checklist-item"><i class="fas fa-list-check"></i><div class="cl-text"><h4>Programme requirements</h4><p>${escapeHtml(a.requirements)}</p></div></div>`);
@@ -947,7 +1033,6 @@
     }
     document.getElementById('documentsChecklist').innerHTML = docItems.join('');
 
-    // Requirements summary
     const reqSummary = [
       ['Route', route],
       ['Session', session || '—'],
@@ -957,7 +1042,6 @@
       .map(([k, v]) => `<div class="info-row"><span class="info-label">${escapeHtml(k)}</span><span class="info-value">${escapeHtml(v)}</span></div>`)
       .join('');
 
-    // Dates table
     const rows = [];
     if (a.open_date) rows.push({ event: 'Applications open', date: formatDate(a.open_date), status: '—' });
     if (a.close_date) rows.push({ event: 'Applications close', date: formatDate(a.close_date), status: statusInfo(computeStatus(null, a.close_date)).label });
@@ -966,17 +1050,14 @@
       ? rows.map((r) => `<tr><td>${escapeHtml(r.event)}</td><td>${escapeHtml(r.date)}</td><td><span class="${badgeClassFor(status)}">${escapeHtml(r.status)}</span></td></tr>`).join('')
       : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
-    // Official notice
     const noticeHtml = sourceUrl
       ? `<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><h4>Official source</h4><p>This admission was verified against the institution's official publication.</p><div class="update-meta"><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div></div></div>`
       : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">No official source link published.</p></div></div>';
     document.getElementById('officialNoticeContainer').innerHTML = noticeHtml;
 
-    // Dates summary
     document.getElementById('datesSummaryOpens').textContent = formatDate(a.open_date);
     document.getElementById('datesSummaryCloses').textContent = formatDate(a.close_date);
 
-    // Application steps
     const stepHtml = portalUrl
       ? `<div class="update-item"><i class="fas fa-1"></i><div class="update-content"><h4>Visit the official portal</h4><p>Open the institution's application portal using the button below.</p><div class="update-meta"><a href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">${escapeHtml(portalUrl)}</a></div></div></div>
          <div class="update-item"><i class="fas fa-2"></i><div class="update-content"><h4>Create an account and submit</h4><p>Follow the portal's instructions to create your applicant profile and submit your application.</p></div></div>
@@ -1076,6 +1157,8 @@
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const idParam = params.get('admission');
+
+    loadFeaturedBanner();
     loadAdmissions().then(() => {
       initialised = true;
       if (idParam) openAdmission(idParam);

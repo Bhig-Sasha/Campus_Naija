@@ -54,6 +54,39 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* FEATURED BANNER (from placements) */
+    .featured-banner-section { padding: 32px 0 8px; display: none; animation: fadeInUp 0.5s ease; }
+    .featured-banner-section.has-image { display: block; }
+    .featured-banner {
+      position: relative; width: 100%; height: 320px;
+      border-radius: 24px; overflow: hidden;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.25s;
+    }
+    .featured-banner:hover { border-color: var(--primary); }
+    .featured-banner img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; filter: brightness(0.85) saturate(1.05);
+      transition: transform 0.5s ease;
+    }
+    .featured-banner:hover img { transform: scale(1.02); }
+    .featured-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,10,9,0.75) 0%, rgba(7,10,9,0.1) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .featured-banner-caption {
+      position: absolute; left: 24px; right: 24px; bottom: 20px;
+      color: var(--text); font-size: 0.9rem; font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      z-index: 2;
+    }
+    @media (max-width: 600px) {
+      .featured-banner { height: 220px; border-radius: 18px; }
+      .featured-banner-caption { left: 16px; right: 16px; bottom: 14px; font-size: 0.82rem; }
+    }
+
     /* DIRECTORY */
     .directory-hero { padding: 40px 0 24px; animation: fadeInUp 0.5s ease; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -80,7 +113,6 @@
     .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
     .view-all { color: var(--primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
 
-    /* Funding type cards */
     .funding-types { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 8px 0 32px; animation: fadeInUp 0.5s ease 0.15s both; }
     @media (min-width: 600px) { .funding-types { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .funding-types { grid-template-columns: repeat(4, 1fr); } }
@@ -91,7 +123,6 @@
     .funding-card h4 { font-size: 1rem; margin-bottom: 6px; }
     .funding-card p { font-size: 0.85rem; color: var(--muted); }
 
-    /* Scholarship grid */
     .scholarships-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 24px; }
     @media (min-width: 600px) { .scholarships-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .scholarships-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -117,7 +148,6 @@
     .scholarship-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; transition: gap 0.2s; }
     .scholarship-card:hover .scholarship-action { gap: 10px; }
 
-    /* Closing soon strip */
     .closing-soon-strip { padding: 32px 0 64px; animation: fadeInUp 0.5s ease 0.2s both; }
     .closing-soon-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; }
     .closing-soon-inner h2 { font-size: 1.5rem; margin-bottom: 8px; }
@@ -132,7 +162,6 @@
     .deadline-item .dl-text p { font-size: 0.8rem; color: var(--muted); margin: 0; }
     .deadline-item .dl-date { font-size: 0.8rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
 
-    /* DETAIL VIEW */
     .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; transition: color 0.2s, gap 0.2s; }
     .back-to-directory:hover { color: var(--primary); gap: 12px; }
 
@@ -236,17 +265,14 @@
     .scam-warning p { font-size: 0.82rem; color: var(--muted); margin: 0; }
     .scam-warning strong { color: var(--accent); }
 
-    /* SKELETON */
     .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* States */
     .empty-state, .error-state, .loading-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
     .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); animation: fadeIn 0.5s ease; }
     .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
     .error-state button:hover { background-color: #00b374; transform: translateY(-1px); }
 
-    /* Footer */
     .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
     .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
     @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
@@ -306,6 +332,14 @@
       <div class="eyebrow">Funding hub</div>
       <h1>Your potential deserves opportunity.</h1>
       <p>Discover scholarships, bursaries, grants, and educational funding opportunities that match your goals.</p>
+    </section>
+
+    <!-- Featured banner (populated from /api/public/placements — scholarships / featured_banner) -->
+    <section class="featured-banner-section" id="featuredBannerSection">
+      <div class="featured-banner" id="featuredBanner">
+        <img id="featuredBannerImg" src="" alt="">
+        <div class="featured-banner-caption" id="featuredBannerCaption"></div>
+      </div>
     </section>
 
     <section class="search-filter-bar">
@@ -390,7 +424,6 @@
       </ul>
     </div>
 
-    <!-- OVERVIEW -->
     <div class="scholarship-tab-panel active" id="scholarship-panel-overview">
       <div class="scholarship-profile-grid">
         <div>
@@ -428,7 +461,6 @@
       </div>
     </div>
 
-    <!-- ELIGIBILITY -->
     <div class="scholarship-tab-panel" id="scholarship-panel-eligibility">
       <div class="scholarship-profile-grid">
         <div>
@@ -459,7 +491,6 @@
       </div>
     </div>
 
-    <!-- FUNDING -->
     <div class="scholarship-tab-panel" id="scholarship-panel-funding">
       <div class="scholarship-profile-grid">
         <div>
@@ -494,7 +525,6 @@
       </div>
     </div>
 
-    <!-- APPLICATION -->
     <div class="scholarship-tab-panel" id="scholarship-panel-application">
       <div class="scholarship-profile-grid">
         <div>
@@ -527,7 +557,6 @@
       </div>
     </div>
 
-    <!-- DEADLINE -->
     <div class="scholarship-tab-panel" id="scholarship-panel-deadline">
       <div class="scholarship-profile-grid">
         <div>
@@ -657,6 +686,60 @@
     return res.json();
   }
 
+  /* ---------- placement helper (cached per page) ---------- */
+  const placementCache = {};
+
+  async function getPlacementsForPage(page) {
+    if (placementCache[page]) return placementCache[page];
+    try {
+      const data = await apiGet(`/api/public/placements?page=${encodeURIComponent(page)}`);
+      const list = Array.isArray(data.placements) ? data.placements : [];
+      placementCache[page] = list;
+      return list;
+    } catch (err) {
+      console.warn('[placements]', page, err.message);
+      placementCache[page] = [];
+      return [];
+    }
+  }
+
+  function resolvePlacement(list, slot, contentRef) {
+    const refStr = contentRef != null ? String(contentRef) : null;
+    if (refStr) {
+      const scoped = list.find(p =>
+        p.slot === slot && p.content_ref && String(p.content_ref) === refStr
+      );
+      if (scoped) return scoped;
+    }
+    return list.find(p => p.slot === slot && !p.content_ref) || null;
+  }
+
+  /* ---------- Featured banner (DB-only, no fallback) ---------- */
+  async function loadFeaturedBanner() {
+    const section = document.getElementById('featuredBannerSection');
+    const img = document.getElementById('featuredBannerImg');
+    const captionEl = document.getElementById('featuredBannerCaption');
+
+    const list = await getPlacementsForPage('scholarships');
+    const p = resolvePlacement(list, 'featured_banner', null);
+
+    if (!p || !p.public_url) {
+      section.classList.remove('has-image');
+      img.removeAttribute('src');
+      img.alt = '';
+      captionEl.textContent = '';
+      return;
+    }
+
+    img.src = p.public_url;
+    img.alt = p.alt_text || '';
+    img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    captionEl.textContent = p.caption || '';
+    section.classList.add('has-image');
+  }
+
+  /* ---------- status helpers ---------- */
   function computeStatus(openDate, closeDate) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const open = openDate ? new Date(openDate) : null;
@@ -725,7 +808,6 @@
     }
   }
 
-  /* ---------- render grid ---------- */
   function renderScholarships(list) {
     const grid = document.getElementById('scholarshipsGrid');
 
@@ -768,7 +850,6 @@
     }).join('');
   }
 
-  /* ---------- funding type cards ---------- */
   function renderFundingTypes(list) {
     const container = document.getElementById('fundingTypes');
     const categories = [...new Set(list.map((s) => s.category).filter(Boolean))].slice(0, 4);
@@ -800,7 +881,6 @@
     }).join('');
   }
 
-  /* ---------- filters ---------- */
   function populateFilters(list) {
     const catSelect = document.getElementById('categoryFilter');
     const lvlSelect = document.getElementById('levelFilter');
@@ -855,7 +935,6 @@
   document.getElementById('scholarshipSearch').addEventListener('input', debouncedFilterScholarships);
   document.getElementById('scholarshipSearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterScholarships(); });
 
-  /* ---------- closing soon ---------- */
   function renderClosingSoon(list) {
     const section = document.getElementById('closingSoonSection');
     const container = document.getElementById('closingSoonList');
@@ -883,7 +962,6 @@
     }).join('');
   }
 
-  /* ---------- views ---------- */
   function showDirectory() {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-scholarship-detail').classList.remove('active');
@@ -899,7 +977,6 @@
     document.getElementById('view-scholarship-detail').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // skeleton state
     document.getElementById('scholarshipDetailName').textContent = 'Loading...';
     document.getElementById('scholarshipDetailBadge').textContent = '';
     document.getElementById('scholarshipDetailBadge').className = 'scholarship-badge';
@@ -944,7 +1021,6 @@
     document.getElementById('scholarshipOverviewText').textContent = msg;
   }
 
-  /* ---------- render detail ---------- */
   function renderDetail(s) {
     const sponsor = s.sponsor || '—';
     const category = s.category || '—';
@@ -966,7 +1042,6 @@
       ${level ? `<span class="dot">●</span><span>${escapeHtml(level)}</span>` : ''}
     `;
 
-    // Buttons
     const applyBtn = document.getElementById('applyBtn');
     if (applyUrl) {
       applyBtn.disabled = false;
@@ -984,11 +1059,9 @@
       sourceBtn.onclick = null;
     }
 
-    // Overview
     document.getElementById('scholarshipOverviewText').textContent =
       s.eligibility || s.coverage || 'No overview published for this scholarship.';
 
-    // Key facts
     const facts = [
       ['Sponsor', sponsor],
       ['Category', category],
@@ -1003,7 +1076,6 @@
       .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td></tr>`)
       .join('');
 
-    // Side info
     document.getElementById('sideSponsor').textContent = sponsor;
     document.getElementById('sideCategory').textContent = category;
     document.getElementById('sideLevel').textContent = level || '—';
@@ -1012,7 +1084,6 @@
     sideStatus.textContent = st.label;
     sideStatus.className = badgeClassFor(status);
 
-    // Countdown
     const closeDate = s.close_date || s.deadline;
     let countdownVal = '—';
     let countdownSub = '—';
@@ -1030,7 +1101,6 @@
     document.getElementById('countdownValue').textContent = countdownVal;
     document.getElementById('countdownSub').textContent = countdownSub;
 
-    // Eligibility
     const eligRows = [
       ['Level', level || '—'],
       ['Location', s.location || '—'],
@@ -1045,7 +1115,6 @@
       .map(([k, v]) => `<div class="info-row"><span class="info-label">${escapeHtml(k)}</span><span class="info-value">${escapeHtml(v)}</span></div>`)
       .join('');
 
-    // Funding
     const fundRows = [
       ['Amount', s.amount ? `${s.currency || ''} ${s.amount}`.trim() : '—'],
       ['Coverage', s.coverage || '—'],
@@ -1062,7 +1131,6 @@
     document.getElementById('fundingCurrency').textContent = s.currency || '—';
     document.getElementById('fundingFrequency').textContent = s.frequency || '—';
 
-    // Application
     const stepsHtml = s.steps
       ? `<div class="update-item"><i class="fas fa-list-ol"></i><div class="update-content"><h4>Application steps</h4><p>${escapeHtml(s.steps)}</p></div></div>`
       : '<div class="update-item"><i class="fas fa-info-circle"></i><div class="update-content"><p style="color:var(--muted);">See the official portal for application steps.</p></div></div>';
@@ -1075,7 +1143,6 @@
 
     document.getElementById('contactText').textContent = s.contact || '—';
 
-    // Timeline
     const timelineRows = [];
     if (s.open_date) timelineRows.push({ event: 'Application opens', date: formatDate(s.open_date), status: computeStatus(s.open_date, null) });
     if (closeDate) timelineRows.push({ event: 'Application closes', date: formatDate(closeDate), status: computeStatus(null, closeDate) });
@@ -1087,14 +1154,12 @@
         }).join('')
       : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
-    // Deadline summary
     document.getElementById('deadlineOpens').textContent = formatDate(s.open_date);
     document.getElementById('deadlineCloses').textContent = formatDate(closeDate);
     document.getElementById('deadlineExtension').textContent = s.extension || '—';
     document.getElementById('deadlineVerification').textContent = s.verification || '—';
   }
 
-  /* ---------- tabs ---------- */
   const tabItems = document.querySelectorAll('.scholarship-tab-item');
   const tabPanels = {
     overview: document.getElementById('scholarship-panel-overview'),
@@ -1125,7 +1190,6 @@
     });
   });
 
-  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -1135,7 +1199,6 @@
     });
   }
 
-  /* ---------- history ---------- */
   let initialised = false;
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
@@ -1146,6 +1209,8 @@
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const idParam = params.get('scholarship');
+
+    loadFeaturedBanner();
     loadScholarships().then(() => {
       initialised = true;
       if (idParam) openScholarship(idParam);
