@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Admissions Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,29 +24,62 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* Loading gate */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Skeleton shimmer */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 8px;
+    }
+    .skeleton-text { height: 12px; margin-bottom: 8px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w40 { width: 40%; }
+    .skeleton-text.w80 { width: 80%; }
+    .skeleton-circle { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; }
+    .skeleton-pill { height: 22px; width: 80px; border-radius: 40px; }
+    .skeleton-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      padding: 18px 20px; border-radius: 14px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
+      transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
@@ -56,8 +89,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
-
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
       display: flex; flex-direction: column; gap: 4px;
@@ -80,13 +111,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
-
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
       display: flex; align-items: center; gap: 12px;
@@ -107,6 +131,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -115,9 +140,8 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
-
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -153,11 +177,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -166,15 +185,13 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
+    /* CONTENT */
     .content { padding: 32px 24px 56px; flex: 1; }
     .view { display: none; }
     .view.active { display: block; }
 
-    /* ============================================================ */
-    /* DIRECTORY VIEW                                               */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -184,8 +201,10 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
+    /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -199,22 +218,20 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
-    }
+    .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
-    }
+    /* Toolbar */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
       padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { background-color: #1f5c47; color: #9fe0c5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -223,6 +240,7 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-danger {
       background-color: transparent; color: var(--danger); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -239,6 +257,7 @@
       transition: all 0.15s;
     }
     .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
@@ -308,14 +327,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* EDITOR VIEW                                                  */
-    /* ============================================================ */
+    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -375,10 +387,7 @@
       padding-top: 20px; border-top: 1px solid var(--border);
     }
 
-    /* Status selector cards */
-    .status-cards {
-      display: grid; grid-template-columns: 1fr; gap: 10px;
-    }
+    .status-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
     @media (min-width: 600px) { .status-cards { grid-template-columns: repeat(3, 1fr); } }
     .status-card {
       background-color: var(--surface); border: 1px solid var(--border);
@@ -393,7 +402,6 @@
     .status-card .sc-title { font-size: 0.85rem; font-weight: 700; }
     .status-card .sc-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
 
-    /* Verification notice */
     .verify-notice {
       display: flex; gap: 12px; padding: 14px 16px;
       background-color: rgba(245,185,66,0.06);
@@ -404,14 +412,7 @@
     .verify-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
     .verify-notice strong { color: var(--accent); }
 
-    /* Conditional fields visibility */
-    .conditional-field { display: none; }
-    .conditional-field.visible { display: flex; flex-direction: column; gap: 6px; }
-
-    /* Danger zone */
-    .danger-panel {
-      border-color: rgba(224, 112, 112, 0.3);
-    }
+    .danger-panel { border-color: rgba(224, 112, 112, 0.3); }
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
 
@@ -425,20 +426,59 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 360px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
+    /* Footer */
+    .admin-footer {
+      margin-top: 40px;
+      padding: 28px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .footer-left i { color: var(--primary); font-size: 0.85rem; }
+    .footer-left .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .footer-right a {
+      color: var(--muted);
+      transition: color 0.15s ease;
+    }
+    .footer-right a:hover { color: var(--primary); }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -446,6 +486,11 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
+      .admin-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -455,6 +500,7 @@
       .editor-header-info h1 { font-size: 1.4rem; }
       .notice-row { padding: 16px; }
       .notice-actions { width: 100%; justify-content: flex-end; }
+      .footer-right { width: 100%; justify-content: space-between; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -467,11 +513,15 @@
 </head>
 <body>
 
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -481,7 +531,7 @@
         <div class="nav-group-label">Workspace</div>
         <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
         <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
-        <a href="./Admissions.html" class="nav-item active"><i class="fas fa-clipboard-list"></i> Admissions <span class="nav-badge">—</span></a>
+        <a href="./Admissions.html" class="nav-item active"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
         <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
         <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
@@ -493,20 +543,18 @@
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -515,28 +563,25 @@
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search admin records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search admin records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
       <main class="content">
 
-        <!-- ============================================================ -->
-        <!-- DIRECTORY VIEW                                               -->
-        <!-- ============================================================ -->
+        <!-- DIRECTORY -->
         <div id="view-directory" class="view active">
           <div class="page-heading">
             <div class="eyebrow"><i class="fas fa-clipboard-list"></i> Admission management</div>
@@ -544,27 +589,25 @@
             <p>Manage application notices, requirements and deadlines.</p>
           </div>
 
-          <!-- Stats -->
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">All notices <i class="fas fa-list"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
-          <!-- Toolbar -->
           <div class="toolbar">
             <button class="btn-primary" onclick="openEditor()">
               <i class="fas fa-plus"></i> Create Admission Notice
@@ -574,16 +617,6 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="noticeSearch" placeholder="Search school or admission title..." oninput="filterNotices()">
               </div>
-              <select id="typeFilter" onchange="filterNotices()">
-                <option value="">All admission types</option>
-                <option value="undergraduate">Undergraduate (UTME)</option>
-                <option value="direct-entry">Direct Entry</option>
-                <option value="postgraduate">Postgraduate</option>
-                <option value="diploma">Diploma / Certificate</option>
-                <option value="jupeb">JUPEB / IJMB</option>
-                <option value="nd-hnd">ND / HND</option>
-                <option value="transfer">Transfer</option>
-              </select>
               <select id="statusFilter" onchange="filterNotices()">
                 <option value="">All statuses</option>
                 <option value="draft">Draft</option>
@@ -600,24 +633,65 @@
             </div>
           </div>
 
-          <!-- List header -->
           <div class="panel-header" style="margin: 8px 0 14px;">
             <div class="panel-title" style="font-size: 1rem;"><i class="fas fa-list"></i> Admission notices</div>
-            <span style="font-size:0.78rem; color: var(--muted);" id="noticeCount">Showing 0 records</span>
+            <span style="font-size:0.78rem; color: var(--muted);" id="noticeCount">Loading…</span>
           </div>
 
           <div class="notice-list" id="noticeList">
-            <!-- Populated by JS -->
+            <!-- Skeleton rows -->
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div style="min-width:110px;">
+                <div class="skeleton skeleton-text w40"></div>
+                <div class="skeleton skeleton-text w80"></div>
+              </div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
           </div>
-
-          <p class="footnote">
-            <i class="fas fa-circle-info"></i> Illustrative record only. No actual institution, deadline or admission status is being asserted.
-          </p>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- EDITOR VIEW                                                  -->
-        <!-- ============================================================ -->
+        <!-- EDITOR -->
         <div id="view-editor" class="view">
           <div class="back-link" onclick="showDirectory()">
             <i class="fas fa-arrow-left"></i> Back to all notices
@@ -630,11 +704,9 @@
             </div>
             <div class="editor-header-actions">
               <button class="btn-outline" onclick="showDirectory()">Cancel</button>
-              <button class="btn-outline" onclick="saveNotice('Draft')"><i class="fas fa-file"></i> Save Draft</button>
             </div>
           </div>
 
-          <!-- Notice details -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-file-lines"></i> Notice details</div>
@@ -647,13 +719,7 @@
               <div class="form-group">
                 <label>Institution <span class="req">*</span></label>
                 <select id="noticeSchool">
-                  <option value="">Select a school from School Management</option>
-                  <option value="uniabuja">University of Abuja</option>
-                  <option value="unilag">University of Lagos</option>
-                  <option value="biu">Benson Idahosa University</option>
-                  <option value="yabatech">Yaba College of Technology</option>
-                  <option value="abu">Ahmadu Bello University</option>
-                  <option value="fce">Federal College of Education, Kano</option>
+                  <option value="">Loading schools…</option>
                 </select>
               </div>
               <div class="form-group">
@@ -666,15 +732,13 @@
               </div>
               <div class="form-group">
                 <label>Entry route <span class="req">*</span></label>
-                <select id="noticeRoute" onchange="onRouteChange()">
+                <select id="noticeRoute">
                   <option value="">Select route</option>
-                  <option value="undergraduate">UTME / Undergraduate</option>
-                  <option value="direct-entry">Direct Entry</option>
-                  <option value="postgraduate">Postgraduate (PGD / Master's / PhD)</option>
-                  <option value="diploma">Diploma / Certificate</option>
-                  <option value="jupeb">JUPEB / IJMB</option>
-                  <option value="nd-hnd">ND / HND</option>
-                  <option value="transfer">Transfer</option>
+                  <option value="UTME">UTME / Undergraduate</option>
+                  <option value="Direct Entry">Direct Entry</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                  <option value="Diploma">Diploma / Certificate</option>
+                  <option value="HND Screening">ND / HND</option>
                 </select>
               </div>
               <div class="form-group">
@@ -685,154 +749,85 @@
                 <label>Closing date</label>
                 <input type="date" id="noticeCloseDate">
               </div>
-            </div>
-          </div>
-
-          <!-- Programmes covered -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-book-open"></i> Programmes covered</div>
-            </div>
-            <div class="form-grid">
               <div class="form-group full">
-                <label>Programmes or courses <span class="optional">(leave empty for all eligible programmes)</span></label>
-                <select id="noticeProgrammes" multiple size="5" style="min-height: 120px;">
-                  <option value="all">All eligible programmes</option>
-                  <option value="computer-science">B.Sc. Computer Science</option>
-                  <option value="law">LL.B. Law</option>
-                  <option value="economics">B.Sc. Economics</option>
-                  <option value="engineering">B.Eng. Engineering</option>
-                  <option value="accounting">B.Sc. Accounting</option>
-                </select>
-                <span class="form-hint">Course options should come from the selected school's course records.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Requirements -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-list-check"></i> Admission requirements</div>
-            </div>
-
-            <!-- Type-specific fields -->
-            <div class="form-grid">
-              <!-- UTME specific -->
-              <div class="form-group conditional-field" id="fieldUtmeScore">
-                <label>UTME score requirement</label>
-                <input type="text" id="noticeUtmeScore" placeholder="e.g. Minimum 180">
-              </div>
-              <div class="form-group conditional-field" id="fieldUtmeSubjects">
-                <label>UTME subject combination</label>
-                <input type="text" id="noticeUtmeSubjects" placeholder="e.g. English, Mathematics, Physics, Chemistry">
-              </div>
-
-              <!-- Postgraduate specific -->
-              <div class="form-group conditional-field" id="fieldDegreeClass">
-                <label>Degree classification</label>
-                <input type="text" id="noticeDegreeClass" placeholder="e.g. Minimum Second Class Lower">
-              </div>
-              <div class="form-group conditional-field" id="fieldTranscript">
-                <label>Transcript requirement</label>
-                <input type="text" id="noticeTranscript" placeholder="e.g. Official transcript required">
-              </div>
-
-              <!-- Direct Entry specific -->
-              <div class="form-group conditional-field" id="fieldDeQualification">
-                <label>Direct Entry qualification</label>
-                <input type="text" id="noticeDeQualification" placeholder="e.g. A-Level / NCE / ND with minimum Lower Credit">
-              </div>
-
-              <!-- ND/HND specific -->
-              <div class="form-group conditional-field" id="fieldNdBasis">
-                <label>ND/HND entry basis</label>
-                <input type="text" id="noticeNdBasis" placeholder="e.g. UTME for ND, ND with Lower Credit for HND">
-              </div>
-            </div>
-
-            <div class="form-grid" style="margin-top: 16px;">
-              <div class="form-group full">
-                <label>General requirements</label>
+                <label>Requirements</label>
                 <textarea id="noticeRequirements" placeholder="Enter verified qualifications, required subjects, grades and any programme-specific conditions..."></textarea>
               </div>
-            </div>
-          </div>
-
-          <!-- Application instructions -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-pen-to-square"></i> Application instructions</div>
-            </div>
-            <div class="form-grid">
               <div class="form-group full">
-                <label>Steps and required documents</label>
+                <label>Application instructions</label>
                 <textarea id="noticeInstructions" placeholder="Explain the application steps and required documents..."></textarea>
               </div>
               <div class="form-group full">
                 <label>Official application URL <span class="req">*</span></label>
                 <input type="url" id="noticeAppUrl" placeholder="https://official-application-portal.example">
-                <span class="form-hint">Illustrative placeholder. The real URL must be checked before publishing.</span>
+                <span class="form-hint">The URL must be valid before saving.</span>
               </div>
               <div class="form-group full">
                 <label>Official source / announcement URL</label>
                 <input type="url" id="noticeSourceUrl" placeholder="Paste the official announcement link">
-                <span class="form-hint">Used to verify the notice. Required before marking as verified.</span>
+                <span class="form-hint">Required before marking as verified.</span>
               </div>
             </div>
           </div>
 
-          <!-- Publication status -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-shield-halved"></i> Publication status</div>
             </div>
-
             <div class="verify-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Verification and publication are separate states.</strong> A notice must be verified before it can be published. Publishing requires a confirmed official source and valid application URL.</p>
+              <p><strong>Verification and publication are separate states.</strong> A notice must be verified before it can be published.</p>
             </div>
-
             <div class="status-cards">
               <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
                 <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
-                <div class="sc-desc">Stored privately. Not visible to the public. You can finish editing later.</div>
+                <div class="sc-desc">Stored privately. Not visible to the public.</div>
               </div>
               <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
                 <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Pending verification</span></div>
-                <div class="sc-desc">Waiting for an admin to verify the official source, dates, and requirements.</div>
+                <div class="sc-desc">Waiting for admin to verify the official source.</div>
               </div>
               <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
                 <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
-                <div class="sc-desc">Confirmed against official sources. Can be published to the public site.</div>
+                <div class="sc-desc">Confirmed against official sources. Can be published.</div>
               </div>
             </div>
-
             <div class="form-actions">
-              <button class="btn-primary" onclick="saveNotice('Draft')"><i class="fas fa-save"></i> Save Draft</button>
-              <button class="btn-gold" onclick="saveNotice('Pending verification')"><i class="fas fa-clock"></i> Submit for verification</button>
-              <button class="btn-outline" onclick="saveNotice('Verified')"><i class="fas fa-circle-check"></i> Mark as verified</button>
-              <button class="btn-primary" onclick="publishNotice()"><i class="fas fa-bullhorn"></i> Publish notice</button>
+              <button class="btn-primary" id="saveDraftBtn" onclick="saveNotice('draft')"><i class="fas fa-save"></i> Save Draft</button>
+              <button class="btn-gold" id="verifyBtn" onclick="saveNotice('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
+              <button class="btn-outline" id="publishBtn" onclick="publishNotice()"><i class="fas fa-bullhorn"></i> Publish notice</button>
             </div>
           </div>
 
-          <!-- Danger zone -->
           <div class="panel danger-panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
             </div>
             <p style="font-size:0.85rem; color: var(--muted); margin-bottom:14px;">Destructive actions require confirmation and are recorded in the audit trail.</p>
             <div class="form-actions" style="border-top:none; padding-top:0;">
-              <button class="btn-outline" onclick="if(confirm('Unpublish this notice? It will be hidden from public browsing.')) toast('Notice unpublished (demo).')"><i class="fas fa-eye-slash"></i> Unpublish</button>
-              <button class="btn-danger" onclick="if(confirm('Archive this notice? Historical records will be retained.')) toast('Notice archived (demo).')"><i class="fas fa-box-archive"></i> Archive notice</button>
+              <button class="btn-danger" id="deleteBtn" onclick="deleteNotice()"><i class="fas fa-trash"></i> Delete notice</button>
             </div>
           </div>
         </div>
+
+        <footer class="admin-footer">
+          <div class="footer-left">
+            <span class="dot" aria-hidden="true"></span>
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>CampusNaija Administration</span>
+          </div>
+          <div class="footer-right">
+            <span id="footerYear">©</span>
+            <a href="/Privacy.html">Privacy</a>
+            <a href="/Terms.html">Terms</a>
+            <a href="mailto:support@campusnaija.ng">Support</a>
+          </div>
+        </footer>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Saved</span>
@@ -842,174 +837,180 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO DATA                                                    */
-      /* ============================================================ */
-      let notices = [
-        {
-          id: 'uniabuja-utme',
-          title: '2026/2027 UTME Admission',
-          school: 'uniabuja',
-          schoolName: 'University of Abuja',
-          session: '2026/2027',
-          route: 'undergraduate',
-          routeLabel: 'UTME / Undergraduate',
-          openDate: '2026-07-01',
-          closeDate: '2026-09-15',
-          status: 'published',
-          verification: 'verified',
-          programmes: ['all'],
-          requirements: 'Five O\'Level credits including English and Mathematics. UTME minimum 180.',
-          instructions: 'Visit the official portal, complete the form, upload documents, and pay the application fee.',
-          appUrl: 'https://uniabuja.edu.ng/admissions',
-          sourceUrl: 'https://uniabuja.edu.ng/admissions-notice-2026'
-        },
-        {
-          id: 'unilag-de',
-          title: '2026/2027 Direct Entry Admission',
-          school: 'unilag',
-          schoolName: 'University of Lagos',
-          session: '2026/2027',
-          route: 'direct-entry',
-          routeLabel: 'Direct Entry',
-          openDate: '2026-05-01',
-          closeDate: '2026-06-30',
-          status: 'published',
-          verification: 'verified',
-          programmes: ['all'],
-          requirements: 'A-Level / NCE / ND with minimum Lower Credit. Five O\'Level credits required.',
-          instructions: 'Apply through the UNILAG admissions portal and upload your Direct Entry qualification.',
-          appUrl: 'https://unilag.edu.ng/de-admissions',
-          sourceUrl: 'https://unilag.edu.ng/de-notice-2026'
-        },
-        {
-          id: 'biu-pg',
-          title: '2026/2027 Postgraduate Admission',
-          school: 'biu',
-          schoolName: 'Benson Idahosa University',
-          session: '2026/2027',
-          route: 'postgraduate',
-          routeLabel: 'Postgraduate (PGD / Master\'s / PhD)',
-          openDate: '2026-06-01',
-          closeDate: '2026-08-31',
-          status: 'published',
-          verification: 'verified',
-          programmes: ['all'],
-          requirements: 'Bachelor\'s degree with minimum Second Class Lower for Master\'s. Master\'s for PhD.',
-          instructions: 'Complete the postgraduate application on the BIU portal and upload transcripts.',
-          appUrl: 'https://biu.edu.ng/postgraduate',
-          sourceUrl: 'https://biu.edu.ng/pg-notice-2026'
-        },
-        {
-          id: 'yabatech-nd',
-          title: '2026/2027 ND Admission',
-          school: 'yabatech',
-          schoolName: 'Yaba College of Technology',
-          session: '2026/2027',
-          route: 'nd-hnd',
-          routeLabel: 'ND / HND',
-          openDate: '2026-07-01',
-          closeDate: '2026-09-30',
-          status: 'draft',
-          verification: 'unverified',
-          programmes: ['all'],
-          requirements: 'Five O\'Level credits including English and Mathematics. UTME minimum 120.',
-          instructions: 'Visit the YABATECH admission portal, complete the form and pay the application fee.',
-          appUrl: 'https://yabatech.edu.ng/nd-admissions',
-          sourceUrl: ''
-        },
-        {
-          id: 'abu-utme',
-          title: '2025/2026 UTME Admission',
-          school: 'abu',
-          schoolName: 'Ahmadu Bello University',
-          session: '2025/2026',
-          route: 'undergraduate',
-          routeLabel: 'UTME / Undergraduate',
-          openDate: '2025-12-01',
-          closeDate: '2026-02-28',
-          status: 'archived',
-          verification: 'verified',
-          programmes: ['all'],
-          requirements: 'Five O\'Level credits including English and Mathematics. UTME minimum 180.',
-          instructions: 'Application window closed.',
-          appUrl: 'https://abu.edu.ng/admissions',
-          sourceUrl: 'https://abu.edu.ng/notice-2025'
-        },
-        {
-          id: 'fce-nce',
-          title: '2026/2027 NCE Admission',
-          school: 'fce',
-          schoolName: 'Federal College of Education, Kano',
-          session: '2026/2027',
-          route: 'diploma',
-          routeLabel: 'Diploma / Certificate',
-          openDate: '2026-06-01',
-          closeDate: '2026-09-30',
-          status: 'pending',
-          verification: 'pending',
-          programmes: ['all'],
-          requirements: 'Five O\'Level credits including English and Mathematics. UTME minimum 100.',
-          instructions: 'Apply through the FCE Kano portal.',
-          appUrl: 'https://fcekano.edu.ng/nce',
-          sourceUrl: ''
-        }
-      ];
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
+      let token = null;
+      let currentUser = null;
+      let notices = [];
+      let schools = [];
       let currentNoticeId = null;
       let selectedStatus = 'draft';
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function statusPill(status, verification) {
-        if (status === 'published') {
-          return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
-        }
-        if (status === 'archived') {
-          return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
-        }
-        if (verification === 'pending') {
-          return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
-        }
-        if (verification === 'verified') {
-          return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
-        }
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
-      }
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 
-      function formatDate(d) {
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const formatDate = (d) => {
         if (!d) return 'Not entered';
-        const date = new Date(d + 'T00:00:00');
+        const date = new Date(d);
+        if (isNaN(date)) return 'Not entered';
         return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      function toast(msg) {
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      /* ============================================================ */
-      /* DIRECTORY                                                    */
-      /* ============================================================ */
+      function statusPill(status, verification) {
+        if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
+        if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
+        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
+        if (verification === 'verified') return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+      }
+
+      /* AUTH */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
+      }
+
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
+      }
+
+      /* DATA */
+      async function loadAll() {
+        // Load schools + admissions in parallel
+        const results = await Promise.allSettled([
+          api('/api/schools'),
+          api('/api/admissions'),
+        ]);
+
+        if (results[0].status === 'fulfilled') {
+          schools = results[0].value.schools || [];
+        } else {
+          console.error('[schools]', results[0].reason);
+        }
+
+        if (results[1].status === 'fulfilled') {
+          notices = results[1].value.admissions || [];
+        } else {
+          console.error('[admissions]', results[1].reason);
+          notices = [];
+        }
+
+        populateSchoolSelect();
+        renderStats();
+        renderDirectory();
+      }
+
+      function populateSchoolSelect() {
+        const sel = document.getElementById('noticeSchool');
+        sel.innerHTML = '<option value="">Select a school</option>' +
+          schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+      }
+
+      function renderStats() {
+        const set = (id, val) => {
+          document.getElementById(id).textContent = val;
+        };
+        set('statTotal', notices.length);
+        set('statPublished', notices.filter(n => n.status === 'published').length);
+        set('statDraft', notices.filter(n => n.status === 'draft').length);
+        set('statPending', notices.filter(n => n.verification === 'pending').length);
+      }
+
       function renderDirectory() {
         const list = document.getElementById('noticeList');
         const query = (document.getElementById('noticeSearch').value || '').toLowerCase().trim();
-        const type = document.getElementById('typeFilter').value;
         const status = document.getElementById('statusFilter').value;
         const session = document.getElementById('sessionFilter').value;
 
         const filtered = notices.filter(n => {
-          const matchQ = !query ||
-            n.title.toLowerCase().includes(query) ||
-            n.schoolName.toLowerCase().includes(query);
-          const matchT = !type || n.route === type;
-          const matchS = !status || n.status === status || n.verification === status;
+          const title = (n.title || '').toLowerCase();
+          const school = (n.school_name || '').toLowerCase();
+          const matchQ = !query || title.includes(query) || school.includes(query);
+          const matchStatus = !status ||
+            (status === 'draft' && n.status === 'draft' && n.verification !== 'pending') ||
+            (status === 'pending' && n.verification === 'pending') ||
+            (status === 'verified' && n.verification === 'verified' && n.status !== 'published') ||
+            (status === 'published' && n.status === 'published') ||
+            (status === 'archived' && n.status === 'archived');
           const matchSession = !session || n.session === session;
-          return matchQ && matchT && matchS && matchSession;
+          return matchQ && matchStatus && matchSession;
         });
 
         document.getElementById('noticeCount').textContent = `Showing ${filtered.length} of ${notices.length} records`;
@@ -1018,8 +1019,8 @@
           list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-clipboard-list"></i>
-              <h3>No notices match your filters</h3>
-              <p>Try adjusting the search or filter options.</p>
+              <h3>No admission notices</h3>
+              <p>${notices.length === 0 ? 'Create your first notice to get started.' : 'Try adjusting your filters.'}</p>
             </div>`;
           return;
         }
@@ -1033,67 +1034,63 @@
               </div>
               <div class="notice-main">
                 <div class="notice-title-row">
-                  <span class="notice-title">${n.title}</span>
+                  <span class="notice-title">${esc(n.title || 'Untitled')}</span>
                 </div>
-                <div class="notice-sub">${n.schoolName}</div>
+                <div class="notice-sub">${esc(n.school_name || '—')}</div>
               </div>
               <div class="notice-meta-cell">
                 <div class="meta-label-sm">Route</div>
-                <div class="meta-value-sm">${n.routeLabel}</div>
+                <div class="meta-value-sm">${esc(n.entry_route || '—')}</div>
               </div>
               <div class="notice-meta-cell">
                 <div class="meta-label-sm">Session</div>
-                <div class="meta-value-sm">${n.session}</div>
+                <div class="meta-value-sm">${esc(n.session || '—')}</div>
               </div>
               <div class="notice-meta-cell">
                 <div class="meta-label-sm">Deadline</div>
-                <div class="meta-value-sm ${n.closeDate ? 'gold' : ''}">${formatDate(n.closeDate)}</div>
+                <div class="meta-value-sm ${n.close_date ? 'gold' : ''}">${formatDate(n.close_date)}</div>
               </div>
               <div class="notice-meta-cell">
                 <div class="meta-label-sm">Status</div>
                 ${statusPill(n.status, n.verification)}
               </div>
               <div class="notice-actions">
-                <button class="btn-outline" onclick="openEditor('${n.id}')"><i class="fas fa-pen"></i> Manage notice</button>
+                <button class="btn-outline" onclick="openEditor('${esc(n.id)}')">
+                  <i class="fas fa-pen"></i> Manage
+                </button>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
 
       function filterNotices() { renderDirectory(); }
 
-      /* ============================================================ */
-      /* EDITOR                                                       */
-      /* ============================================================ */
+      /* EDITOR */
       function openEditor(id) {
         currentNoticeId = id || null;
         const n = id ? notices.find(x => x.id === id) : null;
 
         document.getElementById('editorTitle').textContent = n ? 'Edit admission notice' : 'New admission notice';
 
-        // Populate fields
-        document.getElementById('noticeTitle').value = n ? n.title : '';
-        document.getElementById('noticeSchool').value = n ? n.school : '';
-        document.getElementById('noticeSession').value = n ? n.session : '';
-        document.getElementById('noticeRoute').value = n ? n.route : '';
-        document.getElementById('noticeOpenDate').value = n ? n.openDate : '';
-        document.getElementById('noticeCloseDate').value = n ? n.closeDate : '';
-        document.getElementById('noticeRequirements').value = n ? n.requirements : '';
-        document.getElementById('noticeInstructions').value = n ? n.instructions : '';
-        document.getElementById('noticeAppUrl').value = n ? n.appUrl : '';
-        document.getElementById('noticeSourceUrl').value = n ? n.sourceUrl : '';
+        document.getElementById('noticeTitle').value = n ? (n.title || '') : '';
+        document.getElementById('noticeSchool').value = n ? (n.school_id || '') : '';
+        document.getElementById('noticeSession').value = n ? (n.session || '') : '';
+        document.getElementById('noticeRoute').value = n ? (n.entry_route || '') : '';
+        document.getElementById('noticeOpenDate').value = n && n.open_date ? n.open_date.slice(0, 10) : '';
+        document.getElementById('noticeCloseDate').value = n && n.close_date ? n.close_date.slice(0, 10) : '';
+        document.getElementById('noticeRequirements').value = n ? (n.requirements || '') : '';
+        document.getElementById('noticeInstructions').value = n ? (n.instructions || '') : '';
+        document.getElementById('noticeAppUrl').value = n ? (n.application_url || '') : '';
+        document.getElementById('noticeSourceUrl').value = n ? (n.source_url || '') : '';
 
-        // Reset status
-        selectedStatus = n ? (n.status === 'published' ? 'verified' : n.verification || 'draft') : 'draft';
+        selectedStatus = n ? (n.verification === 'verified' ? 'verified' : n.verification === 'pending' ? 'pending' : 'draft') : 'draft';
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
-        const statusCard = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
-        if (statusCard) statusCard.classList.add('selected');
+        const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
+        if (sc) sc.classList.add('selected');
 
-        // Update conditional fields
-        updateConditionalFields();
+        // Show/hide delete button
+        document.getElementById('deleteBtn').style.display = n ? '' : 'none';
 
-        // Show editor
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1106,160 +1103,151 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      /* Route change — show/hide type-specific fields */
-      function onRouteChange() {
-        updateConditionalFields();
-      }
-
-      function updateConditionalFields() {
-        const route = document.getElementById('noticeRoute').value;
-
-        // Hide all conditional fields first
-        document.querySelectorAll('.conditional-field').forEach(f => f.classList.remove('visible'));
-
-        if (route === 'undergraduate') {
-          document.getElementById('fieldUtmeScore').classList.add('visible');
-          document.getElementById('fieldUtmeSubjects').classList.add('visible');
-        } else if (route === 'postgraduate') {
-          document.getElementById('fieldDegreeClass').classList.add('visible');
-          document.getElementById('fieldTranscript').classList.add('visible');
-        } else if (route === 'direct-entry') {
-          document.getElementById('fieldDeQualification').classList.add('visible');
-        } else if (route === 'nd-hnd') {
-          document.getElementById('fieldNdBasis').classList.add('visible');
-        }
-      }
-
-      /* Status selection */
       function selectStatus(status, el) {
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
       }
 
-      /* ============================================================ */
-      /* SAVE & PUBLISH                                               */
-      /* ============================================================ */
-      function saveNotice(statusLabel) {
+      async function saveNotice(mode) {
         const title = document.getElementById('noticeTitle').value.trim();
-        const school = document.getElementById('noticeSchool').value;
+        const schoolId = document.getElementById('noticeSchool').value;
         const session = document.getElementById('noticeSession').value;
         const route = document.getElementById('noticeRoute').value;
         const appUrl = document.getElementById('noticeAppUrl').value.trim();
-
-        // Validation
-        if (!title) { toast('Please enter an admission title.'); return; }
-        if (!school) { toast('Please select an institution.'); return; }
-        if (!session) { toast('Please select an academic session.'); return; }
-        if (!route) { toast('Please select an entry route.'); return; }
-        if (!appUrl) { toast('Please enter the official application URL.'); return; }
-
-        // Basic URL validation
-        try { new URL(appUrl); } catch (e) {
-          toast('Please enter a valid application URL (including https://).');
-          return;
-        }
-
-        // Date validation
+        const sourceUrl = document.getElementById('noticeSourceUrl').value.trim();
         const openDate = document.getElementById('noticeOpenDate').value;
         const closeDate = document.getElementById('noticeCloseDate').value;
+
+        if (!title) { toast('Please enter an admission title.', true); return; }
+        if (!schoolId) { toast('Please select an institution.', true); return; }
+        if (!session) { toast('Please select an academic session.', true); return; }
+        if (!route) { toast('Please select an entry route.', true); return; }
+        if (!appUrl) { toast('Please enter the official application URL.', true); return; }
+        try { new URL(appUrl); } catch (e) { toast('Please enter a valid application URL.', true); return; }
+        if (sourceUrl) {
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+        }
         if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
-          toast('Closing date cannot be before the opening date.');
+          toast('Closing date cannot be before opening date.', true);
           return;
         }
 
-        // Determine verification from selected status
+        // Determine verification
         let verification = 'unverified';
-        let finalStatus = 'draft';
-        if (selectedStatus === 'pending') { verification = 'pending'; finalStatus = 'draft'; }
-        else if (selectedStatus === 'verified') { verification = 'verified'; finalStatus = 'draft'; }
-
-        // If saving as Draft explicitly
-        if (statusLabel === 'Draft') { verification = 'unverified'; finalStatus = 'draft'; }
-        if (statusLabel === 'Pending verification') { verification = 'pending'; finalStatus = 'draft'; }
-        if (statusLabel === 'Verified') {
-          // Require source URL for verification
-          const sourceUrl = document.getElementById('noticeSourceUrl').value.trim();
-          if (!sourceUrl) { toast('An official source URL is required to mark a notice as verified.'); return; }
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.'); return; }
+        if (mode === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to mark as verified.', true); return; }
           verification = 'verified';
-          finalStatus = 'draft';
+        } else if (selectedStatus === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to mark as verified.', true); return; }
+          verification = 'verified';
+        } else if (selectedStatus === 'pending') {
+          verification = 'pending';
         }
 
-        // Build notice object
-        const schoolSelect = document.getElementById('noticeSchool');
-        const schoolName = schoolSelect.options[schoolSelect.selectedIndex].text;
-        const routeSelect = document.getElementById('noticeRoute');
-        const routeLabel = routeSelect.options[routeSelect.selectedIndex].text;
-
-        const noticeObj = {
-          id: currentNoticeId || 'notice-' + Date.now(),
-          title: title,
-          school: school,
-          schoolName: schoolName,
-          session: session,
-          route: route,
-          routeLabel: routeLabel,
-          openDate: openDate,
-          closeDate: closeDate,
-          status: finalStatus,
-          verification: verification,
-          programmes: ['all'],
-          requirements: document.getElementById('noticeRequirements').value.trim(),
-          instructions: document.getElementById('noticeInstructions').value.trim(),
-          appUrl: appUrl,
-          sourceUrl: document.getElementById('noticeSourceUrl').value.trim()
+        const body = {
+          title,
+          session,
+          entry_route: route,
+          application_url: appUrl,
+          source_url: sourceUrl || null,
+          open_date: openDate || null,
+          close_date: closeDate || null,
+          requirements: document.getElementById('noticeRequirements').value.trim() || null,
+          notes: document.getElementById('noticeInstructions').value.trim() || null,
         };
 
-        // Save or update
-        if (currentNoticeId) {
-          const idx = notices.findIndex(x => x.id === currentNoticeId);
-          if (idx !== -1) notices[idx] = noticeObj;
-        } else {
-          notices.unshift(noticeObj);
-          currentNoticeId = noticeObj.id;
-        }
+        const btn = document.getElementById('saveDraftBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
-        renderDirectory();
-        toast(statusLabel + ' · saved and logged to audit trail.');
+        try {
+          let saved;
+          if (currentNoticeId) {
+            saved = await api('/api/admissions/' + encodeURIComponent(currentNoticeId), {
+              method: 'PATCH', body: JSON.stringify(body)
+            });
+            // If verification changed, call verify
+            if (verification === 'verified' && saved.admission && saved.admission.verification !== 'verified') {
+              await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/verify', { method: 'POST' });
+            }
+          } else {
+            // Create needs school_id in URL
+            saved = await api('/api/schools/' + encodeURIComponent(schoolId) + '/admissions', {
+              method: 'POST', body: JSON.stringify(body)
+            });
+            currentNoticeId = saved.admission.id;
+            // If verification was requested, apply it now
+            if (verification === 'verified') {
+              await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/verify', { method: 'POST' });
+            }
+          }
 
-        // If saving draft from the editor, return to directory
-        if (statusLabel === 'Draft') {
-          setTimeout(showDirectory, 600);
+          await loadAll();
+          toast('Notice saved.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
         }
       }
 
-      function publishNotice() {
+      async function publishNotice() {
         if (!currentNoticeId) {
-          toast('Save the notice first before publishing.');
+          toast('Save the notice first before publishing.', true);
           return;
         }
         const n = notices.find(x => x.id === currentNoticeId);
         if (!n) return;
 
-        // Check verification
         if (n.verification !== 'verified') {
-          toast('Notice must be verified before it can be published.');
+          toast('Notice must be verified before it can be published.', true);
           return;
         }
 
-        // Check dates
-        if (!n.openDate || !n.closeDate) {
-          toast('Please set both opening and closing dates before publishing.');
-          return;
+        if (!confirm('Publish this notice? It will be visible on the public site.')) return;
+
+        const btn = document.getElementById('publishBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing…';
+
+        try {
+          await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/publish', { method: 'POST' });
+          await loadAll();
+          toast('Notice published.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish notice';
         }
-
-        if (!confirm('Publish this admission notice? It will become visible on the public Admissions page, Search, and the homepage.')) return;
-
-        n.status = 'published';
-        renderDirectory();
-        toast('Notice published · visible on public site and logged to audit trail.');
-        setTimeout(showDirectory, 800);
       }
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      async function deleteNotice() {
+        if (!currentNoticeId) return;
+        if (!confirm('Delete this admission notice? This cannot be undone.')) return;
+
+        const btn = document.getElementById('deleteBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+
+        try {
+          await api('/api/admissions/' + encodeURIComponent(currentNoticeId), { method: 'DELETE' });
+          await loadAll();
+          toast('Notice deleted.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-trash"></i> Delete notice';
+        }
+      }
+
+      /* SIDEBAR + LOGOUT */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1278,16 +1266,34 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        renderDirectory();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
+      // Footer year
+      document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
+
+      /* BOOT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await loadAll();
+      })();
+
+      // Expose functions used by inline onclick
+      window.filterNotices = filterNotices;
+      window.openEditor = openEditor;
+      window.showDirectory = showDirectory;
+      window.selectStatus = selectStatus;
+      window.saveNotice = saveNotice;
+      window.publishNotice = publishNotice;
+      window.deleteNotice = deleteNotice;
     })();
   </script>
 

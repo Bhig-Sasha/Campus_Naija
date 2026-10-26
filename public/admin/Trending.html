@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CampusNaija — Trending & News Management</title>
+  <meta name="robots" content="noindex, nofollow">
+  <title>CampusNaija — Trending Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,29 +24,63 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* Loading gate */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Skeleton shimmer */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 8px;
+    }
+    .skeleton-text { height: 12px; margin-bottom: 8px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w40 { width: 40%; }
+    .skeleton-text.w80 { width: 80%; }
+    .skeleton-circle { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; }
+    .skeleton-pill { height: 22px; width: 80px; border-radius: 40px; }
+    .skeleton-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      padding: 18px 20px; border-radius: 14px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
+      transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
@@ -56,8 +90,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
-
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
       display: flex; flex-direction: column; gap: 4px;
@@ -80,12 +112,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
       display: flex; align-items: center; gap: 12px;
@@ -106,6 +132,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -114,9 +141,8 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
-
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -152,11 +178,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -165,15 +186,11 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
     .view { display: none; }
     .view.active { display: block; }
-
-    /* ============================================================ */
-    /* DIRECTORY VIEW                                               */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -181,10 +198,12 @@
       letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
     }
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
-    .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
+    /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -198,22 +217,19 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
-    }
+    .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
 
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
-    }
+    /* Toolbar */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
       padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { background-color: #1f5c47; color: #9fe0c5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -222,14 +238,7 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-gold {
-      background-color: transparent; color: var(--accent); font-weight: 600;
-      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
-      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: all 0.15s;
-    }
-    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-danger {
       background-color: transparent; color: var(--danger); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -238,6 +247,15 @@
       transition: all 0.15s;
     }
     .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+    .btn-gold {
+      background-color: transparent; color: var(--accent); font-weight: 600;
+      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
+      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
@@ -255,7 +273,7 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Story record list */
+    /* Record list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -308,14 +326,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* EDITOR VIEW                                                  */
-    /* ============================================================ */
+    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -332,9 +343,6 @@
     .editor-header-info p { color: var(--muted); font-size: 0.9rem; max-width: 640px; }
     .editor-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .editor-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-    @media (min-width: 1100px) { .editor-layout { grid-template-columns: 1.6fr 1fr; } }
-
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -345,7 +353,6 @@
     }
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
-    .panel-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
     @media (min-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
@@ -374,59 +381,13 @@
     .form-group textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 
-    /* Article body editor */
-    .article-editor {
-      min-height: 320px;
-      line-height: 1.7;
-      font-size: 0.95rem;
-    }
-    .editor-toolbar {
-      display: flex; flex-wrap: wrap; gap: 4px;
-      padding: 8px; background-color: var(--surface);
-      border: 1px solid var(--border); border-bottom: none;
-      border-radius: 10px 10px 0 0;
-    }
-    .editor-toolbar button {
-      background: transparent; border: none; color: var(--muted);
-      padding: 6px 10px; border-radius: 6px; cursor: pointer;
-      font-size: 0.8rem; transition: all 0.15s;
-    }
-    .editor-toolbar button:hover { background-color: var(--elevated); color: var(--primary); }
-    .editor-toolbar .divider { width: 1px; background-color: var(--border); margin: 4px 4px; }
-    #articleBody {
-      border-radius: 0 0 10px 10px;
-      min-height: 280px;
+    .form-actions {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+      padding-top: 20px; border-top: 1px solid var(--border);
     }
 
-    /* Cover image */
-    .cover-preview {
-      width: 100%; height: 160px; background-color: var(--surface);
-      border: 1px dashed var(--border); border-radius: 12px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 8px;
-      color: var(--muted); font-size: 0.82rem; cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-      margin-bottom: 12px;
-    }
-    .cover-preview:hover { border-color: var(--primary); color: var(--primary); }
-    .cover-preview i { font-size: 1.6rem; }
-    .cover-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* Related content chips */
-    .related-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .related-chip {
-      background-color: var(--surface); border: 1px solid var(--border);
-      color: var(--muted); font-size: 0.78rem; font-weight: 600;
-      padding: 6px 14px; border-radius: 40px; cursor: pointer;
-      transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
-    }
-    .related-chip:hover { border-color: var(--primary); color: var(--primary); }
-    .related-chip.selected { background-color: rgba(0,201,130,0.1); border-color: var(--primary); color: var(--primary); }
-    .related-chip i { font-size: 0.7rem; }
-
-    /* Status cards */
     .status-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    @media (min-width: 600px) { .status-cards { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 600px) { .status-cards { grid-template-columns: repeat(4, 1fr); } }
     .status-card {
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: 10px; padding: 14px 16px; cursor: pointer;
@@ -440,7 +401,6 @@
     .status-card .sc-title { font-size: 0.82rem; font-weight: 700; }
     .status-card .sc-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
 
-    /* Verify notice */
     .verify-notice {
       display: flex; gap: 12px; padding: 14px 16px;
       background-color: rgba(245,185,66,0.06);
@@ -451,90 +411,9 @@
     .verify-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
     .verify-notice strong { color: var(--accent); }
 
-    /* Featured toggle */
-    .feature-toggle {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 16px; background-color: var(--surface);
-      border: 1px solid var(--border); border-radius: 10px;
-      cursor: pointer; transition: border-color 0.15s;
-    }
-    .feature-toggle:hover { border-color: var(--accent); }
-    .feature-toggle.on { border-color: var(--accent); background-color: rgba(245,185,66,0.06); }
-    .feature-toggle .toggle-switch {
-      width: 40px; height: 22px; border-radius: 40px;
-      background-color: var(--border); position: relative;
-      transition: background 0.2s; flex-shrink: 0;
-    }
-    .feature-toggle.on .toggle-switch { background-color: var(--accent); }
-    .feature-toggle .toggle-switch::after {
-      content: ''; position: absolute; top: 3px; left: 3px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background-color: var(--text); transition: transform 0.2s;
-    }
-    .feature-toggle.on .toggle-switch::after { transform: translateX(18px); background-color: #070A09; }
-    .feature-toggle .ft-text { flex: 1; }
-    .feature-toggle .ft-title { font-size: 0.85rem; font-weight: 700; }
-    .feature-toggle .ft-desc { font-size: 0.72rem; color: var(--muted); }
-
-    .form-actions {
-      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
-      padding-top: 20px; border-top: 1px solid var(--border);
-    }
-
-    /* Danger panel */
     .danger-panel { border-color: rgba(224, 112, 112, 0.3); }
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
-
-    /* Preview modal */
-    .preview-overlay {
-      display: none; position: fixed; inset: 0;
-      background-color: rgba(0,0,0,0.75); z-index: 150;
-      backdrop-filter: blur(4px); padding: 24px;
-      overflow-y: auto;
-    }
-    .preview-overlay.active { display: flex; align-items: flex-start; justify-content: center; }
-    .preview-modal {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 20px; max-width: 820px; width: 100%;
-      padding: 32px; position: relative; margin: auto;
-    }
-    .preview-close {
-      position: absolute; top: 16px; right: 16px;
-      background: transparent; border: 1px solid var(--border);
-      color: var(--muted); width: 36px; height: 36px;
-      border-radius: 50%; cursor: pointer; font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .preview-close:hover { color: var(--danger); border-color: var(--danger); }
-    .preview-label {
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
-    }
-    .preview-modal h1 { font-size: 1.8rem; margin-bottom: 12px; line-height: 1.2; }
-    .preview-meta {
-      display: flex; flex-wrap: wrap; gap: 16px;
-      font-size: 0.82rem; color: var(--muted); margin-bottom: 24px;
-      padding-bottom: 20px; border-bottom: 1px solid var(--border);
-    }
-    .preview-cover {
-      height: 200px; background-color: var(--elevated);
-      border: 1px solid var(--border); border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--border); font-size: 2rem; margin-bottom: 20px;
-    }
-    .preview-body { font-size: 0.95rem; color: #d0d8d4; line-height: 1.75; white-space: pre-wrap; }
-    .preview-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .preview-tab {
-      background-color: transparent; border: 1px solid var(--border);
-      color: var(--muted); padding: 6px 14px; border-radius: 8px;
-      font-size: 0.78rem; font-weight: 600; cursor: pointer;
-    }
-    .preview-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
-    .preview-mobile {
-      max-width: 375px; margin: 0 auto; border: 1px solid var(--border);
-      border-radius: 24px; padding: 16px; background-color: var(--bg);
-    }
 
     /* Toast */
     .toast {
@@ -546,20 +425,47 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 360px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
+    /* Footer */
+    .admin-footer {
+      margin-top: 40px;
+      padding: 28px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .footer-left {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; color: var(--text);
+    }
+    .footer-left i { color: var(--primary); font-size: 0.85rem; }
+    .footer-left .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .footer-right a { color: var(--muted); transition: color 0.15s ease; }
+    .footer-right a:hover { color: var(--primary); }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -567,6 +473,11 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
+      .admin-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -576,9 +487,7 @@
       .editor-header-info h1 { font-size: 1.4rem; }
       .record-row { padding: 16px; }
       .record-actions { width: 100%; justify-content: flex-end; }
-      .filter-row .search-inline { min-width: 100%; }
-      .preview-modal { padding: 20px; }
-      .preview-modal h1 { font-size: 1.4rem; }
+      .footer-right { width: 100%; justify-content: space-between; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -591,11 +500,15 @@
 </head>
 <body>
 
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -617,20 +530,18 @@
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -639,28 +550,25 @@
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search admin records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search admin records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
       <main class="content">
 
-        <!-- ============================================================ -->
-        <!-- DIRECTORY VIEW                                               -->
-        <!-- ============================================================ -->
+        <!-- DIRECTORY -->
         <div id="view-directory" class="view active">
           <div class="page-heading">
             <div class="eyebrow"><i class="fas fa-fire"></i> Content studio</div>
@@ -668,27 +576,25 @@
             <p>Create, review and publish education stories.</p>
           </div>
 
-          <!-- Stats -->
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">Total stories <i class="fas fa-newspaper"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-label">Featured <i class="fas fa-star gold"></i></div>
+              <div class="stat-mini-value" id="statFeatured"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
-          <!-- Toolbar -->
           <div class="toolbar">
             <button class="btn-primary" onclick="openEditor()">
               <i class="fas fa-plus"></i> New Article
@@ -696,15 +602,10 @@
             <div class="filter-row">
               <div class="search-inline">
                 <i class="fas fa-search"></i>
-                <input type="text" id="storySearch" placeholder="Search stories by title or category..." oninput="filterStories()">
+                <input type="text" id="storySearch" placeholder="Search stories..." oninput="filterStories()">
               </div>
               <select id="categoryFilter" onchange="filterStories()">
                 <option value="">All categories</option>
-                <option value="education">Education News</option>
-                <option value="admissions">Admissions</option>
-                <option value="exams">JAMB &amp; Exams</option>
-                <option value="scholarships">Scholarships</option>
-                <option value="campus">Campus Life</option>
               </select>
               <select id="statusFilter" onchange="filterStories()">
                 <option value="">All statuses</option>
@@ -716,32 +617,52 @@
               </select>
               <select id="featuredFilter" onchange="filterStories()">
                 <option value="">All stories</option>
-                <option value="featured">Featured on homepage</option>
+                <option value="featured">Featured only</option>
                 <option value="not-featured">Not featured</option>
               </select>
             </div>
           </div>
 
-          <!-- List header -->
-          <div class="panel-header" style="margin: 8px 0 14px; display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-            <div style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
-              <i class="fas fa-list" style="color:var(--primary); font-size:0.95rem;"></i> Content library
-            </div>
-            <span style="font-size:0.78rem; color: var(--muted);" id="storyCount">Showing 0 records</span>
+          <div class="panel-header" style="margin: 8px 0 14px;">
+            <div class="panel-title" style="font-size: 1rem;"><i class="fas fa-list"></i> Content library</div>
+            <span style="font-size:0.78rem; color: var(--muted);" id="storyCount">Loading…</span>
           </div>
 
           <div class="record-list" id="storyList">
-            <!-- Populated by JS -->
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
           </div>
-
-          <p class="footnote">
-            <i class="fas fa-circle-info"></i> Illustrative categories only, not live articles. All statistics load from the database; no live counts are provided in this preview.
-          </p>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- EDITOR VIEW                                                  -->
-        <!-- ============================================================ -->
+        <!-- EDITOR -->
         <div id="view-editor" class="view">
           <div class="back-link" onclick="showDirectory()">
             <i class="fas fa-arrow-left"></i> Back to all stories
@@ -750,282 +671,137 @@
           <div class="editor-header">
             <div class="editor-header-info">
               <h1 id="editorTitle">New article</h1>
-              <p>Write, review and publish education stories. Drafts and unpublished changes are not visible to the public.</p>
+              <p>Write, review and publish education stories. Drafts remain private until published.</p>
             </div>
             <div class="editor-header-actions">
-              <button class="btn-outline" onclick="previewArticle()"><i class="fas fa-eye"></i> Preview</button>
               <button class="btn-outline" onclick="showDirectory()">Cancel</button>
             </div>
           </div>
 
-          <div class="editor-layout">
-            <!-- LEFT: writing area -->
-            <div>
-              <!-- Article content -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-pen-nib"></i> Article content</div>
-                </div>
-                <div class="form-grid">
-                  <div class="form-group full">
-                    <label>Article headline <span class="req">*</span></label>
-                    <input type="text" id="articleHeadline" placeholder="e.g. JAMB announces key dates for 2026 UTME">
-                  </div>
-                  <div class="form-group">
-                    <label>Category <span class="req">*</span></label>
-                    <select id="articleCategory">
-                      <option value="education">Education News</option>
-                      <option value="admissions">Admissions</option>
-                      <option value="exams">JAMB &amp; Exams</option>
-                      <option value="scholarships">Scholarships</option>
-                      <option value="campus">Campus Life</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label>Author or editor <span class="req">*</span></label>
-                    <input type="text" id="articleAuthor" placeholder="e.g. CampusNaija Editorial" value="CampusNaija Editorial">
-                  </div>
-                  <div class="form-group full">
-                    <label>Short summary</label>
-                    <textarea id="articleSummary" placeholder="A brief summary shown on cards and in search results..." style="min-height: 70px;"></textarea>
-                  </div>
-                  <div class="form-group full">
-                    <label>Article content <span class="req">*</span></label>
-                    <div class="editor-toolbar">
-                      <button type="button" title="Bold" onclick="insertMarkdown('**')"><i class="fas fa-bold"></i></button>
-                      <button type="button" title="Italic" onclick="insertMarkdown('*')"><i class="fas fa-italic"></i></button>
-                      <button type="button" title="Heading" onclick="insertMarkdown('## ')"><i class="fas fa-heading"></i></button>
-                      <div class="divider"></div>
-                      <button type="button" title="Bullet list" onclick="insertMarkdown('- ')"><i class="fas fa-list-ul"></i></button>
-                      <button type="button" title="Numbered list" onclick="insertMarkdown('1. ')"><i class="fas fa-list-ol"></i></button>
-                      <button type="button" title="Link" onclick="insertMarkdown('[text](url)')"><i class="fas fa-link"></i></button>
-                      <button type="button" title="Quote" onclick="insertMarkdown('> ')"><i class="fas fa-quote-left"></i></button>
-                      <div class="divider"></div>
-                      <button type="button" title="Image" onclick="toast('Image picker opened — choose from Media Library (demo).')"><i class="fas fa-image"></i></button>
-                    </div>
-                    <textarea id="articleBody" class="article-editor" placeholder="Write your article content here..."></textarea>
-                    <span class="form-hint">Supports headings, paragraphs, lists, links, quotes and captions. Content is drafted privately until published.</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Cover image -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-image"></i> Cover image</div>
-                </div>
-                <div class="cover-preview" onclick="toast('Media Library opened — choose a cover image (demo).')">
-                  <i class="fas fa-cloud-arrow-up"></i>
-                  <span>Choose from Media Library</span>
-                </div>
-                <div class="cover-actions">
-                  <button class="btn-outline" onclick="toast('Media Library opened (demo).')"><i class="fas fa-photo-film"></i> Select image</button>
-                  <button class="btn-outline" onclick="toast('Upload dialog opened (demo).')"><i class="fas fa-upload"></i> Upload new</button>
-                </div>
-                <div class="form-group full" style="margin-top: 16px;">
-                  <label>Alternative text (accessibility)</label>
-                  <input type="text" id="articleAltText" placeholder="Describe the image for screen readers">
-                </div>
-                <div class="form-group full">
-                  <label>Caption</label>
-                  <input type="text" id="articleCaption" placeholder="Optional caption shown below the image">
-                </div>
-              </div>
-
-              <!-- Source management -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-link"></i> Source &amp; verification</div>
-                </div>
-                <div class="form-grid">
-                  <div class="form-group full">
-                    <label>Source URL <span class="req">*</span></label>
-                    <input type="url" id="articleSourceUrl" placeholder="https://official-source.example/article">
-                    <span class="form-hint">Required before the article can be verified and published.</span>
-                  </div>
-                  <div class="form-group">
-                    <label>Source publication date</label>
-                    <input type="date" id="articleSourceDate">
-                  </div>
-                  <div class="form-group">
-                    <label>Verification status</label>
-                    <select id="articleVerification">
-                      <option value="unverified">Unverified</option>
-                      <option value="pending">Pending review</option>
-                      <option value="verified">Verified</option>
-                    </select>
-                  </div>
-                  <div class="form-group full">
-                    <label>Verification notes</label>
-                    <textarea id="articleVerificationNotes" placeholder="Internal notes about source verification..." style="min-height: 70px;"></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <!-- SEO settings -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-magnifying-glass-chart"></i> SEO settings</div>
-                </div>
-                <div class="form-grid">
-                  <div class="form-group full">
-                    <label>Page title</label>
-                    <input type="text" id="articleSeoTitle" placeholder="Title shown in browser tabs and search results">
-                  </div>
-                  <div class="form-group full">
-                    <label>Meta description</label>
-                    <textarea id="articleSeoDesc" placeholder="A brief description for search engines (160 characters recommended)..." style="min-height: 70px;"></textarea>
-                  </div>
-                  <div class="form-group full">
-                    <label>URL slug</label>
-                    <input type="text" id="articleSlug" placeholder="e.g. jamb-announces-key-dates-2026-utme">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Related content -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-link-horizontal"></i> Related content</div>
-                  <span class="panel-sub" style="margin:0;">Link relevant records already stored in CampusNaija</span>
-                </div>
-                <div class="related-chips" id="relatedChips">
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-building-columns"></i> University of Abuja</div>
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-building-columns"></i> University of Lagos</div>
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-clipboard-list"></i> UNILAG Direct Entry Notice</div>
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-pen-to-square"></i> JAMB UTME 2026</div>
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-award"></i> MTN Foundation Scholarship</div>
-                  <div class="related-chip" onclick="toggleRelatedChip(this)"><i class="fas fa-award"></i> Chevening Scholarship</div>
-                </div>
-                <span class="form-hint" style="display:block; margin-top:12px;">Selected records will link to their public pages from this article.</span>
-              </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-pen-nib"></i> Article content</div>
             </div>
-
-            <!-- RIGHT: publishing panel -->
-            <div>
-              <!-- Publication status -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-bullhorn"></i> Publishing</div>
-                </div>
-
-                <div class="verify-notice">
-                  <i class="fas fa-triangle-exclamation"></i>
-                  <p><strong>Verification and publication are separate.</strong> Articles must be verified before publication. Publishing requires a source URL and valid content.</p>
-                </div>
-
-                <div class="status-cards">
-                  <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
-                    <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
-                    <div class="sc-desc">Stored privately. Not visible to the public.</div>
-                  </div>
-                  <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
-                    <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
-                    <div class="sc-desc">Awaiting editorial review and source verification.</div>
-                  </div>
-                  <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
-                    <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
-                    <div class="sc-desc">Confirmed. Ready to publish or schedule.</div>
-                  </div>
-                  <div class="status-card" data-status="scheduled" onclick="selectStatus('scheduled', this)">
-                    <div class="sc-top"><i class="fas fa-calendar-check"></i><span class="sc-title">Scheduled</span></div>
-                    <div class="sc-desc">Will publish automatically at the selected time.</div>
-                  </div>
-                </div>
-
-                <!-- Feature toggle -->
-                <div class="feature-toggle" id="featureToggle" style="margin-top: 16px;" onclick="toggleFeature()">
-                  <div class="toggle-switch"></div>
-                  <div class="ft-text">
-                    <div class="ft-title">Feature on homepage</div>
-                    <div class="ft-desc">Display this story in the featured section of Home.html</div>
-                  </div>
-                </div>
-
-                <!-- Schedule -->
-                <div class="form-group" style="margin-top: 16px;" id="scheduleGroup">
-                  <label>Schedule publication</label>
-                  <input type="datetime-local" id="articleSchedule">
-                  <span class="form-hint">The server is responsible for publishing at the scheduled time.</span>
-                </div>
-
-                <div class="form-actions">
-                  <button class="btn-primary" onclick="saveArticle('Draft')" style="width: 100%; justify-content: center;"><i class="fas fa-save"></i> Save as draft</button>
-                  <button class="btn-gold" onclick="saveArticle('Pending review')" style="width: 100%; justify-content: center;"><i class="fas fa-paper-plane"></i> Submit for review</button>
-                  <button class="btn-primary" onclick="publishArticle()" style="width: 100%; justify-content: center;"><i class="fas fa-bullhorn"></i> Publish after approval</button>
-                  <button class="btn-outline" onclick="scheduleArticle()" style="width: 100%; justify-content: center;"><i class="fas fa-calendar-check"></i> Schedule</button>
-                </div>
-                <p class="form-hint" style="margin-top: 12px;">Interactive prototype only — it does not save articles to a live database.</p>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Headline <span class="req">*</span></label>
+                <input type="text" id="articleHeadline" placeholder="e.g. JAMB announces key dates for 2026 UTME">
               </div>
-
-              <!-- Danger zone -->
-              <div class="panel danger-panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
-                </div>
-                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Destructive actions require confirmation and are recorded in the audit trail.</p>
-                <div class="form-actions" style="border-top: none; padding-top: 0;">
-                  <button class="btn-outline" onclick="if(confirm('Unpublish this article? It will be hidden from the public Trending page.')) toast('Article unpublished (demo).')"><i class="fas fa-eye-slash"></i> Unpublish</button>
-                  <button class="btn-danger" onclick="if(confirm('Archive this article? Historical data will be retained.')) toast('Article archived (demo).')"><i class="fas fa-box-archive"></i> Archive</button>
-                </div>
+              <div class="form-group">
+                <label>Category <span class="req">*</span></label>
+                <select id="articleCategory">
+                  <option value="Education">Education</option>
+                  <option value="Admissions">Admissions</option>
+                  <option value="Exams">Exams</option>
+                  <option value="Scholarships">Scholarships</option>
+                  <option value="Campus life">Campus life</option>
+                </select>
               </div>
-
-              <!-- Publishing workflow reminder -->
-              <div class="panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-diagram-project"></i> Publishing workflow</div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                  <div style="display: flex; gap: 10px; font-size: 0.82rem; color: var(--muted);">
-                    <span style="color: var(--primary); font-weight: 800; flex-shrink: 0;">1</span>
-                    <div><strong style="color: var(--text);">Draft</strong> — Create the headline, story, images, category and source.</div>
-                  </div>
-                  <div style="display: flex; gap: 10px; font-size: 0.82rem; color: var(--muted);">
-                    <span style="color: var(--accent); font-weight: 800; flex-shrink: 0;">2</span>
-                    <div><strong style="color: var(--text);">Review</strong> — Check accuracy, sources, spelling and image rights.</div>
-                  </div>
-                  <div style="display: flex; gap: 10px; font-size: 0.82rem; color: var(--muted);">
-                    <span style="color: var(--primary); font-weight: 800; flex-shrink: 0;">3</span>
-                    <div><strong style="color: var(--text);">Publish or schedule</strong> — Publish immediately or set a future time.</div>
-                  </div>
-                  <div style="display: flex; gap: 10px; font-size: 0.82rem; color: var(--muted);">
-                    <span style="color: var(--accent); font-weight: 800; flex-shrink: 0;">4</span>
-                    <div><strong style="color: var(--text);">Public display</strong> — Appears on Trending.html and homepage if featured.</div>
-                  </div>
-                </div>
+              <div class="form-group">
+                <label>Author <span class="req">*</span></label>
+                <input type="text" id="articleAuthor" placeholder="e.g. CampusNaija Editorial">
+              </div>
+              <div class="form-group full">
+                <label>Summary</label>
+                <textarea id="articleSummary" placeholder="Brief summary for cards and search results..." style="min-height:70px;"></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Body <span class="req">*</span></label>
+                <textarea id="articleBody" placeholder="Write the article content here..." style="min-height:240px; line-height:1.7;"></textarea>
+                <span class="form-hint">Line breaks are preserved. Use blank lines between paragraphs.</span>
+              </div>
+              <div class="form-group full">
+                <label>Source URL <span class="optional">(required before verification)</span></label>
+                <input type="url" id="articleSourceUrl" placeholder="https://official-source.example/article">
+              </div>
+              <div class="form-group">
+                <label>Source date</label>
+                <input type="date" id="articleSourceDate">
+              </div>
+              <div class="form-group">
+                <label>Cover media ID <span class="optional">(optional)</span></label>
+                <input type="text" id="articleCoverId" placeholder="media_assets.id if uploaded">
               </div>
             </div>
           </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-bullhorn"></i> Publication</div>
+            </div>
+            <div class="verify-notice">
+              <i class="fas fa-triangle-exclamation"></i>
+              <p><strong>Verification and publication are separate states.</strong> An article must have a source URL before it can be verified, and must be verified before it can be published.</p>
+            </div>
+            <div class="status-cards">
+              <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
+                <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
+                <div class="sc-desc">Private. Not visible to the public.</div>
+              </div>
+              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
+                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
+                <div class="sc-desc">Awaiting editorial review.</div>
+              </div>
+              <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
+                <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
+                <div class="sc-desc">Confirmed against sources. Ready to publish.</div>
+              </div>
+              <div class="status-card" data-status="scheduled" onclick="selectStatus('scheduled', this)">
+                <div class="sc-top"><i class="fas fa-calendar-check"></i><span class="sc-title">Scheduled</span></div>
+                <div class="sc-desc">Publishes at a set future time.</div>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="articleFeatured" style="width:auto;">
+                <span>Feature on homepage</span>
+              </label>
+              <span class="form-hint">Featured stories appear in the homepage card row.</span>
+            </div>
+
+            <div class="form-group" id="scheduleGroup" style="margin-top: 16px; display: none;">
+              <label>Schedule publication at</label>
+              <input type="datetime-local" id="articleSchedule">
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-primary" id="saveDraftBtn" onclick="saveArticle('draft')"><i class="fas fa-save"></i> Save Draft</button>
+              <button class="btn-gold" id="verifyBtn" onclick="saveArticle('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
+              <button class="btn-outline" id="publishBtn" onclick="publishArticle()"><i class="fas fa-bullhorn"></i> Publish</button>
+              <button class="btn-outline" id="scheduleBtn" onclick="scheduleArticle()"><i class="fas fa-calendar-check"></i> Schedule</button>
+            </div>
+          </div>
+
+          <div class="panel danger-panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
+            </div>
+            <p style="font-size:0.85rem; color: var(--muted); margin-bottom:14px;">Destructive actions require confirmation and are recorded in the audit trail.</p>
+            <div class="form-actions" style="border-top:none; padding-top:0;">
+              <button class="btn-danger" id="deleteBtn" onclick="deleteArticle()"><i class="fas fa-trash"></i> Delete article</button>
+            </div>
+          </div>
         </div>
+
+        <footer class="admin-footer">
+          <div class="footer-left">
+            <span class="dot" aria-hidden="true"></span>
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>CampusNaija Administration</span>
+          </div>
+          <div class="footer-right">
+            <span id="footerYear">©</span>
+            <a href="/Privacy.html">Privacy</a>
+            <a href="/Terms.html">Terms</a>
+            <a href="mailto:support@campusnaija.ng">Support</a>
+          </div>
+        </footer>
 
       </main>
     </div>
   </div>
 
-  <!-- ==================== PREVIEW MODAL ==================== -->
-  <div class="preview-overlay" id="previewOverlay">
-    <div class="preview-modal">
-      <button class="preview-close" onclick="closePreview()" aria-label="Close">
-        <i class="fas fa-xmark"></i>
-      </button>
-      <div class="preview-tabs">
-        <button class="preview-tab active" onclick="setPreviewMode('desktop', this)">Desktop</button>
-        <button class="preview-tab" onclick="setPreviewMode('mobile', this)">Mobile</button>
-      </div>
-      <div id="previewContent">
-        <div class="preview-label">Article preview</div>
-        <h1 id="previewHeadline">Article headline</h1>
-        <div class="preview-meta" id="previewMeta">
-          <span><i class="far fa-calendar-alt"></i> Today</span>
-          <span><i class="fas fa-building"></i> CampusNaija Editorial</span>
-        </div>
-        <div class="preview-cover"><i class="fas fa-image"></i></div>
-        <div class="preview-body" id="previewBody">Article content will appear here.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Saved</span>
@@ -1035,177 +811,158 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO DATA                                                    */
-      /* ============================================================ */
-      let stories = [
-        {
-          id: 's1',
-          title: 'JAMB announces key dates for 2026 UTME',
-          category: 'exams',
-          categoryLabel: 'JAMB & Exams',
-          author: 'CampusNaija Exams Desk',
-          updated: '2026-05-24',
-          status: 'published',
-          featured: true,
-          summary: 'The Joint Admissions and Matriculation Board has released important dates for the 2026 UTME exercise.',
-          body: 'The Joint Admissions and Matriculation Board (JAMB) has announced key dates for the 2026 Unified Tertiary Matriculation Examination (UTME).\n\nRegistration opens in January 2026 and closes in March 2026. The examination is expected to hold in April 2026.\n\nCandidates are advised to register early and prepare adequately using approved study materials.',
-          sourceUrl: 'https://jamb.gov.ng/utme-2026',
-          sourceDate: '2026-01-15',
-          verification: 'verified',
-          seoTitle: 'JAMB 2026 UTME Key Dates Announced',
-          seoDesc: 'JAMB has released important dates for the 2026 UTME, including registration and examination windows.',
-          slug: 'jamb-2026-utme-dates',
-          schedule: ''
-        },
-        {
-          id: 's2',
-          title: 'Universities begin 2026/2027 admission process',
-          category: 'admissions',
-          categoryLabel: 'Admissions',
-          author: 'CampusNaija Admissions Desk',
-          updated: '2026-05-22',
-          status: 'published',
-          featured: true,
-          summary: 'Several Nigerian universities have commenced their admission processes for the upcoming academic session.',
-          body: 'Several Nigerian universities have commenced their admission processes for the 2026/2027 academic session.\n\nCandidates who applied through JAMB can check their admission status through the JAMB Central Admissions Processing System (CAPS).\n\nAdmission offers are time-sensitive, so candidates should check their status regularly and respond promptly.',
-          sourceUrl: 'https://jamb.gov.ng/caps',
-          sourceDate: '2026-05-20',
-          verification: 'verified',
-          seoTitle: '2026/2027 University Admission Process Begins',
-          seoDesc: 'Nigerian universities have started their 2026/2027 admission processes. Check your status via JAMB CAPS.',
-          slug: 'universities-admission-2026-2027',
-          schedule: ''
-        },
-        {
-          id: 's3',
-          title: 'Scholarship deadlines approaching for Nigerian students',
-          category: 'scholarships',
-          categoryLabel: 'Scholarships',
-          author: 'CampusNaija Scholarships Desk',
-          updated: '2026-05-20',
-          status: 'pending',
-          featured: false,
-          summary: 'Several local and international scholarships are closing soon. Here\'s what you need to know to apply.',
-          body: 'Several scholarship opportunities for Nigerian students are closing soon.\n\nThis includes the MTN Foundation Scholarship (30 June 2026), the Chevening Scholarship (15 July 2026), and the NNPC/Total Scholarship (5 August 2026).\n\nApplicants should read the eligibility criteria carefully and apply before the deadlines.',
-          sourceUrl: 'https://chevening.org/nigeria',
-          sourceDate: '2026-05-15',
-          verification: 'pending',
-          seoTitle: 'Scholarship Deadlines for Nigerian Students',
-          seoDesc: 'A roundup of scholarships for Nigerian students closing soon, including MTN, Chevening and NNPC/Total.',
-          slug: 'scholarship-deadlines-2026',
-          schedule: ''
-        },
-        {
-          id: 's4',
-          title: 'Guides and opportunities for student success',
-          category: 'campus',
-          categoryLabel: 'Campus Life',
-          author: 'CampusNaija Student Desk',
-          updated: '2026-05-18',
-          status: 'draft',
-          featured: false,
-          summary: 'Useful student information and practical advice for navigating university life and beyond.',
-          body: 'Success in university goes beyond attending lectures. It requires good study habits, active participation, and taking advantage of available opportunities.\n\nThis guide covers study strategies, campus resources, and extra-curricular opportunities.',
-          sourceUrl: 'https://example.edu/student-success',
-          sourceDate: '2026-05-10',
-          verification: 'unverified',
-          seoTitle: 'Student Success Guide',
-          seoDesc: 'Practical advice for Nigerian university students on study habits, campus resources and opportunities.',
-          slug: 'student-success-guide',
-          schedule: ''
-        },
-        {
-          id: 's5',
-          title: 'Updates from Nigeria\'s education sector',
-          category: 'education',
-          categoryLabel: 'Education News',
-          author: 'CampusNaija Newsroom',
-          updated: '2026-05-16',
-          status: 'scheduled',
-          featured: false,
-          summary: 'Key developments in education policy and institutions across Nigeria.',
-          body: 'The Nigerian education sector continues to evolve with several key developments.\n\nThe Federal Ministry of Education has announced new initiatives aimed at improving learning outcomes, while universities are implementing reforms to their academic calendars.',
-          sourceUrl: 'https://education.gov.ng/updates',
-          sourceDate: '2026-05-14',
-          verification: 'verified',
-          seoTitle: 'Nigeria Education Sector Updates',
-          seoDesc: 'Recent developments in Nigerian education policy, institutions and academic calendars.',
-          slug: 'nigeria-education-updates',
-          schedule: '2026-05-26T09:00'
-        },
-        {
-          id: 's6',
-          title: 'New education policy aims to improve learning outcomes',
-          category: 'education',
-          categoryLabel: 'Education News',
-          author: 'CampusNaija Newsroom',
-          updated: '2026-05-12',
-          status: 'archived',
-          featured: false,
-          summary: 'The federal government has announced a new policy initiative focused on improving educational standards.',
-          body: 'The federal government has announced a new education policy initiative aimed at improving learning outcomes.\n\nThe policy focuses on teacher training, curriculum development, and infrastructure improvement.',
-          sourceUrl: 'https://education.gov.ng/policy-2026',
-          sourceDate: '2026-05-10',
-          verification: 'verified',
-          seoTitle: 'New Education Policy Announced',
-          seoDesc: 'Nigeria\'s new education policy focuses on teacher training, curriculum and infrastructure.',
-          slug: 'new-education-policy',
-          schedule: ''
-        }
-      ];
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
+      let token = null;
+      let currentUser = null;
+      let stories = [];
       let currentStoryId = null;
       let selectedStatus = 'draft';
-      let isFeatured = false;
-      let selectedRelated = [];
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function toast(msg) {
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const formatDate = (d) => {
+        if (!d) return '—';
+        const date = new Date(d);
+        if (isNaN(date)) return '—';
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      const categoryIcon = (cat) => {
+        const c = (cat || '').toLowerCase();
+        if (c.includes('admission')) return 'fa-clipboard-list';
+        if (c.includes('exam') || c.includes('jamb')) return 'fa-pen-to-square';
+        if (c.includes('scholarship')) return 'fa-award';
+        if (c.includes('campus')) return 'fa-graduation-cap';
+        return 'fa-newspaper';
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      function statusPill(status) {
+      function statusPill(status, verification, featured) {
         if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
         if (status === 'scheduled') return `<span class="status-pill status-scheduled"><i class="fas fa-calendar-check"></i> Scheduled</span>`;
-        if (status === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
         if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
+        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
         return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
       }
 
-      function formatDate(d) {
-        if (!d) return '—';
+      /* AUTH */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
         try {
-          const date = new Date(d + 'T00:00:00');
-          return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        } catch (e) { return d; }
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
       }
 
-      function categoryIcon(cat) {
-        if (cat === 'education') return 'fa-newspaper';
-        if (cat === 'admissions') return 'fa-clipboard-list';
-        if (cat === 'exams') return 'fa-pen-to-square';
-        if (cat === 'scholarships') return 'fa-award';
-        if (cat === 'campus') return 'fa-graduation-cap';
-        return 'fa-newspaper';
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
       }
 
-      function slugify(text) {
-        return text.toLowerCase().trim()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-');
+      /* DATA */
+      async function loadAll() {
+        try {
+          const res = await api('/api/trending');
+          stories = Array.isArray(res.stories) ? res.stories : [];
+          populateFilters();
+          renderStats();
+          renderDirectory();
+        } catch (e) {
+          document.getElementById('storyList').innerHTML =
+            `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Failed to load</h3><p>${esc(e.message)}</p></div>`;
+          document.getElementById('storyCount').textContent = 'Error loading';
+        }
       }
 
-      /* ============================================================ */
-      /* DIRECTORY                                                    */
-      /* ============================================================ */
+      function populateFilters() {
+        const cats = [...new Set(stories.map(s => s.category).filter(Boolean))].sort();
+        const catSel = document.getElementById('categoryFilter');
+        catSel.innerHTML = '<option value="">All categories</option>' +
+          cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      }
+
+      function renderStats() {
+        const set = (id, val) => { document.getElementById(id).textContent = val; };
+        set('statTotal', stories.length);
+        set('statPublished', stories.filter(s => s.status === 'published').length);
+        set('statDraft', stories.filter(s => s.status === 'draft').length);
+        set('statFeatured', stories.filter(s => s.featured).length);
+      }
+
       function renderDirectory() {
         const list = document.getElementById('storyList');
         const query = (document.getElementById('storySearch').value || '').toLowerCase().trim();
@@ -1214,10 +971,10 @@
         const featured = document.getElementById('featuredFilter').value;
 
         const filtered = stories.filter(s => {
-          const matchQ = !query ||
-            s.title.toLowerCase().includes(query) ||
-            s.categoryLabel.toLowerCase().includes(query) ||
-            s.author.toLowerCase().includes(query);
+          const title = (s.title || '').toLowerCase();
+          const cat = (s.category || '').toLowerCase();
+          const author = (s.author || '').toLowerCase();
+          const matchQ = !query || title.includes(query) || cat.includes(query) || author.includes(query);
           const matchCat = !category || s.category === category;
           const matchStatus = !status || s.status === status;
           const matchFeatured = !featured ||
@@ -1226,14 +983,15 @@
           return matchQ && matchCat && matchStatus && matchFeatured;
         });
 
-        document.getElementById('storyCount').textContent = `Showing ${filtered.length} of ${stories.length} records`;
+        document.getElementById('storyCount').textContent =
+          `Showing ${filtered.length} of ${stories.length} records`;
 
         if (filtered.length === 0) {
           list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-newspaper"></i>
-              <h3>No stories match your filters</h3>
-              <p>Try adjusting the search or filter options.</p>
+              <h3>No stories</h3>
+              <p>${stories.length === 0 ? 'Create your first article to get started.' : 'Try adjusting your filters.'}</p>
             </div>`;
           return;
         }
@@ -1247,14 +1005,14 @@
               </div>
               <div class="record-main">
                 <div class="record-title-row">
-                  <span class="record-title">${s.title}</span>
+                  <span class="record-title">${esc(s.title || 'Untitled')}</span>
                   ${s.featured ? '<i class="fas fa-star featured-star" title="Featured on homepage"></i>' : ''}
                 </div>
-                <div class="record-sub">${s.categoryLabel} · ${s.author}</div>
+                <div class="record-sub">${esc(s.category || '—')} · ${esc(s.author || '—')}</div>
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Updated</div>
-                <div class="meta-value-sm">${formatDate(s.updated)}</div>
+                <div class="meta-value-sm">${formatDate(s.updated_at)}</div>
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Featured</div>
@@ -1262,64 +1020,44 @@
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Status</div>
-                ${statusPill(s.status)}
+                ${statusPill(s.status, s.verification, s.featured)}
               </div>
               <div class="record-actions">
-                <button class="btn-outline" onclick="openEditor('${s.id}')"><i class="fas fa-pen"></i> Edit</button>
-                <button class="btn-outline" onclick="quickPreview('${s.id}')"><i class="fas fa-eye"></i></button>
+                <button class="btn-outline" onclick="openEditor('${esc(s.id)}')">
+                  <i class="fas fa-pen"></i> Edit
+                </button>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
 
       function filterStories() { renderDirectory(); }
 
-      function quickPreview(id) {
-        const s = stories.find(x => x.id === id);
-        if (!s) return;
-        currentStoryId = id;
-        previewArticle();
-      }
-
-      /* ============================================================ */
-      /* EDITOR                                                       */
-      /* ============================================================ */
+      /* EDITOR */
       function openEditor(id) {
         currentStoryId = id || null;
         const s = id ? stories.find(x => x.id === id) : null;
 
         document.getElementById('editorTitle').textContent = s ? 'Edit article' : 'New article';
 
-        document.getElementById('articleHeadline').value = s ? s.title : '';
-        document.getElementById('articleCategory').value = s ? s.category : 'education';
-        document.getElementById('articleAuthor').value = s ? s.author : 'CampusNaija Editorial';
-        document.getElementById('articleSummary').value = s ? s.summary : '';
-        document.getElementById('articleBody').value = s ? s.body : '';
-        document.getElementById('articleAltText').value = '';
-        document.getElementById('articleCaption').value = '';
-        document.getElementById('articleSourceUrl').value = s ? s.sourceUrl : '';
-        document.getElementById('articleSourceDate').value = s ? s.sourceDate : '';
-        document.getElementById('articleVerification').value = s ? s.verification : 'unverified';
-        document.getElementById('articleVerificationNotes').value = '';
-        document.getElementById('articleSeoTitle').value = s ? s.seoTitle : '';
-        document.getElementById('articleSeoDesc').value = s ? s.seoDesc : '';
-        document.getElementById('articleSlug').value = s ? s.slug : '';
-        document.getElementById('articleSchedule').value = s ? (s.schedule || '') : '';
+        document.getElementById('articleHeadline').value = s ? (s.title || '') : '';
+        document.getElementById('articleCategory').value = s ? (s.category || 'Education') : 'Education';
+        document.getElementById('articleAuthor').value = s ? (s.author || '') : (currentUser.name || 'CampusNaija Editorial');
+        document.getElementById('articleSummary').value = s ? (s.summary || '') : '';
+        document.getElementById('articleBody').value = s ? (s.body || '') : '';
+        document.getElementById('articleSourceUrl').value = s ? (s.source_url || '') : '';
+        document.getElementById('articleSourceDate').value = s && s.source_date ? s.source_date.slice(0, 10) : '';
+        document.getElementById('articleCoverId').value = s ? (s.cover_media_id || '') : '';
+        document.getElementById('articleFeatured').checked = s ? !!s.featured : false;
+        document.getElementById('articleSchedule').value = '';
 
-        selectedStatus = s ? (s.status === 'published' ? 'verified' : s.status === 'scheduled' ? 'scheduled' : s.status === 'pending' ? 'pending' : 'draft') : 'draft';
-        if (selectedStatus === 'archived') selectedStatus = 'draft';
+        selectedStatus = s ? (s.verification === 'verified' ? 'verified' : s.verification === 'pending' ? 'pending' : 'draft') : 'draft';
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
-        const statusCard = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
-        if (statusCard) statusCard.classList.add('selected');
+        const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
+        if (sc) sc.classList.add('selected');
 
-        isFeatured = s ? s.featured : false;
-        updateFeatureToggle();
+        document.getElementById('deleteBtn').style.display = s ? '' : 'none';
         updateScheduleVisibility();
-
-        // Reset related chips
-        selectedRelated = [];
-        document.querySelectorAll('.related-chip').forEach(c => c.classList.remove('selected'));
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1333,18 +1071,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      /* Editor toolbar helpers */
-      function insertMarkdown(text) {
-        const ta = document.getElementById('articleBody');
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-        const sel = ta.value.substring(start, end);
-        const replacement = text === '[text](url)' ? `[${sel || 'text'}](url)` : text + sel + (text.length === 2 || text === '* ' || text === '**' ? text : '');
-        ta.value = ta.value.substring(0, start) + replacement + ta.value.substring(end);
-        ta.focus();
-        ta.selectionStart = ta.selectionEnd = start + replacement.length;
-      }
-
       function selectStatus(status, el) {
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
@@ -1354,194 +1080,157 @@
 
       function updateScheduleVisibility() {
         const group = document.getElementById('scheduleGroup');
-        if (selectedStatus === 'scheduled') group.style.display = 'flex';
-        else group.style.display = 'none';
+        group.style.display = selectedStatus === 'scheduled' ? '' : 'none';
       }
 
-      function toggleFeature() {
-        isFeatured = !isFeatured;
-        updateFeatureToggle();
-      }
-
-      function updateFeatureToggle() {
-        const el = document.getElementById('featureToggle');
-        el.classList.toggle('on', isFeatured);
-      }
-
-      function toggleRelatedChip(el) {
-        el.classList.toggle('selected');
-      }
-
-      /* ============================================================ */
-      /* SAVE & PUBLISH                                              */
-      /* ============================================================ */
-      function validateArticle(requireSource) {
-        const headline = document.getElementById('articleHeadline').value.trim();
-        const body = document.getElementById('articleBody').value.trim();
-        const author = document.getElementById('articleAuthor').value.trim();
-        const sourceUrl = document.getElementById('articleSourceUrl').value.trim();
-
-        if (!headline) { toast('Please enter an article headline.'); return false; }
-        if (!body) { toast('Please write the article content.'); return false; }
-        if (!author) { toast('Please enter the author or editor name.'); return false; }
-        if (requireSource) {
-          if (!sourceUrl) { toast('A source URL is required before verification or publication.'); return false; }
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL (including https://).'); return false; }
-        }
-        return true;
-      }
-
-      function saveArticle(statusLabel) {
-        const requireSource = statusLabel !== 'Draft';
-        if (!validateArticle(requireSource)) return;
-
-        const headline = document.getElementById('articleHeadline').value.trim();
+      async function saveArticle(mode) {
+        const title = document.getElementById('articleHeadline').value.trim();
         const category = document.getElementById('articleCategory').value;
-        const categoryLabel = document.getElementById('articleCategory').options[document.getElementById('articleCategory').selectedIndex].text;
         const author = document.getElementById('articleAuthor').value.trim();
-        const summary = document.getElementById('articleSummary').value.trim();
         const body = document.getElementById('articleBody').value.trim();
         const sourceUrl = document.getElementById('articleSourceUrl').value.trim();
         const sourceDate = document.getElementById('articleSourceDate').value;
-        const verification = document.getElementById('articleVerification').value;
-        const seoTitle = document.getElementById('articleSeoTitle').value.trim();
-        const seoDesc = document.getElementById('articleSeoDesc').value.trim();
-        const slug = document.getElementById('articleSlug').value.trim() || slugify(headline);
-        const schedule = document.getElementById('articleSchedule').value;
+        const coverId = document.getElementById('articleCoverId').value.trim();
+        const featured = document.getElementById('articleFeatured').checked;
 
-        let finalStatus = 'draft';
-        if (statusLabel === 'Pending review') finalStatus = 'pending';
-        else if (statusLabel === 'Verified') finalStatus = 'draft';
-        else if (statusLabel === 'Scheduled') finalStatus = 'scheduled';
-        else if (selectedStatus === 'pending') finalStatus = 'pending';
-        else if (selectedStatus === 'verified') finalStatus = 'draft';
-        else if (selectedStatus === 'scheduled') finalStatus = 'scheduled';
+        if (!title) { toast('Please enter a headline.', true); return; }
+        if (!category) { toast('Please select a category.', true); return; }
+        if (!author) { toast('Please enter an author.', true); return; }
+        if (!body) { toast('Please write the article body.', true); return; }
+        if (sourceUrl) {
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+        }
 
-        const obj = {
-          id: currentStoryId || 'story-' + Date.now(),
-          title: headline,
-          category: category,
-          categoryLabel: categoryLabel,
-          author: author,
-          updated: new Date().toISOString().split('T')[0],
-          status: finalStatus,
-          featured: isFeatured,
-          summary: summary,
-          body: body,
-          sourceUrl: sourceUrl,
-          sourceDate: sourceDate,
-          verification: verification,
-          seoTitle: seoTitle,
-          seoDesc: seoDesc,
-          slug: slug,
-          schedule: schedule
+        let verification = 'unverified';
+        if (mode === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
+          verification = 'verified';
+        } else if (selectedStatus === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
+          verification = 'verified';
+        } else if (selectedStatus === 'pending') {
+          verification = 'pending';
+        }
+
+        const payload = {
+          title, category, author,
+          summary: document.getElementById('articleSummary').value.trim() || null,
+          body,
+          source_url: sourceUrl || null,
+          source_date: sourceDate || null,
+          cover_media_id: coverId ? Number(coverId) : null,
+          featured: !!featured,
+          verification
         };
 
-        if (currentStoryId) {
-          const idx = stories.findIndex(x => x.id === currentStoryId);
-          if (idx !== -1) stories[idx] = obj;
-        } else {
-          stories.unshift(obj);
-          currentStoryId = obj.id;
-        }
+        const btn = document.getElementById('saveDraftBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
-        renderDirectory();
-        toast(statusLabel + ' · saved and logged to audit trail.');
-
-        if (statusLabel === 'Draft') {
-          setTimeout(showDirectory, 600);
+        try {
+          let saved;
+          if (currentStoryId) {
+            saved = await api('/api/trending/' + encodeURIComponent(currentStoryId), {
+              method: 'PATCH', body: JSON.stringify(payload)
+            });
+            if (verification === 'verified' && saved.story && saved.story.verification !== 'verified') {
+              await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/verify', { method: 'POST' });
+            }
+          } else {
+            saved = await api('/api/trending', {
+              method: 'POST', body: JSON.stringify(payload)
+            });
+            currentStoryId = saved.story.id;
+            if (verification === 'verified') {
+              await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/verify', { method: 'POST' });
+            }
+          }
+          await loadAll();
+          toast('Article saved.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
         }
       }
 
-      function publishArticle() {
-        if (!currentStoryId) {
-          toast('Save the article as a draft first before publishing.');
-          return;
-        }
-        if (!validateArticle(true)) return;
-
+      async function publishArticle() {
+        if (!currentStoryId) { toast('Save the article first.', true); return; }
         const s = stories.find(x => x.id === currentStoryId);
         if (!s) return;
-
-        const verification = document.getElementById('articleVerification').value;
-        if (verification !== 'verified') {
-          toast('Article must be verified before publication. Update the verification status first.');
+        if (s.verification !== 'verified') {
+          toast('Article must be verified before publishing.', true);
           return;
         }
+        if (!confirm('Publish this article? It will be visible on the public Trending page.')) return;
 
-        if (!confirm('Publish this article? It will appear on the public Trending page' + (isFeatured ? ' and the homepage featured section' : '') + '.')) return;
+        const btn = document.getElementById('publishBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing…';
 
-        s.status = 'published';
-        s.verification = 'verified';
-        s.updated = new Date().toISOString().split('T')[0];
-        renderDirectory();
-        toast('Article published' + (isFeatured ? ' and featured on homepage' : '') + ' · logged to audit trail.');
-        setTimeout(showDirectory, 800);
+        try {
+          await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/publish', { method: 'POST' });
+          await loadAll();
+          toast('Article published.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish';
+        }
       }
 
-      function scheduleArticle() {
-        if (!currentStoryId) {
-          toast('Save the article as a draft first before scheduling.');
-          return;
-        }
-        if (!validateArticle(true)) return;
-
+      async function scheduleArticle() {
+        if (!currentStoryId) { toast('Save the article first.', true); return; }
         const schedule = document.getElementById('articleSchedule').value;
-        if (!schedule) { toast('Please select a publication date and time.'); return; }
+        if (!schedule) { toast('Select a publication date and time.', true); return; }
+        if (!confirm('Schedule this article to publish on ' + new Date(schedule).toLocaleString('en-GB') + '?')) return;
 
-        const s = stories.find(x => x.id === currentStoryId);
-        if (!s) return;
+        const btn = document.getElementById('scheduleBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scheduling…';
 
-        if (!confirm(`Schedule this article to publish on ${new Date(schedule).toLocaleString('en-GB')}?`)) return;
-
-        s.status = 'scheduled';
-        s.schedule = schedule;
-        s.verification = 'verified';
-        s.updated = new Date().toISOString().split('T')[0];
-        renderDirectory();
-        toast('Article scheduled · server will publish at the selected time.');
-        setTimeout(showDirectory, 800);
-      }
-
-      /* ============================================================ */
-      /* PREVIEW                                                      */
-      /* ============================================================ */
-      function previewArticle() {
-        const headline = document.getElementById('articleHeadline').value.trim() || 'Untitled article';
-        const author = document.getElementById('articleAuthor').value.trim() || 'CampusNaija Editorial';
-        const body = document.getElementById('articleBody').value.trim() || 'Article content will appear here.';
-        const category = document.getElementById('articleCategory').options[document.getElementById('articleCategory').selectedIndex].text;
-
-        document.getElementById('previewHeadline').textContent = headline;
-        document.getElementById('previewMeta').innerHTML = `
-          <span><i class="fas fa-tag"></i> ${category}</span>
-          <span><i class="fas fa-building"></i> ${author}</span>
-          <span><i class="far fa-calendar-alt"></i> ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-        `;
-        document.getElementById('previewBody').textContent = body;
-
-        document.getElementById('previewOverlay').classList.add('active');
-      }
-
-      function closePreview() {
-        document.getElementById('previewOverlay').classList.remove('active');
-        setPreviewMode('desktop', document.querySelector('.preview-tab'));
-      }
-
-      function setPreviewMode(mode, el) {
-        document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
-        if (el) el.classList.add('active');
-        const content = document.getElementById('previewContent');
-        if (mode === 'mobile') {
-          content.classList.add('preview-mobile');
-        } else {
-          content.classList.remove('preview-mobile');
+        try {
+          await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/schedule', {
+            method: 'POST',
+            body: JSON.stringify({ scheduled_at: schedule })
+          });
+          await loadAll();
+          toast('Article scheduled.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-calendar-check"></i> Schedule';
         }
       }
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      async function deleteArticle() {
+        if (!currentStoryId) return;
+        if (!confirm('Delete this article? This cannot be undone.')) return;
+
+        const btn = document.getElementById('deleteBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+
+        try {
+          await api('/api/trending/' + encodeURIComponent(currentStoryId), { method: 'DELETE' });
+          await loadAll();
+          toast('Article deleted.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-trash"></i> Delete article';
+        }
+      }
+
+      /* SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1557,40 +1246,36 @@
         menuToggle.setAttribute('aria-expanded', String(open));
       });
       overlay.addEventListener('click', closeSidebar);
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          closeSidebar();
-          closePreview();
-        }
-      });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* Close preview on overlay click */
-      document.getElementById('previewOverlay').addEventListener('click', e => {
-        if (e.target === document.getElementById('previewOverlay')) closePreview();
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
-      /* Auto-generate slug from headline */
-      document.getElementById('articleHeadline').addEventListener('input', e => {
-        const slug = document.getElementById('articleSlug');
-        if (!slug.dataset.touched) {
-          slug.value = slugify(e.target.value);
-        }
-      });
-      document.getElementById('articleSlug').addEventListener('input', e => {
-        e.target.dataset.touched = 'true';
-      });
+      document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        renderDirectory();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* BOOT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await loadAll();
+      })();
 
+      window.filterStories = filterStories;
+      window.openEditor = openEditor;
+      window.showDirectory = showDirectory;
+      window.selectStatus = selectStatus;
+      window.saveArticle = saveArticle;
+      window.publishArticle = publishArticle;
+      window.scheduleArticle = scheduleArticle;
+      window.deleteArticle = deleteArticle;
     })();
   </script>
 

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Exams Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,29 +24,62 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* Loading gate */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Skeleton shimmer */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 8px;
+    }
+    .skeleton-text { height: 12px; margin-bottom: 8px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w40 { width: 40%; }
+    .skeleton-text.w80 { width: 80%; }
+    .skeleton-circle { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; }
+    .skeleton-pill { height: 22px; width: 80px; border-radius: 40px; }
+    .skeleton-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      padding: 18px 20px; border-radius: 14px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
+      transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
@@ -56,8 +89,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
-
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
       display: flex; flex-direction: column; gap: 4px;
@@ -80,13 +111,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
-
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
       display: flex; align-items: center; gap: 12px;
@@ -107,6 +131,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -115,9 +140,8 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
-
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -153,11 +177,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -166,15 +185,12 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
+    /* CONTENT */
     .content { padding: 32px 24px 56px; flex: 1; }
     .view { display: none; }
     .view.active { display: block; }
-
-    /* ============================================================ */
-    /* DIRECTORY VIEW                                               */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -184,8 +200,10 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
+    /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -199,22 +217,20 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
-    }
+    .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
-    }
+    /* Toolbar */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
       padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { background-color: #1f5c47; color: #9fe0c5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -223,6 +239,7 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-danger {
       background-color: transparent; color: var(--danger); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -239,6 +256,7 @@
       transition: all 0.15s;
     }
     .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
@@ -256,7 +274,7 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Exam record list */
+    /* Record list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -308,14 +326,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* EDITOR VIEW                                                  */
-    /* ============================================================ */
+    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -342,7 +353,6 @@
     }
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
-    .panel-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
     @media (min-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
@@ -376,7 +386,6 @@
       padding-top: 20px; border-top: 1px solid var(--border);
     }
 
-    /* Status cards */
     .status-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
     @media (min-width: 600px) { .status-cards { grid-template-columns: repeat(3, 1fr); } }
     .status-card {
@@ -392,7 +401,6 @@
     .status-card .sc-title { font-size: 0.85rem; font-weight: 700; }
     .status-card .sc-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
 
-    /* Verify notice */
     .verify-notice {
       display: flex; gap: 12px; padding: 14px 16px;
       background-color: rgba(245,185,66,0.06);
@@ -403,11 +411,6 @@
     .verify-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
     .verify-notice strong { color: var(--accent); }
 
-    /* Conditional fields */
-    .conditional-field { display: none; }
-    .conditional-field.visible { display: flex; flex-direction: column; gap: 6px; }
-
-    /* Danger panel */
     .danger-panel { border-color: rgba(224, 112, 112, 0.3); }
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
@@ -422,20 +425,47 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 360px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
+    /* Footer */
+    .admin-footer {
+      margin-top: 40px;
+      padding: 28px 24px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .footer-left {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; color: var(--text);
+    }
+    .footer-left i { color: var(--primary); font-size: 0.85rem; }
+    .footer-left .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .footer-right a { color: var(--muted); transition: color 0.15s ease; }
+    .footer-right a:hover { color: var(--primary); }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -443,6 +473,11 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
+      .admin-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -452,6 +487,7 @@
       .editor-header-info h1 { font-size: 1.4rem; }
       .record-row { padding: 16px; }
       .record-actions { width: 100%; justify-content: flex-end; }
+      .footer-right { width: 100%; justify-content: space-between; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -464,11 +500,15 @@
 </head>
 <body>
 
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -490,20 +530,18 @@
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -512,28 +550,25 @@
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search admin records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search admin records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
       <main class="content">
 
-        <!-- ============================================================ -->
-        <!-- DIRECTORY VIEW                                               -->
-        <!-- ============================================================ -->
+        <!-- DIRECTORY -->
         <div id="view-directory" class="view active">
           <div class="page-heading">
             <div class="eyebrow"><i class="fas fa-pen-to-square"></i> Examination management</div>
@@ -541,27 +576,25 @@
             <p>Manage exam information and learning resources.</p>
           </div>
 
-          <!-- Stats -->
           <div class="stats-row">
             <div class="stat-mini">
-              <div class="stat-mini-label">Total exam records <i class="fas fa-list"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-label">Total records <i class="fas fa-list"></i></div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
-          <!-- Toolbar -->
           <div class="toolbar">
             <button class="btn-primary" onclick="openEditor()">
               <i class="fas fa-plus"></i> Add Examination
@@ -573,23 +606,9 @@
               </div>
               <select id="bodyFilter" onchange="filterRecords()">
                 <option value="">All exam bodies</option>
-                <option value="JAMB">JAMB / UTME</option>
-                <option value="WAEC">WAEC</option>
-                <option value="NECO">NECO</option>
-                <option value="NABTEB">NABTEB</option>
-              </select>
-              <select id="typeFilter" onchange="filterRecords()">
-                <option value="">All record types</option>
-                <option value="exam-guide">Examination guide</option>
-                <option value="registration">Registration info</option>
-                <option value="timetable">Timetable</option>
-                <option value="study-guide">Study guide</option>
-                <option value="results">Results guide</option>
               </select>
               <select id="sessionFilter" onchange="filterRecords()">
                 <option value="">All sessions</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
               </select>
               <select id="statusFilter" onchange="filterRecords()">
                 <option value="">All statuses</option>
@@ -602,24 +621,46 @@
             </div>
           </div>
 
-          <!-- List header -->
           <div class="panel-header" style="margin: 8px 0 14px;">
             <div class="panel-title" style="font-size: 1rem;"><i class="fas fa-list"></i> Examination records</div>
-            <span style="font-size:0.78rem; color: var(--muted);" id="recordCount">Showing 0 records</span>
+            <span style="font-size:0.78rem; color: var(--muted);" id="recordCount">Loading…</span>
           </div>
 
           <div class="record-list" id="recordList">
-            <!-- Populated by JS -->
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-circle"></div>
+              <div style="flex:1;min-width:200px;">
+                <div class="skeleton skeleton-text w60"></div>
+                <div class="skeleton skeleton-text w40"></div>
+              </div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
           </div>
-
-          <p class="footnote">
-            <i class="fas fa-circle-info"></i> Illustrative examples only — these are not verified live records or publication statuses.
-          </p>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- EDITOR VIEW                                                  -->
-        <!-- ============================================================ -->
+        <!-- EDITOR -->
         <div id="view-editor" class="view">
           <div class="back-link" onclick="showDirectory()">
             <i class="fas fa-arrow-left"></i> Back to all exam records
@@ -628,55 +669,48 @@
           <div class="editor-header">
             <div class="editor-header-info">
               <h1 id="editorTitle">New examination record</h1>
-              <p>Create or edit examination information. Only fields relevant to the selected record type are shown.</p>
+              <p>Create or edit examination information. Required fields are marked with *.</p>
             </div>
             <div class="editor-header-actions">
               <button class="btn-outline" onclick="showDirectory()">Cancel</button>
-              <button class="btn-outline" onclick="saveRecord('Draft')"><i class="fas fa-file"></i> Save as draft</button>
             </div>
           </div>
 
-          <!-- Basic details -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-circle-info"></i> Basic details</div>
             </div>
             <div class="form-grid">
               <div class="form-group full">
-                <label>Title and guidance <span class="req">*</span></label>
+                <label>Title <span class="req">*</span></label>
                 <input type="text" id="recordTitle" placeholder="e.g. JAMB UTME 2026 Examination Guide">
               </div>
               <div class="form-group">
                 <label>Examination body <span class="req">*</span></label>
-                <select id="recordBody" onchange="onRecordTypeChange()">
+                <select id="recordBody">
                   <option value="">Select examination body</option>
-                  <option value="JAMB">JAMB / UTME</option>
+                  <option value="JAMB">JAMB</option>
                   <option value="WAEC">WAEC</option>
                   <option value="NECO">NECO</option>
                   <option value="NABTEB">NABTEB</option>
+                  <option value="Various">Various / Other</option>
                 </select>
               </div>
               <div class="form-group">
                 <label>Record type <span class="req">*</span></label>
-                <select id="recordType" onchange="onRecordTypeChange()">
+                <select id="recordType">
                   <option value="">Select record type</option>
-                  <option value="exam-guide">Examination guide</option>
-                  <option value="registration">Registration info</option>
-                  <option value="timetable">Timetable</option>
-                  <option value="study-guide">Study guide</option>
-                  <option value="results">Results guide</option>
+                  <option value="Entrance">Entrance examination</option>
+                  <option value="School">School certificate</option>
+                  <option value="Screening">Screening</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Session or examination year <span class="req">*</span></label>
-                <select id="recordSession">
-                  <option value="">Select session</option>
-                  <option value="2026">2026</option>
-                  <option value="2025">2025</option>
-                </select>
+                <label>Session <span class="req">*</span></label>
+                <input type="text" id="recordSession" placeholder="e.g. 2026">
               </div>
               <div class="form-group">
-                <label>Official examination website or application URL <span class="req">*</span></label>
+                <label>Official website <span class="req">*</span></label>
                 <input type="url" id="recordWebsite" placeholder="https://official-exam-portal.example">
               </div>
               <div class="form-group full">
@@ -684,17 +718,15 @@
                 <textarea id="recordDescription" placeholder="Brief overview of this examination and what candidates should know..."></textarea>
               </div>
               <div class="form-group full">
-                <label>Source / verification URL <span class="req">*</span></label>
+                <label>Source / verification URL <span class="optional">(required before verification)</span></label>
                 <input type="url" id="recordSourceUrl" placeholder="Paste the official announcement or verification link">
-                <span class="form-hint">Required before marking the record as verified.</span>
               </div>
             </div>
           </div>
 
-          <!-- Registration section (shown for registration & exam-guide types) -->
-          <div class="panel conditional-panel" id="panelRegistration">
+          <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-clipboard-list"></i> Registration information</div>
+              <div class="panel-title"><i class="fas fa-clipboard-list"></i> Registration & eligibility</div>
             </div>
             <div class="form-grid">
               <div class="form-group full">
@@ -716,69 +748,37 @@
             </div>
           </div>
 
-          <!-- Timetable / results section -->
-          <div class="panel conditional-panel" id="panelTimetable">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-calendar"></i> Timetable and results</div>
-            </div>
-            <div class="form-grid">
-              <div class="form-group full">
-                <label>Timetable or results guidance</label>
-                <textarea id="recordTimetableInfo" placeholder="Official timetable details or result-checking instructions..."></textarea>
-              </div>
-              <div class="form-group full">
-                <label>Downloadable timetable or result link</label>
-                <input type="url" id="recordTimetableUrl" placeholder="https://official-portal.example/timetable.pdf">
-              </div>
-            </div>
-          </div>
-
-          <!-- Study resources section -->
-          <div class="panel conditional-panel" id="panelResources">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-book-open"></i> Study resources</div>
-            </div>
-            <div class="form-grid">
-              <div class="form-group full">
-                <label>Syllabus, subjects and preparation guides</label>
-                <textarea id="recordResources" placeholder="List syllabus topics, subjects and preparation materials..."></textarea>
-              </div>
-              <div class="form-group full">
-                <label>Authorized resource links</label>
-                <textarea id="recordResourceLinks" placeholder="One URL per line — only official or authorized resources."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Verification -->
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification</div>
+              <div class="panel-title"><i class="fas fa-calendar"></i> Timetable & resources</div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Timetable information</label>
+                <textarea id="recordTimetableInfo" placeholder="Official timetable details..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Timetable URL</label>
+                <input type="url" id="recordTimetableUrl" placeholder="https://official-portal.example/timetable.pdf">
+              </div>
+              <div class="form-group full">
+                <label>Preparation resources</label>
+                <textarea id="recordResources" placeholder="Syllabus topics, subjects, and preparation materials..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Resource links</label>
+                <textarea id="recordResourceLinks" placeholder="Official syllabus and resource links..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-shield-halved"></i> Publication status</div>
             </div>
             <div class="verify-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Verification and publication are separate states.</strong> A record must be verified before it can be published. Keep a record of who verified it and when.</p>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Checked date</label>
-                <input type="date" id="recordCheckedDate">
-              </div>
-              <div class="form-group">
-                <label>Reviewer</label>
-                <input type="text" id="recordReviewer" placeholder="Name of reviewer" value="Admin User">
-              </div>
-              <div class="form-group full">
-                <label>Review notes</label>
-                <textarea id="recordReviewNotes" placeholder="Notes about source verification or changes requested..."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Publishing status -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-bullhorn"></i> Publication status</div>
+              <p><strong>Verification and publication are separate states.</strong> A record must be verified before it can be published.</p>
             </div>
             <div class="status-cards">
               <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
@@ -796,32 +796,41 @@
             </div>
 
             <div class="form-actions">
-              <button class="btn-primary" onclick="saveRecord('Draft')"><i class="fas fa-save"></i> Save as draft</button>
-              <button class="btn-gold" onclick="saveRecord('Pending verification')"><i class="fas fa-clock"></i> Submit for review</button>
-              <button class="btn-outline" onclick="saveRecord('Verified')"><i class="fas fa-circle-check"></i> Mark as verified</button>
-              <button class="btn-primary" onclick="publishRecord()"><i class="fas fa-bullhorn"></i> Publish record</button>
+              <button class="btn-primary" id="saveDraftBtn" onclick="saveRecord('draft')"><i class="fas fa-save"></i> Save Draft</button>
+              <button class="btn-gold" id="verifyBtn" onclick="saveRecord('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
+              <button class="btn-outline" id="publishBtn" onclick="publishRecord()"><i class="fas fa-bullhorn"></i> Publish record</button>
             </div>
-            <p class="form-hint" style="margin-top:12px;">This is a visual prototype. It does not create or publish database records.</p>
           </div>
 
-          <!-- Danger zone -->
           <div class="panel danger-panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Danger zone</div>
             </div>
             <p style="font-size:0.85rem; color: var(--muted); margin-bottom:14px;">Destructive actions require confirmation and are recorded in the audit trail.</p>
             <div class="form-actions" style="border-top:none; padding-top:0;">
-              <button class="btn-outline" onclick="if(confirm('Unpublish this record? It will be hidden from the public Exams page.')) toast('Record unpublished (demo).')"><i class="fas fa-eye-slash"></i> Unpublish</button>
-              <button class="btn-danger" onclick="if(confirm('Archive this record? Historical data will be retained.')) toast('Record archived (demo).')"><i class="fas fa-box-archive"></i> Archive record</button>
+              <button class="btn-danger" id="deleteBtn" onclick="deleteRecord()"><i class="fas fa-trash"></i> Delete record</button>
             </div>
           </div>
         </div>
+
+        <footer class="admin-footer">
+          <div class="footer-left">
+            <span class="dot" aria-hidden="true"></span>
+            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+            <span>CampusNaija Administration</span>
+          </div>
+          <div class="footer-right">
+            <span id="footerYear">©</span>
+            <a href="/Privacy.html">Privacy</a>
+            <a href="/Terms.html">Terms</a>
+            <a href="mailto:support@campusnaija.ng">Support</a>
+          </div>
+        </footer>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Saved</span>
@@ -831,182 +840,186 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO DATA                                                    */
-      /* ============================================================ */
-      let records = [
-        {
-          id: 'jamb-2026',
-          title: 'JAMB UTME 2026 Examination Guide',
-          body: 'JAMB',
-          bodyLabel: 'JAMB / UTME',
-          type: 'exam-guide',
-          typeLabel: 'Examination guide',
-          session: '2026',
-          status: 'published',
-          verification: 'verified',
-          website: 'https://jamb.gov.ng',
-          sourceUrl: 'https://jamb.gov.ng/utme-2026',
-          description: 'Complete guide to the 2026 Unified Tertiary Matriculation Examination.',
-          eligibility: 'SSS3 students, school leavers, and candidates seeking university admission.',
-          instructions: 'Register on the JAMB portal, obtain your NIN, and complete the UTME form.',
-          openDate: '2026-01-15',
-          closeDate: '2026-03-15',
-          timetableInfo: 'The UTME is expected to hold in April 2026.',
-          timetableUrl: 'https://jamb.gov.ng/timetable-2026.pdf',
-          resources: 'English, Mathematics, Physics, Chemistry, Biology.',
-          resourceLinks: 'https://jamb.gov.ng/syllabus'
-        },
-        {
-          id: 'waec-2026',
-          title: 'WAEC 2026 Examination Information',
-          body: 'WAEC',
-          bodyLabel: 'WAEC',
-          type: 'registration',
-          typeLabel: 'Registration info',
-          session: '2026',
-          status: 'published',
-          verification: 'verified',
-          website: 'https://waecnigeria.org',
-          sourceUrl: 'https://waecnigeria.org/2026',
-          description: 'Registration and examination details for the 2026 WAEC SSCE.',
-          eligibility: 'SSS3 students and external candidates.',
-          instructions: 'Register through the WAEC portal and upload required documents.',
-          openDate: '2026-02-10',
-          closeDate: '2026-04-30',
-          timetableInfo: 'Examination begins in May 2026.',
-          timetableUrl: 'https://waecnigeria.org/timetable-2026.pdf',
-          resources: 'All senior secondary subjects.',
-          resourceLinks: 'https://waecnigeria.org/syllabus'
-        },
-        {
-          id: 'neco-2026',
-          title: 'NECO 2026 Examination Guidance',
-          body: 'NECO',
-          bodyLabel: 'NECO',
-          type: 'exam-guide',
-          typeLabel: 'Examination guide',
-          session: '2026',
-          status: 'pending',
-          verification: 'pending',
-          website: 'https://neco.gov.ng',
-          sourceUrl: '',
-          description: 'Guidance for the 2026 NECO SSCE examination.',
-          eligibility: 'SSS3 students and external candidates.',
-          instructions: 'Registration is through the NECO portal.',
-          openDate: '2026-03-01',
-          closeDate: '2026-04-30',
-          timetableInfo: 'Examination begins in June 2026.',
-          timetableUrl: '',
-          resources: 'All senior secondary subjects.',
-          resourceLinks: ''
-        },
-        {
-          id: 'nabteb-2026',
-          title: 'NABTEB 2026 Technical Examination Resources',
-          body: 'NABTEB',
-          bodyLabel: 'NABTEB',
-          type: 'study-guide',
-          typeLabel: 'Study guide',
-          session: '2026',
-          status: 'draft',
-          verification: 'unverified',
-          website: 'https://nabteb.gov.ng',
-          sourceUrl: '',
-          description: 'Study resources for NABTEB technical and business examinations.',
-          eligibility: 'Technical college students and vocational candidates.',
-          instructions: '',
-          openDate: '',
-          closeDate: '',
-          timetableInfo: '',
-          timetableUrl: '',
-          resources: 'English, Mathematics, Technical Drawing, Physics, Chemistry.',
-          resourceLinks: ''
-        },
-        {
-          id: 'jamb-2025',
-          title: 'JAMB UTME 2025 Results Guide',
-          body: 'JAMB',
-          bodyLabel: 'JAMB / UTME',
-          type: 'results',
-          typeLabel: 'Results guide',
-          session: '2025',
-          status: 'archived',
-          verification: 'verified',
-          website: 'https://jamb.gov.ng',
-          sourceUrl: 'https://jamb.gov.ng/results-2025',
-          description: 'How to check your 2025 UTME results.',
-          eligibility: '',
-          instructions: '',
-          openDate: '',
-          closeDate: '',
-          timetableInfo: 'Visit the JAMB results portal and enter your registration number.',
-          timetableUrl: 'https://jamb.gov.ng/results-portal',
-          resources: '',
-          resourceLinks: ''
-        }
-      ];
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
+      let token = null;
+      let currentUser = null;
+      let records = [];
       let currentRecordId = null;
       let selectedStatus = 'draft';
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function statusPill(status, verification) {
-        if (status === 'published') {
-          return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
-        }
-        if (status === 'archived') {
-          return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
-        }
-        if (verification === 'pending') {
-          return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
-        }
-        if (verification === 'verified') {
-          return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
-        }
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const formatDate = (d) => {
+        if (!d) return '—';
+        const date = new Date(d);
+        if (isNaN(date)) return '—';
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      function toast(msg) {
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      /* ============================================================ */
-      /* DIRECTORY                                                    */
-      /* ============================================================ */
+      function statusPill(status, verification) {
+        if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
+        if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
+        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
+        if (verification === 'verified') return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+      }
+
+      /* AUTH */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
+      }
+
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
+      }
+
+      /* DATA */
+      async function loadAll() {
+        try {
+          const res = await api('/api/exams');
+          records = Array.isArray(res.exams) ? res.exams : [];
+          populateFilters();
+          renderStats();
+          renderDirectory();
+        } catch (e) {
+          document.getElementById('recordList').innerHTML =
+            `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Failed to load</h3><p>${esc(e.message)}</p></div>`;
+          document.getElementById('recordCount').textContent = 'Error loading';
+        }
+      }
+
+      function populateFilters() {
+        const bodies = [...new Set(records.map(r => r.body).filter(Boolean))].sort();
+        const sessions = [...new Set(records.map(r => r.session).filter(Boolean))].sort().reverse();
+
+        const bodySel = document.getElementById('bodyFilter');
+        bodySel.innerHTML = '<option value="">All exam bodies</option>' +
+          bodies.map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join('');
+
+        const sessionSel = document.getElementById('sessionFilter');
+        sessionSel.innerHTML = '<option value="">All sessions</option>' +
+          sessions.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+      }
+
+      function renderStats() {
+        const set = (id, val) => { document.getElementById(id).textContent = val; };
+        set('statTotal', records.length);
+        set('statPublished', records.filter(r => r.status === 'published').length);
+        set('statDraft', records.filter(r => r.status === 'draft').length);
+        set('statPending', records.filter(r => r.verification === 'pending').length);
+      }
+
       function renderDirectory() {
         const list = document.getElementById('recordList');
         const query = (document.getElementById('recordSearch').value || '').toLowerCase().trim();
         const body = document.getElementById('bodyFilter').value;
-        const type = document.getElementById('typeFilter').value;
         const session = document.getElementById('sessionFilter').value;
         const status = document.getElementById('statusFilter').value;
 
         const filtered = records.filter(r => {
-          const matchQ = !query ||
-            r.title.toLowerCase().includes(query) ||
-            r.bodyLabel.toLowerCase().includes(query);
+          const title = (r.title || '').toLowerCase();
+          const bodyVal = (r.body || '').toLowerCase();
+          const matchQ = !query || title.includes(query) || bodyVal.includes(query);
           const matchB = !body || r.body === body;
-          const matchT = !type || r.type === type;
           const matchS = !session || r.session === session;
-          const matchStatus = !status || r.status === status || r.verification === status;
-          return matchQ && matchB && matchT && matchS && matchStatus;
+          const matchStatus = !status ||
+            (status === 'draft' && r.status === 'draft' && r.verification !== 'pending') ||
+            (status === 'pending' && r.verification === 'pending') ||
+            (status === 'verified' && r.verification === 'verified' && r.status !== 'published') ||
+            (status === 'published' && r.status === 'published') ||
+            (status === 'archived' && r.status === 'archived');
+          return matchQ && matchB && matchS && matchStatus;
         });
 
-        document.getElementById('recordCount').textContent = `Showing ${filtered.length} of ${records.length} records`;
+        document.getElementById('recordCount').textContent =
+          `Showing ${filtered.length} of ${records.length} records`;
 
         if (filtered.length === 0) {
           list.innerHTML = `
             <div class="empty-state">
               <i class="fas fa-pen-to-square"></i>
-              <h3>No exam records match your filters</h3>
-              <p>Try adjusting the search or filter options.</p>
+              <h3>No examination records</h3>
+              <p>${records.length === 0 ? 'Create your first record to get started.' : 'Try adjusting your filters.'}</p>
             </div>`;
           return;
         }
@@ -1023,72 +1036,62 @@
               </div>
               <div class="record-main">
                 <div class="record-title-row">
-                  <span class="record-title">${r.title}</span>
+                  <span class="record-title">${esc(r.title || 'Untitled')}</span>
                 </div>
-                <div class="record-sub">${r.bodyLabel} · ${r.typeLabel}</div>
+                <div class="record-sub">${esc(r.body || '—')} · ${esc(r.type || '—')}</div>
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Session</div>
-                <div class="meta-value-sm">${r.session}</div>
+                <div class="meta-value-sm">${esc(r.session || '—')}</div>
               </div>
               <div class="record-meta-cell">
-                <div class="meta-label-sm">Record type</div>
-                <div class="meta-value-sm">${r.typeLabel}</div>
+                <div class="meta-label-sm">Closes</div>
+                <div class="meta-value-sm ${r.close_date ? 'gold' : ''}">${formatDate(r.close_date)}</div>
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Status</div>
                 ${statusPill(r.status, r.verification)}
               </div>
               <div class="record-actions">
-                <button class="btn-outline" onclick="openEditor('${r.id}')"><i class="fas fa-pen"></i> Edit</button>
-                <button class="btn-outline" onclick="previewRecord('${r.id}')"><i class="fas fa-eye"></i> Preview</button>
+                <button class="btn-outline" onclick="openEditor('${esc(r.id)}')">
+                  <i class="fas fa-pen"></i> Edit
+                </button>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
 
       function filterRecords() { renderDirectory(); }
 
-      function previewRecord(id) {
-        const r = records.find(x => x.id === id);
-        if (r) toast('Previewing "' + r.title + '" (demo).');
-      }
-
-      /* ============================================================ */
-      /* EDITOR                                                       */
-      /* ============================================================ */
+      /* EDITOR */
       function openEditor(id) {
         currentRecordId = id || null;
         const r = id ? records.find(x => x.id === id) : null;
 
         document.getElementById('editorTitle').textContent = r ? 'Edit examination record' : 'New examination record';
 
-        document.getElementById('recordTitle').value = r ? r.title : '';
-        document.getElementById('recordBody').value = r ? r.body : '';
-        document.getElementById('recordType').value = r ? r.type : '';
-        document.getElementById('recordSession').value = r ? r.session : '';
-        document.getElementById('recordWebsite').value = r ? r.website : '';
-        document.getElementById('recordSourceUrl').value = r ? r.sourceUrl : '';
-        document.getElementById('recordDescription').value = r ? r.description : '';
-        document.getElementById('recordEligibility').value = r ? r.eligibility : '';
-        document.getElementById('recordInstructions').value = r ? r.instructions : '';
-        document.getElementById('recordOpenDate').value = r ? r.openDate : '';
-        document.getElementById('recordCloseDate').value = r ? r.closeDate : '';
-        document.getElementById('recordTimetableInfo').value = r ? r.timetableInfo : '';
-        document.getElementById('recordTimetableUrl').value = r ? r.timetableUrl : '';
-        document.getElementById('recordResources').value = r ? r.resources : '';
-        document.getElementById('recordResourceLinks').value = r ? r.resourceLinks : '';
-        document.getElementById('recordCheckedDate').value = '';
-        document.getElementById('recordReviewNotes').value = '';
+        document.getElementById('recordTitle').value = r ? (r.title || '') : '';
+        document.getElementById('recordBody').value = r ? (r.body || '') : '';
+        document.getElementById('recordType').value = r ? (r.type || '') : '';
+        document.getElementById('recordSession').value = r ? (r.session || '') : '';
+        document.getElementById('recordWebsite').value = r ? (r.website || '') : '';
+        document.getElementById('recordSourceUrl').value = r ? (r.source_url || '') : '';
+        document.getElementById('recordDescription').value = r ? (r.description || '') : '';
+        document.getElementById('recordEligibility').value = r ? (r.eligibility || '') : '';
+        document.getElementById('recordInstructions').value = r ? (r.instructions || '') : '';
+        document.getElementById('recordOpenDate').value = r && r.open_date ? r.open_date.slice(0, 10) : '';
+        document.getElementById('recordCloseDate').value = r && r.close_date ? r.close_date.slice(0, 10) : '';
+        document.getElementById('recordTimetableInfo').value = r ? (r.timetable_info || '') : '';
+        document.getElementById('recordTimetableUrl').value = r ? (r.timetable_url || '') : '';
+        document.getElementById('recordResources').value = r ? (r.resources || '') : '';
+        document.getElementById('recordResourceLinks').value = r ? (r.resource_links || '') : '';
 
-        selectedStatus = r ? (r.status === 'published' ? 'verified' : r.verification || 'draft') : 'draft';
-        if (selectedStatus === 'unverified') selectedStatus = 'draft';
+        selectedStatus = r ? (r.verification === 'verified' ? 'verified' : r.verification === 'pending' ? 'pending' : 'draft') : 'draft';
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
-        const statusCard = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
-        if (statusCard) statusCard.classList.add('selected');
+        const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
+        if (sc) sc.classList.add('selected');
 
-        updateConditionalPanels();
+        document.getElementById('deleteBtn').style.display = r ? '' : 'none';
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1102,152 +1105,145 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      /* Show only relevant panels based on record type */
-      function onRecordTypeChange() {
-        updateConditionalPanels();
-      }
-
-      function updateConditionalPanels() {
-        const type = document.getElementById('recordType').value;
-
-        // Hide all conditional panels first
-        document.querySelectorAll('.conditional-panel').forEach(p => p.classList.remove('visible'));
-
-        // Registration panel for exam-guide and registration
-        if (type === 'exam-guide' || type === 'registration') {
-          document.getElementById('panelRegistration').classList.add('visible');
-        }
-        // Timetable panel for timetable and results types
-        if (type === 'timetable' || type === 'results') {
-          document.getElementById('panelTimetable').classList.add('visible');
-        }
-        // Study resources panel for study-guide
-        if (type === 'study-guide') {
-          document.getElementById('panelResources').classList.add('visible');
-        }
-      }
-
-      /* Make conditional-panel visible by default class in CSS */
-      // We need to add CSS for .conditional-panel { display: none; }
-      // and .conditional-panel.visible { display: block; }
-      // Since we didn't add it, we add inline now via style injection for simplicity.
-      // Actually let's add a style tag dynamically.
-
-      /* Status selection */
       function selectStatus(status, el) {
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
       }
 
-      /* ============================================================ */
-      /* SAVE & PUBLISH                                               */
-      /* ============================================================ */
-      function saveRecord(statusLabel) {
+      async function saveRecord(mode) {
         const title = document.getElementById('recordTitle').value.trim();
         const body = document.getElementById('recordBody').value;
         const type = document.getElementById('recordType').value;
-        const session = document.getElementById('recordSession').value;
+        const session = document.getElementById('recordSession').value.trim();
         const website = document.getElementById('recordWebsite').value.trim();
         const sourceUrl = document.getElementById('recordSourceUrl').value.trim();
+        const openDate = document.getElementById('recordOpenDate').value;
+        const closeDate = document.getElementById('recordCloseDate').value;
 
-        if (!title) { toast('Please enter a title.'); return; }
-        if (!body) { toast('Please select an examination body.'); return; }
-        if (!type) { toast('Please select a record type.'); return; }
-        if (!session) { toast('Please select a session.'); return; }
-        if (!website) { toast('Please enter the official website URL.'); return; }
-        try { new URL(website); } catch (e) { toast('Please enter a valid website URL (including https://).'); return; }
+        if (!title) { toast('Please enter a title.', true); return; }
+        if (!body) { toast('Please select an examination body.', true); return; }
+        if (!type) { toast('Please select a record type.', true); return; }
+        if (!session) { toast('Please enter a session.', true); return; }
+        if (!website) { toast('Please enter the official website URL.', true); return; }
+        try { new URL(website); } catch (e) { toast('Please enter a valid website URL (with https://).', true); return; }
         if (sourceUrl) {
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.'); return; }
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+        }
+        if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
+          toast('Close date cannot be before open date.', true);
+          return;
         }
 
         let verification = 'unverified';
-        let finalStatus = 'draft';
-        if (selectedStatus === 'pending') { verification = 'pending'; finalStatus = 'draft'; }
-        else if (selectedStatus === 'verified') { verification = 'verified'; finalStatus = 'draft'; }
-
-        if (statusLabel === 'Pending verification') { verification = 'pending'; finalStatus = 'draft'; }
-        if (statusLabel === 'Verified') {
-          if (!sourceUrl) { toast('An official source URL is required to mark as verified.'); return; }
+        if (mode === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
           verification = 'verified';
-          finalStatus = 'draft';
+        } else if (selectedStatus === 'verified') {
+          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
+          verification = 'verified';
+        } else if (selectedStatus === 'pending') {
+          verification = 'pending';
         }
 
-        const bodySelect = document.getElementById('recordBody');
-        const bodyLabel = bodySelect.options[bodySelect.selectedIndex].text;
-        const typeSelect = document.getElementById('recordType');
-        const typeLabel = typeSelect.options[typeSelect.selectedIndex].text;
-
-        const obj = {
-          id: currentRecordId || 'record-' + Date.now(),
-          title: title,
-          body: body,
-          bodyLabel: bodyLabel,
-          type: type,
-          typeLabel: typeLabel,
-          session: session,
-          status: finalStatus,
-          verification: verification,
-          website: website,
-          sourceUrl: sourceUrl,
-          description: document.getElementById('recordDescription').value.trim(),
-          eligibility: document.getElementById('recordEligibility').value.trim(),
-          instructions: document.getElementById('recordInstructions').value.trim(),
-          openDate: document.getElementById('recordOpenDate').value,
-          closeDate: document.getElementById('recordCloseDate').value,
-          timetableInfo: document.getElementById('recordTimetableInfo').value.trim(),
-          timetableUrl: document.getElementById('recordTimetableUrl').value.trim(),
-          resources: document.getElementById('recordResources').value.trim(),
-          resourceLinks: document.getElementById('recordResourceLinks').value.trim()
+        const reqBody = {
+          title, body, type, session, website,
+          source_url: sourceUrl || null,
+          description: document.getElementById('recordDescription').value.trim() || null,
+          eligibility: document.getElementById('recordEligibility').value.trim() || null,
+          instructions: document.getElementById('recordInstructions').value.trim() || null,
+          open_date: openDate || null,
+          close_date: closeDate || null,
+          timetable_info: document.getElementById('recordTimetableInfo').value.trim() || null,
+          timetable_url: document.getElementById('recordTimetableUrl').value.trim() || null,
+          resources: document.getElementById('recordResources').value.trim() || null,
+          resource_links: document.getElementById('recordResourceLinks').value.trim() || null,
         };
 
-        if (currentRecordId) {
-          const idx = records.findIndex(x => x.id === currentRecordId);
-          if (idx !== -1) records[idx] = obj;
-        } else {
-          records.unshift(obj);
-          currentRecordId = obj.id;
-        }
+        const btn = document.getElementById('saveDraftBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
-        renderDirectory();
-        toast(statusLabel + ' · saved and logged to audit trail.');
-
-        if (statusLabel === 'Draft') {
-          setTimeout(showDirectory, 600);
+        try {
+          if (currentRecordId) {
+            await api('/api/exams/' + encodeURIComponent(currentRecordId), {
+              method: 'PATCH', body: JSON.stringify(reqBody)
+            });
+            if (verification === 'verified') {
+              await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
+            }
+          } else {
+            const created = await api('/api/exams', {
+              method: 'POST', body: JSON.stringify(reqBody)
+            });
+            currentRecordId = created.exam.id;
+            if (verification === 'verified') {
+              await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
+            }
+          }
+          await loadAll();
+          toast('Record saved.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
         }
       }
 
-      function publishRecord() {
+      async function publishRecord() {
         if (!currentRecordId) {
-          toast('Save the record first before publishing.');
+          toast('Save the record first before publishing.', true);
           return;
         }
         const r = records.find(x => x.id === currentRecordId);
         if (!r) return;
         if (r.verification !== 'verified') {
-          toast('Record must be verified before it can be published.');
+          toast('Record must be verified before it can be published.', true);
           return;
         }
-        if (!confirm('Publish this record? It will appear on the public Exams page, Search, and related sections.')) return;
-        r.status = 'published';
-        renderDirectory();
-        toast('Record published · visible on public Exams page and logged to audit trail.');
-        setTimeout(showDirectory, 800);
+        if (!confirm('Publish this record? It will appear on the public Exams page.')) return;
+
+        const btn = document.getElementById('publishBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing…';
+
+        try {
+          await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/publish', { method: 'POST' });
+          await loadAll();
+          toast('Record published.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish record';
+        }
       }
 
-      /* ============================================================ */
-      /* INJECT MISSING CSS FOR CONDITIONAL PANELS                    */
-      /* ============================================================ */
-      const styleEl = document.createElement('style');
-      styleEl.textContent = `
-        .conditional-panel { display: none; }
-        .conditional-panel.visible { display: block; }
-      `;
-      document.head.appendChild(styleEl);
+      async function deleteRecord() {
+        if (!currentRecordId) return;
+        if (!confirm('Delete this exam record? This cannot be undone.')) return;
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+        const btn = document.getElementById('deleteBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting…';
+
+        try {
+          await api('/api/exams/' + encodeURIComponent(currentRecordId), { method: 'DELETE' });
+          await loadAll();
+          toast('Record deleted.');
+          showDirectory();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-trash"></i> Delete record';
+        }
+      }
+
+      /* SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1266,16 +1262,32 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        renderDirectory();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
+      document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
+
+      /* BOOT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await loadAll();
+      })();
+
+      window.filterRecords = filterRecords;
+      window.openEditor = openEditor;
+      window.showDirectory = showDirectory;
+      window.selectStatus = selectStatus;
+      window.saveRecord = saveRecord;
+      window.publishRecord = publishRecord;
+      window.deleteRecord = deleteRecord;
     })();
   </script>
 
