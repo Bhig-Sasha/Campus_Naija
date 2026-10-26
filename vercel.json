@@ -12,11 +12,20 @@
 
     { "source": "/admin",            "destination": "/admin/index.html" },
     { "source": "/admin/",           "destination": "/admin/index.html" },
-    { "source": "/admin/:path*",     "destination": "/admin/:path*" },
+    { "source": "/admin/index",      "destination": "/admin/index.html" },
+    { "source": "/admin/Schools",    "destination": "/admin/Schools.html" },
+    { "source": "/admin/Admissions", "destination": "/admin/Admissions.html" },
+    { "source": "/admin/Exams",      "destination": "/admin/Exams.html" },
+    { "source": "/admin/Scholarships","destination": "/admin/Scholarships.html" },
+    { "source": "/admin/Trending",   "destination": "/admin/Trending.html" },
+    { "source": "/admin/Media",      "destination": "/admin/Media.html" },
+    { "source": "/admin/Users",      "destination": "/admin/Users.html" },
+    { "source": "/admin/Audit",      "destination": "/admin/Audit.html" },
+    { "source": "/admin/Settings",   "destination": "/admin/Settings.html" },
+    { "source": "/admin/Login",      "destination": "/admin/login.html" },
 
     { "source": "/SchoolAd",         "destination": "/SchoolAd/index.html" },
-    { "source": "/SchoolAd/",        "destination": "/SchoolAd/index.html" },
-    { "source": "/SchoolAd/:path*",  "destination": "/SchoolAd/:path*" }
+    { "source": "/SchoolAd/",        "destination": "/SchoolAd/index.html" }
   ],
   "headers": [
     {
