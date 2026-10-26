@@ -24,8 +24,11 @@
     { "source": "/admin/Settings",   "destination": "/admin/Settings.html" },
     { "source": "/admin/Login",      "destination": "/admin/login.html" },
 
-    { "source": "/SchoolAd",         "destination": "/SchoolAd/index.html" },
-    { "source": "/SchoolAd/",        "destination": "/SchoolAd/index.html" }
+    { "source": "/SchoolsAd",         "destination": "/SchoolAd/index.html" },
+    { "source": "/SchoolsAd/",        "destination": "/SchoolAd/index.html" },
+    { "source": "/SchoolsAd/login",   "destination": "/SchoolAd/login.html" },
+    { "source": "/SchoolsAd/Login",   "destination": "/SchoolAd/login.html" },
+    { "source": "/SchoolsAd/:path*",  "destination": "/SchoolAd/:path*.html" }
   ],
   "headers": [
     {

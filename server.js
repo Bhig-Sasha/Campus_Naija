@@ -1474,9 +1474,24 @@ app.get(['/admin', '/admin/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'admin', 'login.html'), (err) => { if (err) next(); });
 });
 
-app.get(['/SchoolAd', '/SchoolAd/'], (req, res, next) => {
+app.get(
+  ['/admin/login', '/admin/login.html', '/admin/Login', '/admin/Login.html'],
+  (req, res, next) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'admin', 'login.html'), (err) => { if (err) next(); });
+  }
+);
+
+app.get(['/SchoolsAd', '/SchoolsAd/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
 });
+
+app.get(
+  ['/SchoolsAd/login', '/SchoolsAd/login.html',
+   '/SchoolAd/Login', '/SchoolAd/Login.html'],
+  (req, res, next) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
+  }
+);
 
 /* ============================================================
  * ERROR HANDLING
