@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Admin Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,708 +24,350 @@
     a { text-decoration: none; color: inherit; }
     button { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
-      --radius-card: 16px;
-      --radius-btn: 10px;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 10px;
       --sidebar-w: 260px;
     }
 
-    /* ----- LAYOUT ----- */
-    .admin-shell {
-      display: flex;
-      min-height: 100vh;
+    /* Loading gate — visible until auth check completes */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
     }
+    #loading-gate .spinner {
+      width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading-gate p { font-size: 0.9rem; }
 
-    /* ===== SIDEBAR ===== */
+    .admin-shell { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      z-index: 60;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
       transition: transform 0.25s ease;
     }
-    .sidebar-brand {
-      padding: 24px 24px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-brand .logo {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
+    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
     .sidebar-brand .logo span { color: var(--primary); }
     .sidebar-brand .portal-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
     }
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-nav {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      flex: 1; overflow-y: auto; padding: 20px 14px;
+      display: flex; flex-direction: column; gap: 4px;
     }
     .nav-group-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 14px 12px 8px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
     }
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--muted);
-      transition: background 0.15s, color 0.15s;
+      display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+      border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+      color: var(--muted); transition: background 0.15s, color 0.15s;
       position: relative;
     }
-    .nav-item i {
-      width: 20px;
-      text-align: center;
-      font-size: 0.95rem;
-      flex-shrink: 0;
-    }
-    .nav-item:hover {
-      background-color: var(--elevated);
-      color: var(--text);
-    }
-    .nav-item.active {
-      background-color: rgba(0, 201, 130, 0.1);
-      color: var(--primary);
-    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); }
+    .nav-item.active { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
     .nav-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 20px;
-      background-color: var(--primary);
-      border-radius: 0 3px 3px 0;
+      content: ''; position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
     .nav-badge {
-      margin-left: auto;
-      background-color: var(--accent);
-      color: #070A09;
-      font-size: 0.65rem;
-      font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 40px;
-      min-width: 22px;
-      text-align: center;
+      margin-left: auto; background-color: var(--accent); color: #070A09;
+      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+      border-radius: 40px; min-width: 22px; text-align: center;
     }
     .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
 
-    .sidebar-footer {
-      padding: 16px 14px 20px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      transition: background 0.15s;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      transition: background 0.15s; cursor: pointer;
     }
     .admin-user:hover { background-color: var(--elevated); }
     .admin-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, #00C982, #008f5c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.85rem;
-      color: #070A09;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
     }
     .admin-user-info { flex: 1; min-width: 0; }
     .admin-user-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .admin-user-role {
-      font-size: 0.7rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      text-transform: capitalize;
     }
     .logout-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 0.95rem;
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 8px;
-      transition: color 0.15s;
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
     }
     .logout-btn:hover { color: #e07070; }
 
-    /* ===== MAIN AREA ===== */
-    .main-area {
-      flex: 1;
-      margin-left: var(--sidebar-w);
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+    /* MAIN */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
-    /* ===== TOP BAR ===== */
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background-color: rgba(13, 18, 16, 0.92);
-      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92); backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 0 24px;
-      height: 68px;
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 68px;
     }
     .menu-toggle {
-      display: none;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 1.25rem;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
+      display: none; background: transparent; border: none; color: var(--text);
+      font-size: 1.25rem; cursor: pointer; padding: 8px; border-radius: 8px;
     }
     .menu-toggle:hover { color: var(--primary); }
 
     .topbar-search {
-      flex: 1;
-      max-width: 420px;
-      position: relative;
-      display: flex;
-      align-items: center;
+      flex: 1; max-width: 420px; position: relative; display: flex; align-items: center;
     }
-    .topbar-search i {
-      position: absolute;
-      left: 14px;
-      color: var(--muted);
-      font-size: 0.85rem;
-      pointer-events: none;
-    }
+    .topbar-search i { position: absolute; left: 14px; color: var(--muted); font-size: 0.85rem; pointer-events: none; }
     .topbar-search input {
-      width: 100%;
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 40px;
-      padding: 10px 16px 10px 40px;
-      font-family: 'Manrope', sans-serif;
-      font-size: 0.85rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 40px; padding: 10px 16px 10px 40px;
+      font-family: 'Manrope', sans-serif; font-size: 0.85rem; color: var(--text);
+      outline: none; transition: border-color 0.2s;
     }
     .topbar-search input::placeholder { color: #6b7c74; }
     .topbar-search input:focus { border-color: var(--primary); }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
-    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
     .icon-btn {
-      position: relative;
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--muted);
-      font-size: 1rem;
-      cursor: pointer;
-      padding: 9px 11px;
-      border-radius: 10px;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer; padding: 9px 11px;
+      border-radius: 10px; transition: all 0.15s;
+      display: inline-flex; align-items: center; justify-content: center;
     }
-    .icon-btn:hover {
-      background-color: var(--elevated);
-      color: var(--primary);
-      border-color: var(--border);
-    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
     .icon-btn .dot-indicator {
-      position: absolute;
-      top: 7px;
-      right: 8px;
-      width: 7px;
-      height: 7px;
-      background-color: var(--accent);
-      border-radius: 50%;
-      border: 2px solid var(--surface);
+      position: absolute; top: 7px; right: 8px;
+      width: 7px; height: 7px; background-color: var(--accent);
+      border-radius: 50%; border: 2px solid var(--surface); display: none;
     }
-    .topbar-divider {
-      width: 1px;
-      height: 26px;
-      background-color: var(--border);
-      margin: 0 6px;
-    }
+    .icon-btn .dot-indicator.show { display: block; }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 10px 6px 6px;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: background 0.15s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
     }
     .topbar-admin:hover { background-color: var(--elevated); }
-    .topbar-admin .admin-avatar {
-      width: 32px;
-      height: 32px;
-      font-size: 0.75rem;
-    }
-    .topbar-admin-name {
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    .topbar-admin-role {
-      font-size: 0.68rem;
-      color: var(--muted);
-      line-height: 1.2;
-    }
+    .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
-    /* ===== CONTENT ===== */
-    .content {
-      padding: 32px 24px 56px;
-      flex: 1;
-    }
+    /* CONTENT */
+    .content { padding: 32px 24px 56px; flex: 1; }
     .page-heading { margin-bottom: 28px; }
     .page-heading .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
     }
-    .page-heading h1 {
-      font-size: 2rem;
-      margin-bottom: 6px;
-    }
-    .page-heading p {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+    .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* ----- OVERVIEW CARDS ----- */
-    .overview-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-    }
+    .overview-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; }
     @media (min-width: 600px) { .overview-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1100px) { .overview-grid { grid-template-columns: repeat(4, 1fr); } }
 
     .stat-card {
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 22px;
-      transition: border-color 0.2s;
-      position: relative;
-      overflow: hidden;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 22px;
+      transition: border-color 0.2s; position: relative; overflow: hidden;
     }
     .stat-card:hover { border-color: var(--primary); }
-    .stat-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
+    .stat-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .stat-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
+      width: 42px; height: 42px; border-radius: 11px;
       background-color: rgba(0, 201, 130, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 1.05rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.05rem;
     }
     .stat-icon.gold { background-color: rgba(245, 185, 66, 0.1); color: var(--accent); }
     .stat-card-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      font-size: 0.78rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
     }
     .stat-card-value {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 6px;
+      font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 6px;
       color: var(--text);
     }
-    .stat-card-value.placeholder { color: var(--muted); letter-spacing: 0.05em; }
-    .stat-card-sub {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
+    .stat-card-value.loading { color: var(--muted); letter-spacing: 0.05em; font-size: 1.2rem; }
+    .stat-card-sub { font-size: 0.78rem; color: var(--muted); }
     .stat-card-sub .gold { color: var(--accent); font-weight: 700; }
     .stat-card-sub .green { color: var(--primary); font-weight: 700; }
 
-    /* ----- MAIN GRID: quick actions + review queue ----- */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 1024px) {
-      .dashboard-grid { grid-template-columns: 1.4fr 1fr; }
-    }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 1024px) { .dashboard-grid { grid-template-columns: 1.4fr 1fr; } }
 
     .panel {
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 24px;
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); padding: 24px;
     }
     .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
     }
-    .panel-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-link {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 0.8rem; font-weight: 600; color: var(--primary);
+      display: inline-flex; align-items: center; gap: 6px;
     }
     .panel-link:hover { text-decoration: underline; }
 
-    /* Quick actions */
-    .quick-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
+    .quick-actions { display: grid; grid-template-columns: 1fr; gap: 12px; }
     @media (min-width: 480px) { .quick-actions { grid-template-columns: repeat(2, 1fr); } }
     .quick-action {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: all 0.15s;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 14px; padding: 16px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; transition: all 0.15s; cursor: pointer;
     }
-    .quick-action:hover {
-      border-color: var(--primary);
-      background-color: rgba(0, 201, 130, 0.04);
-    }
+    .quick-action:hover { border-color: var(--primary); background-color: rgba(0, 201, 130, 0.04); }
     .quick-action-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 40px; height: 40px; border-radius: 10px;
       background-color: rgba(0, 201, 130, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 1rem;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1rem; flex-shrink: 0;
     }
     .quick-action-icon.gold { background-color: rgba(245, 185, 66, 0.1); color: var(--accent); }
     .quick-action-text { flex: 1; min-width: 0; }
-    .quick-action-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
+    .quick-action-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
     .quick-action-desc {
-      font-size: 0.75rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.75rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .quick-action-arrow {
-      color: var(--muted);
-      font-size: 0.75rem;
-      flex-shrink: 0;
+      color: var(--muted); font-size: 0.75rem; flex-shrink: 0;
       transition: transform 0.15s, color 0.15s;
     }
-    .quick-action:hover .quick-action-arrow {
-      color: var(--primary);
-      transform: translateX(3px);
-    }
+    .quick-action:hover .quick-action-arrow { color: var(--primary); transform: translateX(3px); }
 
-    /* Review queue */
     .review-list { display: flex; flex-direction: column; gap: 12px; }
     .review-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: border-color 0.15s;
+      display: flex; align-items: center; gap: 14px; padding: 14px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; transition: border-color 0.15s;
     }
     .review-item:hover { border-color: var(--primary); }
     .review-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 38px; height: 38px; border-radius: 10px;
       background-color: rgba(245, 185, 66, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-      font-size: 0.95rem;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 0.95rem; flex-shrink: 0;
     }
     .review-icon.green { background-color: rgba(0, 201, 130, 0.1); color: var(--primary); }
     .review-text { flex: 1; min-width: 0; }
     .review-text h4 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.85rem; font-weight: 700; margin-bottom: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .review-text p {
-      font-size: 0.72rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.72rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .review-btn {
-      background-color: transparent;
-      border: 1px solid var(--border);
-      color: var(--primary);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
-      flex-shrink: 0;
+      background-color: transparent; border: 1px solid var(--border);
+      color: var(--primary); font-size: 0.72rem; font-weight: 700;
+      padding: 6px 12px; border-radius: 8px; cursor: pointer;
+      transition: all 0.15s; flex-shrink: 0;
     }
-    .review-btn:hover {
-      background-color: var(--primary);
-      color: #070A09;
-      border-color: var(--primary);
-    }
+    .review-btn:hover { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
 
-    .empty-state {
-      text-align: center;
-      padding: 32px 16px;
-      color: var(--muted);
-    }
-    .empty-state i {
-      font-size: 2rem;
-      color: var(--border);
-      margin-bottom: 12px;
-      display: inline-block;
-    }
+    .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); }
+    .empty-state i { font-size: 2rem; color: var(--border); margin-bottom: 12px; display: inline-block; }
     .empty-state p { font-size: 0.85rem; }
+    .empty-state .error { color: #f0a0a0; }
 
-    /* ----- BOTTOM GRID: recent activity + notifications ----- */
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-    @media (min-width: 1024px) {
-      .bottom-grid { grid-template-columns: 1.4fr 1fr; }
-    }
+    .bottom-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 1024px) { .bottom-grid { grid-template-columns: 1.4fr 1fr; } }
 
-    /* Recent activity */
     .activity-list { display: flex; flex-direction: column; }
-    .activity-item {
-      display: flex;
-      gap: 14px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .activity-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
     .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
     .activity-item:first-child { padding-top: 0; }
     .activity-dot {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 0.78rem;
-      flex-shrink: 0;
-      margin-top: 2px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background-color: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.78rem; flex-shrink: 0; margin-top: 2px;
     }
     .activity-dot.green { color: var(--primary); border-color: rgba(0, 201, 130, 0.3); }
     .activity-dot.gold { color: var(--accent); border-color: rgba(245, 185, 66, 0.3); }
     .activity-body { flex: 1; min-width: 0; }
-    .activity-body p {
-      font-size: 0.85rem;
-      color: var(--text);
-      margin-bottom: 3px;
-      line-height: 1.45;
-    }
+    .activity-body p { font-size: 0.85rem; color: var(--text); margin-bottom: 3px; line-height: 1.45; }
     .activity-body p strong { color: var(--text); font-weight: 700; }
     .activity-body p .highlight { color: var(--primary); font-weight: 600; }
     .activity-time {
-      font-size: 0.7rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 0.7rem; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
     }
 
-    /* Notifications */
     .notification-list { display: flex; flex-direction: column; gap: 12px; }
     .notification-item {
-      display: flex;
-      gap: 12px;
-      padding: 14px;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      border-left: 3px solid var(--border);
+      display: flex; gap: 12px; padding: 14px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; border-left: 3px solid var(--border);
     }
     .notification-item.warning { border-left-color: var(--accent); }
     .notification-item.info { border-left-color: var(--primary); }
     .notification-item.critical { border-left-color: #e07070; }
-    .notification-icon {
-      font-size: 0.95rem;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
+    .notification-icon { font-size: 0.95rem; margin-top: 2px; flex-shrink: 0; }
     .notification-item.warning .notification-icon { color: var(--accent); }
     .notification-item.info .notification-icon { color: var(--primary); }
     .notification-item.critical .notification-icon { color: #e07070; }
     .notification-text { flex: 1; min-width: 0; }
-    .notification-text h4 {
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 3px;
-      line-height: 1.3;
-    }
-    .notification-text p {
-      font-size: 0.75rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-    .notification-time {
-      font-size: 0.68rem;
-      color: var(--muted);
-      white-space: nowrap;
-      margin-top: 2px;
-    }
+    .notification-text h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 3px; line-height: 1.3; }
+    .notification-text p { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
+    .notification-time { font-size: 0.68rem; color: var(--muted); white-space: nowrap; margin-top: 2px; }
 
-    /* Footer note */
     .footer-note {
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--muted);
-      padding: 32px 24px 24px;
-      border-top: 1px solid var(--border);
-      margin-top: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      text-align: center; font-size: 0.72rem; color: var(--muted);
+      padding: 32px 24px 24px; border-top: 1px solid var(--border);
+      margin-top: 40px; display: flex; align-items: center; justify-content: center;
+      gap: 8px; flex-wrap: wrap;
     }
     .footer-note i { color: var(--accent); font-size: 0.7rem; }
 
-    /* Sidebar overlay for mobile */
     .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.6);
-      z-index: 55;
-      backdrop-filter: blur(2px);
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0, 0, 0, 0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* ----- RESPONSIVE ----- */
     @media (max-width: 1023px) {
-      .sidebar {
-        transform: translateX(-100%);
-        box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
-      }
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5); }
       .sidebar.open { transform: translateX(0); }
       .main-area { margin-left: 0; }
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
     }
-
     @media (max-width: 600px) {
       .topbar-search { display: none; }
       .topbar-admin-name, .topbar-admin-role { display: none; }
@@ -736,15 +378,10 @@
       .quick-actions { grid-template-columns: 1fr; }
     }
 
-    /* Scrollbar styling */
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
     .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-nav::-webkit-scrollbar-thumb {
-      background-color: var(--border);
-      border-radius: 3px;
-    }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
     }
@@ -752,10 +389,15 @@
 </head>
 <body>
 
-  <!-- Sidebar overlay (mobile) -->
+  <!-- Loading gate — visible until session verified -->
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell">
+  <div class="admin-shell" style="display: none;" id="appShell">
 
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
@@ -781,12 +423,12 @@
 
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out" onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
@@ -796,7 +438,6 @@
     <!-- ==================== MAIN AREA ==================== -->
     <div class="main-area">
 
-      <!-- ===== TOP BAR ===== -->
       <header class="topbar">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
           <i class="fas fa-bars"></i>
@@ -804,48 +445,45 @@
 
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search schools, admissions, articles..." aria-label="Search admin records">
+          <input type="text" id="topSearch" placeholder="Search schools, admissions, articles..." aria-label="Search admin records">
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications" title="Notifications">
+          <button class="icon-btn" aria-label="Notifications" title="Notifications" id="notifBtn">
             <i class="far fa-bell"></i>
-            <span class="dot-indicator"></span>
+            <span class="dot-indicator" id="notifDot"></span>
           </button>
-          <button class="icon-btn" aria-label="Help" title="Help & documentation">
+          <button class="icon-btn" aria-label="Help" title="Help & documentation" onclick="window.open('https://campusnaija.vercel.app/FAQ.html','_blank')">
             <i class="far fa-circle-question"></i>
           </button>
           <div class="topbar-divider" aria-hidden="true"></div>
-          <div class="topbar-admin" role="button" tabindex="0" aria-label="Account menu">
-            <div class="admin-avatar">AD</div>
+          <div class="topbar-admin" role="button" tabindex="0" aria-label="Account">
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
-      <!-- ===== CONTENT ===== -->
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-gauge-high"></i> Platform overview</div>
           <h1>Dashboard</h1>
           <p>Manage your education platform from one place.</p>
         </div>
 
-        <!-- Overview cards -->
+        <!-- ===== Stats ===== -->
         <section class="overview-grid" aria-label="Platform statistics">
           <div class="stat-card">
             <div class="stat-card-top">
               <div class="stat-icon"><i class="fas fa-building-columns"></i></div>
               <span class="stat-card-label">Schools</span>
             </div>
-            <div class="stat-card-value placeholder">—</div>
-            <div class="stat-card-sub">Total records</div>
+            <div class="stat-card-value loading" id="statSchools">—</div>
+            <div class="stat-card-sub" id="statSchoolsSub">Total records</div>
           </div>
 
           <div class="stat-card">
@@ -853,8 +491,8 @@
               <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
               <span class="stat-card-label">Admissions</span>
             </div>
-            <div class="stat-card-value placeholder">—</div>
-            <div class="stat-card-sub">Published notices</div>
+            <div class="stat-card-value loading" id="statAdmissions">—</div>
+            <div class="stat-card-sub" id="statAdmissionsSub">Published notices</div>
           </div>
 
           <div class="stat-card">
@@ -862,8 +500,8 @@
               <div class="stat-icon"><i class="fas fa-award"></i></div>
               <span class="stat-card-label">Scholarships</span>
             </div>
-            <div class="stat-card-value placeholder">—</div>
-            <div class="stat-card-sub">Total listings</div>
+            <div class="stat-card-value loading" id="statScholarships">—</div>
+            <div class="stat-card-sub" id="statScholarshipsSub">Total listings</div>
           </div>
 
           <div class="stat-card">
@@ -871,15 +509,14 @@
               <div class="stat-icon gold"><i class="fas fa-clock-rotate-left"></i></div>
               <span class="stat-card-label">To verify</span>
             </div>
-            <div class="stat-card-value placeholder">—</div>
+            <div class="stat-card-value loading" id="statPending">—</div>
             <div class="stat-card-sub"><span class="gold">Pending review</span></div>
           </div>
         </section>
 
-        <!-- Main grid: quick actions + review queue -->
+        <!-- ===== Quick actions + Review queue ===== -->
         <section class="dashboard-grid" aria-label="Quick actions and review queue">
 
-          <!-- Quick actions -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-bolt"></i> Quick actions</div>
@@ -893,7 +530,6 @@
                 </div>
                 <i class="fas fa-chevron-right quick-action-arrow"></i>
               </a>
-
               <a href="./Admissions.html" class="quick-action">
                 <div class="quick-action-icon"><i class="fas fa-bullhorn"></i></div>
                 <div class="quick-action-text">
@@ -902,7 +538,6 @@
                 </div>
                 <i class="fas fa-chevron-right quick-action-arrow"></i>
               </a>
-
               <a href="./Trending.html" class="quick-action">
                 <div class="quick-action-icon gold"><i class="fas fa-pen-nib"></i></div>
                 <div class="quick-action-text">
@@ -911,7 +546,6 @@
                 </div>
                 <i class="fas fa-chevron-right quick-action-arrow"></i>
               </a>
-
               <a href="./Scholarships.html" class="quick-action">
                 <div class="quick-action-icon gold"><i class="fas fa-plus"></i></div>
                 <div class="quick-action-text">
@@ -923,121 +557,44 @@
             </div>
           </div>
 
-          <!-- Review queue -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-magnifying-glass"></i> Review queue</div>
-              <a href="#" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
+              <a href="./Audit.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="review-list">
-              <div class="review-item">
-                <div class="review-icon"><i class="fas fa-school"></i></div>
-                <div class="review-text">
-                  <h4>School profile awaiting verification</h4>
-                  <p>New institution record · Pending</p>
-                </div>
-                <button class="review-btn">Review</button>
-              </div>
-              <div class="review-item">
-                <div class="review-icon gold"><i class="fas fa-file-circle-check"></i></div>
-                <div class="review-text">
-                  <h4>Admission notice needs confirmation</h4>
-                  <p>Deadline source · Awaiting check</p>
-                </div>
-                <button class="review-btn">Review</button>
-              </div>
-              <div class="review-item">
-                <div class="review-icon green"><i class="fas fa-pen-fancy"></i></div>
-                <div class="review-text">
-                  <h4>Draft article pending approval</h4>
-                  <p>Trending story · Draft</p>
-                </div>
-                <button class="review-btn">Review</button>
-              </div>
+            <div class="review-list" id="reviewList">
+              <div class="empty-state"><p>Loading…</p></div>
             </div>
           </div>
         </section>
 
-        <!-- Bottom grid: recent activity + notifications -->
+        <!-- ===== Recent activity + Notifications ===== -->
         <section class="bottom-grid" aria-label="Activity and notifications">
 
-          <!-- Recent activity -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent activity</div>
               <a href="./Audit.html" class="panel-link">Audit log <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="activity-list">
-              <div class="activity-item">
-                <div class="activity-dot green"><i class="fas fa-circle-check"></i></div>
-                <div class="activity-body">
-                  <p><strong>Admin User</strong> published a new <span class="highlight">admission notice</span>.</p>
-                  <div class="activity-time"><i class="far fa-clock"></i> 12 minutes ago</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot"><i class="fas fa-pen"></i></div>
-                <div class="activity-body">
-                  <p><strong>Editor</strong> updated an <span class="highlight">institution profile</span>.</p>
-                  <div class="activity-time"><i class="far fa-clock"></i> 1 hour ago</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot gold"><i class="fas fa-triangle-exclamation"></i></div>
-                <div class="activity-body">
-                  <p><strong>System</strong> flagged a <span class="highlight">scholarship deadline</span> for verification.</p>
-                  <div class="activity-time"><i class="far fa-clock"></i> 3 hours ago</div>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-dot"><i class="fas fa-upload"></i></div>
-                <div class="activity-body">
-                  <p><strong>Admin User</strong> uploaded new <span class="highlight">media assets</span>.</p>
-                  <div class="activity-time"><i class="far fa-clock"></i> Yesterday</div>
-                </div>
-              </div>
+            <div class="activity-list" id="activityList">
+              <div class="empty-state"><p>Loading…</p></div>
             </div>
           </div>
 
-          <!-- Notifications -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="far fa-bell"></i> Notifications</div>
-              <a href="#" class="panel-link">Mark all read</a>
+              <a href="#" class="panel-link" id="markAllRead">Mark all read</a>
             </div>
-            <div class="notification-list">
-              <div class="notification-item warning">
-                <i class="fas fa-triangle-exclamation notification-icon"></i>
-                <div class="notification-text">
-                  <h4>Deadline approaching</h4>
-                  <p>A published admission notice closes within 7 days.</p>
-                </div>
-                <span class="notification-time">2h</span>
-              </div>
-              <div class="notification-item critical">
-                <i class="fas fa-circle-xmark notification-icon"></i>
-                <div class="notification-text">
-                  <h4>Publishing failed</h4>
-                  <p>An article could not be published. Check required fields.</p>
-                </div>
-                <span class="notification-time">5h</span>
-              </div>
-              <div class="notification-item info">
-                <i class="fas fa-circle-info notification-icon"></i>
-                <div class="notification-text">
-                  <h4>Records need attention</h4>
-                  <p>Several school profiles are missing verification sources.</p>
-                </div>
-                <span class="notification-time">1d</span>
-              </div>
+            <div class="notification-list" id="notifList">
+              <div class="empty-state"><p>Loading…</p></div>
             </div>
           </div>
         </section>
 
-        <!-- Footer note -->
         <div class="footer-note">
           <i class="fas fa-circle-info"></i>
-          <span>Layout preview only. Dashes are intentional placeholders, not real platform statistics. All figures should come from the database.</span>
+          <span>All figures are live from the CampusNaija database. Nothing on this page is mocked or hardcoded.</span>
         </div>
       </main>
     </div>
@@ -1047,66 +604,404 @@
     (function() {
       'use strict';
 
-      const menuToggle = document.getElementById('menuToggle');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
+      // ─────────────────────────────────────────────────────
+      // Config
+      // ─────────────────────────────────────────────────────
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
 
-      function openSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('active');
-        menuToggle.setAttribute('aria-expanded', 'true');
-      }
-      function closeSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        menuToggle.setAttribute('aria-expanded', 'false');
-      }
-      function toggleSidebar() {
-        if (sidebar.classList.contains('open')) closeSidebar();
-        else openSidebar();
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+
+      let token = null;
+      let currentUser = null;
+
+      // ─────────────────────────────────────────────────────
+      // Helpers
+      // ─────────────────────────────────────────────────────
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).slice(0, 2)
+          .map(w => w[0] ? w[0].toUpperCase() : '').join('') || '?';
+      };
+
+      const timeAgo = (iso) => {
+        if (!iso) return '';
+        const then = new Date(iso).getTime();
+        if (isNaN(then)) return '';
+        const diff = Math.max(0, Date.now() - then);
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return mins + 'm ago';
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h ago';
+        const days = Math.floor(hrs / 24);
+        if (days < 30) return days + 'd ago';
+        return new Date(iso).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' });
+      };
+
+      const fmtNum = (n) => Number(n || 0).toLocaleString('en-NG');
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      if (menuToggle) {
-        menuToggle.addEventListener('click', toggleSidebar);
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
       }
-      if (overlay) {
+
+      function renderError(el, msg) {
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p class="error">'
+          + esc(msg) + '</p></div>';
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Auth gate
+      // ─────────────────────────────────────────────────────
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div class="empty-state">'
+            + '<p class="error">Could not reach the server.</p>'
+            + '<p style="margin-top:8px;font-size:0.85rem">The API may be waking up. Retry in a moment.</p>'
+            + '<button onclick="location.reload()" style="margin-top:16px;padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>'
+            + '</div>';
+          return false;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Populate user UI
+      // ─────────────────────────────────────────────────────
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Stats
+      // ─────────────────────────────────────────────────────
+      async function loadStats() {
+        const setVal = (id, val, subId, subText) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.classList.remove('loading');
+          el.textContent = val;
+          if (subId && subText) {
+            const sub = document.getElementById(subId);
+            if (sub) sub.innerHTML = subText;
+          }
+        };
+
+        // Fetch everything in parallel
+        const results = await Promise.allSettled([
+          api('/api/schools'),
+          api('/api/admissions'),
+          api('/api/scholarships'),
+          api('/api/admin/submissions'),
+        ]);
+
+        // Schools
+        if (results[0].status === 'fulfilled') {
+          const list = results[0].value.schools || [];
+          const published = list.filter(s => s.publication === 'published').length;
+          setVal('statSchools', fmtNum(list.length), 'statSchoolsSub',
+            published + ' published · ' + (list.length - published) + ' draft/archived');
+        } else {
+          setVal('statSchools', '—', 'statSchoolsSub', 'Error loading');
+        }
+
+        // Admissions
+        if (results[1].status === 'fulfilled') {
+          const list = results[1].value.admissions || [];
+          const published = list.filter(a => a.status === 'published').length;
+          setVal('statAdmissions', fmtNum(published), 'statAdmissionsSub',
+            list.length + ' total records');
+        } else {
+          setVal('statAdmissions', '—', 'statAdmissionsSub', 'Error loading');
+        }
+
+        // Scholarships
+        if (results[2].status === 'fulfilled') {
+          const list = results[2].value.scholarships || [];
+          const published = list.filter(s => s.status === 'published').length;
+          setVal('statScholarships', fmtNum(published), 'statScholarshipsSub',
+            list.length + ' total listings');
+        } else {
+          setVal('statScholarships', '—', 'statScholarshipsSub', 'Error loading');
+        }
+
+        // Pending review
+        if (results[3].status === 'fulfilled') {
+          const list = results[3].value.submissions || [];
+          setVal('statPending', fmtNum(list.length));
+          if (list.length > 0) {
+            document.getElementById('notifDot').classList.add('show');
+          }
+        } else {
+          setVal('statPending', '—');
+        }
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Review queue
+      // ─────────────────────────────────────────────────────
+      async function loadReviewQueue() {
+        const el = document.getElementById('reviewList');
+        try {
+          const data = await api('/api/admin/submissions');
+          const items = (data.submissions || []).slice(0, 5);
+
+          if (!items.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-circle-check"></i><p>Nothing pending review.</p></div>';
+            return;
+          }
+
+          const iconFor = (type) => ({
+            course: { icon: 'fa-book', cls: 'green' },
+            fee:    { icon: 'fa-money-bill', cls: '' },
+            admission: { icon: 'fa-clipboard-list', cls: '' },
+            calendar: { icon: 'fa-calendar', cls: 'green' },
+          }[type] || { icon: 'fa-file', cls: '' });
+
+          el.innerHTML = items.map(item => {
+            const i = iconFor(item.type);
+            const target = ({
+              course: 'Courses', fee: 'Fees', admission: 'Admissions', calendar: 'Calendar',
+            }[item.type] || 'Dashboard');
+            return `
+              <div class="review-item">
+                <div class="review-icon ${i.cls}"><i class="fas ${i.icon}"></i></div>
+                <div class="review-text">
+                  <h4>${esc(item.label || ('#' + item.id))}</h4>
+                  <p>${esc(item.type)} · ${esc(item.status)} · ${timeAgo(item.updated_at)}</p>
+                </div>
+                <button class="review-btn" onclick="window.location.href='./${target}.html'">Review</button>
+              </div>`;
+          }).join('');
+        } catch (e) {
+          renderError(el, e.message);
+        }
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Recent activity (from audit log)
+      // ─────────────────────────────────────────────────────
+      async function loadActivity() {
+        const el = document.getElementById('activityList');
+        try {
+          const data = await api('/api/audit');
+          const items = (data.audit || []).slice(0, 5);
+
+          if (!items.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><p>No activity yet.</p></div>';
+            return;
+          }
+
+          const iconForAction = (action) => {
+            if (/publish|approve/.test(action)) return { icon: 'fa-circle-check', cls: 'green' };
+            if (/verify/.test(action)) return { icon: 'fa-shield-halved', cls: 'gold' };
+            if (/delete|suspend/.test(action)) return { icon: 'fa-triangle-exclamation', cls: 'gold' };
+            if (/login|logout/.test(action)) return { icon: 'fa-user', cls: '' };
+            if (/create|upload/.test(action)) return { icon: 'fa-upload', cls: '' };
+            return { icon: 'fa-pen', cls: '' };
+          };
+
+          el.innerHTML = items.map(a => {
+            const i = iconForAction(a.action || '');
+            const actor = a.actor_name || 'Unknown';
+            const target = a.target_label || a.target_type || '';
+            return `
+              <div class="activity-item">
+                <div class="activity-dot ${i.cls}"><i class="fas ${i.icon}"></i></div>
+                <div class="activity-body">
+                  <p><strong>${esc(actor)}</strong> ${esc(a.action || '')} <span class="highlight">${esc(target)}</span></p>
+                  <div class="activity-time"><i class="far fa-clock"></i> ${timeAgo(a.created_at)}</div>
+                </div>
+              </div>`;
+          }).join('');
+        } catch (e) {
+          // Audit log requires owner role — fall back gracefully
+          if (/403|Forbidden/.test(e.message)) {
+            el.innerHTML = '<div class="empty-state"><p>Audit log is owner-only.</p></div>';
+          } else {
+            renderError(el, e.message);
+          }
+        }
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Notifications
+      // ─────────────────────────────────────────────────────
+      async function loadNotifications() {
+        const el = document.getElementById('notifList');
+        try {
+          const data = await api('/api/notifications');
+          const items = (data.notifications || []).filter(n => !n.is_read).slice(0, 5);
+
+          if (!items.length) {
+            el.innerHTML = '<div class="empty-state"><i class="far fa-bell"></i><p>No new notifications.</p></div>';
+            return;
+          }
+
+          document.getElementById('notifDot').classList.add('show');
+
+          el.innerHTML = items.map(n => {
+            const cls = /reject|fail|suspend/.test((n.title || '').toLowerCase())
+              ? 'critical'
+              : /approve/.test((n.title || '').toLowerCase())
+                ? 'info'
+                : 'warning';
+            const icon = cls === 'critical' ? 'fa-circle-xmark'
+              : cls === 'info' ? 'fa-circle-check'
+                : 'fa-triangle-exclamation';
+            return `
+              <div class="notification-item ${cls}" data-id="${esc(n.id)}">
+                <i class="fas ${icon} notification-icon"></i>
+                <div class="notification-text">
+                  <h4>${esc(n.title || 'Notification')}</h4>
+                  <p>${esc(n.body || '')}</p>
+                </div>
+                <span class="notification-time">${timeAgo(n.created_at)}</span>
+              </div>`;
+          }).join('');
+        } catch (e) {
+          renderError(el, e.message);
+        }
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Interactions
+      // ─────────────────────────────────────────────────────
+      function wireUI() {
+        // Sign out
+        const doLogout = async () => {
+          if (!confirm('Sign out of CampusNaija admin?')) return;
+          try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+          try {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+          } catch (_) {}
+          window.location.replace(LOGIN_URL);
+        };
+        document.getElementById('sideLogout').addEventListener('click', doLogout);
+
+        // Sidebar toggle (mobile)
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        function closeSidebar() {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+        menuToggle.addEventListener('click', () => {
+          const isOpen = sidebar.classList.contains('open');
+          if (isOpen) closeSidebar();
+          else {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+            menuToggle.setAttribute('aria-expanded', 'true');
+          }
+        });
         overlay.addEventListener('click', closeSidebar);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+        window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+        // Mark all notifications read
+        document.getElementById('markAllRead').addEventListener('click', async (e) => {
+          e.preventDefault();
+          try {
+            const data = await api('/api/notifications');
+            const unread = (data.notifications || []).filter(n => !n.is_read);
+            await Promise.all(unread.map(n =>
+              api('/api/notifications/' + encodeURIComponent(n.id) + '/read', { method: 'POST' })
+            ));
+            document.getElementById('notifDot').classList.remove('show');
+            loadNotifications();
+          } catch (err) {
+            console.warn('[mark-read]', err);
+          }
+        });
+
+        // Top search — navigate to the right section
+        document.getElementById('topSearch').addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter') return;
+          const q = e.target.value.trim();
+          if (!q) return;
+          window.location.href = './Schools.html?q=' + encodeURIComponent(q);
+        });
       }
 
-      // Close sidebar on nav item click (mobile)
-      document.querySelectorAll('.sidebar-nav .nav-item').forEach(function(item) {
-        item.addEventListener('click', function() {
-          if (window.innerWidth < 1024) closeSidebar();
-        });
-      });
+      // ─────────────────────────────────────────────────────
+      // Boot
+      // ─────────────────────────────────────────────────────
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
 
-      // Close on Escape
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeSidebar();
-      });
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
 
-      // Close on resize to desktop
-      window.addEventListener('resize', function() {
-        if (window.innerWidth >= 1024) closeSidebar();
-      });
+        renderUser();
+        wireUI();
 
-      // Prevent default for placeholder links
-      document.querySelectorAll('a[href="#"]').forEach(function(link) {
-        link.addEventListener('click', function(e) { e.preventDefault(); });
-      });
-
-      // Review queue buttons (demo feedback)
-      document.querySelectorAll('.review-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          const original = btn.textContent;
-          btn.textContent = 'Opening…';
-          btn.disabled = true;
-          setTimeout(function() {
-            btn.textContent = original;
-            btn.disabled = false;
-          }, 800);
-        });
-      });
+        // Load data in parallel — each panel fails gracefully
+        await Promise.allSettled([
+          loadStats(),
+          loadReviewQueue(),
+          loadActivity(),
+          loadNotifications(),
+        ]);
+      })();
     })();
   </script>
 

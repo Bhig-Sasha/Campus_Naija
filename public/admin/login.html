@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Admin Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -40,7 +40,6 @@
       --radius-btn: 12px;
     }
 
-    /* Subtle ambient glow behind the card */
     .bg-glow {
       position: fixed;
       top: 50%;
@@ -53,7 +52,6 @@
       z-index: 0;
     }
 
-    /* ----- HEADER (minimal, no public nav) ----- */
     .admin-header {
       position: relative;
       z-index: 2;
@@ -74,7 +72,6 @@
     }
     .logo span { color: var(--primary); }
 
-    /* ----- MAIN / LOGIN CARD ----- */
     .login-main {
       flex: 1;
       display: flex;
@@ -118,7 +115,6 @@
       margin-bottom: 28px;
     }
 
-    /* Form fields */
     .form-group { margin-bottom: 18px; }
     .form-label {
       display: block;
@@ -160,7 +156,6 @@
     .input-wrapper input:focus ~ .field-icon {
       color: var(--primary);
     }
-    /* Password toggle */
     .toggle-password {
       position: absolute;
       right: 12px;
@@ -178,7 +173,6 @@
     }
     .toggle-password:hover { color: var(--primary); }
 
-    /* Remember + Forgot row */
     .form-options {
       display: flex;
       align-items: center;
@@ -233,7 +227,6 @@
     }
     .forgot-link:hover { color: #00b374; text-decoration: underline; }
 
-    /* Submit button */
     .btn-signin {
       width: 100%;
       background-color: var(--primary);
@@ -273,7 +266,6 @@
     .btn-signin.loading .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Security note */
     .security-note {
       display: flex;
       align-items: center;
@@ -296,7 +288,6 @@
       line-height: 1.4;
     }
 
-    /* Authorised notice */
     .authorised-notice {
       text-align: center;
       font-size: 0.78rem;
@@ -308,7 +299,6 @@
     }
     .authorised-notice i { color: var(--accent); font-size: 0.7rem; }
 
-    /* Error / success messages */
     .form-message {
       display: none;
       align-items: flex-start;
@@ -333,7 +323,6 @@
     }
     .form-message.success i { color: var(--primary); margin-top: 2px; }
 
-    /* ----- FOOTER ----- */
     .admin-footer {
       position: relative;
       z-index: 2;
@@ -353,11 +342,8 @@
     .admin-footer a { color: var(--muted); transition: color 0.2s; }
     .admin-footer a:hover { color: var(--primary); }
 
-    /* ----- RESPONSIVE ----- */
     @media (max-width: 480px) {
-      .login-card {
-        padding: 32px 24px 28px;
-      }
+      .login-card { padding: 32px 24px 28px; }
       .login-card h1 { font-size: 1.6rem; }
       .admin-header { padding: 20px 0; }
       .form-options { flex-direction: column; align-items: flex-start; gap: 14px; }
@@ -367,8 +353,6 @@
       .login-card { padding: 28px 18px 24px; }
       .login-card h1 { font-size: 1.4rem; }
     }
-
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; transition: none !important; }
     }
@@ -376,17 +360,14 @@
 </head>
 <body>
 
-  <!-- Subtle ambient glow -->
   <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- Minimal admin header (no public navigation) -->
   <header class="admin-header">
     <div class="admin-header-inner">
       <div class="logo">Campus<span>Naija</span></div>
     </div>
   </header>
 
-  <!-- Login card -->
   <main class="login-main">
     <div class="login-card">
       <div class="card-eyebrow">
@@ -397,22 +378,20 @@
       <h1>Welcome back</h1>
       <p class="subtitle">Sign in to manage CampusNaija.</p>
 
-      <!-- Message area (error / success) -->
       <div class="form-message error" id="formMessage" role="alert" aria-live="polite">
-        <i class="fas fa-circle-exclamation"></i>
+        <i class="fas fa-circle-exclamation" id="formMessageIcon"></i>
         <span id="formMessageText"></span>
       </div>
 
       <form id="loginForm" novalidate autocomplete="on">
-        <!-- Email / username -->
         <div class="form-group">
-          <label class="form-label" for="identifier">Email address or username</label>
+          <label class="form-label" for="identifier">Email address</label>
           <div class="input-wrapper">
             <input
               type="text"
               id="identifier"
               name="identifier"
-              placeholder="Enter your admin credentials"
+              placeholder="you@campusnaija.ng"
               autocomplete="username"
               required
               aria-required="true"
@@ -422,7 +401,6 @@
           </div>
         </div>
 
-        <!-- Password -->
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
           <div class="input-wrapper">
@@ -448,7 +426,6 @@
           </div>
         </div>
 
-        <!-- Remember / Forgot -->
         <div class="form-options">
           <label class="checkbox-label">
             <input type="checkbox" id="rememberMe" name="rememberMe">
@@ -457,7 +434,6 @@
           <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
         </div>
 
-        <!-- Submit -->
         <button type="submit" class="btn-signin" id="signInBtn">
           <span class="spinner" aria-hidden="true"></span>
           <span class="btn-text">
@@ -466,13 +442,11 @@
         </button>
       </form>
 
-      <!-- Security note -->
       <div class="security-note">
         <i class="fas fa-shield-halved"></i>
         <p>Protected administrative access. Authorised personnel only.</p>
       </div>
 
-      <!-- Authorised notice -->
       <div class="authorised-notice">
         <i class="fas fa-circle-info"></i>
         <span>CampusNaija · Administration</span>
@@ -480,16 +454,13 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="admin-footer">
     <p>
-      <span>© 2026 CampusNaija</span>
+      <span>© <span id="year"></span> CampusNaija</span>
       <span class="divider">·</span>
-      <a href="#">Privacy</a>
+      <a href="/Privacy.html">Privacy</a>
       <span class="divider">·</span>
-      <a href="#">Security</a>
-      <span class="divider">·</span>
-      <a href="#">Support</a>
+      <a href="/Terms.html">Terms</a>
     </p>
   </footer>
 
@@ -497,6 +468,20 @@
     (function() {
       'use strict';
 
+      // ─────────────────────────────────────────────────────────────
+      // Configuration
+      // ─────────────────────────────────────────────────────────────
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const ID_KEY    = 'campusnaija_admin_id';
+
+      // The dashboard will live at /admin/index.html once you add it
+      const DASHBOARD_URL = '/admin/index.html';
+
+      // ─────────────────────────────────────────────────────────────
+      // Element references
+      // ─────────────────────────────────────────────────────────────
       const form = document.getElementById('loginForm');
       const identifierInput = document.getElementById('identifier');
       const passwordInput = document.getElementById('password');
@@ -505,8 +490,11 @@
       const signInBtn = document.getElementById('signInBtn');
       const formMessage = document.getElementById('formMessage');
       const formMessageText = document.getElementById('formMessageText');
+      const formMessageIcon = document.getElementById('formMessageIcon');
       const forgotLink = document.getElementById('forgotLink');
       const rememberMe = document.getElementById('rememberMe');
+
+      document.getElementById('year').textContent = new Date().getFullYear();
 
       /* ----- Password visibility toggle ----- */
       togglePasswordBtn.addEventListener('click', function() {
@@ -521,6 +509,9 @@
       /* ----- Message helpers ----- */
       function showMessage(type, text) {
         formMessage.className = 'form-message ' + type + ' show';
+        formMessageIcon.className = type === 'error'
+          ? 'fas fa-circle-exclamation'
+          : 'fas fa-circle-check';
         formMessageText.textContent = text;
       }
       function clearMessage() {
@@ -528,22 +519,22 @@
         formMessageText.textContent = '';
       }
 
-      /* ----- Demo credential check (front-end only) -----
-         NOTE: This is a visual demo. Real authentication must be
-         performed server-side with hashed passwords, rate limiting,
-         and secure session management. Never trust client-side checks. */
-      const DEMO_ADMIN = { identifier: 'admin', password: 'campus2026' };
+      /* ----- Loading state ----- */
+      function setLoading(on) {
+        signInBtn.disabled = !!on;
+        signInBtn.classList.toggle('loading', !!on);
+      }
 
-      form.addEventListener('submit', function(e) {
+      /* ----- Submit handler — calls the real backend ----- */
+      form.addEventListener('submit', async function(e) {
         e.preventDefault();
         clearMessage();
 
         const identifier = identifierInput.value.trim();
         const password = passwordInput.value;
 
-        // Basic validation
         if (!identifier) {
-          showMessage('error', 'Please enter your email address or username.');
+          showMessage('error', 'Please enter your email address.');
           identifierInput.focus();
           return;
         }
@@ -553,70 +544,164 @@
           return;
         }
 
-        // Loading state
-        signInBtn.classList.add('loading');
-        signInBtn.disabled = true;
+        setLoading(true);
 
-        // Simulate server round-trip
-        setTimeout(function() {
-          const ok =
-            identifier.toLowerCase() === DEMO_ADMIN.identifier &&
-            password === DEMO_ADMIN.password;
+        try {
+          const res = await fetch(API_BASE + '/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({ identifier, password }),
+          });
 
-          if (ok) {
-            showMessage('success', 'Authentication successful. Redirecting to dashboard…');
-            // In a real app: redirect to admin/index.html after secure session creation
-            setTimeout(function() {
-              // Demo: reset the form after a moment (no real redirect)
-              signInBtn.classList.remove('loading');
-              signInBtn.disabled = false;
-              // window.location.href = 'index.html';
-            }, 1200);
-          } else {
-            signInBtn.classList.remove('loading');
-            signInBtn.disabled = false;
-            showMessage('error', 'Invalid credentials. Please check your details and try again.');
-            passwordInput.value = '';
-            passwordInput.focus();
+          let data = null;
+          try { data = await res.json(); } catch (_) { /* non-JSON body */ }
+
+          if (!res.ok) {
+            let msg;
+            if (res.status === 429) {
+              msg = 'Too many sign-in attempts. Please wait a few minutes and try again.';
+            } else if (res.status === 403) {
+              msg = (data && data.error) || 'This account is not approved for sign-in.';
+            } else if (res.status === 401) {
+              msg = 'Invalid email or password.';
+            } else {
+              msg = (data && (data.error || data.message))
+                || ('Sign-in failed (HTTP ' + res.status + ').');
+            }
+            throw new Error(msg);
           }
-        }, 900);
+
+          if (!data || !data.token || !data.user) {
+            throw new Error('Unexpected server response. Please try again.');
+          }
+
+          // Only allow staff roles into the admin panel
+          const staffRoles = ['owner', 'admin', 'editor', 'reviewer'];
+          if (!staffRoles.includes(data.user.role)) {
+            throw new Error('This account is not authorised for the admin panel.');
+          }
+
+          // Persist session
+          try {
+            localStorage.setItem(TOKEN_KEY, data.token);
+            localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+            if (rememberMe.checked) {
+              localStorage.setItem(ID_KEY, identifier);
+            } else {
+              localStorage.removeItem(ID_KEY);
+            }
+          } catch (_) { /* private mode */ }
+
+          showMessage('success', 'Signed in. Redirecting…');
+          setTimeout(function() {
+            window.location.replace(DASHBOARD_URL);
+          }, 500);
+
+        } catch (err) {
+          setLoading(false);
+
+          const msg = err && err.message
+            ? err.message
+            : 'Could not reach the server. Check your connection and try again.';
+          showMessage('error', msg);
+          passwordInput.value = '';
+          passwordInput.focus();
+
+          // Log for debugging — especially CORS
+          if (err instanceof TypeError) {
+            console.error(
+              '[admin login] Network or CORS error. Confirm ALLOWED_ORIGINS on Render includes this origin, and that the service is awake.',
+              err
+            );
+          }
+        }
       });
 
-      /* ----- Forgot password (demo) ----- */
-      forgotLink.addEventListener('click', function(e) {
+      /* ----- Forgot password — hit the real endpoint ----- */
+      forgotLink.addEventListener('click', async function(e) {
         e.preventDefault();
         clearMessage();
-        showMessage('success',
-          'If the account exists, a verified password-reset link will be sent to the registered email. Contact your administrator if you do not receive it.');
+
+        const identifier = identifierInput.value.trim();
+        if (!identifier || identifier.indexOf('@') === -1) {
+          showMessage('error', 'Enter your account email above, then click "Forgot password?" again.');
+          identifierInput.focus();
+          return;
+        }
+
+        try {
+          const res = await fetch(API_BASE + '/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ email: identifier }),
+          });
+          const data = await res.json().catch(function() { return {}; });
+
+          if (res.status === 429) {
+            showMessage('error', data.error || 'Too many reset requests. Please try again later.');
+            return;
+          }
+          showMessage('success',
+            data.message
+              || 'If an approved account exists for that email, a reset link will be sent.');
+        } catch (_) {
+          showMessage('success',
+            'If an approved account exists for that email, a reset link will be sent.');
+        }
       });
 
-      /* ----- Clear errors on input ----- */
+      /* ----- Clear error message while typing ----- */
       [identifierInput, passwordInput].forEach(function(el) {
         el.addEventListener('input', function() {
           if (formMessage.classList.contains('error')) clearMessage();
         });
       });
 
-      /* ----- Remember me: store identifier only (never the password) ----- */
+      /* ----- Remember me: restore saved email ----- */
       try {
-        const saved = localStorage.getItem('campusnaija_admin_id');
+        const saved = localStorage.getItem(ID_KEY);
         if (saved) {
           identifierInput.value = saved;
           rememberMe.checked = true;
         }
-      } catch (err) { /* storage unavailable */ }
+      } catch (_) { /* ignore */ }
 
       rememberMe.addEventListener('change', function() {
         try {
           if (rememberMe.checked && identifierInput.value.trim()) {
-            localStorage.setItem('campusnaija_admin_id', identifierInput.value.trim());
+            localStorage.setItem(ID_KEY, identifierInput.value.trim());
           } else {
-            localStorage.removeItem('campusnaija_admin_id');
+            localStorage.removeItem(ID_KEY);
           }
-        } catch (err) { /* ignore */ }
+        } catch (_) { /* ignore */ }
       });
 
-      /* ----- Accessibility: focus first field on load ----- */
+      /* ----- If a valid session already exists, skip the form ----- */
+      (async function() {
+        let existing;
+        try { existing = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!existing) return;
+        try {
+          const res = await fetch(API_BASE + '/api/auth/me', {
+            headers: { 'Authorization': 'Bearer ' + existing, 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            window.location.replace(DASHBOARD_URL);
+          } else {
+            try {
+              localStorage.removeItem(TOKEN_KEY);
+              localStorage.removeItem(USER_KEY);
+            } catch (_) {}
+          }
+        } catch (_) {
+          // Backend asleep — let the user sign in manually
+        }
+      })();
+
+      /* ----- Focus first field on load ----- */
       window.addEventListener('load', function() {
         if (!identifierInput.value) identifierInput.focus();
       });
