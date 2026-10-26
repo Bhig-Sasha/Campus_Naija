@@ -33,8 +33,7 @@
       --shadow-glow: 0 0 0 3px rgba(0,201,130,0.15);
     }
 
-    /* ─────────── Keyframes (used across the page) ─────────── */
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ─────── Keyframes ─────── */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -57,29 +56,33 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─────────── Loading gate ─────────── */
-    #loading-gate {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; color: var(--muted);
-      z-index: 9999;
-      animation: fadeIn 0.3s ease;
+    /* ─────── Skeleton utility ─────── */
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      min-height: 12px;
+      display: block;
     }
-    #loading-gate .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(255,255,255,0.08);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .skeleton-text { height: 12px; }
+    .skeleton-text.short { width: 40%; }
+    .skeleton-text.medium { width: 60%; }
+    .skeleton-text.long { width: 85%; }
+    .skeleton-circle {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
     }
-    #loading-gate p { font-size: 0.9rem; letter-spacing: 0.02em; }
+    .skeleton-dot {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    }
+    .skeleton-btn {
+      width: 70px; height: 26px; border-radius: 8px;
+    }
 
-    /* ─────────── Shell ─────────── */
+    /* ─────── Shell ─────── */
     .admin-shell { display: flex; min-height: 100vh; }
 
-    /* ─────────── Sidebar ─────────── */
+    /* ─────── Sidebar ─────── */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -123,20 +126,7 @@
       font-size: 0.9rem; font-weight: 600; color: var(--muted);
       transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
       position: relative;
-      opacity: 0;
-      animation: slideInLeft 0.35s ease forwards;
     }
-    .sidebar-nav .nav-item:nth-child(1) { animation-delay: 0.05s; }
-    .sidebar-nav .nav-item:nth-child(2) { animation-delay: 0.08s; }
-    .sidebar-nav .nav-item:nth-child(3) { animation-delay: 0.11s; }
-    .sidebar-nav .nav-item:nth-child(4) { animation-delay: 0.14s; }
-    .sidebar-nav .nav-item:nth-child(5) { animation-delay: 0.17s; }
-    .sidebar-nav .nav-item:nth-child(6) { animation-delay: 0.20s; }
-    .sidebar-nav .nav-item:nth-child(8) { animation-delay: 0.25s; }
-    .sidebar-nav .nav-item:nth-child(9) { animation-delay: 0.28s; }
-    .sidebar-nav .nav-item:nth-child(10){ animation-delay: 0.31s; }
-    .sidebar-nav .nav-item:nth-child(11){ animation-delay: 0.34s; }
-
     .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; transition: transform 0.18s ease; }
     .nav-item:hover { background-color: var(--elevated); color: var(--text); transform: translateX(3px); }
     .nav-item:hover i { transform: scale(1.12); }
@@ -190,13 +180,13 @@
     }
     .logout-btn:hover { color: #e07070; transform: translateX(2px); }
 
-    /* ─────────── Main ─────────── */
+    /* ─────── Main ─────── */
     .main-area {
       flex: 1; margin-left: var(--sidebar-w);
       display: flex; flex-direction: column; min-width: 0;
     }
 
-    /* ─────────── Topbar ─────────── */
+    /* ─────── Topbar ─────── */
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -286,7 +276,7 @@
       text-transform: capitalize;
     }
 
-    /* ─────────── Content ─────────── */
+    /* ─────── Content ─────── */
     .content { padding: 32px 24px 56px; flex: 1; }
 
     .page-heading {
@@ -302,7 +292,7 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* ─────────── Stats ─────────── */
+    /* ─────── Stats ─────── */
     .overview-grid {
       display: grid; grid-template-columns: 1fr; gap: 16px;
       margin-bottom: 32px;
@@ -317,13 +307,7 @@
       padding: 22px;
       position: relative; overflow: hidden;
       transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      opacity: 0;
-      animation: fadeInUp 0.45s ease forwards;
     }
-    .stat-card:nth-child(1) { animation-delay: 0.05s; }
-    .stat-card:nth-child(2) { animation-delay: 0.12s; }
-    .stat-card:nth-child(3) { animation-delay: 0.19s; }
-    .stat-card:nth-child(4) { animation-delay: 0.26s; }
 
     .stat-card::before {
       content: '';
@@ -369,14 +353,15 @@
       transition: color 0.2s ease;
     }
     .stat-card-value.loading {
-      color: var(--muted); font-size: 1.2rem;
-      letter-spacing: 0.05em;
-      background: linear-gradient(90deg, var(--muted) 0%, #6b7c74 50%, var(--muted) 100%);
-      background-size: 400px 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 1.4s linear infinite;
+      display: inline-block;
+      width: 60px;
+      height: 32px;
+      margin-bottom: 6px;
+    }
+    .stat-card-value.loading .skeleton {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
     }
     .stat-card-value.filled { animation: countUp 0.35s ease both; }
     .stat-card:hover .stat-card-value { color: var(--primary); }
@@ -386,7 +371,7 @@
     .stat-card-sub .gold { color: var(--accent); font-weight: 700; }
     .stat-card-sub .green { color: var(--primary); font-weight: 700; }
 
-    /* ─────────── Dashboard grid ─────────── */
+    /* ─────── Dashboard grid ─────── */
     .dashboard-grid {
       display: grid; grid-template-columns: 1fr; gap: 24px;
       margin-bottom: 32px;
@@ -400,13 +385,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       padding: 24px;
-      opacity: 0;
-      animation: fadeInUp 0.5s ease forwards;
     }
-    .dashboard-grid .panel:nth-child(1) { animation-delay: 0.3s; }
-    .dashboard-grid .panel:nth-child(2) { animation-delay: 0.38s; }
-    .bottom-grid .panel:nth-child(1) { animation-delay: 0.45s; }
-    .bottom-grid .panel:nth-child(2) { animation-delay: 0.52s; }
 
     .panel-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -422,10 +401,9 @@
       display: inline-flex; align-items: center; gap: 6px;
       transition: gap 0.15s ease;
     }
-    .panel-link:hover { gap: 10px; }
-    .panel-link:hover { text-decoration: underline; }
+    .panel-link:hover { gap: 10px; text-decoration: underline; }
 
-    /* ─────────── Quick actions ─────────── */
+    /* ─────── Quick actions ─────── */
     .quick-actions { display: grid; grid-template-columns: 1fr; gap: 12px; }
     @media (min-width: 480px) { .quick-actions { grid-template-columns: repeat(2, 1fr); } }
 
@@ -465,7 +443,7 @@
     }
     .quick-action:hover .quick-action-arrow { color: var(--primary); transform: translateX(4px); }
 
-    /* ─────────── Review queue ─────────── */
+    /* ─────── Review queue ─────── */
     .review-list { display: flex; flex-direction: column; gap: 12px; }
     .review-item {
       display: flex; align-items: center; gap: 14px;
@@ -474,9 +452,9 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       transition: border-color 0.18s ease, transform 0.18s ease;
-      animation: fadeInUp 0.35s ease both;
     }
     .review-item:hover { border-color: var(--primary); transform: translateX(2px); }
+    .review-item.skeleton-item { pointer-events: none; }
     .review-icon {
       width: 38px; height: 38px; border-radius: 10px;
       background-color: rgba(245, 185, 66, 0.1);
@@ -520,7 +498,7 @@
     .empty-state p { font-size: 0.85rem; }
     .empty-state .error { color: #f0a0a0; }
 
-    /* ─────────── Bottom grid ─────────── */
+    /* ─────── Bottom grid ─────── */
     .bottom-grid {
       display: grid; grid-template-columns: 1fr; gap: 24px;
     }
@@ -534,8 +512,8 @@
       padding: 14px 0;
       border-bottom: 1px solid var(--border);
       transition: background 0.15s ease;
-      animation: fadeIn 0.4s ease both;
     }
+    .activity-item.skeleton-item { pointer-events: none; }
     .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
     .activity-item:first-child { padding-top: 0; }
     .activity-item:hover { background-color: rgba(255,255,255,0.015); }
@@ -565,7 +543,7 @@
       display: flex; align-items: center; gap: 6px;
     }
 
-    /* ─────────── Notifications ─────────── */
+    /* ─────── Notifications ─────── */
     .notification-list { display: flex; flex-direction: column; gap: 12px; }
     .notification-item {
       display: flex; gap: 12px;
@@ -575,8 +553,8 @@
       border-radius: 12px;
       border-left: 3px solid var(--border);
       transition: transform 0.18s ease, border-color 0.18s ease;
-      animation: fadeIn 0.4s ease both;
     }
+    .notification-item.skeleton-item { pointer-events: none; }
     .notification-item:hover { transform: translateX(2px); }
     .notification-item.warning { border-left-color: var(--accent); }
     .notification-item.info { border-left-color: var(--primary); }
@@ -594,7 +572,7 @@
       white-space: nowrap; margin-top: 2px;
     }
 
-    /* ─────────── Footer (new) ─────────── */
+    /* ─────── Footer ─────── */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -606,7 +584,6 @@
       gap: 16px;
       font-size: 0.75rem;
       color: var(--muted);
-      animation: fadeIn 0.6s ease both;
     }
     .footer-left {
       display: flex;
@@ -637,22 +614,16 @@
     }
     .footer-right a:hover { color: var(--primary); }
 
-    /* ─────────── Mobile overlay ─────────── */
+    /* ─────── Mobile overlay ─────── */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0, 0, 0, 0.6);
       z-index: 55;
       backdrop-filter: blur(2px);
-      opacity: 0;
-      transition: opacity 0.25s ease;
     }
-    .sidebar-overlay.active {
-      display: block;
-      opacity: 1;
-      animation: fadeIn 0.25s ease;
-    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.25s ease; }
 
-    /* ─────────── Responsive ─────────── */
+    /* ─────── Responsive ─────── */
     @media (max-width: 1023px) {
       .sidebar {
         transform: translateX(-100%);
@@ -683,17 +654,9 @@
       .footer-right { width: 100%; justify-content: space-between; }
     }
 
-    /* ─────────── Scrollbar ─────────── */
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-nav::-webkit-scrollbar-thumb {
-      background-color: var(--border);
-      border-radius: 3px;
-      transition: background 0.2s ease;
-    }
-    .sidebar-nav::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
-    /* ─────────── Reduced motion ─────────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         transition: none !important;
@@ -703,11 +666,6 @@
   </style>
 </head>
 <body>
-
-  <div id="loading-gate">
-    <div class="spinner"></div>
-    <p>Verifying your session…</p>
-  </div>
 
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
@@ -722,17 +680,17 @@
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="../admin/index.html" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="../admin/Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
-        <a href="../admin/Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="../admin/Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
-        <a href="../admin/Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
-        <a href="../admin/Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <a href="./index.html" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
         <div class="nav-group-label">Management</div>
-        <a href="../admin/Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
-        <a href="../admin/Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-        <a href="../admin/Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
-        <a href="../admin/Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
       </nav>
 
       <div class="sidebar-footer">
@@ -796,8 +754,8 @@
               <div class="stat-icon"><i class="fas fa-building-columns"></i></div>
               <span class="stat-card-label">Schools</span>
             </div>
-            <div class="stat-card-value loading" id="statSchools">—</div>
-            <div class="stat-card-sub" id="statSchoolsSub">Total records</div>
+            <div class="stat-card-value loading" id="statSchools"><span class="skeleton"></span></div>
+            <div class="stat-card-sub" id="statSchoolsSub"><span class="skeleton skeleton-text short" style="display:inline-block;width:60%;"></span></div>
           </div>
 
           <div class="stat-card">
@@ -805,8 +763,8 @@
               <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
               <span class="stat-card-label">Admissions</span>
             </div>
-            <div class="stat-card-value loading" id="statAdmissions">—</div>
-            <div class="stat-card-sub" id="statAdmissionsSub">Published notices</div>
+            <div class="stat-card-value loading" id="statAdmissions"><span class="skeleton"></span></div>
+            <div class="stat-card-sub" id="statAdmissionsSub"><span class="skeleton skeleton-text short" style="display:inline-block;width:60%;"></span></div>
           </div>
 
           <div class="stat-card">
@@ -814,8 +772,8 @@
               <div class="stat-icon"><i class="fas fa-award"></i></div>
               <span class="stat-card-label">Scholarships</span>
             </div>
-            <div class="stat-card-value loading" id="statScholarships">—</div>
-            <div class="stat-card-sub" id="statScholarshipsSub">Total listings</div>
+            <div class="stat-card-value loading" id="statScholarships"><span class="skeleton"></span></div>
+            <div class="stat-card-sub" id="statScholarshipsSub"><span class="skeleton skeleton-text short" style="display:inline-block;width:60%;"></span></div>
           </div>
 
           <div class="stat-card">
@@ -823,7 +781,7 @@
               <div class="stat-icon gold"><i class="fas fa-clock-rotate-left"></i></div>
               <span class="stat-card-label">To verify</span>
             </div>
-            <div class="stat-card-value loading" id="statPending">—</div>
+            <div class="stat-card-value loading" id="statPending"><span class="skeleton"></span></div>
             <div class="stat-card-sub"><span class="gold">Pending review</span></div>
           </div>
         </section>
@@ -877,7 +835,30 @@
               <a href="./Audit.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="review-list" id="reviewList">
-              <div class="empty-state"><p>Loading…</p></div>
+              <div class="review-item skeleton-item">
+                <div class="skeleton skeleton-circle"></div>
+                <div class="review-text">
+                  <div class="skeleton skeleton-text medium" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+                <div class="skeleton skeleton-btn"></div>
+              </div>
+              <div class="review-item skeleton-item">
+                <div class="skeleton skeleton-circle"></div>
+                <div class="review-text">
+                  <div class="skeleton skeleton-text medium" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+                <div class="skeleton skeleton-btn"></div>
+              </div>
+              <div class="review-item skeleton-item">
+                <div class="skeleton skeleton-circle"></div>
+                <div class="review-text">
+                  <div class="skeleton skeleton-text medium" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+                <div class="skeleton skeleton-btn"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -891,7 +872,27 @@
               <a href="./Audit.html" class="panel-link">Audit log <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="activity-list" id="activityList">
-              <div class="empty-state"><p>Loading…</p></div>
+              <div class="activity-item skeleton-item">
+                <div class="skeleton skeleton-dot"></div>
+                <div class="activity-body">
+                  <div class="skeleton skeleton-text long" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+              </div>
+              <div class="activity-item skeleton-item">
+                <div class="skeleton skeleton-dot"></div>
+                <div class="activity-body">
+                  <div class="skeleton skeleton-text long" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+              </div>
+              <div class="activity-item skeleton-item">
+                <div class="skeleton skeleton-dot"></div>
+                <div class="activity-body">
+                  <div class="skeleton skeleton-text long" style="margin-bottom:6px;"></div>
+                  <div class="skeleton skeleton-text short"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -901,12 +902,25 @@
               <a href="#" class="panel-link" id="markAllRead">Mark all read</a>
             </div>
             <div class="notification-list" id="notifList">
-              <div class="empty-state"><p>Loading…</p></div>
+              <div class="notification-item skeleton-item">
+                <div class="skeleton skeleton-circle" style="border-radius: 8px;"></div>
+                <div class="notification-text">
+                  <div class="skeleton skeleton-text medium" style="margin-bottom:4px;"></div>
+                  <div class="skeleton skeleton-text long"></div>
+                </div>
+              </div>
+              <div class="notification-item skeleton-item">
+                <div class="skeleton skeleton-circle" style="border-radius: 8px;"></div>
+                <div class="notification-text">
+                  <div class="skeleton skeleton-text medium" style="margin-bottom:4px;"></div>
+                  <div class="skeleton skeleton-text long"></div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Footer (new) -->
+        <!-- Footer -->
         <footer class="admin-footer">
           <div class="footer-left">
             <span class="dot" aria-hidden="true"></span>
@@ -964,7 +978,6 @@
 
       const fmtNum = (n) => Number(n || 0).toLocaleString('en-NG');
 
-      // Count-up animation for stat numbers
       function animateCount(el, target, suffix) {
         const start = 0;
         const duration = 700;
@@ -1032,12 +1045,7 @@
           return true;
         } catch (e) {
           if (e.message === 'Session expired') return false;
-          document.getElementById('loading-gate').innerHTML =
-            '<div class="empty-state">'
-            + '<p class="error">Could not reach the server.</p>'
-            + '<p style="margin-top:8px;font-size:0.85rem">The API may be waking up. Retry in a moment.</p>'
-            + '<button onclick="location.reload()" style="margin-top:16px;padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>'
-            + '</div>';
+          console.error('[auth]', e.message);
           return false;
         }
       }
@@ -1060,6 +1068,7 @@
         const setVal = (id, val, subId, subText, animate) => {
           const el = document.getElementById(id);
           if (!el) return;
+          el.innerHTML = '';
           if (animate && typeof val === 'number') {
             animateCount(el, val, '');
           } else {
@@ -1136,13 +1145,13 @@
             calendar: { icon: 'fa-calendar', cls: 'green' },
           }[type] || { icon: 'fa-file', cls: '' });
 
-          el.innerHTML = items.map((item, i) => {
+          el.innerHTML = items.map((item) => {
             const ic = iconFor(item.type);
             const target = ({
               course: 'Courses', fee: 'Fees', admission: 'Admissions', calendar: 'Calendar',
             }[item.type] || 'Dashboard');
             return `
-              <div class="review-item" style="animation-delay:${0.05 * i}s">
+              <div class="review-item">
                 <div class="review-icon ${ic.cls}"><i class="fas ${ic.icon}"></i></div>
                 <div class="review-text">
                   <h4>${esc(item.label || ('#' + item.id))}</h4>
@@ -1176,12 +1185,12 @@
             return { icon: 'fa-pen', cls: '' };
           };
 
-          el.innerHTML = items.map((a, i) => {
+          el.innerHTML = items.map((a) => {
             const ic = iconForAction(a.action || '');
             const actor = a.actor_name || 'Unknown';
             const target = a.target_label || a.target_type || '';
             return `
-              <div class="activity-item" style="animation-delay:${0.05 * i}s">
+              <div class="activity-item">
                 <div class="activity-dot ${ic.cls}"><i class="fas ${ic.icon}"></i></div>
                 <div class="activity-body">
                   <p><strong>${esc(actor)}</strong> ${esc(a.action || '')} <span class="highlight">${esc(target)}</span></p>
@@ -1211,7 +1220,7 @@
 
           document.getElementById('notifDot').classList.add('show');
 
-          el.innerHTML = items.map((n, i) => {
+          el.innerHTML = items.map((n) => {
             const cls = /reject|fail|suspend/.test((n.title || '').toLowerCase())
               ? 'critical'
               : /approve/.test((n.title || '').toLowerCase())
@@ -1221,7 +1230,7 @@
               : cls === 'info' ? 'fa-circle-check'
                 : 'fa-triangle-exclamation';
             return `
-              <div class="notification-item ${cls}" data-id="${esc(n.id)}" style="animation-delay:${0.05 * i}s">
+              <div class="notification-item ${cls}" data-id="${esc(n.id)}">
                 <i class="fas ${icon} notification-icon"></i>
                 <div class="notification-text">
                   <h4>${esc(n.title || 'Notification')}</h4>
@@ -1308,15 +1317,22 @@
       }
 
       (async function boot() {
+        // Fast check: if no token at all, redirect before painting the shell
+        let hasToken = false;
+        try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!hasToken) { redirectToLogin('not_signed_in'); return; }
+
+        // Show the shell — skeletons are already in the HTML
+        document.getElementById('appShell').style.display = 'flex';
+
+        // Verify in background
         const ok = await verifySession();
         if (!ok) return;
-
-        document.getElementById('loading-gate').style.display = 'none';
-        document.getElementById('appShell').style.display = 'flex';
 
         renderUser();
         wireUI();
 
+        // Load all panels in parallel — each one fails independently
         await Promise.allSettled([
           loadStats(),
           loadReviewQueue(),

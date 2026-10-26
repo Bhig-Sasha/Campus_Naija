@@ -32,20 +32,19 @@
       --sidebar-w: 260px;
     }
 
-    #loading-gate {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; color: var(--muted); z-index: 9999;
+    /* ── Skeleton shimmer ───────────────────────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
     }
-    #loading-gate .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      min-height: 12px;
+      display: block;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* SIDEBAR */
     .sidebar {
@@ -192,15 +191,7 @@
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
-    .stat-mini-value.loading {
-      color: var(--muted);
-      background: linear-gradient(90deg, var(--muted), #6b7c74, var(--muted));
-      background-size: 400px 100%;
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 1.4s linear infinite;
-    }
-    @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+    .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
@@ -353,7 +344,7 @@
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
 
-    /* READ-ONLY display grid */
+    /* READ-ONLY display */
     .info-display-grid {
       display: grid; grid-template-columns: 1fr; gap: 18px 24px;
     }
@@ -370,11 +361,7 @@
     .info-display-value.empty { color: var(--muted); font-style: italic; font-weight: 400; }
     .info-display-value a { color: var(--primary); }
 
-    .edit-toggle-row {
-      display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 12px;
-    }
-
-    /* EDIT mode forms */
+    /* EDIT mode */
     .edit-mode { display: none; }
     .edit-mode.active { display: block; }
     .view-mode { display: block; }
@@ -507,11 +494,6 @@
 </head>
 <body>
 
-  <div id="loading-gate">
-    <div class="spinner"></div>
-    <p>Verifying your session…</p>
-  </div>
-
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
   <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
@@ -590,19 +572,19 @@
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">Total schools <i class="fas fa-building-columns"></i></div>
-              <div class="stat-mini-value loading" id="statTotal">—</div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Verified <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value loading" id="statVerified">—</div>
+              <div class="stat-mini-value" id="statVerified"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-eye"></i></div>
-              <div class="stat-mini-value loading" id="statPublished">—</div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value loading" id="statPending">—</div>
+              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
@@ -687,7 +669,57 @@
           </div>
 
           <div class="school-list" id="schoolList">
-            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading schools…</p></div>
+            <div class="school-row">
+              <div class="school-logo skeleton" style="border-radius: 12px;"></div>
+              <div class="school-main">
+                <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 10px; width: 40%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 10px; width: 50%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 12px; width: 80%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+            </div>
+            <div class="school-row">
+              <div class="school-logo skeleton" style="border-radius: 12px;"></div>
+              <div class="school-main">
+                <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 10px; width: 40%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 10px; width: 50%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 12px; width: 80%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+            </div>
+            <div class="school-row">
+              <div class="school-logo skeleton" style="border-radius: 12px;"></div>
+              <div class="school-main">
+                <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 10px; width: 40%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 10px; width: 50%; margin-bottom: 6px;"></div>
+                <div class="skeleton" style="height: 12px; width: 80%;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+              <div class="school-meta-cell">
+                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -733,7 +765,6 @@
                 <div class="panel-title"><i class="fas fa-circle-info"></i> School details</div>
               </div>
 
-              <!-- VIEW MODE -->
               <div class="view-mode" id="overviewViewMode">
                 <div class="info-display-grid">
                   <div class="info-display-item full">
@@ -779,7 +810,6 @@
                 </div>
               </div>
 
-              <!-- EDIT MODE -->
               <div class="edit-mode" id="overviewEditMode">
                 <div class="form-grid">
                   <div class="form-group full">
@@ -868,7 +898,7 @@
                     <tr><th>Course</th><th>Faculty</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
                   </thead>
                   <tbody id="coursesTableBody">
-                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
+                    <tr><td colspan="5" style="padding:0;"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center;"><div class="skeleton" style="height:14px;width:40%;"></div><div class="skeleton" style="height:14px;width:25%;"></div><div class="skeleton" style="height:14px;width:15%;"></div></div></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -917,7 +947,7 @@
                     <tr><th>Session</th><th>Category</th><th>Programme</th><th>Amount</th><th>Actions</th></tr>
                   </thead>
                   <tbody id="feesTableBody">
-                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
+                    <tr><td colspan="5" style="padding:0;"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center;"><div class="skeleton" style="height:14px;width:30%;"></div><div class="skeleton" style="height:14px;width:25%;"></div><div class="skeleton" style="height:14px;width:20%;"></div></div></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -937,7 +967,7 @@
                     <tr><th>Title</th><th>Session</th><th>Route</th><th>Closes</th><th>Status</th></tr>
                   </thead>
                   <tbody id="admissionsTableBody">
-                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
+                    <tr><td colspan="5" style="padding:0;"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center;"><div class="skeleton" style="height:14px;width:40%;"></div><div class="skeleton" style="height:14px;width:20%;"></div><div class="skeleton" style="height:14px;width:20%;"></div></div></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -957,7 +987,7 @@
                     <tr><th>Event</th><th>Type</th><th>Session</th><th>Start</th><th>End</th></tr>
                   </thead>
                   <tbody id="calendarTableBody">
-                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
+                    <tr><td colspan="5" style="padding:0;"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center;"><div class="skeleton" style="height:14px;width:40%;"></div><div class="skeleton" style="height:14px;width:20%;"></div><div class="skeleton" style="height:14px;width:20%;"></div></div></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1115,12 +1145,7 @@
           return true;
         } catch (e) {
           if (e.message === 'Session expired') return false;
-          document.getElementById('loading-gate').innerHTML =
-            '<div style="text-align:center;max-width:400px;padding:24px">' +
-            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
-            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
-            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
-            '</div>';
+          console.error('[auth]', e.message);
           return false;
         }
       }
@@ -1140,7 +1165,6 @@
       /* DIRECTORY */
       async function loadSchools() {
         const listEl = document.getElementById('schoolList');
-        listEl.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading schools…</p></div>';
         try {
           const res = await api('/api/schools');
           schools = Array.isArray(res.schools) ? res.schools : [];
@@ -1163,11 +1187,7 @@
       }
 
       function renderStats() {
-        const set = (id, val) => {
-          const el = document.getElementById(id);
-          el.classList.remove('loading');
-          el.textContent = val;
-        };
+        const set = (id, val) => { document.getElementById(id).textContent = val; };
         set('statTotal', schools.length);
         set('statVerified', schools.filter(s => s.verification === 'verified').length);
         set('statPublished', schools.filter(s => s.publication === 'published').length);
@@ -1288,7 +1308,6 @@
         document.getElementById('profileBadges').innerHTML =
           statusPill(currentSchool.verification) + statusPill(currentSchool.publication);
 
-        // Preview link
         const previewLink = document.getElementById('previewPublicLink');
         if (currentSchool.slug) {
           previewLink.href = `/Schools?school=${encodeURIComponent(currentSchool.slug)}`;
@@ -1297,7 +1316,6 @@
           previewLink.style.display = 'none';
         }
 
-        // View-mode fields
         document.getElementById('viewName').textContent = currentSchool.name || '—';
         document.getElementById('viewType').textContent = typeLabel(currentSchool.type) || '—';
         document.getElementById('viewOwnership').textContent = currentSchool.ownership || '—';
@@ -1307,6 +1325,7 @@
         document.getElementById('viewSlug').textContent = currentSchool.slug || '—';
 
         const webEl = document.getElementById('viewWebsite');
+        webEl.classList.remove('empty');
         if (currentSchool.website) {
           const url = /^https?:\/\//i.test(currentSchool.website) ? currentSchool.website : 'https://' + currentSchool.website;
           webEl.innerHTML = `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(currentSchool.website)}</a>`;
@@ -1316,6 +1335,7 @@
         }
 
         const emailEl = document.getElementById('viewEmail');
+        emailEl.classList.remove('empty');
         if (currentSchool.email) {
           emailEl.innerHTML = `<a href="mailto:${esc(currentSchool.email)}">${esc(currentSchool.email)}</a>`;
         } else {
@@ -1332,7 +1352,6 @@
           descEl.classList.add('empty');
         }
 
-        // Edit-mode fields
         document.getElementById('editName').value = currentSchool.name || '';
         document.getElementById('editType').value = currentSchool.type || 'university';
         document.getElementById('editOwnership').value = currentSchool.ownership || 'Federal';
@@ -1343,18 +1362,13 @@
         document.getElementById('editEstablished').value = currentSchool.established || '';
         document.getElementById('editDescription').value = currentSchool.description || '';
 
-        // Verification tab
         renderVerificationTab();
-
-        // Start in view mode
         toggleEditMode(false);
 
-        // Tab state
         document.querySelectorAll('.workspace-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === 'overview'));
         document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
         document.getElementById('tab-overview').classList.add('active');
 
-        // Load nested data
         await Promise.allSettled([loadCourses(), loadFees(), loadAdmissions(), loadCalendar()]);
 
         document.getElementById('view-directory').classList.remove('active');
@@ -1418,7 +1432,6 @@
           });
           currentSchool = res.school || currentSchool;
 
-          // Re-render everything with the fresh data
           await openProfile(currentSchool.id);
           await loadSchools();
           toast('Changes saved.');
@@ -1483,7 +1496,6 @@
       /* COURSES */
       async function loadCourses() {
         const body = document.getElementById('coursesTableBody');
-        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
         try {
           const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses');
           const courses = res.courses || [];
@@ -1550,7 +1562,6 @@
       /* FEES */
       async function loadFees() {
         const body = document.getElementById('feesTableBody');
-        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
         try {
           const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees');
           const fees = res.fees || [];
@@ -1621,7 +1632,6 @@
       /* ADMISSIONS */
       async function loadAdmissions() {
         const body = document.getElementById('admissionsTableBody');
-        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
         try {
           const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions');
           const rows = res.admissions || [];
@@ -1645,7 +1655,6 @@
       /* CALENDAR */
       async function loadCalendar() {
         const body = document.getElementById('calendarTableBody');
-        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
         try {
           const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/calendar');
           const rows = res.events || [];
@@ -1701,17 +1710,24 @@
         window.location.replace(LOGIN_URL);
       });
 
-      /* BOOT */
+      /* BOOT — no spinner, show shell immediately */
       (async function boot() {
+        // Fast check: if no token at all, redirect before painting the shell
+        let hasToken = false;
+        try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!hasToken) { redirectToLogin('not_signed_in'); return; }
+
+        // Show shell — skeletons are already in the HTML
+        document.getElementById('appShell').style.display = 'flex';
+
+        // Verify in background, then load data
         const ok = await verifySession();
         if (!ok) return;
-        document.getElementById('loading-gate').style.display = 'none';
-        document.getElementById('appShell').style.display = 'flex';
+
         renderUser();
         await loadSchools();
       })();
 
-      // Expose functions used by inline onclick
       window.filterSchools = filterSchools;
       window.openAddSchool = openAddSchool;
       window.closeAddSchool = closeAddSchool;
