@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — School Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -24,31 +24,37 @@
     a { text-decoration: none; color: inherit; }
     button, input, select, textarea { font-family: 'Manrope', sans-serif; }
     :root {
-      --bg: #070A09;
-      --surface: #0D1210;
-      --elevated: #111815;
-      --primary: #00C982;
-      --accent: #F5B942;
-      --text: #F5F7F5;
-      --muted: #9BA9A1;
-      --border: #29352F;
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
       --danger: #e07070;
-      --radius-card: 16px;
-      --radius-btn: 10px;
-      --radius-input: 10px;
+      --radius-card: 16px; --radius-btn: 10px; --radius-input: 10px;
       --sidebar-w: 260px;
     }
+
+    /* Loading gate */
+    #loading-gate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; color: var(--muted); z-index: 9999;
+    }
+    #loading-gate .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===== SIDEBAR ===== */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 60;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 60;
       transition: transform 0.25s ease;
     }
     .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
@@ -59,7 +65,6 @@
       margin-top: 10px; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-nav {
       flex: 1; overflow-y: auto; padding: 20px 14px;
@@ -83,12 +88,6 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
-    .nav-badge.muted { background-color: var(--elevated); color: var(--muted); }
 
     .sidebar-footer { padding: 16px 14px 20px; border-top: 1px solid var(--border); }
     .admin-user {
@@ -110,6 +109,7 @@
     }
     .admin-user-role {
       font-size: 0.7rem; color: var(--muted);
+      text-transform: capitalize;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .logout-btn {
@@ -118,7 +118,7 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ===== MAIN AREA ===== */
+    /* ===== MAIN ===== */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -156,11 +156,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-admin {
       display: flex; align-items: center; gap: 10px;
@@ -169,18 +164,13 @@
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .admin-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
-    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; text-transform: capitalize; }
 
     /* ===== CONTENT ===== */
     .content { padding: 32px 24px 56px; flex: 1; }
-
-    /* Page switching */
     .view { display: none; }
     .view.active { display: block; }
 
-    /* ============================================================ */
-    /* DIRECTORY VIEW                                               */
-    /* ============================================================ */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -190,9 +180,10 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats row */
+    /* Stats */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-bottom: 28px;
     }
     @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
@@ -207,22 +198,32 @@
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1;
     }
+    .stat-mini-value.loading {
+      color: var(--muted);
+      background: linear-gradient(90deg, var(--muted), #6b7c74, var(--muted));
+      background-size: 400px 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 1.4s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 
     /* Toolbar */
     .toolbar {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-      margin-bottom: 20px;
+      display: flex; flex-wrap: wrap; gap: 12px;
+      align-items: center; margin-bottom: 20px;
     }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
       padding: 11px 20px; border-radius: var(--radius-btn); font-size: 0.88rem;
-      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { background-color: #1f5c47; color: #9fe0c5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -231,6 +232,7 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-danger {
       background-color: transparent; color: var(--danger); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -247,18 +249,16 @@
       position: relative; display: flex; align-items: center; min-width: 220px;
     }
     .filter-row .search-inline i {
-      position: absolute; left: 12px; color: var(--muted); font-size: 0.8rem;
-      pointer-events: none;
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
     }
     .filter-row input[type="text"],
     .filter-row select {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 10px; padding: 9px 14px;
       font-size: 0.83rem; color: var(--text); outline: none;
-      transition: border-color 0.15s;
     }
     .filter-row .search-inline input { padding-left: 34px; width: 100%; }
-    .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
     /* School list */
@@ -279,8 +279,7 @@
       flex-shrink: 0;
     }
     .school-main { flex: 1; min-width: 200px; }
-    .school-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
-    .school-name { font-size: 1rem; font-weight: 700; }
+    .school-name { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
     .school-sub { font-size: 0.8rem; color: var(--muted); }
     .school-meta-cell { min-width: 110px; }
     .meta-label-sm {
@@ -308,14 +307,7 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    .footnote {
-      font-size: 0.75rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
-    }
-
-    /* ============================================================ */
-    /* PROFILE VIEW                                                 */
-    /* ============================================================ */
+    /* Profile view */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -346,11 +338,8 @@
     }
     .profile-header-sub .dot { font-size: 0.4rem; }
     .profile-header-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .profile-header-actions {
-      display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start;
-    }
+    .profile-header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
 
-    /* Workspace tabs */
     .workspace-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 24px;
@@ -368,7 +357,6 @@
     .workspace-panel { display: none; }
     .workspace-panel.active { display: block; }
 
-    /* Panel structure */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -380,7 +368,6 @@
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
 
-    /* Form layout */
     .form-grid {
       display: grid; grid-template-columns: 1fr; gap: 16px;
     }
@@ -398,11 +385,8 @@
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-input); padding: 10px 14px;
       font-size: 0.88rem; color: var(--text); outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
+      transition: border-color 0.15s; width: 100%;
     }
-    .form-group input::placeholder,
-    .form-group textarea::placeholder { color: #6b7c74; }
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus { border-color: var(--primary); }
@@ -414,7 +398,6 @@
       padding-top: 20px; border-top: 1px solid var(--border);
     }
 
-    /* Verification notice */
     .verify-notice {
       display: flex; gap: 12px; padding: 14px 16px;
       background-color: rgba(245,185,66,0.06);
@@ -425,11 +408,7 @@
     .verify-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
     .verify-notice strong { color: var(--accent); }
 
-    /* Data table */
-    .table-wrap {
-      overflow-x: auto; border-radius: 12px;
-      border: 1px solid var(--border);
-    }
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     thead { background-color: var(--surface); }
     th {
@@ -455,7 +434,6 @@
     }
     .empty-mini i { display: block; font-size: 1.6rem; color: var(--border); margin-bottom: 10px; }
 
-    /* Inline add form (courses, fees) */
     .add-inline {
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; padding: 16px; margin-bottom: 16px;
@@ -464,39 +442,7 @@
     .add-inline.open { display: block; }
     .add-inline .form-grid { grid-template-columns: 1fr; }
     @media (min-width: 700px) { .add-inline .form-grid { grid-template-columns: repeat(3, 1fr); } }
-    .add-inline .form-actions { margin-top: 14px; padding-top: 14px; }
 
-    /* Media grid */
-    .media-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
-    }
-    @media (min-width: 600px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1000px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
-    .media-tile {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden; position: relative;
-    }
-    .media-thumb {
-      height: 100px; background-size: cover; background-position: center;
-      background-color: #0a0f0d;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--border); font-size: 1.5rem;
-    }
-    .media-caption { padding: 10px 12px; }
-    .media-caption h5 { font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; }
-    .media-caption p { font-size: 0.7rem; color: var(--muted); }
-    .media-upload {
-      border: 1px dashed var(--border); background-color: var(--surface);
-      border-radius: 12px; min-height: 140px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 6px;
-      color: var(--muted); font-size: 0.78rem; cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .media-upload:hover { border-color: var(--primary); color: var(--primary); }
-    .media-upload i { font-size: 1.3rem; }
-
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -506,20 +452,20 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
       transform: translateY(120%); opacity: 0;
       transition: transform 0.25s, opacity 0.25s;
-      max-width: 340px;
+      max-width: 380px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -538,7 +484,6 @@
       .school-actions { width: 100%; justify-content: flex-end; }
     }
 
-    /* Scrollbar */
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
     .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
@@ -549,12 +494,15 @@
 </head>
 <body>
 
-  <!-- Mobile overlay -->
+  <div id="loading-gate">
+    <div class="spinner"></div>
+    <p>Verifying your session…</p>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -562,66 +510,63 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="./Schools.html" class="nav-item active"><i class="fas fa-building-columns"></i> Schools</a>
-        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions <span class="nav-badge">—</span></a>
-        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
-        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
-        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <a href="/public/admin/index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="/public/admin/Schools.html" class="nav-item active"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="/public/admin/Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="/public/admin/Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="/public/admin/Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="/public/admin/Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
         <div class="nav-group-label">Management</div>
-        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
-        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
-        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+        <a href="/public/admin/Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="/public/admin/Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="/public/admin/Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="/public/admin/Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
       </nav>
       <div class="sidebar-footer">
         <div class="admin-user">
-          <div class="admin-avatar">AD</div>
+          <div class="admin-avatar" id="sideAvatar">AD</div>
           <div class="admin-user-info">
-            <div class="admin-user-name">Admin User</div>
-            <div class="admin-user-role">Super Administrator</div>
+            <div class="admin-user-name" id="sideName">—</div>
+            <div class="admin-user-role" id="sideRole">—</div>
           </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out"
-            onclick="if(confirm('Sign out of CampusNaija admin?')) window.location.href='login.html';">
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
-      <!-- Top bar -->
       <header class="topbar">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
           <i class="fas fa-bars"></i>
         </button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search admin records..." aria-label="Search">
+          <input type="text" id="topSearch" placeholder="Search admin records..." aria-label="Search">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
-          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <button class="icon-btn" aria-label="Notifications" title="Notifications">
+            <i class="far fa-bell"></i>
+          </button>
+          <button class="icon-btn" aria-label="Help" title="Help">
+            <i class="far fa-circle-question"></i>
+          </button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">AD</div>
             <div>
-              <div class="topbar-admin-name">Admin User</div>
-              <div class="topbar-admin-role">Super Administrator</div>
+              <div class="topbar-admin-name" id="topName">—</div>
+              <div class="topbar-admin-role" id="topRole">—</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
         </div>
       </header>
 
-      <!-- ===== CONTENT ===== -->
       <main class="content">
 
-        <!-- ============================================================ -->
-        <!-- DIRECTORY VIEW                                               -->
-        <!-- ============================================================ -->
+        <!-- DIRECTORY VIEW -->
         <div id="view-directory" class="view active">
           <div class="page-heading">
             <div class="eyebrow"><i class="fas fa-building-columns"></i> Institution management</div>
@@ -629,27 +574,25 @@
             <p>Manage institutions, profiles, courses and fees.</p>
           </div>
 
-          <!-- Stats -->
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">Total schools <i class="fas fa-building-columns"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value loading" id="statTotal">—</div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Verified <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value loading" id="statVerified">—</div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Course records <i class="fas fa-book-open"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-label">Published <i class="fas fa-eye"></i></div>
+              <div class="stat-mini-value loading" id="statPublished">—</div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value">—</div>
+              <div class="stat-mini-value loading" id="statPending">—</div>
             </div>
           </div>
 
-          <!-- Toolbar -->
           <div class="toolbar">
             <button class="btn-primary" onclick="openAddSchool()">
               <i class="fas fa-plus"></i> Add New School
@@ -667,23 +610,16 @@
               </select>
               <select id="stateFilter" onchange="filterSchools()">
                 <option value="">All states</option>
-                <option value="Abuja">Abuja (FCT)</option>
-                <option value="Lagos">Lagos</option>
-                <option value="Edo">Edo</option>
-                <option value="Kaduna">Kaduna</option>
-                <option value="Kano">Kano</option>
               </select>
               <select id="verifyFilter" onchange="filterSchools()">
-                <option value="">All verification statuses</option>
+                <option value="">All statuses</option>
                 <option value="verified">Verified</option>
                 <option value="unverified">Unverified</option>
-                <option value="draft">Draft</option>
-                <option value="archived">Archived</option>
+                <option value="pending">Pending</option>
               </select>
             </div>
           </div>
 
-          <!-- Add school inline form -->
           <div class="add-inline" id="addSchoolForm">
             <div class="panel-header" style="margin-bottom:14px;">
               <div class="panel-title"><i class="fas fa-plus"></i> New school record</div>
@@ -694,7 +630,7 @@
                 <input type="text" id="newSchoolName" placeholder="e.g., University of Lagos">
               </div>
               <div class="form-group">
-                <label>Institution type</label>
+                <label>Institution type <span class="req">*</span></label>
                 <select id="newSchoolType">
                   <option value="university">University</option>
                   <option value="polytechnic">Polytechnic</option>
@@ -702,7 +638,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Ownership</label>
+                <label>Ownership <span class="req">*</span></label>
                 <select id="newSchoolOwnership">
                   <option value="Federal">Federal</option>
                   <option value="State">State</option>
@@ -717,72 +653,66 @@
                 <label>City</label>
                 <input type="text" id="newSchoolCity" placeholder="e.g., Akoka">
               </div>
+              <div class="form-group">
+                <label>Website</label>
+                <input type="url" id="newSchoolWebsite" placeholder="https://">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="newSchoolEmail" placeholder="info@institution.edu.ng">
+              </div>
             </div>
             <div class="form-actions">
-              <button class="btn-primary" onclick="saveNewSchool()"><i class="fas fa-check"></i> Save as draft</button>
+              <button class="btn-primary" id="saveSchoolBtn" onclick="saveNewSchool()"><i class="fas fa-check"></i> Create school</button>
               <button class="btn-outline" onclick="closeAddSchool()">Cancel</button>
             </div>
           </div>
 
-          <!-- List header -->
           <div class="panel-header" style="margin: 8px 0 14px;">
             <div class="panel-title" style="font-size: 1rem;"><i class="fas fa-list"></i> All Schools</div>
-            <span style="font-size:0.78rem; color: var(--muted);" id="schoolCount">Showing 0 records</span>
+            <span style="font-size:0.78rem; color: var(--muted);" id="schoolCount">Loading…</span>
           </div>
 
-          <!-- School list -->
           <div class="school-list" id="schoolList">
-            <!-- Populated by JS -->
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading schools…</p></div>
           </div>
-
-          <p class="footnote">
-            <i class="fas fa-circle-info"></i> Illustrative school records only. These are not verified institutions or live database entries.
-          </p>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- PROFILE VIEW                                                 -->
-        <!-- ============================================================ -->
+        <!-- PROFILE VIEW -->
         <div id="view-profile" class="view">
           <div class="back-link" onclick="showDirectory()">
             <i class="fas fa-arrow-left"></i> Back to all schools
           </div>
 
-          <!-- Profile header -->
           <div class="profile-header">
             <div class="profile-logo-lg" id="profileLogo">—</div>
             <div class="profile-header-info">
-              <h2 id="profileName">School name</h2>
-              <div class="profile-header-sub" id="profileSub">
-                <span>Type · State</span>
-              </div>
+              <h2 id="profileName">Loading…</h2>
+              <div class="profile-header-sub" id="profileSub"></div>
               <div class="profile-header-badges" id="profileBadges"></div>
             </div>
             <div class="profile-header-actions">
-              <button class="btn-outline" onclick="switchTab('overview')"><i class="fas fa-pen"></i> Edit Profile</button>
-              <button class="btn-outline" onclick="toast('Public preview opened in a new tab (demo).')"><i class="fas fa-eye"></i> Preview Public Page</button>
+              <a class="btn-outline" id="previewPublicLink" target="_blank" rel="noopener">
+                <i class="fas fa-eye"></i> Preview Public Page
+              </a>
             </div>
           </div>
 
-          <!-- Workspace tabs -->
-          <div class="workspace-tabs" id="workspaceTabs">
+          <div class="workspace-tabs">
             <button class="workspace-tab active" data-tab="overview"><i class="fas fa-circle-info"></i> Overview</button>
             <button class="workspace-tab" data-tab="courses"><i class="fas fa-book-open"></i> Courses</button>
             <button class="workspace-tab" data-tab="fees"><i class="fas fa-money-bill"></i> Fees</button>
-            <button class="workspace-tab" data-tab="admissions"><i class="fas fa-clipboard-list"></i> Admissions</button>
-            <button class="workspace-tab" data-tab="calendar"><i class="fas fa-calendar"></i> Calendar</button>
-            <button class="workspace-tab" data-tab="media"><i class="fas fa-photo-film"></i> Media</button>
           </div>
 
-          <!-- ===== TAB: OVERVIEW ===== -->
+          <!-- OVERVIEW -->
           <div class="workspace-panel active" id="tab-overview">
             <div class="panel">
               <div class="panel-header">
                 <div class="panel-title"><i class="fas fa-pen"></i> School details</div>
               </div>
-              <div class="verify-notice">
+              <div class="verify-notice" id="verificationNotice">
                 <i class="fas fa-triangle-exclamation"></i>
-                <p><strong>Verification status: Unverified.</strong> Confirm details with official sources before marking this profile verified. Draft and unpublished changes are not visible to the public.</p>
+                <p id="verificationText">Verification status: loading…</p>
               </div>
               <div class="form-grid">
                 <div class="form-group full">
@@ -827,26 +757,25 @@
                 </div>
               </div>
               <div class="form-actions">
-                <button class="btn-primary" onclick="saveProfile('Save changes')"><i class="fas fa-check"></i> Save changes</button>
-                <button class="btn-outline" onclick="saveProfile('Saved as draft')"><i class="fas fa-file"></i> Save as draft</button>
-                <button class="btn-outline" onclick="toast('Verification workflow opened (demo).')"><i class="fas fa-shield-halved"></i> Verify information</button>
-                <button class="btn-danger" onclick="if(confirm('Archive this school? It will be hidden from public browsing.')) toast('School archived (demo).')"><i class="fas fa-box-archive"></i> Archive</button>
+                <button class="btn-primary" id="saveProfileBtn" onclick="saveProfile()"><i class="fas fa-check"></i> Save changes</button>
+                <button class="btn-outline" id="verifyBtn" onclick="verifySchool()"><i class="fas fa-shield-halved"></i> Verify</button>
+                <button class="btn-outline" id="publishBtn" onclick="publishSchool()"><i class="fas fa-eye"></i> Publish</button>
+                <button class="btn-danger" id="archiveBtn" onclick="archiveSchool()"><i class="fas fa-box-archive"></i> Archive</button>
               </div>
             </div>
           </div>
 
-          <!-- ===== TAB: COURSES ===== -->
+          <!-- COURSES -->
           <div class="workspace-panel" id="tab-courses">
             <div class="panel">
               <div class="panel-header">
                 <div class="panel-title"><i class="fas fa-book-open"></i> Programmes &amp; courses</div>
                 <button class="btn-primary" onclick="toggleAddCourse()"><i class="fas fa-plus"></i> Add course</button>
               </div>
-
               <div class="add-inline" id="addCourseForm">
                 <div class="form-grid">
                   <div class="form-group">
-                    <label>Course name</label>
+                    <label>Course name <span class="req">*</span></label>
                     <input type="text" id="newCourseName" placeholder="e.g., B.Sc. Computer Science">
                   </div>
                   <div class="form-group">
@@ -859,39 +788,30 @@
                   </div>
                 </div>
                 <div class="form-actions">
-                  <button class="btn-primary" onclick="saveNewCourse()"><i class="fas fa-check"></i> Save course</button>
+                  <button class="btn-primary" id="saveCourseBtn" onclick="saveNewCourse()"><i class="fas fa-check"></i> Save course</button>
                   <button class="btn-outline" onclick="toggleAddCourse()">Cancel</button>
                 </div>
               </div>
-
               <div class="table-wrap">
                 <table>
                   <thead>
-                    <tr>
-                      <th>Course</th>
-                      <th>Faculty</th>
-                      <th>Duration</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
+                    <tr><th>Course</th><th>Faculty</th><th>Duration</th><th>Status</th><th>Actions</th></tr>
                   </thead>
                   <tbody id="coursesTableBody">
-                    <!-- Populated -->
+                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
                   </tbody>
                 </table>
               </div>
-              <p class="form-hint" style="margin-top:12px;">Changes to courses are saved as drafts until you publish the school profile.</p>
             </div>
           </div>
 
-          <!-- ===== TAB: FEES ===== -->
+          <!-- FEES -->
           <div class="workspace-panel" id="tab-fees">
             <div class="panel">
               <div class="panel-header">
                 <div class="panel-title"><i class="fas fa-money-bill"></i> Tuition &amp; fees</div>
                 <button class="btn-primary" onclick="toggleAddFee()"><i class="fas fa-plus"></i> Add fee</button>
               </div>
-
               <div class="add-inline" id="addFeeForm">
                 <div class="form-grid">
                   <div class="form-group">
@@ -899,149 +819,38 @@
                     <input type="text" id="newFeeProgram" placeholder="e.g., Undergraduate 100L">
                   </div>
                   <div class="form-group">
-                    <label>Session</label>
+                    <label>Session <span class="req">*</span></label>
                     <input type="text" id="newFeeSession" placeholder="e.g., 2026/2027">
                   </div>
                   <div class="form-group">
-                    <label>Amount (₦)</label>
-                    <input type="text" id="newFeeAmount" placeholder="e.g., 150,000">
+                    <label>Category <span class="req">*</span></label>
+                    <select id="newFeeCategory">
+                      <option value="Tuition">Tuition</option>
+                      <option value="Acceptance">Acceptance</option>
+                      <option value="Hostel">Hostel</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Amount (₦) <span class="req">*</span></label>
+                    <input type="number" id="newFeeAmount" placeholder="e.g., 150000" min="0">
                   </div>
                 </div>
                 <div class="form-actions">
-                  <button class="btn-primary" onclick="saveNewFee()"><i class="fas fa-check"></i> Save fee</button>
+                  <button class="btn-primary" id="saveFeeBtn" onclick="saveNewFee()"><i class="fas fa-check"></i> Save fee</button>
                   <button class="btn-outline" onclick="toggleAddFee()">Cancel</button>
                 </div>
               </div>
-
               <div class="table-wrap">
                 <table>
                   <thead>
-                    <tr>
-                      <th>Programme</th>
-                      <th>Session</th>
-                      <th>Amount</th>
-                      <th>Source</th>
-                      <th>Actions</th>
-                    </tr>
+                    <tr><th>Session</th><th>Category</th><th>Programme</th><th>Amount</th><th>Actions</th></tr>
                   </thead>
                   <tbody id="feesTableBody">
-                    <!-- Populated -->
+                    <tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>
                   </tbody>
                 </table>
               </div>
-              <p class="form-hint" style="margin-top:12px;">Fees marked as estimates are not treated as official until verified. Always record the official source and date.</p>
-            </div>
-          </div>
-
-          <!-- ===== TAB: ADMISSIONS ===== -->
-          <div class="workspace-panel" id="tab-admissions">
-            <div class="panel">
-              <div class="panel-header">
-                <div class="panel-title"><i class="fas fa-clipboard-list"></i> Linked admission notices</div>
-                <button class="btn-outline" onclick="toast('Create admission notice (demo).')"><i class="fas fa-plus"></i> New notice</button>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Notice</th>
-                      <th>Level</th>
-                      <th>Deadline</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admissionsTableBody">
-                    <tr>
-                      <td>2026/2027 UTME Admission</td>
-                      <td>Undergraduate</td>
-                      <td>15 Sep 2026</td>
-                      <td><span class="status-pill status-verified"><i class="fas fa-check-circle"></i> Open</span></td>
-                      <td><div class="table-actions"><button class="icon-action" onclick="toast('Edit notice (demo).')"><i class="fas fa-pen"></i></button></div></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="form-hint" style="margin-top:12px;">Editing a notice here updates the corresponding public listing on Admissions.html.</p>
-            </div>
-          </div>
-
-          <!-- ===== TAB: CALENDAR ===== -->
-          <div class="workspace-panel" id="tab-calendar">
-            <div class="panel">
-              <div class="panel-header">
-                <div class="panel-title"><i class="fas fa-calendar"></i> Academic calendar</div>
-                <button class="btn-outline" onclick="toast('Add date (demo).')"><i class="fas fa-plus"></i> Add date</button>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Event</th>
-                      <th>Date</th>
-                      <th>Source</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="calendarTableBody">
-                    <tr>
-                      <td>First semester begins</td>
-                      <td>12 Oct 2026</td>
-                      <td>Academic office (draft)</td>
-                      <td><span class="status-pill status-unverified"><i class="fas fa-clock"></i> Estimate</span></td>
-                    </tr>
-                    <tr>
-                      <td>Course registration opens</td>
-                      <td>4 Oct 2026</td>
-                      <td>Academic office (draft)</td>
-                      <td><span class="status-pill status-unverified"><i class="fas fa-clock"></i> Estimate</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="form-hint" style="margin-top:12px;">Dates marked as estimates remain visible with a clear label until verified against an official publication.</p>
-            </div>
-          </div>
-
-          <!-- ===== TAB: MEDIA ===== -->
-          <div class="workspace-panel" id="tab-media">
-            <div class="panel">
-              <div class="panel-header">
-                <div class="panel-title"><i class="fas fa-photo-film"></i> Logo &amp; campus images</div>
-              </div>
-              <div class="media-grid">
-                <div class="media-tile">
-                  <div class="media-thumb"><i class="fas fa-building-columns"></i></div>
-                  <div class="media-caption">
-                    <h5>School logo</h5>
-                    <p>Primary logo</p>
-                  </div>
-                </div>
-                <div class="media-tile">
-                  <div class="media-thumb"><i class="fas fa-image"></i></div>
-                  <div class="media-caption">
-                    <h5>Campus cover</h5>
-                    <p>Profile banner</p>
-                  </div>
-                </div>
-                <div class="media-upload" onclick="toast('Upload dialog opened (demo).')">
-                  <i class="fas fa-cloud-arrow-up"></i>
-                  <span>Upload image</span>
-                </div>
-              </div>
-              <p class="form-hint" style="margin-top:16px;">Select which images appear on the public school card and profile. Uploading media does not publish it until the profile is published.</p>
-            </div>
-          </div>
-
-          <!-- Danger zone -->
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title" style="color: var(--danger);"><i class="fas fa-triangle-exclamation" style="color: var(--danger);"></i> Danger zone</div>
-            </div>
-            <p style="font-size:0.85rem; color: var(--muted); margin-bottom:14px;">Destructive actions require confirmation and are logged in the audit trail.</p>
-            <div class="form-actions" style="border-top:none; padding-top:0;">
-              <button class="btn-outline" onclick="if(confirm('Unpublish this school from public browsing?')) toast('School unpublished (demo).')"><i class="fas fa-eye-slash"></i> Unpublish</button>
-              <button class="btn-danger" onclick="if(confirm('Archive this school? Historical records will be retained.')) toast('School archived (demo).')"><i class="fas fa-box-archive"></i> Archive school</button>
             </div>
           </div>
         </div>
@@ -1050,7 +859,6 @@
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Saved</span>
@@ -1060,155 +868,167 @@
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO DATA                                                    */
-      /* ============================================================ */
-      let schools = [
-        {
-          id: 'uniabuja',
-          name: 'University of Abuja',
-          type: 'university',
-          typeLabel: 'University',
-          ownership: 'Federal',
-          state: 'Abuja',
-          city: 'Gwagwalada',
-          status: 'unverified',
-          website: 'uniabuja.edu.ng',
-          email: 'info@uniabuja.edu.ng',
-          description: 'Federal university in the Federal Capital Territory.',
-          courses: [
-            { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', status: 'Draft' },
-            { name: 'LL.B. Law', faculty: 'Law', duration: '5 years', status: 'Draft' }
-          ],
-          fees: [
-            { program: 'Undergraduate 100L', session: '2026/2027', amount: '150,000', source: 'Estimate' }
-          ]
-        },
-        {
-          id: 'unilag',
-          name: 'University of Lagos',
-          type: 'university',
-          typeLabel: 'University',
-          ownership: 'Federal',
-          state: 'Lagos',
-          city: 'Akoka',
-          status: 'verified',
-          website: 'unilag.edu.ng',
-          email: 'info@unilag.edu.ng',
-          description: 'Premier federal university known for research and innovation.',
-          courses: [
-            { name: 'B.Sc. Computer Science', faculty: 'Science', duration: '4 years', status: 'Published' },
-            { name: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', duration: '5 years', status: 'Published' }
-          ],
-          fees: [
-            { program: 'Undergraduate 100L', session: '2026/2027', amount: '160,000', source: 'Official' }
-          ]
-        },
-        {
-          id: 'biu',
-          name: 'Benson Idahosa University',
-          type: 'university',
-          typeLabel: 'University',
-          ownership: 'Private',
-          state: 'Edo',
-          city: 'Benin City',
-          status: 'verified',
-          website: 'biu.edu.ng',
-          email: 'info@biu.edu.ng',
-          description: 'Private Christian university committed to academic excellence.',
-          courses: [
-            { name: 'B.Sc. Accounting', faculty: 'Management', duration: '4 years', status: 'Published' }
-          ],
-          fees: [
-            { program: 'Undergraduate 100L', session: '2026/2027', amount: '150,000', source: 'Official' }
-          ]
-        },
-        {
-          id: 'yabatech',
-          name: 'Yaba College of Technology',
-          type: 'polytechnic',
-          typeLabel: 'Polytechnic',
-          ownership: 'Federal',
-          state: 'Lagos',
-          city: 'Yaba',
-          status: 'unverified',
-          website: 'yabatech.edu.ng',
-          email: 'info@yabatech.edu.ng',
-          description: 'Leading polytechnic focused on technical and vocational education.',
-          courses: [
-            { name: 'ND Computer Science', faculty: 'Science', duration: '2 years', status: 'Draft' }
-          ],
-          fees: []
-        },
-        {
-          id: 'abu',
-          name: 'Ahmadu Bello University',
-          type: 'university',
-          typeLabel: 'University',
-          ownership: 'Federal',
-          state: 'Kaduna',
-          city: 'Zaria',
-          status: 'verified',
-          website: 'abu.edu.ng',
-          email: 'info@abu.edu.ng',
-          description: 'One of the largest universities in Nigeria.',
-          courses: [
-            { name: 'B.Sc. Economics', faculty: 'Social Sciences', duration: '4 years', status: 'Published' }
-          ],
-          fees: [
-            { program: 'Undergraduate 100L', session: '2025/2026', amount: '140,000', source: 'Official' }
-          ]
-        },
-        {
-          id: 'fce',
-          name: 'Federal College of Education, Kano',
-          type: 'college',
-          typeLabel: 'College of Education',
-          ownership: 'Federal',
-          state: 'Kano',
-          city: 'Kano',
-          status: 'draft',
-          website: 'fcekano.edu.ng',
-          email: 'info@fcekano.edu.ng',
-          description: 'College dedicated to producing high-quality educators.',
-          courses: [],
-          fees: []
+      // Config
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
+      const LOGIN_URL = '/admin/login.html';
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+
+      let token = null;
+      let currentUser = null;
+      let schools = [];
+      let currentSchool = null;
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '?';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || '?';
+      };
+
+      const typeLabel = (t) => ({
+        university: 'University', polytechnic: 'Polytechnic', college: 'College of Education'
+      }[t] || t);
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
         }
-      ];
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return data;
+      }
 
-      let currentSchoolId = null;
-      let currentTab = 'overview';
-
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      function initials(name) {
-        return name.split(' ').filter(w => w.length > 1).slice(0, 2)
-          .map(w => w[0].toUpperCase()).join('');
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        const txt = document.getElementById('toastText');
+        txt.textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
       function statusPill(status) {
         const map = {
           verified: ['status-verified', 'fas fa-check-circle', 'Verified'],
+          pending:  ['status-unverified', 'fas fa-clock', 'Pending'],
           unverified: ['status-unverified', 'fas fa-clock', 'Unverified'],
-          draft: ['status-draft', 'fas fa-file', 'Draft'],
+          draft:    ['status-draft', 'fas fa-file', 'Draft'],
+          published: ['status-verified', 'fas fa-eye', 'Published'],
           archived: ['status-archived', 'fas fa-box-archive', 'Archived']
         };
         const [cls, icon, label] = map[status] || map.unverified;
         return `<span class="status-pill ${cls}"><i class="${icon}"></i> ${label}</span>`;
       }
 
-      function toast(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2600);
+      /* ==========================================================
+         AUTH
+      ========================================================== */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
+            redirectToLogin('not_authorised');
+            return false;
+          }
+          return true;
+        } catch (e) {
+          if (e.message === 'Session expired') return false;
+          document.getElementById('loading-gate').innerHTML =
+            '<div style="text-align:center;max-width:400px;padding:24px">' +
+            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
+            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
+            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
+            '</div>';
+          return false;
+        }
       }
 
-      /* ============================================================ */
-      /* DIRECTORY                                                    */
-      /* ============================================================ */
+      function renderUser() {
+        const name = currentUser.name || 'Admin';
+        const role = currentUser.role || 'admin';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = role;
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+        document.getElementById('topRole').textContent = role;
+      }
+
+      /* ==========================================================
+         DIRECTORY
+      ========================================================== */
+      async function loadSchools() {
+        const listEl = document.getElementById('schoolList');
+        listEl.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading schools…</p></div>';
+        try {
+          const res = await api('/api/schools');
+          schools = Array.isArray(res.schools) ? res.schools : [];
+          populateStateFilter();
+          renderStats();
+          renderDirectory();
+        } catch (e) {
+          listEl.innerHTML = `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Failed to load</h3><p>${esc(e.message)}</p></div>`;
+          document.getElementById('schoolCount').textContent = 'Error loading';
+        }
+      }
+
+      function populateStateFilter() {
+        const sel = document.getElementById('stateFilter');
+        const states = [...new Set(schools.map(s => s.state).filter(Boolean))].sort();
+        const current = sel.value;
+        sel.innerHTML = '<option value="">All states</option>' +
+          states.map(st => `<option value="${esc(st)}">${esc(st)}</option>`).join('');
+        sel.value = current;
+      }
+
+      function renderStats() {
+        const total = schools.length;
+        const verified = schools.filter(s => s.verification === 'verified').length;
+        const published = schools.filter(s => s.publication === 'published').length;
+        const pending = schools.filter(s => s.verification === 'pending').length;
+
+        const set = (id, val) => {
+          const el = document.getElementById(id);
+          el.classList.remove('loading');
+          el.textContent = val;
+        };
+        set('statTotal', total);
+        set('statVerified', verified);
+        set('statPublished', published);
+        set('statPending', pending);
+      }
+
       function renderDirectory() {
         const list = document.getElementById('schoolList');
         const query = (document.getElementById('schoolSearch').value || '').toLowerCase().trim();
@@ -1217,10 +1037,10 @@
         const verify = document.getElementById('verifyFilter').value;
 
         const filtered = schools.filter(s => {
-          const matchQ = !query || s.name.toLowerCase().includes(query) || s.city.toLowerCase().includes(query);
+          const matchQ = !query || (s.name || '').toLowerCase().includes(query) || (s.city || '').toLowerCase().includes(query);
           const matchT = !type || s.type === type;
           const matchS = !state || s.state === state;
-          const matchV = !verify || s.status === verify;
+          const matchV = !verify || s.verification === verify;
           return matchQ && matchT && matchS && matchV;
         });
 
@@ -1238,27 +1058,25 @@
 
         list.innerHTML = filtered.map(s => `
           <div class="school-row">
-            <div class="school-logo">${initials(s.name)}</div>
+            <div class="school-logo">${esc(initials(s.name))}</div>
             <div class="school-main">
-              <div class="school-name-row">
-                <span class="school-name">${s.name}</span>
-              </div>
-              <div class="school-sub">${s.ownership} · ${s.state}</div>
+              <div class="school-name">${esc(s.name)}</div>
+              <div class="school-sub">${esc(s.ownership || '—')} · ${esc(s.state || '—')}</div>
             </div>
             <div class="school-meta-cell">
               <div class="meta-label-sm">Type</div>
-              <div class="meta-value-sm">${s.typeLabel}</div>
+              <div class="meta-value-sm">${esc(typeLabel(s.type))}</div>
             </div>
             <div class="school-meta-cell">
-              <div class="meta-label-sm">Courses</div>
-              <div class="meta-value-sm">${s.courses.length} · view in profile</div>
+              <div class="meta-label-sm">Verification</div>
+              ${statusPill(s.verification)}
             </div>
             <div class="school-meta-cell">
-              <div class="meta-label-sm">Status</div>
-              ${statusPill(s.status)}
+              <div class="meta-label-sm">Publication</div>
+              ${statusPill(s.publication)}
             </div>
             <div class="school-actions">
-              <button class="btn-outline" onclick="openProfile('${s.id}')"><i class="fas fa-arrow-right"></i> View profile</button>
+              <button class="btn-outline" onclick="openProfile('${esc(s.id)}')"><i class="fas fa-arrow-right"></i> View</button>
             </div>
           </div>
         `).join('');
@@ -1266,7 +1084,6 @@
 
       function filterSchools() { renderDirectory(); }
 
-      /* Add school */
       function openAddSchool() {
         document.getElementById('addSchoolForm').classList.add('open');
         document.getElementById('newSchoolName').focus();
@@ -1274,219 +1091,348 @@
       function closeAddSchool() {
         document.getElementById('addSchoolForm').classList.remove('open');
       }
-      function saveNewSchool() {
+
+      async function saveNewSchool() {
         const name = document.getElementById('newSchoolName').value.trim();
-        if (!name) { toast('Please enter a school name.'); return; }
-        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        schools.unshift({
-          id: id,
-          name: name,
-          type: document.getElementById('newSchoolType').value,
-          typeLabel: {
-            university: 'University', polytechnic: 'Polytechnic', college: 'College of Education'
-          }[document.getElementById('newSchoolType').value],
-          ownership: document.getElementById('newSchoolOwnership').value,
-          state: document.getElementById('newSchoolState').value.trim() || '—',
-          city: document.getElementById('newSchoolCity').value.trim() || '—',
-          status: 'draft',
-          website: '', email: '', description: '',
-          courses: [], fees: []
-        });
-        document.getElementById('newSchoolName').value = '';
-        document.getElementById('newSchoolState').value = '';
-        document.getElementById('newSchoolCity').value = '';
-        closeAddSchool();
-        renderDirectory();
-        toast('School saved as draft.');
+        const type = document.getElementById('newSchoolType').value;
+        const ownership = document.getElementById('newSchoolOwnership').value;
+        if (!name) { toast('Enter a school name.', true); return; }
+
+        const btn = document.getElementById('saveSchoolBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+
+        try {
+          const body = {
+            name, type, ownership,
+            state: document.getElementById('newSchoolState').value.trim() || null,
+            city: document.getElementById('newSchoolCity').value.trim() || null,
+            website: document.getElementById('newSchoolWebsite').value.trim() || null,
+            email: document.getElementById('newSchoolEmail').value.trim() || null,
+          };
+          await api('/api/schools', { method: 'POST', body: JSON.stringify(body) });
+          ['newSchoolName','newSchoolState','newSchoolCity','newSchoolWebsite','newSchoolEmail'].forEach(id => document.getElementById(id).value = '');
+          closeAddSchool();
+          await loadSchools();
+          toast('School created as draft.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Create school';
+        }
       }
 
-      /* ============================================================ */
-      /* PROFILE                                                      */
-      /* ============================================================ */
-      function openProfile(id) {
-        const s = schools.find(x => x.id === id);
-        if (!s) return;
-        currentSchoolId = id;
+      /* ==========================================================
+         PROFILE
+      ========================================================== */
+      async function openProfile(id) {
+        try {
+          const res = await api('/api/schools/' + encodeURIComponent(id));
+          currentSchool = res.school || res;
+        } catch (e) {
+          toast(e.message, true);
+          return;
+        }
 
-        document.getElementById('profileLogo').textContent = initials(s.name);
-        document.getElementById('profileName').textContent = s.name;
+        document.getElementById('profileLogo').textContent = initials(currentSchool.name);
+        document.getElementById('profileName').textContent = currentSchool.name || '—';
         document.getElementById('profileSub').innerHTML =
-          `<span>${s.ownership} · ${s.state}</span><span class="dot">●</span><span>${s.typeLabel}</span>`;
-        document.getElementById('profileBadges').innerHTML = statusPill(s.status);
+          `<span>${esc(currentSchool.ownership || '—')} · ${esc(currentSchool.state || '—')}</span>
+           <span class="dot">●</span>
+           <span>${esc(typeLabel(currentSchool.type))}</span>`;
+        document.getElementById('profileBadges').innerHTML =
+          statusPill(currentSchool.verification) + statusPill(currentSchool.publication);
 
-        // Overview form
-        document.getElementById('editName').value = s.name;
-        document.getElementById('editType').value = s.type;
-        document.getElementById('editOwnership').value = s.ownership;
-        document.getElementById('editState').value = s.state;
-        document.getElementById('editCity').value = s.city;
-        document.getElementById('editWebsite').value = s.website;
-        document.getElementById('editEmail').value = s.email;
-        document.getElementById('editDescription').value = s.description;
+        // Public preview
+        const previewLink = document.getElementById('previewPublicLink');
+        if (currentSchool.slug) {
+          previewLink.href = `/Schools?school=${encodeURIComponent(currentSchool.slug)}`;
+          previewLink.style.display = '';
+        } else {
+          previewLink.style.display = 'none';
+        }
 
-        renderCourses(s);
-        renderFees(s);
+        // Verification notice
+        const verifText = document.getElementById('verificationText');
+        if (currentSchool.verification === 'verified') {
+          verifText.innerHTML = '<strong>Verified.</strong> This school\'s information has been reviewed.';
+        } else if (currentSchool.verification === 'pending') {
+          verifText.innerHTML = '<strong>Verification pending.</strong> Review the details carefully before approving.';
+        } else {
+          verifText.innerHTML = '<strong>Unverified.</strong> Confirm details with official sources before marking this profile verified.';
+        }
 
-        // Show profile, reset tab
+        // Form
+        document.getElementById('editName').value = currentSchool.name || '';
+        document.getElementById('editType').value = currentSchool.type || 'university';
+        document.getElementById('editOwnership').value = currentSchool.ownership || 'Federal';
+        document.getElementById('editState').value = currentSchool.state || '';
+        document.getElementById('editCity').value = currentSchool.city || '';
+        document.getElementById('editWebsite').value = currentSchool.website || '';
+        document.getElementById('editEmail').value = currentSchool.email || '';
+        document.getElementById('editDescription').value = currentSchool.description || '';
+
+        // Tab state
+        document.querySelectorAll('.workspace-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === 'overview'));
+        document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-overview').classList.add('active');
+
+        // Load nested data
+        await loadCourses();
+        await loadFees();
+
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-profile').classList.add('active');
-        switchTab('overview');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       function showDirectory() {
         document.getElementById('view-profile').classList.remove('active');
         document.getElementById('view-directory').classList.add('active');
-        currentSchoolId = null;
+        currentSchool = null;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      function saveProfile(msg) {
-        const s = schools.find(x => x.id === currentSchoolId);
-        if (!s) return;
-        s.name = document.getElementById('editName').value.trim() || s.name;
-        s.type = document.getElementById('editType').value;
-        s.typeLabel = { university: 'University', polytechnic: 'Polytechnic', college: 'College of Education' }[s.type];
-        s.ownership = document.getElementById('editOwnership').value;
-        s.state = document.getElementById('editState').value.trim() || s.state;
-        s.city = document.getElementById('editCity').value.trim() || s.city;
-        s.website = document.getElementById('editWebsite').value.trim();
-        s.email = document.getElementById('editEmail').value.trim();
-        s.description = document.getElementById('editDescription').value.trim();
+      async function saveProfile() {
+        if (!currentSchool) return;
+        const btn = document.getElementById('saveProfileBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
-        document.getElementById('profileLogo').textContent = initials(s.name);
-        document.getElementById('profileName').textContent = s.name;
-        document.getElementById('profileSub').innerHTML =
-          `<span>${s.ownership} · ${s.state}</span><span class="dot">●</span><span>${s.typeLabel}</span>`;
-        renderDirectory();
-        toast(msg + ' · logged to audit trail.');
+        try {
+          const body = {
+            name: document.getElementById('editName').value.trim() || currentSchool.name,
+            type: document.getElementById('editType').value,
+            ownership: document.getElementById('editOwnership').value,
+            state: document.getElementById('editState').value.trim() || null,
+            city: document.getElementById('editCity').value.trim() || null,
+            website: document.getElementById('editWebsite').value.trim() || null,
+            email: document.getElementById('editEmail').value.trim() || null,
+            description: document.getElementById('editDescription').value.trim() || null,
+          };
+          const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id), {
+            method: 'PATCH', body: JSON.stringify(body)
+          });
+          currentSchool = res.school || currentSchool;
+
+          document.getElementById('profileName').textContent = currentSchool.name;
+          document.getElementById('profileSub').innerHTML =
+            `<span>${esc(currentSchool.ownership)} · ${esc(currentSchool.state || '—')}</span>
+             <span class="dot">●</span>
+             <span>${esc(typeLabel(currentSchool.type))}</span>`;
+
+          await loadSchools();
+          toast('Changes saved.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Save changes';
+        }
       }
 
-      /* Tabs */
-      document.querySelectorAll('.workspace-tab').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-      });
-      function switchTab(tab) {
-        currentTab = tab;
-        document.querySelectorAll('.workspace-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-        document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
-        const panel = document.getElementById('tab-' + tab);
-        if (panel) panel.classList.add('active');
+      async function verifySchool() {
+        if (!currentSchool) return;
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/verify', {
+            method: 'POST', body: JSON.stringify({ verification: 'verified' })
+          });
+          await openProfile(currentSchool.id);
+          await loadSchools();
+          toast('School verified.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-shield-halved"></i> Verify';
+        }
       }
 
-      /* ============================================================ */
-      /* COURSES                                                      */
-      /* ============================================================ */
-      function renderCourses(s) {
+      async function publishSchool() {
+        if (!currentSchool) return;
+        const btn = document.getElementById('publishBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing…';
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/publish', { method: 'POST' });
+          await openProfile(currentSchool.id);
+          await loadSchools();
+          toast('School published.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-eye"></i> Publish';
+        }
+      }
+
+      async function archiveSchool() {
+        if (!currentSchool) return;
+        if (!confirm('Archive this school? It will be hidden from public browsing.')) return;
+        const btn = document.getElementById('archiveBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Archiving…';
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/archive', { method: 'POST' });
+          await openProfile(currentSchool.id);
+          await loadSchools();
+          toast('School archived.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-box-archive"></i> Archive';
+        }
+      }
+
+      /* ==========================================================
+         COURSES
+      ========================================================== */
+      async function loadCourses() {
         const body = document.getElementById('coursesTableBody');
-        if (!s.courses.length) {
-          body.innerHTML = `<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-book-open"></i>No courses recorded yet.</div></td></tr>`;
-          return;
+        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
+        try {
+          const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses');
+          const courses = res.courses || [];
+          if (!courses.length) {
+            body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-book-open"></i>No courses recorded yet.</div></td></tr>';
+            return;
+          }
+          body.innerHTML = courses.map(c => `
+            <tr>
+              <td>${esc(c.name)}</td>
+              <td>${esc(c.faculty || '—')}</td>
+              <td>${esc(c.duration || '—')}</td>
+              <td>${statusPill(c.status)}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="icon-action danger" onclick="deleteCourse('${esc(c.id)}')" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`).join('');
+        } catch (e) {
+          body.innerHTML = `<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-triangle-exclamation"></i>${esc(e.message)}</div></td></tr>`;
         }
-        body.innerHTML = s.courses.map((c, i) => `
-          <tr>
-            <td>${c.name}</td>
-            <td>${c.faculty}</td>
-            <td>${c.duration}</td>
-            <td><span class="status-pill ${c.status === 'Published' ? 'status-verified' : 'status-draft'}">
-              <i class="fas ${c.status === 'Published' ? 'fa-check-circle' : 'fa-file'}"></i> ${c.status}
-            </span></td>
-            <td>
-              <div class="table-actions">
-                <button class="icon-action" onclick="toast('Edit course (demo).')"><i class="fas fa-pen"></i></button>
-                <button class="icon-action danger" onclick="removeCourse(${i})"><i class="fas fa-trash"></i></button>
-              </div>
-            </td>
-          </tr>
-        `).join('');
       }
-      function toggleAddCourse() {
-        document.getElementById('addCourseForm').classList.toggle('open');
-      }
-      function saveNewCourse() {
-        const s = schools.find(x => x.id === currentSchoolId);
+
+      function toggleAddCourse() { document.getElementById('addCourseForm').classList.toggle('open'); }
+
+      async function saveNewCourse() {
+        if (!currentSchool) return;
         const name = document.getElementById('newCourseName').value.trim();
-        if (!s || !name) { toast('Enter a course name.'); return; }
-        s.courses.push({
-          name: name,
-          faculty: document.getElementById('newCourseFaculty').value.trim() || '—',
-          duration: document.getElementById('newCourseDuration').value.trim() || '—',
-          status: 'Draft'
-        });
-        document.getElementById('newCourseName').value = '';
-        document.getElementById('newCourseFaculty').value = '';
-        document.getElementById('newCourseDuration').value = '';
-        toggleAddCourse();
-        renderCourses(s);
-        renderDirectory();
-        toast('Course added as draft.');
-      }
-      function removeCourse(i) {
-        if (!confirm('Remove this course?')) return;
-        const s = schools.find(x => x.id === currentSchoolId);
-        s.courses.splice(i, 1);
-        renderCourses(s);
-        renderDirectory();
-        toast('Course removed (demo).');
+        if (!name) { toast('Enter a course name.', true); return; }
+        const btn = document.getElementById('saveCourseBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses', {
+            method: 'POST',
+            body: JSON.stringify({
+              name,
+              faculty: document.getElementById('newCourseFaculty').value.trim() || null,
+              duration: document.getElementById('newCourseDuration').value.trim() || null,
+            })
+          });
+          ['newCourseName','newCourseFaculty','newCourseDuration'].forEach(id => document.getElementById(id).value = '');
+          toggleAddCourse();
+          await loadCourses();
+          toast('Course added as draft.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Save course';
+        }
       }
 
-      /* ============================================================ */
-      /* FEES                                                         */
-      /* ============================================================ */
-      function renderFees(s) {
+      async function deleteCourse(id) {
+        if (!confirm('Delete this course? This action cannot be undone.')) return;
+        try {
+          await api('/api/courses/' + encodeURIComponent(id), { method: 'DELETE' });
+          await loadCourses();
+          toast('Course deleted.');
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* ==========================================================
+         FEES
+      ========================================================== */
+      async function loadFees() {
         const body = document.getElementById('feesTableBody');
-        if (!s.fees.length) {
-          body.innerHTML = `<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-money-bill"></i>No fee records yet.</div></td></tr>`;
+        body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-spinner fa-spin"></i>Loading…</div></td></tr>';
+        try {
+          const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees');
+          const fees = res.fees || [];
+          if (!fees.length) {
+            body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-money-bill"></i>No fee records yet.</div></td></tr>';
+            return;
+          }
+          body.innerHTML = fees.map(f => `
+            <tr>
+              <td>${esc(f.session)}</td>
+              <td>${esc(f.category)}</td>
+              <td>${esc(f.programme || '—')}</td>
+              <td>₦${Number(f.amount || 0).toLocaleString('en-NG')}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="icon-action danger" onclick="deleteFee('${esc(f.id)}')" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`).join('');
+        } catch (e) {
+          body.innerHTML = `<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-triangle-exclamation"></i>${esc(e.message)}</div></td></tr>`;
+        }
+      }
+
+      function toggleAddFee() { document.getElementById('addFeeForm').classList.toggle('open'); }
+
+      async function saveNewFee() {
+        if (!currentSchool) return;
+        const session = document.getElementById('newFeeSession').value.trim();
+        const category = document.getElementById('newFeeCategory').value;
+        const amount = Number(document.getElementById('newFeeAmount').value);
+        if (!session || !category || !Number.isFinite(amount) || amount < 0) {
+          toast('Session, category and a valid amount are required.', true);
           return;
         }
-        body.innerHTML = s.fees.map((f, i) => `
-          <tr>
-            <td>${f.program}</td>
-            <td>${f.session}</td>
-            <td>₦${f.amount}</td>
-            <td><span class="status-pill ${f.source === 'Official' ? 'status-verified' : 'status-unverified'}">
-              <i class="fas ${f.source === 'Official' ? 'fa-check-circle' : 'fa-clock'}"></i> ${f.source}
-            </span></td>
-            <td>
-              <div class="table-actions">
-                <button class="icon-action" onclick="toast('Edit fee (demo).')"><i class="fas fa-pen"></i></button>
-                <button class="icon-action danger" onclick="removeFee(${i})"><i class="fas fa-trash"></i></button>
-              </div>
-            </td>
-          </tr>
-        `).join('');
-      }
-      function toggleAddFee() {
-        document.getElementById('addFeeForm').classList.toggle('open');
-      }
-      function saveNewFee() {
-        const s = schools.find(x => x.id === currentSchoolId);
-        const program = document.getElementById('newFeeProgram').value.trim();
-        if (!s || !program) { toast('Enter a programme.'); return; }
-        s.fees.push({
-          program: program,
-          session: document.getElementById('newFeeSession').value.trim() || '—',
-          amount: document.getElementById('newFeeAmount').value.trim() || '0',
-          source: 'Estimate'
-        });
-        document.getElementById('newFeeProgram').value = '';
-        document.getElementById('newFeeSession').value = '';
-        document.getElementById('newFeeAmount').value = '';
-        toggleAddFee();
-        renderFees(s);
-        toast('Fee added as estimate.');
-      }
-      function removeFee(i) {
-        if (!confirm('Remove this fee record?')) return;
-        const s = schools.find(x => x.id === currentSchoolId);
-        s.fees.splice(i, 1);
-        renderFees(s);
-        toast('Fee record removed (demo).');
+        const btn = document.getElementById('saveFeeBtn');
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees', {
+            method: 'POST',
+            body: JSON.stringify({
+              session, category, amount,
+              programme: document.getElementById('newFeeProgram').value.trim() || null,
+            })
+          });
+          ['newFeeProgram','newFeeSession','newFeeAmount'].forEach(id => document.getElementById(id).value = '');
+          toggleAddFee();
+          await loadFees();
+          toast('Fee added as draft.');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Save fee';
+        }
       }
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      async function deleteFee(id) {
+        if (!confirm('Delete this fee record?')) return;
+        try {
+          await api('/api/fees/' + encodeURIComponent(id), { method: 'DELETE' });
+          await loadFees();
+          toast('Fee record deleted.');
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* ==========================================================
+         TABS + SIDEBAR
+      ========================================================== */
+      document.querySelectorAll('.workspace-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.workspace-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === btn.dataset.tab));
+          document.querySelectorAll('.workspace-panel').forEach(p => p.classList.remove('active'));
+          const target = document.getElementById('tab-' + btn.dataset.tab);
+          if (target) target.classList.add('active');
+        });
+      });
+
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1505,17 +1451,42 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        renderDirectory();
-        // Prevent placeholder anchor jumps
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
+      document.getElementById('sideLogout').addEventListener('click', async () => {
+        if (!confirm('Sign out of CampusNaija admin?')) return;
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       });
 
+      /* ==========================================================
+         BOOT
+      ========================================================== */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        document.getElementById('loading-gate').style.display = 'none';
+        document.getElementById('appShell').style.display = 'flex';
+        renderUser();
+        await loadSchools();
+      })();
+
+      // Expose functions used by inline onclick
+      window.filterSchools = filterSchools;
+      window.openAddSchool = openAddSchool;
+      window.closeAddSchool = closeAddSchool;
+      window.saveNewSchool = saveNewSchool;
+      window.openProfile = openProfile;
+      window.showDirectory = showDirectory;
+      window.saveProfile = saveProfile;
+      window.verifySchool = verifySchool;
+      window.publishSchool = publishSchool;
+      window.archiveSchool = archiveSchool;
+      window.toggleAddCourse = toggleAddCourse;
+      window.saveNewCourse = saveNewCourse;
+      window.deleteCourse = deleteCourse;
+      window.toggleAddFee = toggleAddFee;
+      window.saveNewFee = saveNewFee;
+      window.deleteFee = deleteFee;
     })();
   </script>
 
