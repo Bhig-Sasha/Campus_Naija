@@ -25,16 +25,24 @@
     /* HEADER */
     .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; transition: transform 0.2s; }
+    .logo:hover { transform: scale(1.02); }
     .logo span { color: var(--primary); }
     .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
-    .nav-links a:hover { color: var(--primary); }
+    .nav-links a { transition: color 0.2s, transform 0.2s; display: inline-block; }
+    .nav-links a:hover { color: var(--primary); transform: translateY(-1px); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
-    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; }
-    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; }
-    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; }
-    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
+    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; transition: color 0.2s, transform 0.2s; }
+    .search-icon-btn:hover { color: var(--primary); transform: scale(1.1); }
+    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-explore:hover { background-color: #00b374; transform: translateY(-1px); }
+    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; transition: color 0.2s; }
+    .hamburger:hover { color: var(--primary); }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); animation: slideDown 0.25s ease; }
+    .mobile-nav a { transition: color 0.2s, padding-left 0.2s; }
+    .mobile-nav a:hover { color: var(--primary); padding-left: 4px; }
     .mobile-nav.active { display: flex; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     @media (min-width: 1024px) {
       .nav-links { display: flex; }
       .btn-explore { display: inline-block; }
@@ -43,146 +51,174 @@
     }
 
     .view { display: none; }
-    .view.active { display: block; }
+    .view.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
     /* DIRECTORY */
-    .directory-hero { padding: 40px 0 24px; }
+    .directory-hero { padding: 40px 0 24px; animation: fadeInUp 0.5s ease; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .directory-hero .eyebrow { color: var(--primary); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
     .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
-    .search-filter-bar { margin: 24px 0 32px; }
+    .search-filter-bar { margin: 24px 0 32px; animation: fadeInUp 0.5s ease 0.1s both; }
     .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; }
-    .search-wrapper:focus-within { border-color: var(--primary); }
-    .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
-    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
+    .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; transition: border-color 0.2s, box-shadow 0.2s; }
+    .search-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.08); }
+    .search-wrapper i { color: var(--muted); font-size: 1.1rem; transition: color 0.2s; }
+    .search-wrapper:focus-within i { color: var(--primary); }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; min-width: 0; }
     .search-wrapper input::placeholder { color: #6b7c74; }
-    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; }
-    .year-select { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer; min-width: 160px; }
-    .year-select:focus { border-color: var(--primary); }
+    .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; transition: background 0.2s, transform 0.15s; }
+    .search-wrapper button:hover { background-color: #00b374; transform: scale(1.02); }
+    .search-wrapper button:active { transform: scale(0.98); }
+    .year-select { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 12px 20px; font-family: 'Manrope', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; cursor: pointer; min-width: 160px; transition: border-color 0.2s, box-shadow 0.2s; }
+    .year-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.08); }
 
     .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
-    .filter-tab { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.15s; }
-    .filter-tab:hover { border-color: var(--primary); color: var(--text); }
+    .filter-tab { background-color: var(--elevated); border: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 40px; cursor: pointer; transition: all 0.2s; }
+    .filter-tab:hover { border-color: var(--primary); color: var(--text); transform: translateY(-1px); }
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
+    .filter-tab.active:hover { transform: none; }
 
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-    .section-title { font-size: 1.8rem; }
+    .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
 
     .exams-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 64px; }
     @media (min-width: 600px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1024px) { .exams-grid { grid-template-columns: repeat(4, 1fr); } }
 
-    .exam-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; display: flex; flex-direction: column; cursor: pointer; }
-    .exam-card:hover { border-color: var(--primary); }
-    .exam-img { height: 150px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); }
+    .exam-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; cursor: pointer; animation: cardIn 0.4s ease both; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .exam-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+    .exam-img { height: 150px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); overflow: hidden; transition: transform 0.4s ease; }
+    .exam-card:hover .exam-img { transform: scale(1.03); }
     .exam-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
     .exam-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
-    .exam-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .exam-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; transition: color 0.2s; }
+    .exam-card:hover .exam-name { color: var(--primary); }
     .exam-body-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
     .exam-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
-    .exam-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; }
+    .exam-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; transition: gap 0.2s; }
+    .exam-card:hover .exam-action { gap: 10px; }
 
     /* Calendar strip */
-    .calendar-strip { padding: 40px 0 16px; border-top: 1px solid var(--border); margin-top: 8px; }
-    .calendar-strip-inner { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; }
-    .calendar-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0; border-left: 4px solid var(--accent); }
+    .calendar-strip { padding: 40px 0 16px; border-top: 1px solid var(--border); margin-top: 8px; animation: fadeInUp 0.5s ease 0.2s both; }
+    .calendar-strip-inner { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; }
+    .calendar-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 18px 22px; min-width: 240px; flex-shrink: 0; border-left: 4px solid var(--accent); transition: border-color 0.2s, transform 0.2s; }
+    .calendar-item:hover { border-left-color: var(--primary); transform: translateY(-2px); }
     .calendar-item .cal-label { color: var(--accent); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
     .calendar-item .cal-event { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
     .calendar-item .cal-date { font-size: 0.85rem; color: var(--muted); }
     .calendar-item .cal-source { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 6px; }
 
     /* Prep strip */
-    .prep-strip { padding: 32px 0 64px; }
-    .prep-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    .prep-strip { padding: 32px 0 64px; animation: fadeInUp 0.5s ease 0.25s both; }
+    .prep-inner { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; transition: border-color 0.2s; }
+    .prep-inner:hover { border-color: var(--primary); }
     .prep-inner h2 { font-size: 1.6rem; margin-bottom: 8px; }
     .prep-inner p { color: var(--muted); font-size: 0.95rem; max-width: 520px; }
     .prep-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     /* DETAIL */
-    .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; }
-    .back-to-directory:hover { color: var(--primary); }
+    .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; transition: color 0.2s, gap 0.2s; }
+    .back-to-directory:hover { color: var(--primary); gap: 12px; }
 
-    .exam-detail-hero { padding: 8px 0 16px; }
-    .exam-detail-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .exam-detail-hero { padding: 8px 0 16px; animation: fadeInUp 0.4s ease; }
+    .exam-detail-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; transition: border-color 0.2s; }
+    .exam-detail-card:hover { border-color: var(--primary); }
     .exam-detail-header { padding: 24px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid var(--border); }
     .exam-detail-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .exam-detail-title-row h1 { font-size: 2rem; }
-    .exam-badge { background-color: rgba(0,201,130,0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .exam-badge { background-color: rgba(0,201,130,0.15); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 40px; text-transform: uppercase; letter-spacing: 0.05em; animation: fadeIn 0.5s ease 0.2s both; }
     .exam-badge.gold { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .exam-badge.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .exam-detail-sub { color: var(--muted); font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .exam-detail-sub .dot { font-size: 0.4rem; }
     .exam-detail-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    .btn-primary { background-color: var(--primary); color: #070A09; font-weight: 700; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary { background-color: var(--primary); color: #070A09; font-weight: 700; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; }
+    .btn-primary:hover:not(:disabled) { background-color: #00b374; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,201,130,0.25); }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-outline { background-color: transparent; color: var(--text); font-weight: 600; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline { background-color: transparent; color: var(--text); font-weight: 600; padding: 12px 24px; border-radius: var(--radius-btn); font-size: 0.9rem; border: 1px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: border-color 0.2s, color 0.2s, transform 0.15s; }
+    .btn-outline:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
     .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .exam-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .exam-tabs { margin: 16px 0 32px; border-bottom: 1px solid var(--border); overflow-x: auto; animation: fadeInUp 0.4s ease 0.1s both; }
     .exam-tab-list { display: flex; flex-wrap: nowrap; gap: 4px; list-style: none; min-width: max-content; }
-    .exam-tab-item { padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
-    .exam-tab-item:hover { color: var(--text); }
+    .exam-tab-item { padding: 12px 20px; font-weight: 600; font-size: 0.9rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s, background 0.2s; white-space: nowrap; border-radius: 6px 6px 0 0; }
+    .exam-tab-item:hover { color: var(--text); background-color: rgba(255,255,255,0.03); }
     .exam-tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
 
     .exam-tab-panel { display: none; }
-    .exam-tab-panel.active { display: block; }
+    .exam-tab-panel.active { display: block; animation: fadeIn 0.35s ease; }
 
     .exam-profile-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
     @media (min-width: 900px) { .exam-profile-grid { grid-template-columns: 2fr 1fr; } }
 
-    .info-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; }
+    .info-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; transition: border-color 0.2s, transform 0.2s; animation: fadeInUp 0.4s ease both; }
+    .info-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .info-card:nth-child(2) { animation-delay: 0.08s; }
     .info-card h3 { font-size: 1.1rem; margin-bottom: 18px; }
     .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; gap: 12px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--muted); }
     .info-value { font-weight: 600; text-align: right; word-break: break-word; }
-    .info-value a { color: var(--primary); }
+    .info-value a { color: var(--primary); transition: opacity 0.2s; }
+    .info-value a:hover { opacity: 0.8; }
 
     .exam-section { margin-bottom: 40px; }
     .exam-section h2 { font-size: 1.5rem; margin-bottom: 16px; }
     .exam-section h3 { font-size: 1.15rem; margin-bottom: 12px; }
     .exam-section p { color: var(--muted); margin-bottom: 16px; white-space: pre-wrap; }
 
-    .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); }
+    .data-table-wrapper { overflow-x: auto; border-radius: var(--radius-card); border: 1px solid var(--border); transition: border-color 0.2s; }
+    .data-table-wrapper:hover { border-color: var(--primary); }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     thead { background-color: var(--elevated); }
     th { text-align: left; padding: 14px 16px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); white-space: nowrap; }
     td { padding: 14px 16px; border-top: 1px solid var(--border); }
+    tr { transition: background 0.15s; }
     tr:hover td { background-color: rgba(255,255,255,0.02); }
-    .badge-soft { background-color: rgba(0,201,130,0.12); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
-    .badge-gold { background-color: rgba(245,185,66,0.12); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
-    .badge-muted { background-color: rgba(155,169,161,0.12); color: var(--muted); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
+    .badge-soft { background-color: rgba(0,201,130,0.12); color: var(--primary); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; display: inline-block; }
+    .badge-gold { background-color: rgba(245,185,66,0.12); color: var(--accent); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; display: inline-block; }
+    .badge-muted { background-color: rgba(155,169,161,0.12); color: var(--muted); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 40px; display: inline-block; }
 
     .update-list { display: flex; flex-direction: column; gap: 16px; }
-    .update-item { background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px; border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start; }
+    .update-item { background-color: var(--elevated); border-radius: var(--radius-card); padding: 18px 20px; border-left: 4px solid var(--accent); display: flex; gap: 14px; align-items: flex-start; transition: transform 0.15s; }
+    .update-item:hover { transform: translateX(3px); }
     .update-item i { color: var(--accent); margin-top: 4px; }
+    .update-item .update-content { min-width: 0; }
     .update-item .update-content h4 { font-size: 1rem; margin-bottom: 4px; }
     .update-item .update-content p { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; white-space: pre-wrap; }
     .update-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
-    .update-meta a { color: var(--primary); word-break: break-all; }
+    .update-meta a { color: var(--primary); word-break: break-all; transition: opacity 0.2s; }
+    .update-meta a:hover { opacity: 0.8; }
 
     .resource-list { display: flex; flex-direction: column; gap: 12px; }
-    .resource-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s; }
-    .resource-item:hover { border-color: var(--primary); }
+    .resource-item { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px 18px; display: flex; align-items: center; gap: 14px; transition: border-color 0.2s, transform 0.15s; }
+    .resource-item:hover { border-color: var(--primary); transform: translateX(3px); }
     .resource-item i { color: var(--primary); font-size: 1.2rem; width: 24px; text-align: center; }
     .resource-item .res-text { flex: 1; min-width: 0; }
     .resource-item .res-text h4 { font-size: 0.95rem; margin-bottom: 2px; }
     .resource-item .res-text p { font-size: 0.8rem; color: var(--muted); margin: 0; word-break: break-all; }
     .resource-item .res-action { color: var(--primary); font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
 
-    .countdown-box { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; text-align: center; }
+    .countdown-box { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; text-align: center; transition: border-color 0.2s; }
+    .countdown-box:hover { border-color: var(--primary); }
     .countdown-box .cd-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
     .countdown-box .cd-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
     .countdown-box .cd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
+    /* SKELETON */
+    .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
     /* STATES */
     .loading-state, .empty-state, .error-state { text-align: center; padding: 64px 24px; color: var(--muted); grid-column: 1 / -1; }
-    .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; }
-    .loading-spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s linear infinite; margin-bottom: 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state i, .error-state i { font-size: 2.5rem; margin-bottom: 16px; display: block; color: var(--border); animation: fadeIn 0.5s ease; }
+    .error-state button { margin-top: 16px; background-color: var(--primary); color: #070A09; border: none; padding: 10px 24px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .error-state button:hover { background-color: #00b374; transform: translateY(-1px); }
 
     /* FOOTER */
     .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; }
@@ -191,15 +227,21 @@
     @media (min-width: 1024px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
     .footer-brand p { color: var(--muted); font-size: 0.9rem; margin: 16px 0 20px; max-width: 280px; }
     .social-links { display: flex; gap: 16px; }
-    .social-links a { color: var(--muted); font-size: 1.2rem; }
-    .social-links a:hover { color: var(--primary); }
+    .social-links a { color: var(--muted); font-size: 1.2rem; transition: color 0.2s, transform 0.2s; display: inline-block; }
+    .social-links a:hover { color: var(--primary); transform: translateY(-2px); }
     .footer-links h4 { font-size: 0.95rem; margin-bottom: 16px; }
     .footer-links ul { list-style: none; }
     .footer-links li { margin-bottom: 10px; }
-    .footer-links a { color: var(--muted); font-size: 0.9rem; }
-    .footer-links a:hover { color: var(--primary); }
+    .footer-links a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s, padding-left 0.2s; }
+    .footer-links a:hover { color: var(--primary); padding-left: 4px; }
     .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
     .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a { transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--primary); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -259,10 +301,11 @@
     <section>
       <div class="section-header"><div class="section-title" id="examCount">Examinations</div></div>
       <div class="exams-grid" id="examsGrid">
-        <div class="loading-state" id="examsLoading">
-          <span class="loading-spinner"></span>
-          <p>Loading examinations...</p>
-        </div>
+        <!-- skeleton cards -->
+        <div class="skeleton" style="height:280px;"></div>
+        <div class="skeleton" style="height:280px;"></div>
+        <div class="skeleton" style="height:280px;"></div>
+        <div class="skeleton" style="height:280px;"></div>
       </div>
     </section>
 
@@ -339,7 +382,7 @@
               <table>
                 <thead><tr><th>Detail</th><th>Information</th></tr></thead>
                 <tbody id="examKeyFacts">
-                  <tr><td colspan="2" style="text-align:center; color:var(--muted);">Loading...</td></tr>
+                  <tr><td colspan="2"><div class="skeleton" style="height:32px; width:100%;"></div></td></tr>
                 </tbody>
               </table>
             </div>
@@ -381,7 +424,7 @@
               <table>
                 <thead><tr><th>Event</th><th>Date</th><th>Status</th></tr></thead>
                 <tbody id="registrationTable">
-                  <tr><td colspan="3" style="text-align:center; color:var(--muted);">Loading...</td></tr>
+                  <tr><td colspan="3"><div class="skeleton" style="height:32px; width:100%;"></div></td></tr>
                 </tbody>
               </table>
             </div>
@@ -592,7 +635,12 @@
   /* ---------- load list ---------- */
   async function loadExams() {
     const grid = document.getElementById('examsGrid');
-    grid.innerHTML = `<div class="loading-state" id="examsLoading"><span class="loading-spinner"></span><p>Loading examinations...</p></div>`;
+    grid.innerHTML = `
+      <div class="skeleton" style="height:280px;"></div>
+      <div class="skeleton" style="height:280px;"></div>
+      <div class="skeleton" style="height:280px;"></div>
+      <div class="skeleton" style="height:280px;"></div>
+    `;
 
     try {
       const data = await apiGet('/api/public/exams');
@@ -607,6 +655,7 @@
     } catch (err) {
       console.error('[exams]', err);
       grid.innerHTML = `<div class="error-state">
+        <i class="fas fa-triangle-exclamation"></i>
         <p>We could not load examinations right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadExams()">Try again</button>
@@ -621,7 +670,11 @@
     const grid = document.getElementById('examsGrid');
 
     if (!list.length) {
-      grid.innerHTML = `<div class="empty-state"><p>No examinations have been published yet.</p><p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p></div>`;
+      grid.innerHTML = `<div class="empty-state">
+        <i class="fas fa-file-pen"></i>
+        <p>No examinations have been published yet.</p>
+        <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
+      </div>`;
       document.getElementById('examCount').textContent = 'No examinations yet';
       return;
     }
@@ -629,15 +682,17 @@
     document.getElementById('examCount').textContent =
       `${list.length} examination${list.length === 1 ? '' : 's'}`;
 
-    grid.innerHTML = list.map((e) => {
+    grid.innerHTML = list.map((e, i) => {
       const typeKey = (e.type || '').toString().toLowerCase().replace(/\s+/g, '');
       const st = statusInfo(e._status);
       const desc = e.description || (e.open_date || e.close_date
         ? `${e.open_date ? 'Opens ' + formatDate(e.open_date) : ''}${e.open_date && e.close_date ? ' · ' : ''}${e.close_date ? 'Closes ' + formatDate(e.close_date) : ''}`
         : 'Registration details pending');
+      const delay = Math.min(i * 0.05, 0.4);
 
       return `
         <div class="exam-card"
+             style="animation-delay: ${delay}s"
              data-type="${escapeHtml(typeKey)}"
              data-session="${escapeHtml((e.session || '').toLowerCase())}"
              data-name="${escapeHtml((e.title || '').toLowerCase())}"
@@ -741,8 +796,15 @@
       const okSession = !session || cardSession === session;
       const okQuery = !query || name.includes(query) || body.includes(query);
 
-      if (okType && okSession && okQuery) { card.style.display = ''; visible++; }
-      else { card.style.display = 'none'; }
+      if (okType && okSession && okQuery) {
+        card.style.display = '';
+        card.style.animation = 'none';
+        void card.offsetWidth;
+        card.style.animation = 'cardIn 0.35s ease both';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
     });
 
     const countEl = document.getElementById('examCount');
@@ -769,10 +831,27 @@
     document.getElementById('view-exam-detail').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    // skeleton state
     document.getElementById('examDetailName').textContent = 'Loading...';
     document.getElementById('examDetailBadge').textContent = '';
     document.getElementById('examDetailBadge').className = 'exam-badge';
     document.getElementById('examDetailSub').innerHTML = '';
+    document.getElementById('registerBtn').disabled = true;
+    document.getElementById('sourceBtn').disabled = true;
+    document.getElementById('examOverviewText').textContent = 'Loading examination information...';
+    document.getElementById('examKeyFacts').innerHTML = '<tr><td colspan="2"><div class="skeleton" style="height:32px; width:100%;"></div></td></tr>';
+    document.getElementById('examEligibleText').textContent = 'Loading...';
+    document.getElementById('sideBody').textContent = '—';
+    document.getElementById('sideType').textContent = '—';
+    document.getElementById('sideSession').textContent = '—';
+    document.getElementById('countdownValue').textContent = '—';
+    document.getElementById('countdownSub').textContent = '—';
+    document.getElementById('registrationTable').innerHTML = '<tr><td colspan="3"><div class="skeleton" style="height:32px; width:100%;"></div></td></tr>';
+    document.getElementById('timetableDownloads').innerHTML = '<div class="skeleton" style="height:64px; width:100%;"></div>';
+    document.getElementById('examInstructions').innerHTML = '<div class="skeleton" style="height:64px; width:100%;"></div>';
+    document.getElementById('eligibilityText').textContent = 'Loading...';
+    document.getElementById('examResources').innerHTML = '<div class="skeleton" style="height:64px; width:100%;"></div>';
+    document.getElementById('resultsServices').innerHTML = '<div class="skeleton" style="height:64px; width:100%;"></div>';
 
     resetExamTabs();
     document.querySelector('.exam-tab-item[data-tab="overview"]').classList.add('active');
@@ -925,7 +1004,6 @@
       resParts.push(`<div class="update-item"><i class="fas fa-book-open"></i><div class="update-content"><h4>Resources</h4><p>${escapeHtml(e.resources)}</p></div></div>`);
     }
     if (e.resource_links) {
-      // Split by whitespace or newlines and try each as a URL
       const links = String(e.resource_links).split(/[\s,]+/).filter(Boolean);
       const validLinks = links.map(safeUrl).filter(Boolean);
       if (validLinks.length) {

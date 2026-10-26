@@ -23,7 +23,7 @@
     }
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-    /* Header */
+    /* Header — no explore button, no search icon */
     .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
     .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
     .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
@@ -31,10 +31,6 @@
     .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
     .nav-links a:hover { color: var(--primary); transition: color 0.2s; }
     .header-actions { display: flex; align-items: center; gap: 16px; }
-    .search-icon-btn { background: transparent; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer; padding: 6px; border-radius: 8px; }
-    .search-icon-btn:hover { color: var(--primary); }
-    .btn-explore { display: none; background-color: var(--primary); color: #070A09; font-weight: 700; padding: 10px 22px; border-radius: var(--radius-btn); font-size: 0.9rem; transition: background 0.2s; border: none; cursor: pointer; }
-    .btn-explore:hover { background-color: #00b374; }
     .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; padding: 6px; }
     .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
     .mobile-nav a:hover { color: var(--primary); }
@@ -51,7 +47,7 @@
     .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; margin-bottom: 24px; transition: border-color 0.2s; }
     .search-wrapper:focus-within { border-color: var(--primary); }
     .search-wrapper i { color: var(--muted); font-size: 1.1rem; }
-    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; }
+    .search-wrapper input { flex: 1; background: transparent; border: none; padding: 12px 0; font-family: 'Manrope', sans-serif; font-size: 1rem; color: var(--text); outline: none; min-width: 0; }
     .search-wrapper input::placeholder { color: #6b7c74; }
     .search-wrapper button { background-color: var(--primary); border: none; border-radius: 40px; padding: 12px 24px; font-weight: 700; font-size: 0.95rem; color: #070A09; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
     .search-wrapper button:hover { background-color: #00b374; }
@@ -97,7 +93,7 @@
     /* News */
     .news-section { padding: 40px 0; }
     .news-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-    .news-featured { background-color: var(--surface); border-radius: var(--radius-card); border: 1px solid var(--border); overflow: hidden; }
+    .news-featured { background-color: var(--surface); border-radius: var(--radius-card); border: 1px solid var(--border); overflow: hidden; display: block; }
     .news-featured .news-img { height: 200px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
     .news-featured .news-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 10%, transparent 70%); }
     .news-featured .news-content { padding: 20px; }
@@ -154,6 +150,7 @@
     .skeleton { background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-card); }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    /* Responsive */
     @media (min-width: 600px) {
       .hero h1 { font-size: 3rem; }
       .discovery-grid { grid-template-columns: repeat(2, 1fr); }
@@ -166,7 +163,6 @@
     @media (min-width: 1024px) {
       .header-inner { height: 80px; }
       .nav-links { display: flex; }
-      .btn-explore { display: inline-block; }
       .hamburger { display: none; }
       .mobile-nav { display: none !important; }
       .hero { padding: 64px 0 72px; }
@@ -199,8 +195,7 @@
         <a href="/Trending">Trending</a>
       </nav>
       <div class="header-actions">
-        <button class="search-icon-btn" aria-label="Search" id="headerSearchBtn"><i class="fas fa-search"></i></button>
-        <a href="/Schools" class="btn-explore">Explore</a>
+        <!-- Removed search icon and explore button -->
         <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
       </div>
     </div>
@@ -280,6 +275,7 @@
           <a href="/Schools.html" class="view-all">View all schools <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="schools-grid" id="schoolsGrid">
+          <!-- skeleton placeholders (3 cards) -->
           <div class="skeleton" style="height:280px;"></div>
           <div class="skeleton" style="height:280px;"></div>
           <div class="skeleton" style="height:280px;"></div>
@@ -393,7 +389,6 @@
       'use strict';
 
       // ── API base ─────────────────────────────────────────────
-      // Your Render backend. Change this one line if the host changes.
       const API_BASE = 'https://campus-naija.onrender.com';
       // ─────────────────────────────────────────────────────────
 
@@ -444,7 +439,6 @@
 
       const bgStyle = (url) => {
         if (!url) return '';
-        // Only allow http(s) or relative paths in the inline style
         const safe = /^(https?:)?\//i.test(url) ? url : '';
         return safe ? `style="background-image:url('${encodeURI(safe)}');"` : '';
       };
@@ -457,9 +451,6 @@
         const q = searchInput.value.trim();
         if (!q) return;
         window.location.href = `/Schools.html?q=${encodeURIComponent(q)}`;
-      });
-      document.getElementById('headerSearchBtn').addEventListener('click', () => {
-        document.getElementById('searchInput').focus();
       });
 
       /* ---------- Featured schools (from DB) ---------- */
