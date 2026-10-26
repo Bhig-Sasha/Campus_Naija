@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 
 /* ============================================================
  * CONFIG
@@ -22,12 +23,25 @@ const OWNER_PASSWORD = process.env.OWNER_PASSWORD || '';
 const FORCE_PASSWORD_CHANGE = process.env.FORCE_PASSWORD_CHANGE === '1';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*')
   .split(',').map(s => s.trim()).filter(Boolean);
-const UPLOAD_DIR = process.env.UPLOAD_DIR || '/tmp/uploads';
+
+// Supabase Storage
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const MEDIA_BUCKET = 'media';
 
 if (!DATABASE_URL) { console.error('[env] DATABASE_URL is required'); process.exit(1); }
 if (!JWT_SECRET)   { console.error('[env] JWT_SECRET is required');   process.exit(1); }
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error('[env] SUPABASE_URL and SUPABASE_SERVICE_KEY are required for media uploads');
+  process.exit(1);
+}
 
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+/* ============================================================
+ * SUPABASE CLIENT (Storage only — DB still uses pg)
+ * ============================================================ */
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
 
 /* ============================================================
  * DATABASE (Supabase / Postgres via pg)
@@ -100,7 +114,6 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '2mb' }));
 app.use(morgan('tiny'));
-app.use('/uploads', express.static(UPLOAD_DIR, { fallthrough: true, maxAge: '7d' }));
 
 /* ============================================================
  * HELPERS
@@ -941,16 +954,9 @@ router.post('/trending/:id/schedule', authenticate, requireRole('owner','admin')
   res.json({ ok: true });
 }));
 
-/* ---------- MEDIA ---------- */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, crypto.randomBytes(12).toString('hex') + ext);
-  },
-});
+/* ---------- MEDIA (Supabase Storage) ---------- */
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf'];
@@ -961,24 +967,49 @@ const upload = multer({
 
 router.post('/media', authenticate, requireRole('owner','admin','editor','school_manager'), upload.single('file'), asyncH(async (req, res) => {
   if (!req.file) throw httpError(400, 'A file is required.');
+
   const b = req.body || {};
   let schoolId = b.school_id ? Number(b.school_id) : null;
   if (req.user.role === 'school_manager') {
     if (!req.user.school_id) throw httpError(403, 'No school assigned to this account.');
     schoolId = req.user.school_id;
   }
+
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  const filename = crypto.randomBytes(12).toString('hex') + ext;
+
+  const { error: uploadError } = await supabase.storage
+    .from(MEDIA_BUCKET)
+    .upload(filename, req.file.buffer, {
+      contentType: req.file.mimetype,
+      cacheControl: '3600',
+      upsert: false,
+    });
+
+  if (uploadError) {
+    console.error('[supabase storage]', uploadError.message);
+    throw httpError(500, 'Media upload failed: ' + uploadError.message);
+  }
+
+  const { data: urlData } = supabase.storage
+    .from(MEDIA_BUCKET)
+    .getPublicUrl(filename);
+
+  const publicUrl = urlData.publicUrl;
+
   const row = await one(
     `insert into public.media_assets
        (filename, original_name, mime_type, size, storage_path, public_url,
         display_name, alt_text, caption, category, tags, school_id, uploaded_by)
      values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning *`,
     [
-      req.file.filename, req.file.originalname, req.file.mimetype, req.file.size,
-      req.file.filename, `/uploads/${req.file.filename}`,
+      filename, req.file.originalname, req.file.mimetype, req.file.size,
+      filename, publicUrl,
       b.display_name || req.file.originalname, b.alt_text || null, b.caption || null,
       b.category || null, b.tags || null, schoolId, req.user.id
     ]
   );
+
   await audit(req, 'upload', 'media', row.id, row.display_name || row.original_name);
   res.status(201).json({ media: row });
 }));
@@ -1020,8 +1051,16 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   if (!row) throw httpError(404, 'Media not found.');
   if (req.user.role === 'school_manager' && row.school_id !== req.user.school_id)
     throw httpError(403, 'You can only delete media for your assigned institution.');
+
+  const { error: removeError } = await supabase.storage
+    .from(MEDIA_BUCKET)
+    .remove([row.filename]);
+
+  if (removeError) {
+    console.error('[supabase storage remove]', removeError.message);
+  }
+
   await run('delete from public.media_assets where id=$1', [row.id]);
-  try { fs.unlinkSync(path.join(UPLOAD_DIR, row.filename)); } catch (_) {}
   await audit(req, 'delete', 'media', row.id, row.display_name || row.filename);
   res.json({ ok: true });
 }));
@@ -1222,53 +1261,37 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.3.1' });
+    res.json({ ok: true, time: r.rows[0].now, version: '1.4.0', media: 'supabase-storage' });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.3.1',
+      version: '1.4.0',
     });
   }
 }));
 
 /* ============================================================
  * FRONTEND STATIC FILES
- * ============================================================
- * Layout:
- *   public/
- *   ├── Home.html, Schools.html, Admissions.html,
- *   │   Exams.html, Scholarships.html, Trending.html
- *   ├── admin/
- *   │   ├── login.html      ← served at /admin and /admin/
- *   │   └── index.html      ← the dashboard (protected by client JS)
- *   └── SchoolAd/
- *       ├── login.html      ← served at /SchoolAd and /SchoolAd/
- *       ├── index.html      ← the dashboard (protected by client JS)
- *       └── submissions.html
  * ============================================================ */
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 app.use(express.static(PUBLIC_DIR, {
   extensions: ['html'],
-  index: false,           // don't auto-serve index.html in any folder
+  index: false,
   maxAge: '1h',
   fallthrough: true,
 }));
 
-/* Root → Home */
 app.get('/', (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'Home.html'), (err) => { if (err) next(); });
 });
 
-/* /admin and /admin/ always serve the LOGIN page.
-   The dashboard (index.html) is only reachable after a successful sign-in. */
 app.get(['/admin', '/admin/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'admin', 'login.html'), (err) => { if (err) next(); });
 });
 
-/* /SchoolAd and /SchoolAd/ always serve the LOGIN page. */
 app.get(['/SchoolAd', '/SchoolAd/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
 });
@@ -1289,8 +1312,8 @@ app.use((err, req, res, next) => {
 const httpServer = app.listen(PORT, () => {
   console.log(`CampusNaija backend listening on port ${PORT}`);
   console.log(`Owner email: ${OWNER_EMAIL}`);
-  console.log(`Uploads directory: ${UPLOAD_DIR}`);
   console.log(`Public dir: ${PUBLIC_DIR}`);
+  console.log(`Media storage: Supabase bucket "${MEDIA_BUCKET}"`);
   console.log('API base: /api');
 });
 
