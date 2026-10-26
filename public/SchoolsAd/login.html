@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>CampusNaija — School Partner Portal Sign In</title>
+  <title>CampusNaija — School Portal Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -450,6 +450,7 @@
       justify-content: center;
       gap: 6px;
       padding-top: 4px;
+      flex-wrap: wrap;
     }
     .card-footer .help-row a {
       color: var(--primary);
@@ -709,7 +710,10 @@
       const ID_KEY    = 'campusnaija_schoolad_id';
       const DASHBOARD_URL = '/SchoolAd/index.html';
 
-      // School portal is strictly for school_manager accounts
+      // School portal is strictly for school_manager accounts.
+      // However, if a non-school_manager account tries to sign in here,
+      // we deliberately do NOT reveal that the account exists — we return
+      // the same generic error as a wrong password.
       const ALLOWED_ROLES = ['school_manager'];
 
       // ─────────────────────────────────────────────────────────────
@@ -801,10 +805,11 @@
             let msg;
             if (res.status === 429) {
               msg = 'Too many sign-in attempts. Please wait a few minutes and try again.';
+            } else if (res.status === 401) {
+              // Server's generic message — also used for wrong password
+              msg = 'Invalid email or password.';
             } else if (res.status === 403) {
               msg = (data && data.error) || 'This account is not approved for sign-in.';
-            } else if (res.status === 401) {
-              msg = 'Invalid email or password.';
             } else {
               msg = (data && (data.error || data.message))
                 || ('Sign-in failed (HTTP ' + res.status + ').');
@@ -816,16 +821,15 @@
             throw new Error('Unexpected server response. Please try again.');
           }
 
-          // Only school_manager role is allowed into the SchoolAd portal
+          // Only school_manager role is allowed into the SchoolAd portal.
+          //
+          // IMPORTANT: If a valid account exists but belongs to a different
+          // role (owner / admin / editor / reviewer), we do NOT tell the user
+          // that. That would leak the existence of a real account and which
+          // portal it belongs to. We return the exact same message as a
+          // wrong password.
           if (!ALLOWED_ROLES.includes(data.user.role)) {
-            if (data.user.role === 'owner' || data.user.role === 'admin' ||
-                data.user.role === 'editor' || data.user.role === 'reviewer') {
-              throw new Error(
-                'This account belongs to the platform admin panel. ' +
-                'Please sign in at /admin/login instead.'
-              );
-            }
-            throw new Error('This account is not authorised for the School Partner Portal.');
+            throw new Error('Invalid email or password.');
           }
 
           // Persist session
@@ -887,9 +891,10 @@
             showMessage('error', data.error || 'Too many reset requests. Please try again later.');
             return;
           }
+          // Always the same message regardless of whether the account exists,
+          // so an attacker can't use this form to probe for real emails.
           showMessage('success',
-            data.message
-              || 'If an approved account exists for that email, a reset link will be sent.');
+            'If an approved account exists for that email, a reset link will be sent.');
         } catch (_) {
           showMessage('success',
             'If an approved account exists for that email, a reset link will be sent.');
@@ -937,7 +942,7 @@
             if (ALLOWED_ROLES.includes(role)) {
               window.location.replace(data.user.landing || DASHBOARD_URL);
             } else {
-              // Wrong portal — clear and stay on the form
+              // Wrong portal — clear silently and stay on the form
               try {
                 localStorage.removeItem(TOKEN_KEY);
                 localStorage.removeItem(USER_KEY);
