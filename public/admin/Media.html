@@ -57,7 +57,6 @@
       animation: shimmer 1.4s linear infinite;
       border-radius: 8px;
     }
-    .skeleton-text { height: 12px; margin-bottom: 8px; }
     .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
     /* SIDEBAR */
@@ -185,7 +184,6 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
@@ -204,7 +202,6 @@
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
 
-    /* Upload zone */
     .upload-zone {
       background-color: var(--elevated);
       border: 2px dashed var(--border);
@@ -261,7 +258,6 @@
       transition: width 0.2s ease;
     }
 
-    /* Toolbar */
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -317,7 +313,6 @@
     }
     .view-toggle button.active { background-color: var(--primary); color: #070A09; }
 
-    /* Gallery */
     .gallery-header {
       display: flex; align-items: baseline; justify-content: space-between;
       margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
@@ -340,7 +335,6 @@
       display: flex; flex-direction: column;
     }
     .media-item:hover { border-color: var(--primary); transform: translateY(-2px); }
-    .media-item.selected { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,201,130,0.2); }
 
     .media-thumbnail {
       height: 120px; background-size: cover; background-position: center;
@@ -379,7 +373,6 @@
       display: inline-flex; align-items: center; gap: 4px;
     }
 
-    /* List view */
     .media-list { display: flex; flex-direction: column; gap: 8px; }
     .media-list-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -388,7 +381,6 @@
       cursor: pointer; transition: border-color 0.15s;
     }
     .media-list-row:hover { border-color: var(--primary); }
-    .media-list-row.selected { border-color: var(--primary); }
     .mlr-thumb {
       width: 48px; height: 48px; border-radius: 8px;
       background-color: #0a0f0d; background-size: cover; background-position: center;
@@ -404,12 +396,8 @@
       color: var(--muted); font-weight: 700; margin-bottom: 2px;
     }
     .mlr-cell .mlr-value { font-size: 0.8rem; font-weight: 600; }
-    .mlr-placement {
-      color: var(--primary) !important; font-weight: 700 !important;
-    }
-    .mlr-unassigned {
-      color: var(--muted) !important; font-style: italic; font-weight: 500 !important;
-    }
+    .mlr-placement { color: var(--primary) !important; font-weight: 700 !important; }
+    .mlr-unassigned { color: var(--muted) !important; font-style: italic; font-weight: 500 !important; }
 
     .empty-state {
       text-align: center; padding: 56px 20px;
@@ -420,7 +408,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* Detail panel */
     .detail-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 100;
@@ -430,7 +417,7 @@
 
     .detail-panel {
       position: fixed; top: 0; right: 0; bottom: 0;
-      width: 100%; max-width: 460px;
+      width: 100%; max-width: 480px;
       background-color: var(--surface); border-left: 1px solid var(--border);
       z-index: 110; display: flex; flex-direction: column;
       transform: translateX(100%); transition: transform 0.25s ease;
@@ -482,7 +469,6 @@
     .detail-form-group select:focus { border-color: var(--primary); }
     .detail-form-group textarea { resize: vertical; min-height: 60px; }
 
-    /* Placement block */
     .placement-block {
       border-top: 1px solid var(--border);
       padding-top: 18px;
@@ -515,6 +501,68 @@
     }
     .placement-current .btn-clear:hover { background-color: rgba(224,112,112,0.1); }
 
+    /* Ref picker */
+    .ref-picker { position: relative; }
+    .ref-picker-search {
+      position: relative; display: flex; align-items: center; margin-bottom: 8px;
+    }
+    .ref-picker-search i {
+      position: absolute; left: 12px; color: var(--muted);
+      font-size: 0.8rem; pointer-events: none;
+    }
+    .ref-picker-search input {
+      width: 100%; background-color: var(--elevated);
+      border: 1px solid var(--border); border-radius: var(--radius-input);
+      padding: 9px 12px 9px 34px;
+      font-size: 0.82rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .ref-picker-search input:focus { border-color: var(--primary); }
+    .ref-picker-list {
+      max-height: 220px; overflow-y: auto;
+      background-color: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-input);
+      display: flex; flex-direction: column;
+    }
+    .ref-picker-option {
+      padding: 10px 12px; cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem; transition: background 0.1s;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .ref-picker-option:last-child { border-bottom: none; }
+    .ref-picker-option:hover { background-color: var(--elevated); }
+    .ref-picker-option.selected {
+      background-color: rgba(0,201,130,0.12);
+      border-left: 3px solid var(--primary);
+      padding-left: 9px;
+    }
+    .ref-picker-option .rpo-title {
+      font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ref-picker-option .rpo-sub {
+      font-size: 0.7rem; color: var(--muted);
+      font-family: monospace;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ref-picker-empty {
+      padding: 16px 12px; text-align: center;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .ref-picker-loading {
+      padding: 16px 12px; text-align: center;
+      font-size: 0.78rem; color: var(--muted);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .ref-picker-loading .sp {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     .meta-info {
       display: flex; flex-direction: column; gap: 8px;
       padding: 14px; background-color: var(--elevated);
@@ -527,9 +575,7 @@
     .meta-info-row .mi-label { color: var(--muted); }
     .meta-info-row .mi-value { font-weight: 600; text-align: right; word-break: break-all; }
 
-    .url-copy {
-      display: flex; gap: 8px; margin-bottom: 16px;
-    }
+    .url-copy { display: flex; gap: 8px; margin-bottom: 16px; }
     .url-copy input {
       flex: 1; background-color: var(--elevated);
       border: 1px solid var(--border); border-radius: var(--radius-input);
@@ -548,7 +594,6 @@
       flex: 1; justify-content: center; min-width: 100px;
     }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -566,28 +611,19 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Footer */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
       border-top: 1px solid var(--border);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      font-size: 0.75rem;
-      color: var(--muted);
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 16px;
+      font-size: 0.75rem; color: var(--muted);
     }
-    .footer-left {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 600; color: var(--text);
-    }
+    .footer-left { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
     .footer-left i { color: var(--primary); font-size: 0.85rem; }
     .footer-left .dot {
       width: 6px; height: 6px; border-radius: 50%;
-      background: var(--primary);
-      box-shadow: 0 0 8px var(--primary);
+      background: var(--primary); box-shadow: 0 0 8px var(--primary);
     }
     .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
     .footer-right a { color: var(--muted); transition: color 0.15s ease; }
@@ -606,11 +642,7 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
-      .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
+      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -628,6 +660,8 @@
     .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
     .detail-body::-webkit-scrollbar { width: 6px; }
     .detail-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+    .ref-picker-list::-webkit-scrollbar { width: 6px; }
+    .ref-picker-list::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -837,17 +871,17 @@
       const PLACEMENTS = {
         home: [
           { v: 'hero', label: 'Hero image' },
-          { v: 'featured_school', label: 'Featured school image', needsRef: true, refHint: 'School ID' },
-          { v: 'featured_story', label: 'Featured story image', needsRef: true, refHint: 'Story ID' },
+          { v: 'featured_school', label: 'Featured school image', needsRef: true, refHint: 'School', refSource: 'schools' },
+          { v: 'featured_story', label: 'Featured story image', needsRef: true, refHint: 'Story', refSource: 'trending' },
         ],
         schools: [
-          { v: 'school_cover', label: 'School cover photo', needsRef: true, refHint: 'School ID' },
-          { v: 'school_logo', label: 'School logo', needsRef: true, refHint: 'School ID' },
+          { v: 'school_cover', label: 'School cover photo', needsRef: true, refHint: 'School', refSource: 'schools' },
+          { v: 'school_logo', label: 'School logo', needsRef: true, refHint: 'School', refSource: 'schools' },
         ],
         admissions:   [{ v: 'featured_banner', label: 'Featured banner' }],
         exams:        [{ v: 'featured_banner', label: 'Featured banner' }],
         scholarships: [{ v: 'featured_banner', label: 'Featured banner' }],
-        trending:     [{ v: 'article_cover', label: 'Article cover image', needsRef: true, refHint: 'Story ID' }],
+        trending:     [{ v: 'article_cover', label: 'Article cover image', needsRef: true, refHint: 'Story', refSource: 'trending' }],
       };
 
       const PAGE_LABELS = {
@@ -860,6 +894,11 @@
       let mediaFiles = [];
       let currentView = 'grid';
       let selectedMediaId = null;
+
+      // cached record lists for the ref picker
+      const recordsCache = { schools: null, trending: null };
+      // currently selected record (per detail panel instance)
+      let selectedRef = null;
 
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -1171,6 +1210,96 @@
         }
       }
 
+      /* ---------- RECORD PICKER (dropdown from DB) ---------- */
+      async function loadRecordsForSource(source) {
+        if (recordsCache[source]) return recordsCache[source];
+        try {
+          if (source === 'schools') {
+            const data = await api('/api/schools');
+            const list = (data.schools || []).map(s => ({
+              id: s.id,
+              title: s.name || 'Untitled school',
+              sub: [s.city, s.state].filter(Boolean).join(', ') || s.slug || s.id,
+            }));
+            list.sort((a, b) => a.title.localeCompare(b.title));
+            recordsCache.schools = list;
+            return list;
+          }
+          if (source === 'trending') {
+            const data = await api('/api/trending');
+            const list = (data.stories || []).map(s => ({
+              id: s.id,
+              title: s.title || 'Untitled story',
+              sub: [s.category, s.author].filter(Boolean).join(' · ') || s.id,
+            }));
+            list.sort((a, b) => a.title.localeCompare(b.title));
+            recordsCache.trending = list;
+            return list;
+          }
+          return [];
+        } catch (e) {
+          console.error('[records]', source, e.message);
+          return [];
+        }
+      }
+
+      function renderRefPicker(source, preselectedId) {
+        const wrap = document.getElementById('refPickerWrap');
+        if (!wrap) return;
+
+        const sourceLabel = source === 'schools' ? 'school' : (source === 'trending' ? 'story' : 'record');
+
+        wrap.innerHTML = `
+          <div class="ref-picker">
+            <div class="ref-picker-search">
+              <i class="fas fa-search"></i>
+              <input type="text" id="refSearch" placeholder="Search ${sourceLabel} title…" oninput="filterRefOptions()">
+            </div>
+            <div class="ref-picker-list" id="refList">
+              <div class="ref-picker-loading"><span class="sp"></span> Loading ${sourceLabel}s…</div>
+            </div>
+          </div>
+        `;
+
+        selectedRef = preselectedId || null;
+
+        loadRecordsForSource(source).then(list => {
+          const listEl = document.getElementById('refList');
+          if (!listEl) return;
+
+          if (!list.length) {
+            listEl.innerHTML = `<div class="ref-picker-empty">No ${sourceLabel}s found. Create one first.</div>`;
+            return;
+          }
+
+          listEl.innerHTML = list.map(r => `
+            <div class="ref-picker-option ${r.id === selectedRef ? 'selected' : ''}"
+                 data-id="${esc(r.id)}"
+                 data-title="${esc(r.title.toLowerCase())}"
+                 onclick="pickRef('${esc(r.id)}')">
+              <span class="rpo-title">${esc(r.title)}</span>
+              <span class="rpo-sub">${esc(r.sub)}</span>
+            </div>
+          `).join('');
+        });
+      }
+
+      function filterRefOptions() {
+        const q = (document.getElementById('refSearch')?.value || '').toLowerCase().trim();
+        const opts = document.querySelectorAll('#refList .ref-picker-option');
+        opts.forEach(o => {
+          const title = o.dataset.title || '';
+          o.style.display = !q || title.includes(q) ? '' : 'none';
+        });
+      }
+
+      function pickRef(id) {
+        selectedRef = id;
+        document.querySelectorAll('#refList .ref-picker-option').forEach(o => {
+          o.classList.toggle('selected', o.dataset.id === id);
+        });
+      }
+
       /* DETAIL */
       function openDetail(id) {
         selectedMediaId = id;
@@ -1183,7 +1312,6 @@
         const canPlace = CAN_PLACE.includes(currentUser.role);
         const hasPlacements = m.placements && m.placements.length > 0;
 
-        // Build placement UI (only for images + permitted roles)
         let placementHTML = '';
         if (isImg && canPlace) {
           const currentList = hasPlacements
@@ -1206,8 +1334,7 @@
                 <i class="fas fa-thumbtack"></i> Where should this image appear?
               </div>
               <p class="placement-hint">
-                Choose a page and slot, then click <strong>Save &amp; place</strong>.
-                Assigning an image to a slot that is already occupied will replace the previous image.
+                Choose a page and slot. If the slot requires a specific record, pick it from the list below — no UUIDs to type.
               </p>
 
               ${currentList}
@@ -1231,11 +1358,8 @@
               </div>
 
               <div class="detail-form-group" id="refGroup" style="display:none;">
-                <label id="refLabel">Specific record</label>
-                <input type="text" id="placeRef" placeholder="e.g. a school or story id">
-                <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;">
-                  This slot applies to a specific record. Enter the ID of the school or story it belongs to.
-                </p>
+                <label id="refLabel">Choose record</label>
+                <div id="refPickerWrap"></div>
               </div>
             </div>
           `;
@@ -1305,9 +1429,7 @@
             updateSlotOptions();
             const slotSel = document.getElementById('placeSlot');
             if (slotSel) slotSel.value = first.slot;
-            updateRefVisibility();
-            const refInput = document.getElementById('placeRef');
-            if (refInput && first.content_ref) refInput.value = first.content_ref;
+            updateRefVisibility(first.content_ref || null);
           }
         }
 
@@ -1326,6 +1448,7 @@
         document.getElementById('detailPanel').classList.remove('open');
         document.getElementById('detailOverlay').classList.remove('active');
         selectedMediaId = null;
+        selectedRef = null;
       }
 
       /* PLACEMENT UI helpers */
@@ -1350,22 +1473,24 @@
         updateRefVisibility();
       }
 
-      function updateRefVisibility() {
+      function updateRefVisibility(preselectedId) {
         const page = document.getElementById('placePage')?.value;
         const slot = document.getElementById('placeSlot')?.value;
         const refGroup = document.getElementById('refGroup');
         const refLabel = document.getElementById('refLabel');
-        const refInput = document.getElementById('placeRef');
         if (!refGroup) return;
 
         const def = ((PLACEMENTS[page] || []).find(s => s.v === slot)) || {};
         if (def.needsRef) {
           refGroup.style.display = '';
-          if (refLabel) refLabel.textContent = 'Specific record (' + (def.refHint || 'ID') + ')';
-          if (refInput) refInput.placeholder = def.refHint || 'Enter record ID';
+          if (refLabel) {
+            refLabel.textContent = 'Choose ' + (def.refHint || 'record');
+          }
+          // Pass preselectedId if this is a re-open of an existing placement
+          renderRefPicker(def.refSource, preselectedId || null);
         } else {
           refGroup.style.display = 'none';
-          if (refInput) refInput.value = '';
+          selectedRef = null;
         }
       }
 
@@ -1375,14 +1500,13 @@
           await api('/api/media/placements/' + encodeURIComponent(placementId), { method: 'DELETE' });
           toast('Placement removed.');
           await loadMedia();
-          // Re-open the same media file to reflect the change
           if (selectedMediaId) openDetail(selectedMediaId);
         } catch (e) {
           toast(e.message, true);
         }
       }
 
-      /* SAVE (metadata + placement) */
+      /* SAVE */
       async function saveMedia(id) {
         const m = mediaFiles.find(x => x.id === id);
         if (!m) return;
@@ -1400,17 +1524,24 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
         try {
-          // 1) Save metadata
           await api('/api/media/' + encodeURIComponent(id), {
             method: 'PATCH', body: JSON.stringify(payload)
           });
 
-          // 2) Save placement (only if the placement UI exists and page selected)
           const pageSel = document.getElementById('placePage');
           if (pageSel && pageSel.value) {
             const page = pageSel.value;
             const slot = document.getElementById('placeSlot').value;
-            const content_ref = document.getElementById('placeRef').value.trim() || null;
+
+            const def = ((PLACEMENTS[page] || []).find(s => s.v === slot)) || {};
+            let content_ref = null;
+
+            if (def.needsRef) {
+              if (!selectedRef) {
+                throw new Error('Please choose a ' + (def.refHint || 'record') + ' before saving.');
+              }
+              content_ref = selectedRef;
+            }
 
             await api('/api/media/placements', {
               method: 'POST',
@@ -1444,7 +1575,6 @@
           await loadMedia();
           closeDetail();
         } catch (e) {
-          // Server returns 409 if media is still placed
           if (e.code === 'media_in_use') {
             toast('This image is still placed on the site. Remove its placement first.', true);
           } else {
@@ -1496,7 +1626,6 @@
 
       document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
 
-      /* UPLOAD ZONE events */
       const uploadZone = document.getElementById('uploadZone');
       const fileInput = document.getElementById('fileInput');
 
@@ -1523,7 +1652,6 @@
 
       document.getElementById('detailOverlay').addEventListener('click', closeDetail);
 
-      /* BOOT */
       (async function boot() {
         const ok = await verifySession();
         if (!ok) return;
@@ -1533,7 +1661,6 @@
         await loadMedia();
       })();
 
-      // Expose globals for inline handlers
       window.setView = setView;
       window.filterMedia = filterMedia;
       window.openDetail = openDetail;
@@ -1544,6 +1671,8 @@
       window.updateSlotOptions = updateSlotOptions;
       window.updateRefVisibility = updateRefVisibility;
       window.clearPlacement = clearPlacement;
+      window.filterRefOptions = filterRefOptions;
+      window.pickRef = pickRef;
     })();
   </script>
 
