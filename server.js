@@ -37,6 +37,43 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 }
 
 /* ============================================================
+ * PLACEMENT REGISTRY — what images can appear where on the site
+ * ============================================================
+ * Add new pages/slots here when you extend the public website.
+ * The API validates against these so typos never reach the DB.
+ */
+const PLACEMENT_PAGES = ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'];
+
+const PLACEMENT_SLOTS = {
+  home:         ['hero', 'featured_school', 'featured_story'],
+  schools:      ['school_cover', 'school_logo'],
+  admissions:   ['featured_banner'],
+  exams:        ['featured_banner'],
+  scholarships: ['featured_banner'],
+  trending:     ['article_cover'],
+};
+
+// Slots that must be bound to a specific record (school.id, story.id, …)
+// because they affect one item and not the whole page.
+const PLACEMENTS_REQUIRING_REF = new Set([
+  'schools:school_cover',
+  'schools:school_logo',
+  'trending:article_cover',
+  'home:featured_school',
+  'home:featured_story',
+]);
+
+function isValidPlacement(page, slot) {
+  return PLACEMENT_PAGES.includes(page)
+    && Array.isArray(PLACEMENT_SLOTS[page])
+    && PLACEMENT_SLOTS[page].includes(slot);
+}
+
+function placementNeedsRef(page, slot) {
+  return PLACEMENTS_REQUIRING_REF.has(`${page}:${slot}`);
+}
+
+/* ============================================================
  * SUPABASE CLIENT (Storage only — DB still uses pg)
  * ============================================================ */
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
@@ -370,6 +407,30 @@ router.get('/public/trending/:id', asyncH(async (req, res) => {
 router.get('/public/settings', asyncH(async (req, res) => {
   const s = await readSettings();
   res.json({ site_name: s.site_name, site_tagline: s.site_tagline, site_description: s.site_description });
+}));
+
+/* ---------- PUBLIC: media placements ---------- */
+// Used by Home.html, Schools.html, Admissions.html, … to fetch the assigned
+// image for a given page/slot (optionally scoped to a specific record).
+router.get('/public/placements', asyncH(async (req, res) => {
+  const { page, slot, content_ref } = req.query;
+  const clauses = ['p.is_active = true'];
+  const params = [];
+  if (page)       { params.push(page);                 clauses.push(`p.page = $${params.length}`); }
+  if (slot)       { params.push(slot);                 clauses.push(`p.slot = $${params.length}`); }
+  if (content_ref){ params.push(String(content_ref));  clauses.push(`p.content_ref = $${params.length}`); }
+  else            { clauses.push(`p.content_ref IS NULL`); }
+
+  const rows = await many(
+    `select p.id, p.page, p.slot, p.content_ref, p.media_id,
+            m.public_url, m.alt_text, m.caption, m.display_name
+       from public.media_placements p
+       join public.media_assets m on m.id = p.media_id
+      where ${clauses.join(' and ')}
+      order by p.updated_at desc`,
+    params
+  );
+  res.json({ placements: rows });
 }));
 
 /* ---------- SCHOOLS ---------- */
@@ -1014,14 +1075,34 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   res.status(201).json({ media: row });
 }));
 
+// GET /media — now enriched with placements[] per file
 router.get('/media', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const clauses = []; const params = [];
   if (req.user.role === 'school_manager') { params.push(req.user.school_id); clauses.push(`school_id = $${params.length}`); }
   if (req.query.school_id && req.user.role !== 'school_manager') { params.push(req.query.school_id); clauses.push(`school_id = $${params.length}`); }
+
   const rows = await many(
     `select * from public.media_assets ${clauses.length ? 'where ' + clauses.join(' and ') : ''} order by created_at desc`,
     params
   );
+
+  // Attach active placements to each media record so the admin can see
+  // "Placed on Home → Hero" without a second request.
+  if (rows.length) {
+    const ids = rows.map(r => r.id);
+    const placements = await many(
+      `select id, media_id, page, slot, content_ref, is_active, updated_at
+         from public.media_placements
+        where is_active = true and media_id = ANY($1::uuid[])`,
+      [ids]
+    );
+    const byMedia = {};
+    for (const p of placements) (byMedia[p.media_id] ||= []).push(p);
+    for (const r of rows) r.placements = byMedia[r.id] || [];
+  } else {
+    for (const r of rows) r.placements = [];
+  }
+
   res.json({ media: rows });
 }));
 
@@ -1052,6 +1133,21 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   if (req.user.role === 'school_manager' && row.school_id !== req.user.school_id)
     throw httpError(403, 'You can only delete media for your assigned institution.');
 
+  // Refuse deletion if this media is actively placed anywhere on the site.
+  // The admin must first unassign or replace it from the Media page.
+  const activePlacements = await many(
+    `select id, page, slot, content_ref from public.media_placements
+      where media_id = $1 and is_active = true`,
+    [row.id]
+  );
+  if (activePlacements.length) {
+    throw httpError(
+      409,
+      `This file is used on ${activePlacements.length} placement(s). Unassign or replace it first.`,
+      'media_in_use'
+    );
+  }
+
   const { error: removeError } = await supabase.storage
     .from(MEDIA_BUCKET)
     .remove([row.filename]);
@@ -1062,6 +1158,85 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
 
   await run('delete from public.media_assets where id=$1', [row.id]);
   await audit(req, 'delete', 'media', row.id, row.display_name || row.filename);
+  res.json({ ok: true });
+}));
+
+/* ---------- MEDIA PLACEMENTS ---------- */
+/*
+ * A placement binds a media_assets row to a specific (page, slot) —
+ * optionally scoped to a content record via content_ref.
+ * Rules:
+ *   - Only one ACTIVE placement per (page, slot, content_ref).
+ *   - Posting a new placement for the same triple deactivates the old one
+ *     and creates the new one, so admins can "swap" images without cleanup.
+ *   - Deleting a placement removes the row entirely (soft delete optional).
+ */
+router.get('/media/placements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
+  const { page, slot, media_id } = req.query;
+  const clauses = ['p.is_active = true'];
+  const params = [];
+  if (page)     { params.push(page);     clauses.push(`p.page = $${params.length}`); }
+  if (slot)     { params.push(slot);     clauses.push(`p.slot = $${params.length}`); }
+  if (media_id) { params.push(media_id); clauses.push(`p.media_id = $${params.length}`); }
+
+  const rows = await many(
+    `select p.*, m.public_url, m.alt_text, m.display_name, m.mime_type
+       from public.media_placements p
+       join public.media_assets m on m.id = p.media_id
+      where ${clauses.join(' and ')}
+      order by p.updated_at desc`,
+    params
+  );
+  res.json({ placements: rows });
+}));
+
+router.post('/media/placements', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const { media_id, page, slot, content_ref } = req.body || {};
+  if (!media_id || !page || !slot)
+    throw httpError(400, 'media_id, page and slot are required.');
+
+  if (!isValidPlacement(page, slot))
+    throw httpError(400, `Unknown placement: ${page} / ${slot}.`);
+
+  const media = await one('select * from public.media_assets where id=$1', [media_id]);
+  if (!media) throw httpError(404, 'Media not found.');
+  if (!/^image\//i.test(media.mime_type || ''))
+    throw httpError(400, 'Only images can be placed on the website.');
+
+  const ref = content_ref ? String(content_ref) : null;
+  if (placementNeedsRef(page, slot) && !ref)
+    throw httpError(400, `This slot requires a content_ref (e.g. school id).`);
+  if (!placementNeedsRef(page, slot) && ref)
+    throw httpError(400, `This slot is global and does not accept a content_ref.`);
+
+  // Deactivate the existing active placement for the same (page, slot, ref).
+  await run(
+    `update public.media_placements
+        set is_active = false, updated_at = now()
+      where page = $1 and slot = $2
+        and (content_ref is not distinct from $3)
+        and is_active = true`,
+    [page, slot, ref]
+  );
+
+  const row = await one(
+    `insert into public.media_placements (media_id, page, slot, content_ref, is_active)
+     values ($1,$2,$3,$4,true) returning *`,
+    [media_id, page, slot, ref]
+  );
+
+  await audit(req, 'place_media', 'media_placement', row.id, `${page}/${slot}`, {
+    media_id, content_ref: ref,
+  });
+
+  res.status(201).json({ placement: row });
+}));
+
+router.delete('/media/placements/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.media_placements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Placement not found.');
+  await run('delete from public.media_placements where id=$1', [row.id]);
+  await audit(req, 'unplace_media', 'media_placement', row.id, `${row.page}/${row.slot}`);
   res.json({ ok: true });
 }));
 
@@ -1261,13 +1436,13 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.4.0', media: 'supabase-storage' });
+    res.json({ ok: true, time: r.rows[0].now, version: '1.5.0', media: 'supabase-storage', placements: true });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.4.0',
+      version: '1.5.0',
     });
   }
 }));

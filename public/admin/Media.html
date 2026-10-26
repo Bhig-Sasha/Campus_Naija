@@ -58,11 +58,6 @@
       border-radius: 8px;
     }
     .skeleton-text { height: 12px; margin-bottom: 8px; }
-    .skeleton-text.w60 { width: 60%; }
-    .skeleton-text.w40 { width: 40%; }
-    .skeleton-thumb {
-      height: 120px; border-radius: 14px 14px 0 0;
-    }
     .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
     /* SIDEBAR */
@@ -195,7 +190,7 @@
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
     }
-    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(5, 1fr); } }
     .stat-mini {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px 20px;
@@ -359,6 +354,13 @@
       font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px;
     }
+    .media-placement-badge {
+      position: absolute; top: 8px; right: 8px;
+      background-color: rgba(0, 201, 130, 0.9); color: #070A09;
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 3px 8px; border-radius: 4px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
     .media-info { padding: 12px 14px; flex: 1; }
     .media-name {
       font-size: 0.82rem; font-weight: 700; margin-bottom: 3px;
@@ -367,6 +369,14 @@
     .media-meta {
       font-size: 0.7rem; color: var(--muted);
       display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .media-meta .placement-line {
+      color: var(--primary); font-weight: 700;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .media-meta .unassigned-line {
+      color: var(--muted); font-style: italic;
+      display: inline-flex; align-items: center; gap: 4px;
     }
 
     /* List view */
@@ -394,6 +404,12 @@
       color: var(--muted); font-weight: 700; margin-bottom: 2px;
     }
     .mlr-cell .mlr-value { font-size: 0.8rem; font-weight: 600; }
+    .mlr-placement {
+      color: var(--primary) !important; font-weight: 700 !important;
+    }
+    .mlr-unassigned {
+      color: var(--muted) !important; font-style: italic; font-weight: 500 !important;
+    }
 
     .empty-state {
       text-align: center; padding: 56px 20px;
@@ -414,7 +430,7 @@
 
     .detail-panel {
       position: fixed; top: 0; right: 0; bottom: 0;
-      width: 100%; max-width: 440px;
+      width: 100%; max-width: 460px;
       background-color: var(--surface); border-left: 1px solid var(--border);
       z-index: 110; display: flex; flex-direction: column;
       transform: translateX(100%); transition: transform 0.25s ease;
@@ -465,6 +481,39 @@
     .detail-form-group textarea:focus,
     .detail-form-group select:focus { border-color: var(--primary); }
     .detail-form-group textarea { resize: vertical; min-height: 60px; }
+
+    /* Placement block */
+    .placement-block {
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+    .placement-block-title {
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--primary); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .placement-hint {
+      font-size: 0.72rem; color: var(--muted);
+      margin-bottom: 14px; line-height: 1.5;
+    }
+    .placement-current {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: 8px; padding: 10px 12px;
+      margin-bottom: 14px; font-size: 0.78rem;
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap;
+    }
+    .placement-current .pc-text { flex: 1; color: var(--text); font-weight: 600; }
+    .placement-current .pc-text small { display: block; color: var(--muted); font-weight: 500; margin-top: 2px; }
+    .placement-current .btn-clear {
+      background: transparent; border: 1px solid rgba(224,112,112,0.4);
+      color: var(--danger); font-size: 0.7rem; font-weight: 700;
+      padding: 5px 10px; border-radius: 6px; cursor: pointer;
+    }
+    .placement-current .btn-clear:hover { background-color: rgba(224,112,112,0.1); }
 
     .meta-info {
       display: flex; flex-direction: column; gap: 8px;
@@ -656,7 +705,7 @@
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-photo-film"></i> Media library</div>
           <h1>All website media</h1>
-          <p>Upload, organize, preview and reuse images across CampusNaija.</p>
+          <p>Upload, organize, preview, and assign images to specific spots on the CampusNaija website.</p>
         </div>
 
         <div class="stats-row">
@@ -671,6 +720,10 @@
           <div class="stat-mini">
             <div class="stat-mini-label">Documents <i class="fas fa-file-pdf"></i></div>
             <div class="stat-mini-value" id="statDocs"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Placed <i class="fas fa-thumbtack"></i></div>
+            <div class="stat-mini-value" id="statPlaced"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Total size <i class="fas fa-database gold"></i></div>
@@ -713,6 +766,11 @@
               <option value="">All types</option>
               <option value="image">Images</option>
               <option value="document">Documents</option>
+            </select>
+            <select id="placementFilter" onchange="filterMedia()" aria-label="Filter by placement">
+              <option value="">All placements</option>
+              <option value="placed">Placed</option>
+              <option value="unassigned">Unassigned</option>
             </select>
           </div>
         </div>
@@ -773,6 +831,29 @@
       const USER_KEY  = 'campusnaija_admin_user';
       const LOGIN_URL = '/admin/login.html';
       const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+      const CAN_PLACE = ['owner', 'admin'];
+
+      /* ---------- Placement registry (mirrors server.js) ---------- */
+      const PLACEMENTS = {
+        home: [
+          { v: 'hero', label: 'Hero image' },
+          { v: 'featured_school', label: 'Featured school image', needsRef: true, refHint: 'School ID' },
+          { v: 'featured_story', label: 'Featured story image', needsRef: true, refHint: 'Story ID' },
+        ],
+        schools: [
+          { v: 'school_cover', label: 'School cover photo', needsRef: true, refHint: 'School ID' },
+          { v: 'school_logo', label: 'School logo', needsRef: true, refHint: 'School ID' },
+        ],
+        admissions:   [{ v: 'featured_banner', label: 'Featured banner' }],
+        exams:        [{ v: 'featured_banner', label: 'Featured banner' }],
+        scholarships: [{ v: 'featured_banner', label: 'Featured banner' }],
+        trending:     [{ v: 'article_cover', label: 'Article cover image', needsRef: true, refHint: 'Story ID' }],
+      };
+
+      const PAGE_LABELS = {
+        home: 'Home', schools: 'Schools', admissions: 'Admissions',
+        exams: 'Exams', scholarships: 'Scholarships', trending: 'Trending',
+      };
 
       let token = null;
       let currentUser = null;
@@ -808,6 +889,16 @@
       const isImage = (mime) => mime && mime.startsWith('image/');
       const isPdf = (mime) => mime === 'application/pdf';
 
+      function placementLabel(page, slot) {
+        const slots = PLACEMENTS[page] || [];
+        const def = slots.find(s => s.v === slot);
+        return (PAGE_LABELS[page] || page) + ' → ' + (def ? def.label : slot);
+      }
+
+      function placementShort(page, slot) {
+        return (PAGE_LABELS[page] || page) + ' → ' + slot;
+      }
+
       function redirectToLogin(reason) {
         try {
           localStorage.removeItem(TOKEN_KEY);
@@ -835,7 +926,9 @@
         try { data = await res.json(); } catch (_) {}
         if (!res.ok) {
           const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
-          throw new Error(msg);
+          const err = new Error(msg);
+          err.code = data && data.code;
+          throw err;
         }
         return data;
       }
@@ -891,6 +984,7 @@
         try {
           const res = await api('/api/media');
           mediaFiles = Array.isArray(res.media) ? res.media : [];
+          mediaFiles.forEach(m => { if (!Array.isArray(m.placements)) m.placements = []; });
           renderStats();
           filterMedia();
         } catch (e) {
@@ -905,6 +999,7 @@
         set('statTotal', mediaFiles.length);
         set('statImages', mediaFiles.filter(m => isImage(m.mime_type)).length);
         set('statDocs', mediaFiles.filter(m => isPdf(m.mime_type)).length);
+        set('statPlaced', mediaFiles.filter(m => m.placements && m.placements.length > 0).length);
         const totalBytes = mediaFiles.reduce((sum, m) => sum + (Number(m.size) || 0), 0);
         set('statSize', formatSize(totalBytes));
       }
@@ -912,6 +1007,7 @@
       function filterMedia() {
         const query = (document.getElementById('mediaSearch').value || '').toLowerCase().trim();
         const type = document.getElementById('typeFilter').value;
+        const placementFilter = document.getElementById('placementFilter').value;
 
         const filtered = mediaFiles.filter(m => {
           const q1 = (m.display_name || '').toLowerCase();
@@ -921,7 +1017,11 @@
           const matchT = !type ||
             (type === 'image' && isImage(m.mime_type)) ||
             (type === 'document' && isPdf(m.mime_type));
-          return matchQ && matchT;
+          const isPlaced = m.placements && m.placements.length > 0;
+          const matchP = !placementFilter ||
+            (placementFilter === 'placed' && isPlaced) ||
+            (placementFilter === 'unassigned' && !isPlaced);
+          return matchQ && matchT && matchP;
         });
 
         document.getElementById('mediaCount').textContent =
@@ -946,11 +1046,23 @@
           const isDoc = isPdf(m.mime_type);
           const thumbStyle = isImg ? `style="background-image: url('${esc(m.public_url)}');"` : '';
           const icon = isDoc ? 'fa-file-pdf' : (isImg ? 'fa-image' : 'fa-file');
+          const hasPlacement = m.placements && m.placements.length > 0;
+          const first = hasPlacement ? m.placements[0] : null;
+
+          const placementBadge = hasPlacement
+            ? `<span class="media-placement-badge"><i class="fas fa-thumbtack"></i> Placed</span>`
+            : '';
+
+          const placementLine = hasPlacement
+            ? `<div class="media-meta"><span class="placement-line"><i class="fas fa-thumbtack"></i> ${esc(placementShort(first.page, first.slot))}${m.placements.length > 1 ? ' +' + (m.placements.length - 1) : ''}</span></div>`
+            : `<div class="media-meta"><span class="unassigned-line"><i class="fas fa-circle-dashed"></i> Unassigned</span></div>`;
+
           return `
             <div class="media-item" onclick="openDetail('${esc(m.id)}')">
               <div class="media-thumbnail" ${thumbStyle}>
                 ${!isImg ? `<i class="fas ${icon}"></i>` : ''}
                 <span class="media-type-badge">${isDoc ? 'PDF' : 'Image'}</span>
+                ${placementBadge}
               </div>
               <div class="media-info">
                 <div class="media-name">${esc(m.display_name || m.original_name || m.filename)}</div>
@@ -959,6 +1071,7 @@
                   <span>·</span>
                   <span>${formatDate(m.created_at)}</span>
                 </div>
+                ${placementLine}
               </div>
             </div>`;
         }).join('');
@@ -978,6 +1091,12 @@
           const isImg = isImage(m.mime_type);
           const isDoc = isPdf(m.mime_type);
           const thumbStyle = isImg ? `style="background-image: url('${esc(m.public_url)}');"` : '';
+          const hasPlacement = m.placements && m.placements.length > 0;
+          const first = hasPlacement ? m.placements[0] : null;
+          const placementCell = hasPlacement
+            ? `<div class="mlr-cell"><div class="mlr-label">Placement</div><div class="mlr-value mlr-placement"><i class="fas fa-thumbtack"></i> ${esc(placementShort(first.page, first.slot))}${m.placements.length > 1 ? ' +' + (m.placements.length - 1) : ''}</div></div>`
+            : `<div class="mlr-cell"><div class="mlr-label">Placement</div><div class="mlr-value mlr-unassigned"><i class="fas fa-circle-dashed"></i> Unassigned</div></div>`;
+
           return `
             <div class="media-list-row" onclick="openDetail('${esc(m.id)}')">
               <div class="mlr-thumb" ${thumbStyle}>
@@ -995,6 +1114,7 @@
                 <div class="mlr-label">Type</div>
                 <div class="mlr-value">${isDoc ? 'PDF' : 'Image'}</div>
               </div>
+              ${placementCell}
               <div class="mlr-cell">
                 <div class="mlr-label">Uploaded</div>
                 <div class="mlr-value">${formatDate(m.created_at)}</div>
@@ -1060,6 +1180,72 @@
         const isImg = isImage(m.mime_type);
         const isDoc = isPdf(m.mime_type);
         const previewStyle = isImg ? `style="background-image: url('${esc(m.public_url)}');"` : '';
+        const canPlace = CAN_PLACE.includes(currentUser.role);
+        const hasPlacements = m.placements && m.placements.length > 0;
+
+        // Build placement UI (only for images + permitted roles)
+        let placementHTML = '';
+        if (isImg && canPlace) {
+          const currentList = hasPlacements
+            ? m.placements.map(p => `
+                <div class="placement-current">
+                  <i class="fas fa-thumbtack" style="color:var(--primary);"></i>
+                  <div class="pc-text">
+                    ${esc(placementLabel(p.page, p.slot))}
+                    <small>${p.content_ref ? 'Record: ' + esc(p.content_ref) : 'Global'}</small>
+                  </div>
+                  <button class="btn-clear" onclick="clearPlacement('${esc(p.id)}')" title="Remove this placement">
+                    <i class="fas fa-xmark"></i>
+                  </button>
+                </div>`).join('')
+            : '';
+
+          placementHTML = `
+            <div class="placement-block">
+              <div class="placement-block-title">
+                <i class="fas fa-thumbtack"></i> Where should this image appear?
+              </div>
+              <p class="placement-hint">
+                Choose a page and slot, then click <strong>Save &amp; place</strong>.
+                Assigning an image to a slot that is already occupied will replace the previous image.
+              </p>
+
+              ${currentList}
+
+              <div class="detail-form-group">
+                <label>Page</label>
+                <select id="placePage" onchange="updateSlotOptions()">
+                  <option value="">— Not placed —</option>
+                  <option value="home">Home</option>
+                  <option value="schools">Schools</option>
+                  <option value="admissions">Admissions</option>
+                  <option value="exams">Exams</option>
+                  <option value="scholarships">Scholarships</option>
+                  <option value="trending">Trending</option>
+                </select>
+              </div>
+
+              <div class="detail-form-group" id="slotGroup" style="display:none;">
+                <label>Placement slot</label>
+                <select id="placeSlot" onchange="updateRefVisibility()"></select>
+              </div>
+
+              <div class="detail-form-group" id="refGroup" style="display:none;">
+                <label id="refLabel">Specific record</label>
+                <input type="text" id="placeRef" placeholder="e.g. a school or story id">
+                <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;">
+                  This slot applies to a specific record. Enter the ID of the school or story it belongs to.
+                </p>
+              </div>
+            </div>
+          `;
+        } else if (isImg && !canPlace) {
+          placementHTML = `
+            <div class="placement-block">
+              <div class="placement-block-title"><i class="fas fa-thumbtack"></i> Placement</div>
+              <p class="placement-hint">Only owners and admins can assign images to website slots.</p>
+            </div>`;
+        }
 
         const body = document.getElementById('detailBody');
         body.innerHTML = `
@@ -1092,7 +1278,9 @@
             <input type="text" id="editTags" value="${esc(m.tags || '')}" placeholder="e.g. lagos, campus">
           </div>
 
-          <div class="url-copy">
+          ${placementHTML}
+
+          <div class="url-copy" style="margin-top:16px;">
             <input type="text" value="${esc(m.public_url)}" readonly id="mediaUrlInput">
             <button class="btn-outline" style="padding: 8px 12px;" onclick="copyUrl()" title="Copy URL">
               <i class="fas fa-copy"></i>
@@ -1107,6 +1295,21 @@
             <div class="meta-info-row"><span class="mi-label">Uploaded</span><span class="mi-value">${formatDate(m.created_at)}</span></div>
           </div>
         `;
+
+        // Prefill placement dropdowns with the first existing placement (if any)
+        if (isImg && canPlace && hasPlacements) {
+          const first = m.placements[0];
+          const pageSel = document.getElementById('placePage');
+          if (pageSel) {
+            pageSel.value = first.page;
+            updateSlotOptions();
+            const slotSel = document.getElementById('placeSlot');
+            if (slotSel) slotSel.value = first.slot;
+            updateRefVisibility();
+            const refInput = document.getElementById('placeRef');
+            if (refInput && first.content_ref) refInput.value = first.content_ref;
+          }
+        }
 
         const actions = document.getElementById('detailActions');
         actions.innerHTML = `
@@ -1125,18 +1328,61 @@
         selectedMediaId = null;
       }
 
-      function copyUrl() {
-        const input = document.getElementById('mediaUrlInput');
-        if (!input) return;
-        input.select();
-        try {
-          document.execCommand('copy');
-          toast('URL copied to clipboard.');
-        } catch (e) {
-          toast('Copy failed. Please copy manually.', true);
+      /* PLACEMENT UI helpers */
+      function updateSlotOptions() {
+        const pageSel = document.getElementById('placePage');
+        const slotGroup = document.getElementById('slotGroup');
+        const slotSel = document.getElementById('placeSlot');
+        const refGroup = document.getElementById('refGroup');
+        if (!pageSel || !slotSel) return;
+
+        const page = pageSel.value;
+        if (!page) {
+          slotGroup.style.display = 'none';
+          refGroup.style.display = 'none';
+          return;
+        }
+        slotGroup.style.display = '';
+        const slots = PLACEMENTS[page] || [];
+        slotSel.innerHTML = slots
+          .map(s => `<option value="${esc(s.v)}">${esc(s.label)}</option>`)
+          .join('');
+        updateRefVisibility();
+      }
+
+      function updateRefVisibility() {
+        const page = document.getElementById('placePage')?.value;
+        const slot = document.getElementById('placeSlot')?.value;
+        const refGroup = document.getElementById('refGroup');
+        const refLabel = document.getElementById('refLabel');
+        const refInput = document.getElementById('placeRef');
+        if (!refGroup) return;
+
+        const def = ((PLACEMENTS[page] || []).find(s => s.v === slot)) || {};
+        if (def.needsRef) {
+          refGroup.style.display = '';
+          if (refLabel) refLabel.textContent = 'Specific record (' + (def.refHint || 'ID') + ')';
+          if (refInput) refInput.placeholder = def.refHint || 'Enter record ID';
+        } else {
+          refGroup.style.display = 'none';
+          if (refInput) refInput.value = '';
         }
       }
 
+      async function clearPlacement(placementId) {
+        if (!confirm('Remove this placement? The image will stop appearing in that slot.')) return;
+        try {
+          await api('/api/media/placements/' + encodeURIComponent(placementId), { method: 'DELETE' });
+          toast('Placement removed.');
+          await loadMedia();
+          // Re-open the same media file to reflect the change
+          if (selectedMediaId) openDetail(selectedMediaId);
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      /* SAVE (metadata + placement) */
       async function saveMedia(id) {
         const m = mediaFiles.find(x => x.id === id);
         if (!m) return;
@@ -1154,10 +1400,25 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
         try {
+          // 1) Save metadata
           await api('/api/media/' + encodeURIComponent(id), {
             method: 'PATCH', body: JSON.stringify(payload)
           });
-          toast('Media details saved.');
+
+          // 2) Save placement (only if the placement UI exists and page selected)
+          const pageSel = document.getElementById('placePage');
+          if (pageSel && pageSel.value) {
+            const page = pageSel.value;
+            const slot = document.getElementById('placeSlot').value;
+            const content_ref = document.getElementById('placeRef').value.trim() || null;
+
+            await api('/api/media/placements', {
+              method: 'POST',
+              body: JSON.stringify({ media_id: id, page, slot, content_ref })
+            });
+          }
+
+          toast('Saved.');
           await loadMedia();
           closeDetail();
         } catch (e) {
@@ -1183,10 +1444,27 @@
           await loadMedia();
           closeDetail();
         } catch (e) {
-          toast(e.message, true);
+          // Server returns 409 if media is still placed
+          if (e.code === 'media_in_use') {
+            toast('This image is still placed on the site. Remove its placement first.', true);
+          } else {
+            toast(e.message, true);
+          }
         } finally {
           btn.disabled = false;
           btn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+        }
+      }
+
+      function copyUrl() {
+        const input = document.getElementById('mediaUrlInput');
+        if (!input) return;
+        input.select();
+        try {
+          document.execCommand('copy');
+          toast('URL copied to clipboard.');
+        } catch (e) {
+          toast('Copy failed. Please copy manually.', true);
         }
       }
 
@@ -1255,6 +1533,7 @@
         await loadMedia();
       })();
 
+      // Expose globals for inline handlers
       window.setView = setView;
       window.filterMedia = filterMedia;
       window.openDetail = openDetail;
@@ -1262,6 +1541,9 @@
       window.copyUrl = copyUrl;
       window.saveMedia = saveMedia;
       window.deleteMedia = deleteMedia;
+      window.updateSlotOptions = updateSlotOptions;
+      window.updateRefVisibility = updateRefVisibility;
+      window.clearPlacement = clearPlacement;
     })();
   </script>
 
