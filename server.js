@@ -69,69 +69,6 @@ function placementNeedsRef(page, slot) {
 }
 
 /* ============================================================
- * ROLE MENU REGISTRY — single source of truth for "what this role sees"
- * ============================================================
- * Only used to answer two questions for the frontend:
- *   • which menu items can this user see?
- *   • where should they land after login?
- *
- * These are NOT the permission rules. Those are still enforced server-side
- * on each route via requireRole(...). A hacker editing this in the browser
- * gets labels only — the API still rejects any action they don't own.
- */
-const ROLE_MENU = {
-  owner: [
-    { label: 'Dashboard',    href: '/admin/index.html',        icon: 'fa-gauge-high' },
-    { label: 'Schools',      href: '/admin/Schools.html',      icon: 'fa-building-columns' },
-    { label: 'Admissions',   href: '/admin/Admissions.html',   icon: 'fa-clipboard-list' },
-    { label: 'Exams',        href: '/admin/Exams.html',        icon: 'fa-pen-to-square' },
-    { label: 'Scholarships', href: '/admin/Scholarships.html', icon: 'fa-award' },
-    { label: 'Trending',     href: '/admin/Trending.html',     icon: 'fa-fire' },
-    { label: 'Media',        href: '/admin/Media.html',        icon: 'fa-photo-film' },
-    { label: 'Users',        href: '/admin/Users.html',        icon: 'fa-users' },
-    { label: 'Audit Log',    href: '/admin/Audit.html',        icon: 'fa-list-check' },
-    { label: 'Settings',     href: '/admin/Settings.html',     icon: 'fa-gear' },
-  ],
-  admin: [
-    { label: 'Dashboard',    href: '/admin/index.html',        icon: 'fa-gauge-high' },
-    { label: 'Schools',      href: '/admin/Schools.html',      icon: 'fa-building-columns' },
-    { label: 'Admissions',   href: '/admin/Admissions.html',   icon: 'fa-clipboard-list' },
-    { label: 'Exams',        href: '/admin/Exams.html',        icon: 'fa-pen-to-square' },
-    { label: 'Scholarships', href: '/admin/Scholarships.html', icon: 'fa-award' },
-    { label: 'Trending',     href: '/admin/Trending.html',     icon: 'fa-fire' },
-    { label: 'Media',        href: '/admin/Media.html',        icon: 'fa-photo-film' },
-    { label: 'Audit Log',    href: '/admin/Audit.html',        icon: 'fa-list-check' },
-  ],
-  editor: [
-    { label: 'Dashboard',    href: '/admin/index.html',        icon: 'fa-gauge-high' },
-    { label: 'Exams',        href: '/admin/Exams.html',        icon: 'fa-pen-to-square' },
-    { label: 'Scholarships', href: '/admin/Scholarships.html', icon: 'fa-award' },
-    { label: 'Trending',     href: '/admin/Trending.html',     icon: 'fa-fire' },
-    { label: 'Media',        href: '/admin/Media.html',        icon: 'fa-photo-film' },
-  ],
-  reviewer: [
-    { label: 'Dashboard',    href: '/admin/index.html',        icon: 'fa-gauge-high' },
-    { label: 'Review Queue', href: '/admin/ReviewQueue.html',  icon: 'fa-list-check' },
-    { label: 'Schools',      href: '/admin/Schools.html',      icon: 'fa-building-columns' },
-    { label: 'Admissions',   href: '/admin/Admissions.html',   icon: 'fa-clipboard-list' },
-    { label: 'Exams',        href: '/admin/Exams.html',        icon: 'fa-pen-to-square' },
-    { label: 'Scholarships', href: '/admin/Scholarships.html', icon: 'fa-award' },
-    { label: 'Trending',     href: '/admin/Trending.html',     icon: 'fa-fire' },
-    { label: 'Media',        href: '/admin/Media.html',        icon: 'fa-photo-film' },
-  ],
-  // School managers use the /SchoolAd portal, not the admin dashboard.
-  school_manager: [],
-};
-
-const ROLE_LANDING = {
-  owner:          '/admin/index.html',
-  admin:          '/admin/index.html',
-  editor:         '/admin/index.html',
-  reviewer:       '/admin/ReviewQueue.html',
-  school_manager: '/SchoolAd/index.html',
-};
-
-/* ============================================================
  * SUPABASE CLIENT (Storage only — DB still uses pg)
  * ============================================================ */
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
@@ -286,20 +223,6 @@ function publicUser(u) {
   };
 }
 
-/**
- * Wrap publicUser with menu + landing — this is what /auth/me and /auth/login
- * return so the browser has exactly the sidebar the server allows.
- */
-function userPayload(u) {
-  const base = publicUser(u);
-  if (!base) return null;
-  return {
-    ...base,
-    menu: ROLE_MENU[base.role] || [],
-    landing: ROLE_LANDING[base.role] || '/admin/index.html',
-  };
-}
-
 async function authenticate(req, res, next) {
   try {
     const h = req.headers.authorization || '';
@@ -374,22 +297,15 @@ router.post('/auth/login', asyncH(async (req, res) => {
 
   const token = signToken(user);
   await audit({ user, ip }, 'login', 'auth', user.id, user.email);
-
-  const payload = userPayload(user);
-  res.json({
-    token,
-    user: payload,
-    landing: payload.landing,
-  });
+  res.json({ token, user: publicUser(user) });
 }));
 
 router.post('/auth/refresh', authenticate, asyncH(async (req, res) => {
-  const payload = userPayload(req.user);
-  res.json({ token: signToken(req.user), user: payload, landing: payload.landing });
+  res.json({ token: signToken(req.user), user: publicUser(req.user) });
 }));
 
 router.get('/auth/me', authenticate, asyncH(async (req, res) => {
-  res.json({ user: userPayload(req.user) });
+  res.json({ user: publicUser(req.user) });
 }));
 
 router.post('/auth/logout', authenticate, asyncH(async (req, res) => {
@@ -489,6 +405,24 @@ router.get('/public/settings', asyncH(async (req, res) => {
 }));
 
 /* ---------- PUBLIC: media placements ---------- */
+/*
+ * Used by Home.html, Schools.html, Admissions.html, … to fetch the assigned
+ * image for a given page/slot (optionally scoped to a specific record).
+ *
+ * Query params:
+ *   page        – required filter (home / schools / admissions / exams / scholarships / trending)
+ *   slot        – optional filter (hero / school_cover / …)
+ *   content_ref – OPTIONAL. Behaviour:
+ *                 • missing      → return ALL active placements for the page
+ *                                  (frontend filters per-record client-side)
+ *                 • empty ('')   → return only GLOBAL placements (content_ref IS NULL)
+ *                 • value        → return only placements for that specific record
+ *
+ * The "missing vs empty" distinction is critical: Home / Schools / Trending
+ * pages call `?page=X` without a content_ref and then match client-side.
+ * If we force `content_ref IS NULL` on a missing param, per-record covers
+ * (school covers, article covers) get stripped before reaching the browser.
+ */
 router.get('/public/placements', asyncH(async (req, res) => {
   const { page, slot, content_ref } = req.query;
   const clauses = ['p.is_active = true'];
@@ -1162,6 +1096,7 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   res.status(201).json({ media: row });
 }));
 
+// GET /media — enriched with placements[] per file
 router.get('/media', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const clauses = []; const params = [];
   if (req.user.role === 'school_manager') { params.push(req.user.school_id); clauses.push(`school_id = $${params.length}`); }
@@ -1508,13 +1443,13 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.5.2', media: 'supabase-storage', placements: true, roleMenu: true });
+    res.json({ ok: true, time: r.rows[0].now, version: '1.5.1', media: 'supabase-storage', placements: true });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.5.2',
+      version: '1.5.1',
     });
   }
 }));

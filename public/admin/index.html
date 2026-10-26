@@ -671,19 +671,26 @@
 
   <div class="admin-shell" style="display: none;" id="appShell">
 
-    <!-- SIDEBAR — links rendered from server (currentUser.menu) -->
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
         <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
       </div>
 
-      <nav class="sidebar-nav" id="sidebarNav">
-        <!-- Skeleton nav while the user loads -->
+      <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <div class="skeleton" style="height: 42px; margin-bottom: 4px;"></div>
-        <div class="skeleton" style="height: 42px; margin-bottom: 4px;"></div>
-        <div class="skeleton" style="height: 42px; margin-bottom: 4px;"></div>
+        <a href="../admin/index.html" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="../admin/Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
+        <a href="../admin/Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="../admin/Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
+        <a href="../admin/Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
+        <a href="../admin/Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
+        <div class="nav-group-label">Management</div>
+        <a href="../admin/Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
+        <a href="../admin/Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+        <a href="../admin/Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Log</a>
+        <a href="../admin/Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
       </nav>
 
       <div class="sidebar-footer">
@@ -939,7 +946,7 @@
       const TOKEN_KEY = 'campusnaija_admin_token';
       const USER_KEY  = 'campusnaija_admin_user';
       const LOGIN_URL = '/admin/login.html';
-      const ADMIN_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
       let token = null;
       let currentUser = null;
@@ -1031,14 +1038,7 @@
         try {
           const data = await api('/api/auth/me');
           currentUser = data.user;
-
-          // School managers belong in the SchoolAd portal, not here.
-          if (currentUser.role === 'school_manager') {
-            window.location.replace('/SchoolAd/index.html');
-            return false;
-          }
-
-          if (!ADMIN_ROLES.includes(currentUser.role)) {
+          if (!ALLOWED_ROLES.includes(currentUser.role)) {
             redirectToLogin('not_authorised');
             return false;
           }
@@ -1048,44 +1048,6 @@
           console.error('[auth]', e.message);
           return false;
         }
-      }
-
-      /**
-       * Render the sidebar from the server-provided menu array.
-       * The list is already filtered for this role — we just paint it.
-       */
-      function renderSidebarFromServer(user) {
-        const nav = document.getElementById('sidebarNav');
-        if (!nav) return;
-
-        const menu = Array.isArray(user.menu) ? user.menu : [];
-        if (!menu.length) {
-          nav.innerHTML = '<div class="empty-state"><p>No menu items for your role.</p></div>';
-          return;
-        }
-
-        // Split into "Workspace" (first 6) and "Management" (rest)
-        const firstHalf = menu.slice(0, 6);
-        const rest      = menu.slice(6);
-        const current   = location.pathname;
-
-        const item = (m) => {
-          // Normalize for comparison: pages link to /admin/Foo.html, current may be /admin/Foo
-          const norm = (p) => String(p || '').replace(/\.html$/, '').replace(/\/$/, '');
-          const isActive = norm(current).endsWith(norm(m.href).replace(/^\/admin/, ''));
-          return `
-            <a href="${m.href}" class="nav-item ${isActive ? 'active' : ''}">
-              <i class="fas ${m.icon}"></i> ${esc(m.label)}
-            </a>`;
-        };
-
-        nav.innerHTML = `
-          <div class="nav-group-label">Workspace</div>
-          ${firstHalf.map(item).join('')}
-          ${rest.length ? `
-            <div class="nav-group-label">Management</div>
-            ${rest.map(item).join('')}` : ''}
-        `;
       }
 
       function renderUser() {
@@ -1337,6 +1299,7 @@
           window.location.href = './Schools.html?q=' + encodeURIComponent(q);
         });
 
+        // Subtle mouse-tracking glow on stat cards
         document.querySelectorAll('.stat-card').forEach(card => {
           card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
@@ -1347,11 +1310,14 @@
           });
         });
 
+        // Footer year
+        const y = new Date().getFullYear();
         const fy = document.getElementById('footerYear');
-        if (fy) fy.textContent = '© ' + new Date().getFullYear();
+        if (fy) fy.textContent = '© ' + y;
       }
 
       (async function boot() {
+        // Fast check: if no token at all, redirect before painting the shell
         let hasToken = false;
         try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!hasToken) { redirectToLogin('not_signed_in'); return; }
@@ -1359,13 +1325,14 @@
         // Show the shell — skeletons are already in the HTML
         document.getElementById('appShell').style.display = 'flex';
 
+        // Verify in background
         const ok = await verifySession();
         if (!ok) return;
 
         renderUser();
-        renderSidebarFromServer(currentUser);
         wireUI();
 
+        // Load all panels in parallel — each one fails independently
         await Promise.allSettled([
           loadStats(),
           loadReviewQueue(),
