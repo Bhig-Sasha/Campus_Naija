@@ -24,11 +24,11 @@
     { "source": "/admin/Settings",   "destination": "/admin/Settings.html" },
     { "source": "/admin/Login",      "destination": "/admin/login.html" },
 
-    { "source": "/SchoolsAd",         "destination": "/SchoolAd/index.html" },
-    { "source": "/SchoolsAd/",        "destination": "/SchoolAd/index.html" },
-    { "source": "/SchoolsAd/login",   "destination": "/SchoolAd/login.html" },
-    { "source": "/SchoolsAd/Login",   "destination": "/SchoolAd/login.html" },
-    { "source": "/SchoolsAd/:path*",  "destination": "/SchoolAd/:path*.html" }
+    { "source": "/SchoolsAd",         "destination": "/SchoolsAd/index.html" },
+    { "source": "/SchoolsAd/",        "destination": "/SchoolsAd/index.html" },
+    { "source": "/SchoolsAd/login",   "destination": "/SchoolsAd/login.html" },
+    { "source": "/SchoolsAd/Login",   "destination": "/SchoolsAd/login.html" },
+    { "source": "/SchoolsAd/:path*",  "destination": "/SchoolsAd/:path*.html" }
   ],
   "headers": [
     {
