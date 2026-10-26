@@ -89,9 +89,9 @@ async function seed() {
  * APP
  * ============================================================ */
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  // Allow your own pages/scripts; relax CSP slightly for the static site
   contentSecurityPolicy: false,
 }));
 app.use(cors({
@@ -1225,30 +1225,84 @@ router.patch('/settings', authenticate, requireRole('owner'), asyncH(async (req,
   res.json({ ok: true, settings: await readSettings() });
 }));
 
-/* ---------- HEALTH ---------- */
+/* ---------- HEALTH ----------
+ * Returns 200 only if the database responds within 5 seconds.
+ * Returns 503 with a diagnostic message otherwise — so you can
+ * spot a dead Supabase connection from a browser tab.
+ */
 router.get('/health', asyncH(async (req, res) => {
-  const r = await q('select now() as now');
-  res.json({ ok: true, time: r.rows[0].now, version: '1.2.0' });
+  try {
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('database health check timed out after 5s')), 5000)
+    );
+    const dbPromise = q('select now() as now');
+    const r = await Promise.race([dbPromise, timeoutPromise]);
+    res.json({ ok: true, time: r.rows[0].now, version: '1.3.0' });
+  } catch (e) {
+    res.status(503).json({
+      ok: false,
+      error: 'Database unreachable: ' + e.message,
+      hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
+      version: '1.3.0',
+    });
+  }
 }));
 
 /* ============================================================
  * FRONTEND STATIC FILES
+ * ============================================================
+ * Serves everything under `public/`. No fallbacks, no mock data,
+ * no in-memory HTML — just the real files you have on disk.
+ *
+ * Layout (must be committed to the repo):
+ *
+ *   public/
+ *   ├── Home.html
+ *   ├── Schools.html
+ *   ├── Admissions.html
+ *   ├── Exams.html
+ *   ├── Scholarships.html
+ *   ├── Trending.html
+ *   ├── admin/
+ *   │   ├── index.html
+ *   │   └── dashboard.html
+ *   └── SchoolAd/
+ *       ├── index.html
+ *       ├── dashboard.html
+ *       └── submissions.html
+ *
+ * Behavior:
+ *   /Home.html            → public/Home.html
+ *   /admin/index.html     → public/admin/index.html
+ *   /admin/dashboard.html → public/admin/dashboard.html
+ *   /SchoolAd/...         → public/SchoolAd/...
+ *   /                     → public/Home.html
+ *   /admin                → public/admin/index.html
+ *   /SchoolAd             → public/SchoolAd/index.html
+ *
+ * `index: false` prevents auto-serving index.html at every directory,
+ * so we control entry points explicitly below.
  * ============================================================ */
-// Serves /public as static. `extensions: ['html']` lets clean URLs like
-// /Home resolve to public/Home.html. `index: false` so we control the
-// root path explicitly below (fall back to Home.html).
-app.use(express.static(path.join(__dirname, 'public'), {
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+app.use(express.static(PUBLIC_DIR, {
   extensions: ['html'],
   index: false,
   maxAge: '1h',
   fallthrough: true,
 }));
 
-// Convenience: root → Home.html
+/* Explicit entry points — no guesswork, no fallbacks. */
 app.get('/', (req, res, next) => {
-  res.sendFile(path.join(__dirname, 'public', 'Home.html'), (err) => {
-    if (err) next();
-  });
+  res.sendFile(path.join(PUBLIC_DIR, 'Home.html'), (err) => { if (err) next(); });
+});
+
+app.get(['/admin', '/admin/'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'index.html'), (err) => { if (err) next(); });
+});
+
+app.get(['/SchoolAd', '/SchoolAd/'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'index.html'), (err) => { if (err) next(); });
 });
 
 /* ============================================================
@@ -1268,7 +1322,7 @@ const httpServer = app.listen(PORT, () => {
   console.log(`CampusNaija backend listening on port ${PORT}`);
   console.log(`Owner email: ${OWNER_EMAIL}`);
   console.log(`Uploads directory: ${UPLOAD_DIR}`);
-  console.log(`Public dir: ${path.join(__dirname, 'public')}`);
+  console.log(`Public dir: ${PUBLIC_DIR}`);
   console.log('API base: /api');
 });
 

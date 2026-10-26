@@ -3,10 +3,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/admin",           "destination": "/admin/index.html" },
-    { "source": "/admin/",          "destination": "/admin/index.html" },
-    { "source": "/admin/:path*",    "destination": "/admin/:path*" },
-
     { "source": "/",                "destination": "/Home" },
     { "source": "/schools",         "destination": "/Schools" },
     { "source": "/schools/:slug",   "destination": "/Schools" },
@@ -29,15 +25,11 @@
     },
     {
       "source": "/admin/(.*)",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
       "source": "/SchoolAd/(.*)",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     }
   ]
 }
