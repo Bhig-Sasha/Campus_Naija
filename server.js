@@ -30,7 +30,7 @@ if (!JWT_SECRET)   { console.error('[env] JWT_SECRET is required');   process.ex
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 /* ============================================================
- * DATABASE (Supabase / Postgres)
+ * DATABASE (Supabase / Postgres via pg)
  * ============================================================ */
 const pool = new Pool({
   connectionString: DATABASE_URL,
@@ -47,7 +47,7 @@ async function many(text, params) { const r = await q(text, params); return r.ro
 async function run(text, params) { const r = await q(text, params); return r.rowCount; }
 
 /* ============================================================
- * SEED (idempotent, only if users table is empty)
+ * SEED
  * ============================================================ */
 async function seed() {
   try {
@@ -122,9 +122,7 @@ async function audit(req, action, targetType, targetId, targetLabel, details) {
         (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, details, ip)
        values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
       [
-        u ? u.id : null,
-        u ? u.name : 'Unknown',
-        u ? u.role : 'security',
+        u ? u.id : null, u ? u.name : 'Unknown', u ? u.role : 'security',
         action, targetType,
         targetId != null ? String(targetId) : null,
         targetLabel || null,
@@ -943,16 +941,7 @@ router.post('/trending/:id/schedule', authenticate, requireRole('owner','admin')
   res.json({ ok: true });
 }));
 
-/* ---------- MEDIA ----------
- * TODO (production): replace multer diskStorage with Supabase Storage:
- *   1) npm install @supabase/supabase-js
- *   2) const { createClient } = require('@supabase/supabase-js');
- *      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
- *   3) In the /media handler, upload req.file.buffer to a bucket named "media",
- *      store the returned path in media_assets.storage_path and the public URL
- *      in media_assets.public_url.
- *   4) Remove the /uploads static mount below.
- */
+/* ---------- MEDIA ---------- */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
@@ -1037,7 +1026,7 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   res.json({ ok: true });
 }));
 
-/* ---------- USERS (owner only) ---------- */
+/* ---------- USERS ---------- */
 router.get('/users', authenticate, requireRole('owner'), asyncH(async (req, res) => {
   const rows = await many('select * from public.users order by created_at desc');
   res.json({ users: rows.map(publicUser) });
@@ -1225,11 +1214,7 @@ router.patch('/settings', authenticate, requireRole('owner'), asyncH(async (req,
   res.json({ ok: true, settings: await readSettings() });
 }));
 
-/* ---------- HEALTH ----------
- * Returns 200 only if the database responds within 5 seconds.
- * Returns 503 with a diagnostic message otherwise — so you can
- * spot a dead Supabase connection from a browser tab.
- */
+/* ---------- HEALTH ---------- */
 router.get('/health', asyncH(async (req, res) => {
   try {
     const timeoutPromise = new Promise((_, reject) =>
@@ -1237,13 +1222,13 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.3.0' });
+    res.json({ ok: true, time: r.rows[0].now, version: '1.3.1' });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.3.0',
+      version: '1.3.1',
     });
   }
 }));
@@ -1251,58 +1236,41 @@ router.get('/health', asyncH(async (req, res) => {
 /* ============================================================
  * FRONTEND STATIC FILES
  * ============================================================
- * Serves everything under `public/`. No fallbacks, no mock data,
- * no in-memory HTML — just the real files you have on disk.
- *
- * Layout (must be committed to the repo):
- *
+ * Layout:
  *   public/
- *   ├── Home.html
- *   ├── Schools.html
- *   ├── Admissions.html
- *   ├── Exams.html
- *   ├── Scholarships.html
- *   ├── Trending.html
+ *   ├── Home.html, Schools.html, Admissions.html,
+ *   │   Exams.html, Scholarships.html, Trending.html
  *   ├── admin/
- *   │   ├── index.html
- *   │   └── dashboard.html
+ *   │   ├── login.html      ← served at /admin and /admin/
+ *   │   └── index.html      ← the dashboard (protected by client JS)
  *   └── SchoolAd/
- *       ├── index.html
- *       ├── dashboard.html
+ *       ├── login.html      ← served at /SchoolAd and /SchoolAd/
+ *       ├── index.html      ← the dashboard (protected by client JS)
  *       └── submissions.html
- *
- * Behavior:
- *   /Home.html            → public/Home.html
- *   /admin/index.html     → public/admin/index.html
- *   /admin/dashboard.html → public/admin/dashboard.html
- *   /SchoolAd/...         → public/SchoolAd/...
- *   /                     → public/Home.html
- *   /admin                → public/admin/index.html
- *   /SchoolAd             → public/SchoolAd/index.html
- *
- * `index: false` prevents auto-serving index.html at every directory,
- * so we control entry points explicitly below.
  * ============================================================ */
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 app.use(express.static(PUBLIC_DIR, {
   extensions: ['html'],
-  index: false,
+  index: false,           // don't auto-serve index.html in any folder
   maxAge: '1h',
   fallthrough: true,
 }));
 
-/* Explicit entry points — no guesswork, no fallbacks. */
+/* Root → Home */
 app.get('/', (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'Home.html'), (err) => { if (err) next(); });
 });
 
+/* /admin and /admin/ always serve the LOGIN page.
+   The dashboard (index.html) is only reachable after a successful sign-in. */
 app.get(['/admin', '/admin/'], (req, res, next) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'index.html'), (err) => { if (err) next(); });
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'login.html'), (err) => { if (err) next(); });
 });
 
+/* /SchoolAd and /SchoolAd/ always serve the LOGIN page. */
 app.get(['/SchoolAd', '/SchoolAd/'], (req, res, next) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'index.html'), (err) => { if (err) next(); });
+  res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
 });
 
 /* ============================================================
