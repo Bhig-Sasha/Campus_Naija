@@ -1,14 +1,10 @@
 CampusNaija/
-├── index.html
 ├── Home.html
 ├── Schools.html
 ├── Admissions.html
 ├── Exams.html
 ├── Scholarships.html
 ├── Trending.html
-├── Search.html
-├── About.html
-├── Contact.html
 │
 ├── admin/
 │   ├── login.html
@@ -23,18 +19,6 @@ CampusNaija/
 │   ├── Users.html
 │   ├── Audit.html
 │   └── Settings.html
-│
-├── assets/
-│   ├── css/
-│   ├── js/
-│   └── images/
-│
-└── backend/
-    ├── routes/
-    ├── controllers/
-    ├── services/
-    └── database/
-
     SchoolAd/
 ├── login.html
 ├── index.html
