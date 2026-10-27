@@ -95,7 +95,6 @@
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
 
-    /* Sidebar footer — profile block with inline sign-out (matches Dashboard) */
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
       display: flex; align-items: center; gap: 12px;
@@ -190,7 +189,7 @@
     .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
-    .content { padding: 32px 24px 56px; flex: 1; }
+    .content { padding: 32px 24px 56px; flex: 1; display: flex; flex-direction: column; }
 
     /* HEADING */
     .page-heading { margin-bottom: 24px; }
@@ -202,15 +201,17 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* SCOPE BANNER */
+    /* SCOPE BANNER — hidden when everything is fine */
     .scope-banner {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+      display: none;
+      flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
       border-radius: 12px; margin-bottom: 24px;
     }
+    .scope-banner.visible { display: flex; }
     .scope-banner.unassigned {
       background-color: rgba(245,185,66,0.05);
       border-color: rgba(245,185,66,0.25);
@@ -411,48 +412,50 @@
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
-    /* Lifecycle */
-    .lifecycle-grid {
-      display: grid; grid-template-columns: 1fr; gap: 12px;
+    /* SITE FOOTER */
+    .site-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 20px;
     }
-    @media (min-width: 700px) { .lifecycle-grid { grid-template-columns: 1fr 1fr; } }
-    @media (min-width: 1100px) { .lifecycle-grid { grid-template-columns: repeat(5, 1fr); } }
-    .lifecycle-step {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px; position: relative;
+    .footer-top {
+      display: flex; flex-wrap: wrap; gap: 24px;
+      align-items: flex-start; justify-content: space-between;
     }
-    .lifecycle-step .step-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 32px; height: 32px; border-radius: 9px;
-      background-color: rgba(0,201,130,0.1); color: var(--primary);
-      font-weight: 800; font-size: 0.85rem; margin-bottom: 10px;
+    .footer-brand .footer-logo {
+      font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
-    .lifecycle-step:nth-child(3) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .lifecycle-step:nth-child(4) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .lifecycle-step h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
-    .lifecycle-step p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; margin: 0; }
-
-    /* Feedback info */
-    .feedback-panel {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 12px; padding: 18px 22px;
-      display: flex; gap: 14px; align-items: flex-start;
+    .footer-brand .footer-logo span { color: var(--primary); }
+    .footer-brand .footer-tagline {
+      font-size: 0.78rem; color: var(--muted); max-width: 320px; line-height: 1.5;
     }
-    .feedback-panel i {
-      color: var(--accent); font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;
+    .footer-links {
+      display: flex; flex-wrap: wrap; gap: 32px;
     }
-    .feedback-panel .fb-text { flex: 1; }
-    .feedback-panel h4 { font-size: 0.9rem; margin-bottom: 4px; }
-    .feedback-panel p {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
+    .footer-col h5 {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px;
     }
-
-    .footnote {
-      font-size: 0.72rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
+    .footer-col ul {
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
     }
-    .footnote i { color: var(--accent); margin-right: 6px; }
+    .footer-col a {
+      font-size: 0.82rem; color: var(--muted);
+      transition: color 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .footer-col a:hover { color: var(--primary); }
+    .footer-col a i { font-size: 0.7rem; }
+    .footer-bottom {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      align-items: center; justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--muted);
+    }
 
     /* Toast */
     .toast {
@@ -497,6 +500,9 @@
       .sub-row { flex-wrap: wrap; }
       .sub-actions { width: 100%; justify-content: flex-end; }
       .sub-tab { padding: 9px 12px; font-size: 0.8rem; }
+      .footer-top { flex-direction: column; gap: 20px; }
+      .footer-links { gap: 24px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -533,7 +539,6 @@
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
-      <!-- Sidebar footer — profile block with inline sign-out (matches Dashboard) -->
       <div class="sidebar-footer">
         <div class="rep-user">
           <div class="rep-avatar" id="sideAvatar">—</div>
@@ -585,11 +590,12 @@
           <p>Follow each change from draft to review, approval and publication.</p>
         </div>
 
+        <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
         <div class="scope-banner" id="scopeBanner">
-          <i class="fas fa-lock"></i>
+          <i class="fas fa-triangle-exclamation"></i>
           <div class="scope-text">
-            <strong>School-scoped access</strong>
-            <span>Representatives see only submissions belonging to their assigned institution.</span>
+            <strong id="scopeBannerTitle">—</strong>
+            <span id="scopeBannerDesc">—</span>
           </div>
           <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
@@ -651,51 +657,45 @@
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title"><i class="fas fa-diagram-project"></i> Submission lifecycle</div>
+        <footer class="site-footer">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">Campus<span>Naija</span></div>
+              <p class="footer-tagline">The school administration portal for verified Nigerian institutions. Manage your profile, courses, fees, admissions and calendar in one place.</p>
+            </div>
+            <div class="footer-links">
+              <div class="footer-col">
+                <h5>Workspace</h5>
+                <ul>
+                  <li><a href="./profile.html"><i class="fas fa-building-columns"></i> School profile</a></li>
+                  <li><a href="./courses.html"><i class="fas fa-book-open"></i> Faculties &amp; courses</a></li>
+                  <li><a href="./fees.html"><i class="fas fa-money-bill"></i> Fees</a></li>
+                  <li><a href="./admissions.html"><i class="fas fa-clipboard-list"></i> Admissions</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Review</h5>
+                <ul>
+                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
+                  <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Support</h5>
+                <ul>
+                  <li><a href="/FAQ.html"><i class="fas fa-circle-question"></i> FAQ</a></li>
+                  <li><a href="mailto:support@campusnaija.ng"><i class="fas fa-envelope"></i> Contact admin</a></li>
+                  <li><a href="/privacy.html"><i class="fas fa-shield-halved"></i> Privacy</a></li>
+                  <li><a href="/terms.html"><i class="fas fa-file-contract"></i> Terms</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <p class="panel-desc">Every submission follows this workflow. You can prepare changes in drafts, submit them for review, and revise returned content before it is published.</p>
-          <div class="lifecycle-grid">
-            <div class="lifecycle-step">
-              <div class="step-num">01</div>
-              <h4>Draft</h4>
-              <p>Prepare changes and check the details before submitting.</p>
-            </div>
-            <div class="lifecycle-step">
-              <div class="step-num">02</div>
-              <h4>Submitted</h4>
-              <p>The system records the submission and sends it to the review queue.</p>
-            </div>
-            <div class="lifecycle-step">
-              <div class="step-num">03</div>
-              <h4>Under review</h4>
-              <p>The platform owner checks accuracy, completeness and supporting evidence.</p>
-            </div>
-            <div class="lifecycle-step">
-              <div class="step-num">04</div>
-              <h4>Approved or changes requested</h4>
-              <p>Reviewers approve the content or return it with feedback.</p>
-            </div>
-            <div class="lifecycle-step">
-              <div class="step-num">05</div>
-              <h4>Published</h4>
-              <p>Approved content becomes visible on the public school profile when published.</p>
-            </div>
+          <div class="footer-bottom">
+            <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
           </div>
-        </div>
-
-        <div class="feedback-panel">
-          <i class="fas fa-comment-dots"></i>
-          <div class="fb-text">
-            <h4>Reviewer feedback</h4>
-            <p>Reviewer comments appear alongside each returned or decided submission. Use the notes to revise the record on its respective page (Courses, Fees, Admissions or Academic Calendar), then re-submit for review.</p>
-          </div>
-        </div>
-
-        <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
-        </p>
+        </footer>
 
       </main>
     </div>
@@ -812,45 +812,43 @@
         document.getElementById('topName').textContent = name;
       }
 
+      /**
+       * renderSchool
+       * ------------
+       * - 'ok'         → hide the scope banner entirely; sidebar shows school name.
+       * - 'unassigned' → show yellow scope banner with guidance.
+       * - 'orphaned'   → show red scope banner with reference id.
+       */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
+        const banner = document.getElementById('scopeBanner');
+        const bannerTitle = document.getElementById('scopeBannerTitle');
+        const bannerDesc = document.getElementById('scopeBannerDesc');
         const pill = document.getElementById('scopeSchoolPill');
-        const scopeBanner = document.getElementById('scopeBanner');
-        const footnote = document.getElementById('footnoteInstName');
 
-        scopeBanner.classList.remove('unassigned', 'orphaned');
+        banner.classList.remove('visible', 'unassigned', 'orphaned');
 
         if (schoolState === 'unassigned') {
-          sidebarName.textContent = 'No institution assigned';
+          banner.classList.add('visible', 'unassigned');
+          bannerTitle.textContent = 'No institution assigned';
+          bannerDesc.textContent = 'Contact the platform administrator to be assigned to your institution.';
           pill.textContent = 'Unassigned';
-          scopeBanner.classList.add('unassigned');
-          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
-          scopeBanner.querySelector('.scope-text span').textContent =
-            'Contact the platform administrator to be assigned to your institution.';
-          footnote.textContent = 'Unassigned';
+          sidebarName.textContent = 'No institution assigned';
           return;
         }
 
         if (schoolState === 'orphaned') {
           const ref = (currentUser && currentUser.school_id) || '—';
-          sidebarName.textContent = 'School reference invalid';
+          banner.classList.add('visible', 'orphaned');
+          bannerTitle.textContent = 'Assigned school could not be found';
+          bannerDesc.textContent = 'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
           pill.textContent = 'Orphaned reference';
-          scopeBanner.classList.add('orphaned');
-          scopeBanner.querySelector('.scope-text strong').textContent = 'Assigned school could not be found';
-          scopeBanner.querySelector('.scope-text span').textContent =
-            'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
-          footnote.textContent = 'Orphaned reference';
+          sidebarName.textContent = 'School reference invalid';
           return;
         }
 
-        // schoolState === 'ok'
+        // schoolState === 'ok' — no banner, just plain branding
         sidebarName.textContent = currentSchool.name || '—';
-
-        pill.textContent = currentSchool.name;
-        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
-        scopeBanner.querySelector('.scope-text span').textContent =
-          'Representatives see only submissions belonging to their assigned institution.';
-        footnote.textContent = currentSchool.name;
       }
 
       /* STATS */
@@ -1090,17 +1088,6 @@
         }
       }
 
-      /**
-       * loadSchool
-       * ----------
-       * Mirrors the dashboard version:
-       *   1. No school_id → 'unassigned'
-       *   2. Try /api/schools/:id directly.
-       *      - Success → 'ok'
-       *      - 404 → 'orphaned'
-       *   3. If direct fetch failed but /auth/me enriched fields exist → 'ok' (partial)
-       *   4. Fallback → 'orphaned'
-       */
       async function loadSchool() {
         currentSchool = null;
         schoolState = 'unassigned';
@@ -1166,6 +1153,12 @@
       overlay.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      // Set footer year dynamically
+      (function setFooterYear() {
+        const y = document.getElementById('footerYear');
+        if (y) y.textContent = String(new Date().getFullYear());
+      })();
 
       /* INIT */
       (async function boot() {
