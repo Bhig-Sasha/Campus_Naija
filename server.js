@@ -1463,7 +1463,7 @@ router.post('/admin/submissions/:type/:id/decision', authenticate, requireRole('
       m.id, row.school_id,
       decision === 'approved' ? 'Submission approved' : 'Changes requested',
       `${type}: ${row.name || row.title || '#' + id}${comment ? ' — ' + comment : ''}`,
-      '/SchoolsAd/submissions.html'
+      '/SchoolAd/submissions.html'
     );
   }
   res.json({ ok: true, new_status: newStatus });
@@ -1575,12 +1575,12 @@ app.get(
   }
 );
 
-app.get(['/SchoolsAd', '/SchoolsAd/'], (req, res, next) => {
+app.get(['/SchoolAd', '/SchoolAd/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
 });
 
 app.get(
-  ['/SchoolsAd/login', '/SchoolsAd/login.html',
+  ['/SchoolAd/login', '/SchoolAd/login.html',
    '/SchoolAd/Login', '/SchoolAd/Login.html'],
   (req, res, next) => {
     res.sendFile(path.join(PUBLIC_DIR, 'SchoolAd', 'login.html'), (err) => { if (err) next(); });
