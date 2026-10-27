@@ -32,7 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    /* Loading gate */
     #loading-gate {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
@@ -48,7 +47,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Skeleton shimmer */
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -200,7 +198,6 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
@@ -220,7 +217,6 @@
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
     .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
-    /* Toolbar */
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -274,7 +270,6 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Record list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -326,7 +321,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -415,7 +409,6 @@
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -433,7 +426,6 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Footer */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -473,11 +465,7 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
-      .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
+      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -590,8 +578,8 @@
               <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-label">Unverified <i class="fas fa-clock gold"></i></div>
+              <div class="stat-mini-value" id="statUnverified"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
@@ -604,16 +592,10 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="recordSearch" placeholder="Search examination records..." oninput="filterRecords()">
               </div>
-              <select id="bodyFilter" onchange="filterRecords()">
-                <option value="">All exam bodies</option>
-              </select>
-              <select id="sessionFilter" onchange="filterRecords()">
-                <option value="">All sessions</option>
-              </select>
               <select id="statusFilter" onchange="filterRecords()">
                 <option value="">All statuses</option>
                 <option value="draft">Draft</option>
-                <option value="pending">Review</option>
+                <option value="unverified">Unverified</option>
                 <option value="verified">Verified</option>
                 <option value="published">Published</option>
                 <option value="archived">Archived</option>
@@ -633,27 +615,6 @@
                 <div class="skeleton skeleton-text w60"></div>
                 <div class="skeleton skeleton-text w40"></div>
               </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div class="skeleton skeleton-pill"></div>
             </div>
@@ -714,12 +675,18 @@
                 <input type="url" id="recordWebsite" placeholder="https://official-exam-portal.example">
               </div>
               <div class="form-group full">
-                <label>Description / overview</label>
-                <textarea id="recordDescription" placeholder="Brief overview of this examination and what candidates should know..."></textarea>
+                <label>Body / overview <span class="req">*</span></label>
+                <textarea id="recordBodyText" placeholder="Overview of this examination and what candidates should know..."></textarea>
+                <span class="form-hint">This is the main descriptive text shown on the public exams page.</span>
               </div>
               <div class="form-group full">
-                <label>Source / verification URL <span class="optional">(required before verification)</span></label>
+                <label>Description <span class="optional">(optional)</span></label>
+                <textarea id="recordDescription" placeholder="Additional context..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Source / verification URL</label>
                 <input type="url" id="recordSourceUrl" placeholder="Paste the official announcement or verification link">
+                <span class="form-hint">Required before marking as verified.</span>
               </div>
             </div>
           </div>
@@ -730,19 +697,19 @@
             </div>
             <div class="form-grid">
               <div class="form-group full">
-                <label>Eligibility</label>
+                <label>Eligibility <span class="optional">(optional)</span></label>
                 <textarea id="recordEligibility" placeholder="Who can register for this examination?"></textarea>
               </div>
               <div class="form-group full">
-                <label>Registration instructions</label>
+                <label>Registration instructions <span class="optional">(optional)</span></label>
                 <textarea id="recordInstructions" placeholder="Step-by-step registration guidance and official link..."></textarea>
               </div>
               <div class="form-group">
-                <label>Registration opens</label>
+                <label>Registration opens <span class="optional">(optional)</span></label>
                 <input type="date" id="recordOpenDate">
               </div>
               <div class="form-group">
-                <label>Registration closes</label>
+                <label>Registration closes <span class="optional">(optional)</span></label>
                 <input type="date" id="recordCloseDate">
               </div>
             </div>
@@ -754,19 +721,19 @@
             </div>
             <div class="form-grid">
               <div class="form-group full">
-                <label>Timetable information</label>
+                <label>Timetable information <span class="optional">(optional)</span></label>
                 <textarea id="recordTimetableInfo" placeholder="Official timetable details..."></textarea>
               </div>
               <div class="form-group full">
-                <label>Timetable URL</label>
+                <label>Timetable URL <span class="optional">(optional)</span></label>
                 <input type="url" id="recordTimetableUrl" placeholder="https://official-portal.example/timetable.pdf">
               </div>
               <div class="form-group full">
-                <label>Preparation resources</label>
+                <label>Preparation resources <span class="optional">(optional)</span></label>
                 <textarea id="recordResources" placeholder="Syllabus topics, subjects, and preparation materials..."></textarea>
               </div>
               <div class="form-group full">
-                <label>Resource links</label>
+                <label>Resource links <span class="optional">(optional)</span></label>
                 <textarea id="recordResourceLinks" placeholder="Official syllabus and resource links..."></textarea>
               </div>
             </div>
@@ -774,31 +741,37 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved"></i> Publication status</div>
+              <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification &amp; publication</div>
             </div>
             <div class="verify-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Verification and publication are separate states.</strong> A record must be verified before it can be published.</p>
+              <p><strong>Verification and publication are separate steps.</strong> A record must be saved with a valid source URL, then marked verified, before it can be published.</p>
             </div>
             <div class="status-cards">
               <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
                 <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
                 <div class="sc-desc">Stored privately. Not visible to the public.</div>
               </div>
-              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
-                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
-                <div class="sc-desc">Waiting for source verification by a reviewer.</div>
+              <div class="status-card" data-status="unverified" onclick="selectStatus('unverified', this)">
+                <div class="sc-top"><i class="fas fa-circle-question"></i><span class="sc-title">Unverified</span></div>
+                <div class="sc-desc">Saved with details but no verification yet.</div>
               </div>
               <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
                 <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
-                <div class="sc-desc">Confirmed against official sources. Ready to publish.</div>
+                <div class="sc-desc">Confirmed against official sources. Can be published.</div>
               </div>
             </div>
 
             <div class="form-actions">
-              <button class="btn-primary" id="saveDraftBtn" onclick="saveRecord('draft')"><i class="fas fa-save"></i> Save Draft</button>
-              <button class="btn-gold" id="verifyBtn" onclick="saveRecord('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
-              <button class="btn-outline" id="publishBtn" onclick="publishRecord()"><i class="fas fa-bullhorn"></i> Publish record</button>
+              <button class="btn-primary" id="saveBtn" onclick="saveRecord()">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button class="btn-gold" id="verifyBtn" onclick="verifyRecord()">
+                <i class="fas fa-circle-check"></i> Mark as verified
+              </button>
+              <button class="btn-outline" id="publishBtn" onclick="publishRecord()">
+                <i class="fas fa-bullhorn"></i> Publish
+              </button>
             </div>
           </div>
 
@@ -909,12 +882,17 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
+      // Priority: status → verification.
+      // Matches server semantics: `status` is the row lifecycle
+      // (draft / pending / published / archived), `verification` is
+      // the editorial flag (unverified / verified).
       function statusPill(status, verification) {
         if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
         if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
-        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
+        if (status === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
         if (verification === 'verified') return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        if (status === 'draft') return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Unverified</span>`;
       }
 
       /* AUTH */
@@ -958,7 +936,6 @@
         try {
           const res = await api('/api/exams');
           records = Array.isArray(res.exams) ? res.exams : [];
-          populateFilters();
           renderStats();
           renderDirectory();
         } catch (e) {
@@ -968,47 +945,30 @@
         }
       }
 
-      function populateFilters() {
-        const bodies = [...new Set(records.map(r => r.body).filter(Boolean))].sort();
-        const sessions = [...new Set(records.map(r => r.session).filter(Boolean))].sort().reverse();
-
-        const bodySel = document.getElementById('bodyFilter');
-        bodySel.innerHTML = '<option value="">All exam bodies</option>' +
-          bodies.map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join('');
-
-        const sessionSel = document.getElementById('sessionFilter');
-        sessionSel.innerHTML = '<option value="">All sessions</option>' +
-          sessions.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
-      }
-
       function renderStats() {
         const set = (id, val) => { document.getElementById(id).textContent = val; };
         set('statTotal', records.length);
         set('statPublished', records.filter(r => r.status === 'published').length);
         set('statDraft', records.filter(r => r.status === 'draft').length);
-        set('statPending', records.filter(r => r.verification === 'pending').length);
+        set('statUnverified', records.filter(r => r.verification !== 'verified' && r.status !== 'published').length);
       }
 
       function renderDirectory() {
         const list = document.getElementById('recordList');
         const query = (document.getElementById('recordSearch').value || '').toLowerCase().trim();
-        const body = document.getElementById('bodyFilter').value;
-        const session = document.getElementById('sessionFilter').value;
         const status = document.getElementById('statusFilter').value;
 
         const filtered = records.filter(r => {
           const title = (r.title || '').toLowerCase();
           const bodyVal = (r.body || '').toLowerCase();
           const matchQ = !query || title.includes(query) || bodyVal.includes(query);
-          const matchB = !body || r.body === body;
-          const matchS = !session || r.session === session;
-          const matchStatus = !status ||
-            (status === 'draft' && r.status === 'draft' && r.verification !== 'pending') ||
-            (status === 'pending' && r.verification === 'pending') ||
-            (status === 'verified' && r.verification === 'verified' && r.status !== 'published') ||
-            (status === 'published' && r.status === 'published') ||
-            (status === 'archived' && r.status === 'archived');
-          return matchQ && matchB && matchS && matchStatus;
+          let matchStatus = true;
+          if (status === 'draft') matchStatus = r.status === 'draft';
+          else if (status === 'unverified') matchStatus = r.verification !== 'verified' && r.status !== 'published';
+          else if (status === 'verified') matchStatus = r.verification === 'verified' && r.status !== 'published';
+          else if (status === 'published') matchStatus = r.status === 'published';
+          else if (status === 'archived') matchStatus = r.status === 'archived';
+          return matchQ && matchStatus;
         });
 
         document.getElementById('recordCount').textContent =
@@ -1025,7 +985,7 @@
         }
 
         list.innerHTML = filtered.map(r => {
-          const isGold = r.status === 'published' || r.verification === 'pending';
+          const isGold = r.status === 'published' || r.verification !== 'verified';
           const iconClass = r.body === 'WAEC' ? 'fa-file-lines' :
                             r.body === 'NECO' ? 'fa-clipboard-list' :
                             r.body === 'NABTEB' ? 'fa-gears' : 'fa-pen-to-square';
@@ -1038,11 +998,7 @@
                 <div class="record-title-row">
                   <span class="record-title">${esc(r.title || 'Untitled')}</span>
                 </div>
-                <div class="record-sub">${esc(r.body || '—')} · ${esc(r.type || '—')}</div>
-              </div>
-              <div class="record-meta-cell">
-                <div class="meta-label-sm">Session</div>
-                <div class="meta-value-sm">${esc(r.session || '—')}</div>
+                <div class="record-sub">${esc(r.body || '—')} · ${esc(r.type || '—')} · ${esc(r.session || '—')}</div>
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Closes</div>
@@ -1066,32 +1022,40 @@
       /* EDITOR */
       function openEditor(id) {
         currentRecordId = id || null;
-        const r = id ? records.find(x => x.id === id) : null;
+        const r = id ? records.find(x => String(x.id) === String(id)) : null;
+        const isEdit = !!r;
 
-        document.getElementById('editorTitle').textContent = r ? 'Edit examination record' : 'New examination record';
+        document.getElementById('editorTitle').textContent = isEdit ? 'Edit examination record' : 'New examination record';
 
-        document.getElementById('recordTitle').value = r ? (r.title || '') : '';
-        document.getElementById('recordBody').value = r ? (r.body || '') : '';
-        document.getElementById('recordType').value = r ? (r.type || '') : '';
-        document.getElementById('recordSession').value = r ? (r.session || '') : '';
-        document.getElementById('recordWebsite').value = r ? (r.website || '') : '';
-        document.getElementById('recordSourceUrl').value = r ? (r.source_url || '') : '';
-        document.getElementById('recordDescription').value = r ? (r.description || '') : '';
-        document.getElementById('recordEligibility').value = r ? (r.eligibility || '') : '';
-        document.getElementById('recordInstructions').value = r ? (r.instructions || '') : '';
-        document.getElementById('recordOpenDate').value = r && r.open_date ? r.open_date.slice(0, 10) : '';
-        document.getElementById('recordCloseDate').value = r && r.close_date ? r.close_date.slice(0, 10) : '';
-        document.getElementById('recordTimetableInfo').value = r ? (r.timetable_info || '') : '';
-        document.getElementById('recordTimetableUrl').value = r ? (r.timetable_url || '') : '';
-        document.getElementById('recordResources').value = r ? (r.resources || '') : '';
-        document.getElementById('recordResourceLinks').value = r ? (r.resource_links || '') : '';
+        document.getElementById('recordTitle').value = isEdit ? (r.title || '') : '';
+        document.getElementById('recordBody').value = isEdit ? (r.body || '') : '';
+        document.getElementById('recordType').value = isEdit ? (r.type || '') : '';
+        document.getElementById('recordSession').value = isEdit ? (r.session || '') : '';
+        document.getElementById('recordWebsite').value = isEdit ? (r.website || '') : '';
+        document.getElementById('recordSourceUrl').value = isEdit ? (r.source_url || '') : '';
+        document.getElementById('recordBodyText').value = isEdit ? (r.body_text || '') : '';
+        document.getElementById('recordDescription').value = isEdit ? (r.description || '') : '';
+        document.getElementById('recordEligibility').value = isEdit ? (r.eligibility || '') : '';
+        document.getElementById('recordInstructions').value = isEdit ? (r.instructions || '') : '';
+        document.getElementById('recordOpenDate').value = isEdit && r.open_date ? String(r.open_date).slice(0, 10) : '';
+        document.getElementById('recordCloseDate').value = isEdit && r.close_date ? String(r.close_date).slice(0, 10) : '';
+        document.getElementById('recordTimetableInfo').value = isEdit ? (r.timetable_info || '') : '';
+        document.getElementById('recordTimetableUrl').value = isEdit ? (r.timetable_url || '') : '';
+        document.getElementById('recordResources').value = isEdit ? (r.resources || '') : '';
+        document.getElementById('recordResourceLinks').value = isEdit ? (r.resource_links || '') : '';
 
-        selectedStatus = r ? (r.verification === 'verified' ? 'verified' : r.verification === 'pending' ? 'pending' : 'draft') : 'draft';
+        selectedStatus = isEdit ? (r.verification === 'verified' ? 'verified' : 'unverified') : 'unverified';
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
         if (sc) sc.classList.add('selected');
 
-        document.getElementById('deleteBtn').style.display = r ? '' : 'none';
+        document.getElementById('deleteBtn').style.display = isEdit ? '' : 'none';
+        document.getElementById('verifyBtn').style.display =
+          (isEdit && r.verification === 'verified') ? 'none' : '';
+        document.getElementById('publishBtn').style.display =
+          (isEdit && r.status === 'published') ? 'none' : '';
+        document.getElementById('verifyBtn').disabled = !isEdit;
+        document.getElementById('publishBtn').disabled = !isEdit;
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1106,48 +1070,41 @@
       }
 
       function selectStatus(status, el) {
+        if (el.classList.contains('disabled')) return;
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
       }
 
-      async function saveRecord(mode) {
+      function collectForm() {
         const title = document.getElementById('recordTitle').value.trim();
         const body = document.getElementById('recordBody').value;
         const type = document.getElementById('recordType').value;
         const session = document.getElementById('recordSession').value.trim();
         const website = document.getElementById('recordWebsite').value.trim();
+        const bodyText = document.getElementById('recordBodyText').value.trim();
         const sourceUrl = document.getElementById('recordSourceUrl').value.trim();
         const openDate = document.getElementById('recordOpenDate').value;
         const closeDate = document.getElementById('recordCloseDate').value;
 
-        if (!title) { toast('Please enter a title.', true); return; }
-        if (!body) { toast('Please select an examination body.', true); return; }
-        if (!type) { toast('Please select a record type.', true); return; }
-        if (!session) { toast('Please enter a session.', true); return; }
-        if (!website) { toast('Please enter the official website URL.', true); return; }
-        try { new URL(website); } catch (e) { toast('Please enter a valid website URL (with https://).', true); return; }
+        if (!title) { toast('Please enter a title.', true); return null; }
+        if (!body) { toast('Please select an examination body.', true); return null; }
+        if (!type) { toast('Please select a record type.', true); return null; }
+        if (!session) { toast('Please enter a session.', true); return null; }
+        if (!website) { toast('Please enter the official website URL.', true); return null; }
+        try { new URL(website); } catch (e) { toast('Please enter a valid website URL (with https://).', true); return null; }
+        if (!bodyText) { toast('Please enter the body / overview.', true); return null; }
         if (sourceUrl) {
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return null; }
         }
         if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
           toast('Close date cannot be before open date.', true);
-          return;
+          return null;
         }
 
-        let verification = 'unverified';
-        if (mode === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'pending') {
-          verification = 'pending';
-        }
-
-        const reqBody = {
+        return {
           title, body, type, session, website,
+          body: bodyText,
           source_url: sourceUrl || null,
           description: document.getElementById('recordDescription').value.trim() || null,
           eligibility: document.getElementById('recordEligibility').value.trim() || null,
@@ -1159,8 +1116,13 @@
           resources: document.getElementById('recordResources').value.trim() || null,
           resource_links: document.getElementById('recordResourceLinks').value.trim() || null,
         };
+      }
 
-        const btn = document.getElementById('saveDraftBtn');
+      async function saveRecord() {
+        const reqBody = collectForm();
+        if (!reqBody) return;
+
+        const btn = document.getElementById('saveBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
@@ -1169,35 +1131,53 @@
             await api('/api/exams/' + encodeURIComponent(currentRecordId), {
               method: 'PATCH', body: JSON.stringify(reqBody)
             });
-            if (verification === 'verified') {
-              await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Record updated.');
+            openEditor(currentRecordId);
           } else {
             const created = await api('/api/exams', {
               method: 'POST', body: JSON.stringify(reqBody)
             });
             currentRecordId = created.exam.id;
-            if (verification === 'verified') {
-              await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Record saved as draft.');
+            openEditor(currentRecordId);
           }
-          await loadAll();
-          toast('Record saved.');
-          showDirectory();
         } catch (e) {
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+          btn.innerHTML = '<i class="fas fa-save"></i> Save';
+        }
+      }
+
+      async function verifyRecord() {
+        if (!currentRecordId) { toast('Save the record first.', true); return; }
+        const r = records.find(x => String(x.id) === String(currentRecordId));
+        if (!r) return;
+        if (!r.source_url) { toast('A source URL is required before verification.', true); return; }
+        if (r.verification === 'verified') { toast('Already verified.', true); return; }
+
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+
+        try {
+          await api('/api/exams/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
+          await loadAll();
+          toast('Record marked as verified.');
+          openEditor(currentRecordId);
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-circle-check"></i> Mark as verified';
         }
       }
 
       async function publishRecord() {
-        if (!currentRecordId) {
-          toast('Save the record first before publishing.', true);
-          return;
-        }
-        const r = records.find(x => x.id === currentRecordId);
+        if (!currentRecordId) { toast('Save the record first before publishing.', true); return; }
+        const r = records.find(x => String(x.id) === String(currentRecordId));
         if (!r) return;
         if (r.verification !== 'verified') {
           toast('Record must be verified before it can be published.', true);
@@ -1218,7 +1198,7 @@
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish record';
+          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish';
         }
       }
 
@@ -1286,6 +1266,7 @@
       window.showDirectory = showDirectory;
       window.selectStatus = selectStatus;
       window.saveRecord = saveRecord;
+      window.verifyRecord = verifyRecord;
       window.publishRecord = publishRecord;
       window.deleteRecord = deleteRecord;
     })();

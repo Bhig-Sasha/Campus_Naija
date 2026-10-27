@@ -32,7 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    /* Loading gate */
     #loading-gate {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
@@ -48,7 +47,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Skeleton shimmer */
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -200,7 +198,6 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
@@ -219,7 +216,6 @@
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
 
-    /* Toolbar */
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -273,7 +269,6 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Record list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -314,7 +309,6 @@
     .status-pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .status-verified { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .status-archived { background-color: rgba(224,112,112,0.12); color: var(--danger); }
-    .status-expired { background-color: rgba(224,112,112,0.12); color: var(--danger); }
     .record-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
 
     .empty-state {
@@ -326,7 +320,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -415,7 +408,6 @@
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -433,7 +425,6 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Footer */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -473,11 +464,7 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
-      .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
+      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -579,19 +566,19 @@
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">Total records <i class="fas fa-list"></i></div>
-              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
-              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-label">Unverified <i class="fas fa-clock gold"></i></div>
+              <div class="stat-mini-value" id="statUnverified"><span class="skeleton"></span></div>
             </div>
           </div>
 
@@ -613,10 +600,9 @@
               <select id="statusFilter" onchange="filterRecords()">
                 <option value="">All statuses</option>
                 <option value="draft">Draft</option>
-                <option value="pending">Review</option>
+                <option value="unverified">Unverified</option>
                 <option value="verified">Verified</option>
                 <option value="published">Published</option>
-                <option value="expired">Expired</option>
                 <option value="archived">Archived</option>
               </select>
             </div>
@@ -634,27 +620,6 @@
                 <div class="skeleton skeleton-text w60"></div>
                 <div class="skeleton skeleton-text w40"></div>
               </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div style="min-width:110px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div class="skeleton skeleton-pill"></div>
             </div>
@@ -831,35 +796,37 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved"></i> Publication status</div>
+              <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification &amp; publication</div>
             </div>
             <div class="verify-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Verification and publication are separate states.</strong> A scholarship must be verified before it can be published.</p>
+              <p><strong>Verification and publication are separate steps.</strong> A scholarship must be saved with a valid source URL, then marked verified, before it can be published.</p>
             </div>
             <div class="status-cards">
               <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
                 <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
                 <div class="sc-desc">Stored privately. Not visible to the public.</div>
               </div>
-              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
-                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
-                <div class="sc-desc">Waiting for source verification.</div>
+              <div class="status-card" data-status="unverified" onclick="selectStatus('unverified', this)">
+                <div class="sc-top"><i class="fas fa-circle-question"></i><span class="sc-title">Unverified</span></div>
+                <div class="sc-desc">Saved with details but no verification yet.</div>
               </div>
               <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
                 <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
-                <div class="sc-desc">Confirmed. Ready to publish.</div>
-              </div>
-              <div class="status-card" data-status="expired" onclick="selectStatus('expired', this)">
-                <div class="sc-top"><i class="fas fa-calendar-xmark"></i><span class="sc-title">Expired</span></div>
-                <div class="sc-desc">Deadline passed. Remains visible as closed.</div>
+                <div class="sc-desc">Confirmed against official sources. Can be published.</div>
               </div>
             </div>
 
             <div class="form-actions">
-              <button class="btn-primary" id="saveDraftBtn" onclick="saveRecord('draft')"><i class="fas fa-save"></i> Save Draft</button>
-              <button class="btn-gold" id="verifyBtn" onclick="saveRecord('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
-              <button class="btn-outline" id="publishBtn" onclick="publishRecord()"><i class="fas fa-bullhorn"></i> Publish</button>
+              <button class="btn-primary" id="saveBtn" onclick="saveRecord()">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button class="btn-gold" id="verifyBtn" onclick="verifyRecord()">
+                <i class="fas fa-circle-check"></i> Mark as verified
+              </button>
+              <button class="btn-outline" id="publishBtn" onclick="publishRecord()">
+                <i class="fas fa-bullhorn"></i> Publish
+              </button>
             </div>
           </div>
 
@@ -972,11 +939,11 @@
 
       function statusPill(status, verification) {
         if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
-        if (status === 'expired') return `<span class="status-pill status-expired"><i class="fas fa-calendar-xmark"></i> Expired</span>`;
-        if (status === 'archived') return `<span class="status-pill status-archived"></span>`;
-        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
+        if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
+        if (status === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
         if (verification === 'verified') return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        if (status === 'draft') return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Unverified</span>`;
       }
 
       /* AUTH */
@@ -1048,7 +1015,7 @@
         set('statTotal', records.length);
         set('statPublished', records.filter(r => r.status === 'published').length);
         set('statDraft', records.filter(r => r.status === 'draft').length);
-        set('statPending', records.filter(r => r.verification === 'pending').length);
+        set('statUnverified', records.filter(r => r.verification !== 'verified' && r.status !== 'published').length);
       }
 
       function renderDirectory() {
@@ -1064,13 +1031,12 @@
           const matchQ = !query || title.includes(query) || sponsor.includes(query);
           const matchCat = !category || r.category === category;
           const matchLvl = !level || r.level === level;
-          const matchStatus = !status ||
-            (status === 'draft' && r.status === 'draft' && r.verification !== 'pending') ||
-            (status === 'pending' && r.verification === 'pending') ||
-            (status === 'verified' && r.verification === 'verified' && r.status !== 'published') ||
-            (status === 'published' && r.status === 'published') ||
-            (status === 'expired' && r.status === 'expired') ||
-            (status === 'archived' && r.status === 'archived');
+          let matchStatus = true;
+          if (status === 'draft') matchStatus = r.status === 'draft';
+          else if (status === 'unverified') matchStatus = r.verification !== 'verified' && r.status !== 'published';
+          else if (status === 'verified') matchStatus = r.verification === 'verified' && r.status !== 'published';
+          else if (status === 'published') matchStatus = r.status === 'published';
+          else if (status === 'archived') matchStatus = r.status === 'archived';
           return matchQ && matchCat && matchLvl && matchStatus;
         });
 
@@ -1088,7 +1054,7 @@
         }
 
         list.innerHTML = filtered.map(r => {
-          const isGold = r.status === 'published' || r.verification === 'pending';
+          const isGold = r.status === 'published' || r.verification !== 'verified';
           const iconClass = r.category === 'Research' ? 'fa-flask' :
                             r.category === 'Bursary' ? 'fa-hand-holding-dollar' :
                             r.category === 'International' ? 'fa-earth-africa' : 'fa-graduation-cap';
@@ -1133,39 +1099,50 @@
       /* EDITOR */
       function openEditor(id) {
         currentRecordId = id || null;
-        const r = id ? records.find(x => x.id === id) : null;
+        const r = id ? records.find(x => String(x.id) === String(id)) : null;
+        const isEdit = !!r;
 
-        document.getElementById('editorTitle').textContent = r ? 'Edit scholarship' : 'New scholarship';
+        document.getElementById('editorTitle').textContent = isEdit ? 'Edit scholarship' : 'New scholarship';
 
-        document.getElementById('recordTitle').value = r ? (r.title || '') : '';
-        document.getElementById('recordSponsor').value = r ? (r.sponsor || '') : '';
-        document.getElementById('recordSponsorType').value = r ? (r.sponsor_type || '') : '';
-        document.getElementById('recordCategory').value = r ? (r.category || '') : '';
-        document.getElementById('recordLevel').value = r ? (r.level || '') : '';
-        document.getElementById('recordLocation').value = r ? (r.location || '') : '';
-        document.getElementById('recordCloseDate').value = r && r.close_date ? r.close_date.slice(0, 10) : '';
-        document.getElementById('recordEligibility').value = r ? (r.eligibility || '') : '';
-        document.getElementById('recordApplyUrl').value = r ? (r.apply_url || '') : '';
-        document.getElementById('recordSourceUrl').value = r ? (r.source_url || '') : '';
-        document.getElementById('recordCoverage').value = r ? (r.coverage || '') : '';
-        document.getElementById('recordAmount').value = r ? (r.amount || '') : '';
-        document.getElementById('recordCurrency').value = r ? (r.currency || '') : '';
-        document.getElementById('recordCovered').value = r ? (r.covered || '') : '';
-        document.getElementById('recordNotCovered').value = r ? (r.not_covered || '') : '';
-        document.getElementById('recordNationality').value = r ? (r.nationality || '') : '';
-        document.getElementById('recordAcademic').value = r ? (r.academic || '') : '';
-        document.getElementById('recordDocuments').value = r ? (r.documents || '') : '';
-        document.getElementById('recordSteps').value = r ? (r.steps || '') : '';
-        document.getElementById('recordContact').value = r ? (r.contact || '') : '';
-        document.getElementById('recordOpenDate').value = r && r.open_date ? r.open_date.slice(0, 10) : '';
-        document.getElementById('recordExtension').value = r ? (r.extension || '') : '';
+        document.getElementById('recordTitle').value = isEdit ? (r.title || '') : '';
+        document.getElementById('recordSponsor').value = isEdit ? (r.sponsor || '') : '';
+        document.getElementById('recordSponsorType').value = isEdit ? (r.sponsor_type || '') : '';
+        document.getElementById('recordCategory').value = isEdit ? (r.category || '') : '';
+        document.getElementById('recordLevel').value = isEdit ? (r.level || '') : '';
+        document.getElementById('recordLocation').value = isEdit ? (r.location || '') : '';
+        document.getElementById('recordCloseDate').value = isEdit && r.close_date ? String(r.close_date).slice(0, 10) : '';
+        document.getElementById('recordEligibility').value = isEdit ? (r.eligibility || '') : '';
+        document.getElementById('recordApplyUrl').value = isEdit ? (r.apply_url || '') : '';
+        document.getElementById('recordSourceUrl').value = isEdit ? (r.source_url || '') : '';
+        document.getElementById('recordCoverage').value = isEdit ? (r.coverage || '') : '';
+        document.getElementById('recordAmount').value = isEdit ? (r.amount || '') : '';
+        document.getElementById('recordCurrency').value = isEdit ? (r.currency || '') : '';
+        document.getElementById('recordCovered').value = isEdit ? (r.covered || '') : '';
+        document.getElementById('recordNotCovered').value = isEdit ? (r.not_covered || '') : '';
+        document.getElementById('recordNationality').value = isEdit ? (r.nationality || '') : '';
+        document.getElementById('recordAcademic').value = isEdit ? (r.academic || '') : '';
+        document.getElementById('recordDocuments').value = isEdit ? (r.documents || '') : '';
+        document.getElementById('recordSteps').value = isEdit ? (r.steps || '') : '';
+        document.getElementById('recordContact').value = isEdit ? (r.contact || '') : '';
+        document.getElementById('recordOpenDate').value = isEdit && r.open_date ? String(r.open_date).slice(0, 10) : '';
+        document.getElementById('recordExtension').value = isEdit ? (r.extension || '') : '';
 
-        selectedStatus = r ? (r.verification === 'verified' ? 'verified' : r.verification === 'pending' ? 'pending' : 'draft') : 'draft';
+        if (isEdit) {
+          selectedStatus = r.verification === 'verified' ? 'verified' : 'unverified';
+        } else {
+          selectedStatus = 'unverified';
+        }
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
         if (sc) sc.classList.add('selected');
 
-        document.getElementById('deleteBtn').style.display = r ? '' : 'none';
+        document.getElementById('deleteBtn').style.display = isEdit ? '' : 'none';
+        document.getElementById('verifyBtn').style.display =
+          (isEdit && r.verification === 'verified') ? 'none' : '';
+        document.getElementById('publishBtn').style.display =
+          (isEdit && r.status === 'published') ? 'none' : '';
+        document.getElementById('verifyBtn').disabled = !isEdit;
+        document.getElementById('publishBtn').disabled = !isEdit;
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1180,12 +1157,13 @@
       }
 
       function selectStatus(status, el) {
+        if (el.classList.contains('disabled')) return;
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
       }
 
-      async function saveRecord(mode) {
+      function collectForm() {
         const title = document.getElementById('recordTitle').value.trim();
         const sponsor = document.getElementById('recordSponsor').value.trim();
         const category = document.getElementById('recordCategory').value;
@@ -1193,28 +1171,17 @@
         const applyUrl = document.getElementById('recordApplyUrl').value.trim();
         const sourceUrl = document.getElementById('recordSourceUrl').value.trim();
 
-        if (!title) { toast('Please enter a title.', true); return; }
-        if (!sponsor) { toast('Please enter the sponsor.', true); return; }
-        if (!category) { toast('Please select a category.', true); return; }
-        if (!level) { toast('Please select a level.', true); return; }
-        if (!applyUrl) { toast('Please enter the official apply URL.', true); return; }
-        try { new URL(applyUrl); } catch (e) { toast('Please enter a valid apply URL (with https://).', true); return; }
+        if (!title) { toast('Please enter a title.', true); return null; }
+        if (!sponsor) { toast('Please enter the sponsor.', true); return null; }
+        if (!category) { toast('Please select a category.', true); return null; }
+        if (!level) { toast('Please select a level.', true); return null; }
+        if (!applyUrl) { toast('Please enter the official apply URL.', true); return null; }
+        try { new URL(applyUrl); } catch (e) { toast('Please enter a valid apply URL (with https://).', true); return null; }
         if (sourceUrl) {
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return null; }
         }
 
-        let verification = 'unverified';
-        if (mode === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'pending') {
-          verification = 'pending';
-        }
-
-        const body = {
+        return {
           title, sponsor, category, level,
           sponsor_type: document.getElementById('recordSponsorType').value || null,
           location: document.getElementById('recordLocation').value.trim() || null,
@@ -1235,8 +1202,13 @@
           apply_url: applyUrl,
           source_url: sourceUrl || null,
         };
+      }
 
-        const btn = document.getElementById('saveDraftBtn');
+      async function saveRecord() {
+        const body = collectForm();
+        if (!body) return;
+
+        const btn = document.getElementById('saveBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
@@ -1245,35 +1217,53 @@
             await api('/api/scholarships/' + encodeURIComponent(currentRecordId), {
               method: 'PATCH', body: JSON.stringify(body)
             });
-            if (verification === 'verified') {
-              await api('/api/scholarships/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Scholarship updated.');
+            openEditor(currentRecordId);
           } else {
             const created = await api('/api/scholarships', {
               method: 'POST', body: JSON.stringify(body)
             });
             currentRecordId = created.scholarship.id;
-            if (verification === 'verified') {
-              await api('/api/scholarships/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Scholarship saved as draft.');
+            openEditor(currentRecordId);
           }
-          await loadAll();
-          toast('Scholarship saved.');
-          showDirectory();
         } catch (e) {
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+          btn.innerHTML = '<i class="fas fa-save"></i> Save';
+        }
+      }
+
+      async function verifyRecord() {
+        if (!currentRecordId) { toast('Save the scholarship first.', true); return; }
+        const r = records.find(x => String(x.id) === String(currentRecordId));
+        if (!r) return;
+        if (!r.source_url) { toast('A source URL is required before verification.', true); return; }
+        if (r.verification === 'verified') { toast('Already verified.', true); return; }
+
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+
+        try {
+          await api('/api/scholarships/' + encodeURIComponent(currentRecordId) + '/verify', { method: 'POST' });
+          await loadAll();
+          toast('Scholarship marked as verified.');
+          openEditor(currentRecordId);
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-circle-check"></i> Mark as verified';
         }
       }
 
       async function publishRecord() {
-        if (!currentRecordId) {
-          toast('Save the scholarship first before publishing.', true);
-          return;
-        }
-        const r = records.find(x => x.id === currentRecordId);
+        if (!currentRecordId) { toast('Save the scholarship first before publishing.', true); return; }
+        const r = records.find(x => String(x.id) === String(currentRecordId));
         if (!r) return;
         if (r.verification !== 'verified') {
           toast('Scholarship must be verified before it can be published.', true);
@@ -1362,6 +1352,7 @@
       window.showDirectory = showDirectory;
       window.selectStatus = selectStatus;
       window.saveRecord = saveRecord;
+      window.verifyRecord = verifyRecord;
       window.publishRecord = publishRecord;
       window.deleteRecord = deleteRecord;
     })();

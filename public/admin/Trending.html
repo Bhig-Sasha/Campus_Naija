@@ -32,7 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    /* Loading gate */
     #loading-gate {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
@@ -48,7 +47,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Skeleton shimmer */
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -200,7 +198,6 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
@@ -219,7 +216,6 @@
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
 
-    /* Toolbar */
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -273,7 +269,6 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Record list */
     .record-list { display: flex; flex-direction: column; gap: 12px; }
     .record-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -326,7 +321,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -415,7 +409,6 @@
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -433,7 +426,6 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Footer */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -473,11 +465,7 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
-      .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
+      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -579,19 +567,19 @@
           <div class="stats-row">
             <div class="stat-mini">
               <div class="stat-mini-label">Total stories <i class="fas fa-newspaper"></i></div>
-              <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statTotal"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statPublished"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Drafts <i class="fas fa-file"></i></div>
-              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton"></span></div>
             </div>
             <div class="stat-mini">
               <div class="stat-mini-label">Featured <i class="fas fa-star gold"></i></div>
-              <div class="stat-mini-value" id="statFeatured"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-value" id="statFeatured"><span class="skeleton"></span></div>
             </div>
           </div>
 
@@ -635,27 +623,6 @@
                 <div class="skeleton skeleton-text w60"></div>
                 <div class="skeleton skeleton-text w40"></div>
               </div>
-              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div style="min-width:100px;"><div class="skeleton skeleton-text w40"></div><div class="skeleton skeleton-text w80"></div></div>
               <div class="skeleton skeleton-pill"></div>
             </div>
@@ -702,7 +669,7 @@
                 <input type="text" id="articleAuthor" placeholder="e.g. CampusNaija Editorial">
               </div>
               <div class="form-group full">
-                <label>Summary</label>
+                <label>Summary <span class="optional">(optional)</span></label>
                 <textarea id="articleSummary" placeholder="Brief summary for cards and search results..." style="min-height:70px;"></textarea>
               </div>
               <div class="form-group full">
@@ -715,12 +682,13 @@
                 <input type="url" id="articleSourceUrl" placeholder="https://official-source.example/article">
               </div>
               <div class="form-group">
-                <label>Source date</label>
+                <label>Source date <span class="optional">(optional)</span></label>
                 <input type="date" id="articleSourceDate">
               </div>
               <div class="form-group">
-                <label>Cover media ID <span class="optional">(optional)</span></label>
-                <input type="text" id="articleCoverId" placeholder="media_assets.id if uploaded">
+                <label>Cover media ID <span class="optional">(optional, UUID)</span></label>
+                <input type="text" id="articleCoverId" placeholder="Paste the media_assets UUID">
+                <span class="form-hint">Must be a valid UUID from your media library.</span>
               </div>
             </div>
           </div>
@@ -738,17 +706,13 @@
                 <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
                 <div class="sc-desc">Private. Not visible to the public.</div>
               </div>
-              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
-                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Under review</span></div>
-                <div class="sc-desc">Awaiting editorial review.</div>
+              <div class="status-card" data-status="unverified" onclick="selectStatus('unverified', this)">
+                <div class="sc-top"><i class="fas fa-circle-question"></i><span class="sc-title">Unverified</span></div>
+                <div class="sc-desc">Saved but not yet verified against sources.</div>
               </div>
               <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
                 <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
                 <div class="sc-desc">Confirmed against sources. Ready to publish.</div>
-              </div>
-              <div class="status-card" data-status="scheduled" onclick="selectStatus('scheduled', this)">
-                <div class="sc-top"><i class="fas fa-calendar-check"></i><span class="sc-title">Scheduled</span></div>
-                <div class="sc-desc">Publishes at a set future time.</div>
               </div>
             </div>
 
@@ -760,16 +724,24 @@
               <span class="form-hint">Featured stories appear in the homepage card row.</span>
             </div>
 
-            <div class="form-group" id="scheduleGroup" style="margin-top: 16px; display: none;">
-              <label>Schedule publication at</label>
-              <input type="datetime-local" id="articleSchedule">
+            <div class="form-actions">
+              <button class="btn-primary" id="saveBtn" onclick="saveArticle()">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button class="btn-gold" id="verifyBtn" onclick="verifyArticle()">
+                <i class="fas fa-circle-check"></i> Mark as verified
+              </button>
+              <button class="btn-outline" id="publishBtn" onclick="publishArticle()">
+                <i class="fas fa-bullhorn"></i> Publish
+              </button>
+              <button class="btn-outline" id="scheduleBtn" onclick="scheduleArticle()">
+                <i class="fas fa-calendar-check"></i> Schedule
+              </button>
             </div>
 
-            <div class="form-actions">
-              <button class="btn-primary" id="saveDraftBtn" onclick="saveArticle('draft')"><i class="fas fa-save"></i> Save Draft</button>
-              <button class="btn-gold" id="verifyBtn" onclick="saveArticle('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
-              <button class="btn-outline" id="publishBtn" onclick="publishArticle()"><i class="fas fa-bullhorn"></i> Publish</button>
-              <button class="btn-outline" id="scheduleBtn" onclick="scheduleArticle()"><i class="fas fa-calendar-check"></i> Schedule</button>
+            <div class="form-group" style="margin-top: 16px;">
+              <label>Schedule publication at <span class="optional">(used by Schedule button)</span></label>
+              <input type="datetime-local" id="articleSchedule">
             </div>
           </div>
 
@@ -816,6 +788,11 @@
       const USER_KEY  = 'campusnaija_admin_user';
       const LOGIN_URL = '/admin/login.html';
       const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+
+      // Matches the server's UUID expectation for cover_media_id.
+      // The `media_assets.id` column is `uuid`, so passing a Number here
+      // causes an insert error every time.
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
       let token = null;
       let currentUser = null;
@@ -889,12 +866,14 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      function statusPill(status, verification, featured) {
+      function statusPill(status, verification) {
         if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
         if (status === 'scheduled') return `<span class="status-pill status-scheduled"><i class="fas fa-calendar-check"></i> Scheduled</span>`;
         if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
         if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Review</span>`;
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        if (verification === 'verified') return `<span class="status-pill status-archived" style="background:rgba(0,201,130,0.12);color:var(--primary);border:1px solid rgba(0,201,130,0.3);"><i class="fas fa-circle-check"></i> Verified</span>`;
+        if (status === 'draft') return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Unverified</span>`;
       }
 
       /* AUTH */
@@ -1020,7 +999,7 @@
               </div>
               <div class="record-meta-cell">
                 <div class="meta-label-sm">Status</div>
-                ${statusPill(s.status, s.verification, s.featured)}
+                ${statusPill(s.status, s.verification)}
               </div>
               <div class="record-actions">
                 <button class="btn-outline" onclick="openEditor('${esc(s.id)}')">
@@ -1036,28 +1015,39 @@
       /* EDITOR */
       function openEditor(id) {
         currentStoryId = id || null;
-        const s = id ? stories.find(x => x.id === id) : null;
+        const s = id ? stories.find(x => String(x.id) === String(id)) : null;
+        const isEdit = !!s;
 
-        document.getElementById('editorTitle').textContent = s ? 'Edit article' : 'New article';
+        document.getElementById('editorTitle').textContent = isEdit ? 'Edit article' : 'New article';
 
-        document.getElementById('articleHeadline').value = s ? (s.title || '') : '';
-        document.getElementById('articleCategory').value = s ? (s.category || 'Education') : 'Education';
-        document.getElementById('articleAuthor').value = s ? (s.author || '') : (currentUser.name || 'CampusNaija Editorial');
-        document.getElementById('articleSummary').value = s ? (s.summary || '') : '';
-        document.getElementById('articleBody').value = s ? (s.body || '') : '';
-        document.getElementById('articleSourceUrl').value = s ? (s.source_url || '') : '';
-        document.getElementById('articleSourceDate').value = s && s.source_date ? s.source_date.slice(0, 10) : '';
-        document.getElementById('articleCoverId').value = s ? (s.cover_media_id || '') : '';
-        document.getElementById('articleFeatured').checked = s ? !!s.featured : false;
+        document.getElementById('articleHeadline').value = isEdit ? (s.title || '') : '';
+        document.getElementById('articleCategory').value = isEdit ? (s.category || 'Education') : 'Education';
+        document.getElementById('articleAuthor').value = isEdit ? (s.author || '') : (currentUser.name || 'CampusNaija Editorial');
+        document.getElementById('articleSummary').value = isEdit ? (s.summary || '') : '';
+        document.getElementById('articleBody').value = isEdit ? (s.body || '') : '';
+        document.getElementById('articleSourceUrl').value = isEdit ? (s.source_url || '') : '';
+        document.getElementById('articleSourceDate').value = isEdit && s.source_date ? String(s.source_date).slice(0, 10) : '';
+        document.getElementById('articleCoverId').value = isEdit ? (s.cover_media_id || '') : '';
+        document.getElementById('articleFeatured').checked = isEdit ? !!s.featured : false;
         document.getElementById('articleSchedule').value = '';
 
-        selectedStatus = s ? (s.verification === 'verified' ? 'verified' : s.verification === 'pending' ? 'pending' : 'draft') : 'draft';
+        if (isEdit) {
+          selectedStatus = s.verification === 'verified' ? 'verified' : 'unverified';
+        } else {
+          selectedStatus = 'unverified';
+        }
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
         if (sc) sc.classList.add('selected');
 
-        document.getElementById('deleteBtn').style.display = s ? '' : 'none';
-        updateScheduleVisibility();
+        document.getElementById('deleteBtn').style.display = isEdit ? '' : 'none';
+        document.getElementById('verifyBtn').style.display =
+          (isEdit && s.verification === 'verified') ? 'none' : '';
+        document.getElementById('publishBtn').style.display =
+          (isEdit && s.status === 'published') ? 'none' : '';
+        document.getElementById('verifyBtn').disabled = !isEdit;
+        document.getElementById('publishBtn').disabled = !isEdit;
+        document.getElementById('scheduleBtn').disabled = !isEdit;
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1072,18 +1062,13 @@
       }
 
       function selectStatus(status, el) {
+        if (el.classList.contains('disabled')) return;
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
-        updateScheduleVisibility();
       }
 
-      function updateScheduleVisibility() {
-        const group = document.getElementById('scheduleGroup');
-        group.style.display = selectedStatus === 'scheduled' ? '' : 'none';
-      }
-
-      async function saveArticle(mode) {
+      function collectForm() {
         const title = document.getElementById('articleHeadline').value.trim();
         const category = document.getElementById('articleCategory').value;
         const author = document.getElementById('articleAuthor').value.trim();
@@ -1093,72 +1078,89 @@
         const coverId = document.getElementById('articleCoverId').value.trim();
         const featured = document.getElementById('articleFeatured').checked;
 
-        if (!title) { toast('Please enter a headline.', true); return; }
-        if (!category) { toast('Please select a category.', true); return; }
-        if (!author) { toast('Please enter an author.', true); return; }
-        if (!body) { toast('Please write the article body.', true); return; }
+        if (!title) { toast('Please enter a headline.', true); return null; }
+        if (!category) { toast('Please select a category.', true); return null; }
+        if (!author) { toast('Please enter an author.', true); return null; }
+        if (!body) { toast('Please write the article body.', true); return null; }
         if (sourceUrl) {
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
+          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return null; }
+        }
+        if (coverId && !UUID_RE.test(coverId)) {
+          toast('Cover media ID must be a valid UUID (e.g. 550e8400-e29b-41d4-a716-446655440000).', true);
+          return null;
         }
 
-        let verification = 'unverified';
-        if (mode === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to verify.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'pending') {
-          verification = 'pending';
-        }
-
-        const payload = {
+        return {
           title, category, author,
           summary: document.getElementById('articleSummary').value.trim() || null,
           body,
           source_url: sourceUrl || null,
           source_date: sourceDate || null,
-          cover_media_id: coverId ? Number(coverId) : null,
+          cover_media_id: coverId || null,
           featured: !!featured,
-          verification
         };
+      }
 
-        const btn = document.getElementById('saveDraftBtn');
+      async function saveArticle() {
+        const payload = collectForm();
+        if (!payload) return;
+
+        const btn = document.getElementById('saveBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
         try {
-          let saved;
           if (currentStoryId) {
-            saved = await api('/api/trending/' + encodeURIComponent(currentStoryId), {
+            await api('/api/trending/' + encodeURIComponent(currentStoryId), {
               method: 'PATCH', body: JSON.stringify(payload)
             });
-            if (verification === 'verified' && saved.story && saved.story.verification !== 'verified') {
-              await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Article updated.');
+            openEditor(currentStoryId);
           } else {
-            saved = await api('/api/trending', {
+            const created = await api('/api/trending', {
               method: 'POST', body: JSON.stringify(payload)
             });
-            currentStoryId = saved.story.id;
-            if (verification === 'verified') {
-              await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/verify', { method: 'POST' });
-            }
+            currentStoryId = created.story.id;
+            await loadAll();
+            toast('Article saved as draft.');
+            openEditor(currentStoryId);
           }
-          await loadAll();
-          toast('Article saved.');
-          showDirectory();
         } catch (e) {
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+          btn.innerHTML = '<i class="fas fa-save"></i> Save';
+        }
+      }
+
+      async function verifyArticle() {
+        if (!currentStoryId) { toast('Save the article first.', true); return; }
+        const s = stories.find(x => String(x.id) === String(currentStoryId));
+        if (!s) return;
+        if (!s.source_url) { toast('A source URL is required before verification.', true); return; }
+        if (s.verification === 'verified') { toast('Already verified.', true); return; }
+
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+
+        try {
+          await api('/api/trending/' + encodeURIComponent(currentStoryId) + '/verify', { method: 'POST' });
+          await loadAll();
+          toast('Article marked as verified.');
+          openEditor(currentStoryId);
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-circle-check"></i> Mark as verified';
         }
       }
 
       async function publishArticle() {
-        if (!currentStoryId) { toast('Save the article first.', true); return; }
-        const s = stories.find(x => x.id === currentStoryId);
+        if (!currentStoryId) { toast('Save the article first before publishing.', true); return; }
+        const s = stories.find(x => String(x.id) === String(currentStoryId));
         if (!s) return;
         if (s.verification !== 'verified') {
           toast('Article must be verified before publishing.', true);
@@ -1184,9 +1186,13 @@
       }
 
       async function scheduleArticle() {
-        if (!currentStoryId) { toast('Save the article first.', true); return; }
+        if (!currentStoryId) { toast('Save the article first before scheduling.', true); return; }
         const schedule = document.getElementById('articleSchedule').value;
         if (!schedule) { toast('Select a publication date and time.', true); return; }
+        if (new Date(schedule).getTime() <= Date.now()) {
+          toast('Scheduled time must be in the future.', true);
+          return;
+        }
         if (!confirm('Schedule this article to publish on ' + new Date(schedule).toLocaleString('en-GB') + '?')) return;
 
         const btn = document.getElementById('scheduleBtn');
@@ -1273,6 +1279,7 @@
       window.showDirectory = showDirectory;
       window.selectStatus = selectStatus;
       window.saveArticle = saveArticle;
+      window.verifyArticle = verifyArticle;
       window.publishArticle = publishArticle;
       window.scheduleArticle = scheduleArticle;
       window.deleteArticle = deleteArticle;

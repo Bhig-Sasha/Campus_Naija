@@ -32,7 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    /* Loading gate */
     #loading-gate {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
@@ -48,7 +47,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Skeleton shimmer */
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -201,7 +199,6 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; }
 
-    /* Stats */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr);
       gap: 14px; margin-bottom: 28px;
@@ -221,7 +218,6 @@
     .stat-mini-value { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
     .stat-mini-value .skeleton { display: inline-block; width: 40px; height: 24px; vertical-align: middle; }
 
-    /* Toolbar */
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -275,7 +271,6 @@
     .filter-row input::placeholder { color: #6b7c74; }
     .filter-row input:focus, .filter-row select:focus { border-color: var(--primary); }
 
-    /* Notice list */
     .notice-list { display: flex; flex-direction: column; gap: 12px; }
     .notice-row {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -327,7 +322,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* EDITOR */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
       color: var(--muted); font-size: 0.88rem; font-weight: 500;
@@ -380,6 +374,8 @@
     .form-group select:focus,
     .form-group textarea:focus { border-color: var(--primary); }
     .form-group textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+    .form-group input:disabled,
+    .form-group select:disabled { background-color: rgba(17,24,21,0.5); color: var(--muted); cursor: not-allowed; }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 
     .form-actions {
@@ -396,6 +392,8 @@
     }
     .status-card:hover { border-color: var(--primary); }
     .status-card.selected { border-color: var(--primary); background-color: rgba(0,201,130,0.06); }
+    .status-card.disabled { opacity: 0.4; cursor: not-allowed; }
+    .status-card.disabled:hover { border-color: var(--border); }
     .status-card .sc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .status-card .sc-top i { font-size: 0.85rem; color: var(--muted); }
     .status-card.selected .sc-top i { color: var(--primary); }
@@ -416,7 +414,6 @@
     .danger-panel .panel-title { color: var(--danger); }
     .danger-panel .panel-title i { color: var(--danger); }
 
-    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -434,7 +431,6 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Footer */
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -486,11 +482,7 @@
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
-      .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
+      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
     @media (max-width: 600px) {
       .topbar-search { display: none; }
@@ -603,8 +595,8 @@
               <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-label">Unverified <i class="fas fa-clock gold"></i></div>
+              <div class="stat-mini-value" id="statUnverified"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
@@ -620,15 +612,13 @@
               <select id="statusFilter" onchange="filterNotices()">
                 <option value="">All statuses</option>
                 <option value="draft">Draft</option>
-                <option value="pending">Pending verification</option>
+                <option value="unverified">Unverified</option>
                 <option value="verified">Verified</option>
                 <option value="published">Published</option>
                 <option value="archived">Archived</option>
               </select>
               <select id="sessionFilter" onchange="filterNotices()">
                 <option value="">All academic sessions</option>
-                <option value="2026/2027">2026/2027</option>
-                <option value="2025/2026">2025/2026</option>
               </select>
             </div>
           </div>
@@ -639,48 +629,11 @@
           </div>
 
           <div class="notice-list" id="noticeList">
-            <!-- Skeleton rows -->
             <div class="skeleton-row">
               <div class="skeleton skeleton-circle"></div>
               <div style="flex:1;min-width:200px;">
                 <div class="skeleton skeleton-text w60"></div>
                 <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;">
-                <div class="skeleton skeleton-text w40"></div>
-                <div class="skeleton skeleton-text w80"></div>
-              </div>
-              <div style="min-width:110px;">
-                <div class="skeleton skeleton-text w40"></div>
-                <div class="skeleton skeleton-text w80"></div>
-              </div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;">
-                <div class="skeleton skeleton-text w40"></div>
-                <div class="skeleton skeleton-text w80"></div>
-              </div>
-              <div style="min-width:110px;">
-                <div class="skeleton skeleton-text w40"></div>
-                <div class="skeleton skeleton-text w80"></div>
-              </div>
-              <div class="skeleton skeleton-pill"></div>
-            </div>
-            <div class="skeleton-row">
-              <div class="skeleton skeleton-circle"></div>
-              <div style="flex:1;min-width:200px;">
-                <div class="skeleton skeleton-text w60"></div>
-                <div class="skeleton skeleton-text w40"></div>
-              </div>
-              <div style="min-width:110px;">
-                <div class="skeleton skeleton-text w40"></div>
-                <div class="skeleton skeleton-text w80"></div>
               </div>
               <div style="min-width:110px;">
                 <div class="skeleton skeleton-text w40"></div>
@@ -721,14 +674,14 @@
                 <select id="noticeSchool">
                   <option value="">Loading schools…</option>
                 </select>
+                <span class="form-hint" id="schoolLockHint" style="display:none;">
+                  <i class="fas fa-lock"></i> Institution cannot be changed after creation.
+                </span>
               </div>
               <div class="form-group">
                 <label>Academic session <span class="req">*</span></label>
-                <select id="noticeSession">
-                  <option value="">Select session</option>
-                  <option value="2026/2027">2026/2027</option>
-                  <option value="2025/2026">2025/2026</option>
-                </select>
+                <input type="text" id="noticeSession" placeholder="e.g. 2026/2027" autocomplete="off">
+                <span class="form-hint">Format: YYYY/YYYY</span>
               </div>
               <div class="form-group">
                 <label>Entry route <span class="req">*</span></label>
@@ -736,56 +689,65 @@
                   <option value="">Select route</option>
                   <option value="UTME">UTME / Undergraduate</option>
                   <option value="Direct Entry">Direct Entry</option>
+                  <option value="UTME & Direct Entry">UTME &amp; Direct Entry</option>
                   <option value="Postgraduate">Postgraduate</option>
-                  <option value="Diploma">Diploma / Certificate</option>
-                  <option value="HND Screening">ND / HND</option>
+                  <option value="ND/HND">ND / HND</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Opening date</label>
+                <label>Opening date <span class="optional">(optional)</span></label>
                 <input type="date" id="noticeOpenDate">
               </div>
               <div class="form-group">
-                <label>Closing date</label>
+                <label>Closing date <span class="optional">(optional)</span></label>
                 <input type="date" id="noticeCloseDate">
               </div>
               <div class="form-group full">
-                <label>Requirements</label>
-                <textarea id="noticeRequirements" placeholder="Enter verified qualifications, required subjects, grades and any programme-specific conditions..."></textarea>
+                <label>Verified extension <span class="optional">(if applicable)</span></label>
+                <input type="text" id="noticeExtension" placeholder="e.g. Extended to 30 Sep 2026 — official source confirmed">
               </div>
               <div class="form-group full">
-                <label>Application instructions</label>
-                <textarea id="noticeInstructions" placeholder="Explain the application steps and required documents..."></textarea>
+                <label>Requirements <span class="optional">(optional)</span></label>
+                <textarea id="noticeRequirements" placeholder="O'Level subjects, UTME requirements, Direct Entry criteria..."></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Eligibility <span class="optional">(optional)</span></label>
+                <textarea id="noticeEligibility" placeholder="Special eligibility criteria..." style="min-height:60px;"></textarea>
               </div>
               <div class="form-group full">
                 <label>Official application URL <span class="req">*</span></label>
                 <input type="url" id="noticeAppUrl" placeholder="https://official-application-portal.example">
-                <span class="form-hint">The URL must be valid before saving.</span>
+                <span class="form-hint">Direct applicants to a verified institutional or examination portal only.</span>
               </div>
               <div class="form-group full">
-                <label>Official source / announcement URL</label>
+                <label>Official source / announcement URL <span class="req">*</span></label>
                 <input type="url" id="noticeSourceUrl" placeholder="Paste the official announcement link">
-                <span class="form-hint">Required before marking as verified.</span>
+                <span class="form-hint">Required — verification and publication both depend on it.</span>
+              </div>
+              <div class="form-group full">
+                <label>Additional notes <span class="optional">(optional)</span></label>
+                <textarea id="noticeNotes" placeholder="Any additional instructions..." style="min-height:60px;"></textarea>
               </div>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved"></i> Publication status</div>
+              <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification &amp; publication</div>
             </div>
             <div class="verify-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Verification and publication are separate states.</strong> A notice must be verified before it can be published.</p>
+              <p><strong>Verification and publication are separate steps.</strong> A notice must be saved with a valid source URL, then marked verified, before it can be published.</p>
             </div>
             <div class="status-cards">
               <div class="status-card selected" data-status="draft" onclick="selectStatus('draft', this)">
                 <div class="sc-top"><i class="fas fa-file"></i><span class="sc-title">Draft</span></div>
                 <div class="sc-desc">Stored privately. Not visible to the public.</div>
               </div>
-              <div class="status-card" data-status="pending" onclick="selectStatus('pending', this)">
-                <div class="sc-top"><i class="fas fa-clock"></i><span class="sc-title">Pending verification</span></div>
-                <div class="sc-desc">Waiting for admin to verify the official source.</div>
+              <div class="status-card" data-status="unverified" onclick="selectStatus('unverified', this)">
+                <div class="sc-top"><i class="fas fa-circle-question"></i><span class="sc-title">Unverified</span></div>
+                <div class="sc-desc">Saved with details but no verification yet.</div>
               </div>
               <div class="status-card" data-status="verified" onclick="selectStatus('verified', this)">
                 <div class="sc-top"><i class="fas fa-circle-check"></i><span class="sc-title">Verified</span></div>
@@ -793,9 +755,15 @@
               </div>
             </div>
             <div class="form-actions">
-              <button class="btn-primary" id="saveDraftBtn" onclick="saveNotice('draft')"><i class="fas fa-save"></i> Save Draft</button>
-              <button class="btn-gold" id="verifyBtn" onclick="saveNotice('verified')"><i class="fas fa-circle-check"></i> Save as Verified</button>
-              <button class="btn-outline" id="publishBtn" onclick="publishNotice()"><i class="fas fa-bullhorn"></i> Publish notice</button>
+              <button class="btn-primary" id="saveBtn" onclick="saveNotice()">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button class="btn-gold" id="verifyBtn" onclick="verifyNotice()">
+                <i class="fas fa-circle-check"></i> Mark as verified
+              </button>
+              <button class="btn-outline" id="publishBtn" onclick="publishNotice()">
+                <i class="fas fa-bullhorn"></i> Publish
+              </button>
             </div>
           </div>
 
@@ -907,12 +875,16 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
+      // Status pill reflects status (draft/pending/published/archived) first,
+      // then verification. Matches server semantics where status is the row
+      // lifecycle and verification is the editorial review flag.
       function statusPill(status, verification) {
         if (status === 'published') return `<span class="status-pill status-published"><i class="fas fa-circle-check"></i> Published</span>`;
         if (status === 'archived') return `<span class="status-pill status-archived"><i class="fas fa-box-archive"></i> Archived</span>`;
-        if (verification === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
+        if (status === 'pending') return `<span class="status-pill status-pending"><i class="fas fa-clock"></i> Pending</span>`;
         if (verification === 'verified') return `<span class="status-pill status-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
-        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        if (status === 'draft') return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Draft</span>`;
+        return `<span class="status-pill status-draft"><i class="fas fa-file"></i> Unverified</span>`;
       }
 
       /* AUTH */
@@ -953,7 +925,6 @@
 
       /* DATA */
       async function loadAll() {
-        // Load schools + admissions in parallel
         const results = await Promise.allSettled([
           api('/api/schools'),
           api('/api/admissions'),
@@ -973,6 +944,7 @@
         }
 
         populateSchoolSelect();
+        populateSessionFilter();
         renderStats();
         renderDirectory();
       }
@@ -983,6 +955,15 @@
           schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
       }
 
+      function populateSessionFilter() {
+        const sel = document.getElementById('sessionFilter');
+        const current = sel.value;
+        const sessions = [...new Set(notices.map(n => n.session).filter(Boolean))].sort().reverse();
+        sel.innerHTML = '<option value="">All academic sessions</option>' +
+          sessions.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+        if (sessions.includes(current)) sel.value = current;
+      }
+
       function renderStats() {
         const set = (id, val) => {
           document.getElementById(id).textContent = val;
@@ -990,7 +971,7 @@
         set('statTotal', notices.length);
         set('statPublished', notices.filter(n => n.status === 'published').length);
         set('statDraft', notices.filter(n => n.status === 'draft').length);
-        set('statPending', notices.filter(n => n.verification === 'pending').length);
+        set('statUnverified', notices.filter(n => n.verification !== 'verified' && n.status !== 'published').length);
       }
 
       function renderDirectory() {
@@ -1003,14 +984,14 @@
           const title = (n.title || '').toLowerCase();
           const school = (n.school_name || '').toLowerCase();
           const matchQ = !query || title.includes(query) || school.includes(query);
-          const matchStatus = !status ||
-            (status === 'draft' && n.status === 'draft' && n.verification !== 'pending') ||
-            (status === 'pending' && n.verification === 'pending') ||
-            (status === 'verified' && n.verification === 'verified' && n.status !== 'published') ||
-            (status === 'published' && n.status === 'published') ||
-            (status === 'archived' && n.status === 'archived');
           const matchSession = !session || n.session === session;
-          return matchQ && matchStatus && matchSession;
+          let matchStatus = true;
+          if (status === 'draft') matchStatus = n.status === 'draft';
+          else if (status === 'unverified') matchStatus = n.verification !== 'verified' && n.status !== 'published';
+          else if (status === 'verified') matchStatus = n.verification === 'verified' && n.status !== 'published';
+          else if (status === 'published') matchStatus = n.status === 'published';
+          else if (status === 'archived') matchStatus = n.status === 'archived';
+          return matchQ && matchSession && matchStatus;
         });
 
         document.getElementById('noticeCount').textContent = `Showing ${filtered.length} of ${notices.length} records`;
@@ -1026,7 +1007,7 @@
         }
 
         list.innerHTML = filtered.map(n => {
-          const isGold = n.status === 'published' || n.verification === 'pending';
+          const isGold = n.status === 'published' || n.verification !== 'verified';
           return `
             <div class="notice-row">
               <div class="notice-icon ${isGold ? 'gold' : ''}">
@@ -1068,28 +1049,49 @@
       /* EDITOR */
       function openEditor(id) {
         currentNoticeId = id || null;
-        const n = id ? notices.find(x => x.id === id) : null;
+        const n = id ? notices.find(x => String(x.id) === String(id)) : null;
+        const isEdit = !!n;
 
-        document.getElementById('editorTitle').textContent = n ? 'Edit admission notice' : 'New admission notice';
+        document.getElementById('editorTitle').textContent = isEdit ? 'Edit admission notice' : 'New admission notice';
 
-        document.getElementById('noticeTitle').value = n ? (n.title || '') : '';
-        document.getElementById('noticeSchool').value = n ? (n.school_id || '') : '';
-        document.getElementById('noticeSession').value = n ? (n.session || '') : '';
-        document.getElementById('noticeRoute').value = n ? (n.entry_route || '') : '';
-        document.getElementById('noticeOpenDate').value = n && n.open_date ? n.open_date.slice(0, 10) : '';
-        document.getElementById('noticeCloseDate').value = n && n.close_date ? n.close_date.slice(0, 10) : '';
-        document.getElementById('noticeRequirements').value = n ? (n.requirements || '') : '';
-        document.getElementById('noticeInstructions').value = n ? (n.instructions || '') : '';
-        document.getElementById('noticeAppUrl').value = n ? (n.application_url || '') : '';
-        document.getElementById('noticeSourceUrl').value = n ? (n.source_url || '') : '';
+        document.getElementById('noticeTitle').value = isEdit ? (n.title || '') : '';
+        document.getElementById('noticeSchool').value = isEdit ? (n.school_id || '') : '';
+        document.getElementById('noticeSession').value = isEdit ? (n.session || '') : '';
+        document.getElementById('noticeRoute').value = isEdit ? (n.entry_route || '') : '';
+        document.getElementById('noticeOpenDate').value = isEdit && n.open_date ? String(n.open_date).slice(0, 10) : '';
+        document.getElementById('noticeCloseDate').value = isEdit && n.close_date ? String(n.close_date).slice(0, 10) : '';
+        document.getElementById('noticeExtension').value = isEdit ? (n.extension_note || '') : '';
+        document.getElementById('noticeRequirements').value = isEdit ? (n.requirements || '') : '';
+        document.getElementById('noticeEligibility').value = isEdit ? (n.eligibility || '') : '';
+        document.getElementById('noticeAppUrl').value = isEdit ? (n.application_url || '') : '';
+        document.getElementById('noticeSourceUrl').value = isEdit ? (n.source_url || '') : '';
+        document.getElementById('noticeNotes').value = isEdit ? (n.notes || '') : '';
 
-        selectedStatus = n ? (n.verification === 'verified' ? 'verified' : n.verification === 'pending' ? 'pending' : 'draft') : 'draft';
+        // School cannot be changed after creation (server doesn't accept school_id on PATCH)
+        document.getElementById('noticeSchool').disabled = isEdit;
+        document.getElementById('schoolLockHint').style.display = isEdit ? 'inline' : 'none';
+
+        // Reflect current state in the status card selection. The server tracks
+        // verification (unverified/verified) and status (draft/pending/published/archived).
+        // If already published or archived, the "verified" card is the effective one.
+        if (isEdit) {
+          if (n.verification === 'verified') selectedStatus = 'verified';
+          else selectedStatus = 'unverified';
+        } else {
+          selectedStatus = 'unverified';
+        }
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         const sc = document.querySelector(`.status-card[data-status="${selectedStatus}"]`);
         if (sc) sc.classList.add('selected');
 
-        // Show/hide delete button
-        document.getElementById('deleteBtn').style.display = n ? '' : 'none';
+        // Show/hide action buttons based on state
+        document.getElementById('deleteBtn').style.display = isEdit ? '' : 'none';
+        document.getElementById('verifyBtn').style.display =
+          (isEdit && n.verification === 'verified') ? 'none' : '';
+        document.getElementById('publishBtn').style.display =
+          (isEdit && n.status === 'published') ? 'none' : '';
+        document.getElementById('verifyBtn').disabled = !isEdit;
+        document.getElementById('publishBtn').disabled = !isEdit;
 
         document.getElementById('view-directory').classList.remove('active');
         document.getElementById('view-editor').classList.add('active');
@@ -1104,109 +1106,119 @@
       }
 
       function selectStatus(status, el) {
+        if (el.classList.contains('disabled')) return;
         selectedStatus = status;
         document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
       }
 
-      async function saveNotice(mode) {
+      function collectForm() {
         const title = document.getElementById('noticeTitle').value.trim();
         const schoolId = document.getElementById('noticeSchool').value;
-        const session = document.getElementById('noticeSession').value;
+        const session = document.getElementById('noticeSession').value.trim();
         const route = document.getElementById('noticeRoute').value;
         const appUrl = document.getElementById('noticeAppUrl').value.trim();
         const sourceUrl = document.getElementById('noticeSourceUrl').value.trim();
         const openDate = document.getElementById('noticeOpenDate').value;
         const closeDate = document.getElementById('noticeCloseDate').value;
 
-        if (!title) { toast('Please enter an admission title.', true); return; }
-        if (!schoolId) { toast('Please select an institution.', true); return; }
-        if (!session) { toast('Please select an academic session.', true); return; }
-        if (!route) { toast('Please select an entry route.', true); return; }
-        if (!appUrl) { toast('Please enter the official application URL.', true); return; }
-        try { new URL(appUrl); } catch (e) { toast('Please enter a valid application URL.', true); return; }
-        if (sourceUrl) {
-          try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return; }
-        }
+        if (!title) { toast('Please enter an admission title.', true); return null; }
+        if (!currentNoticeId && !schoolId) { toast('Please select an institution.', true); return null; }
+        if (!session) { toast('Please enter an academic session.', true); return null; }
+        if (!/^\d{4}\/\d{4}$/.test(session)) { toast('Session should look like 2026/2027.', true); return null; }
+        if (!route) { toast('Please select an entry route.', true); return null; }
+        if (!appUrl) { toast('Please enter the official application URL.', true); return null; }
+        try { new URL(appUrl); } catch (e) { toast('Please enter a valid application URL.', true); return null; }
+        if (!sourceUrl) { toast('Please enter the official source URL.', true); return null; }
+        try { new URL(sourceUrl); } catch (e) { toast('Please enter a valid source URL.', true); return null; }
         if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
           toast('Closing date cannot be before opening date.', true);
-          return;
+          return null;
         }
 
-        // Determine verification
-        let verification = 'unverified';
-        if (mode === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to mark as verified.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'verified') {
-          if (!sourceUrl) { toast('Source URL is required to mark as verified.', true); return; }
-          verification = 'verified';
-        } else if (selectedStatus === 'pending') {
-          verification = 'pending';
-        }
-
-        const body = {
+        return {
           title,
           session,
           entry_route: route,
           application_url: appUrl,
-          source_url: sourceUrl || null,
+          source_url: sourceUrl,
           open_date: openDate || null,
           close_date: closeDate || null,
+          extension_note: document.getElementById('noticeExtension').value.trim() || null,
           requirements: document.getElementById('noticeRequirements').value.trim() || null,
-          notes: document.getElementById('noticeInstructions').value.trim() || null,
+          eligibility: document.getElementById('noticeEligibility').value.trim() || null,
+          notes: document.getElementById('noticeNotes').value.trim() || null,
         };
+      }
 
-        const btn = document.getElementById('saveDraftBtn');
+      async function saveNotice() {
+        const body = collectForm();
+        if (!body) return;
+
+        const btn = document.getElementById('saveBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 
         try {
-          let saved;
           if (currentNoticeId) {
-            saved = await api('/api/admissions/' + encodeURIComponent(currentNoticeId), {
+            // Edit path: PATCH existing record
+            await api('/api/admissions/' + encodeURIComponent(currentNoticeId), {
               method: 'PATCH', body: JSON.stringify(body)
             });
-            // If verification changed, call verify
-            if (verification === 'verified' && saved.admission && saved.admission.verification !== 'verified') {
-              await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/verify', { method: 'POST' });
-            }
+            await loadAll();
+            toast('Notice updated.');
+            openEditor(currentNoticeId);
           } else {
-            // Create needs school_id in URL
-            saved = await api('/api/schools/' + encodeURIComponent(schoolId) + '/admissions', {
+            // Create path: POST under school
+            const schoolId = document.getElementById('noticeSchool').value;
+            const res = await api('/api/schools/' + encodeURIComponent(schoolId) + '/admissions', {
               method: 'POST', body: JSON.stringify(body)
             });
-            currentNoticeId = saved.admission.id;
-            // If verification was requested, apply it now
-            if (verification === 'verified') {
-              await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/verify', { method: 'POST' });
-            }
+            currentNoticeId = res.admission.id;
+            await loadAll();
+            toast('Notice saved as draft.');
+            openEditor(currentNoticeId);
           }
-
-          await loadAll();
-          toast('Notice saved.');
-          showDirectory();
         } catch (e) {
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+          btn.innerHTML = '<i class="fas fa-save"></i> Save';
+        }
+      }
+
+      async function verifyNotice() {
+        if (!currentNoticeId) { toast('Save the notice first.', true); return; }
+        const n = notices.find(x => String(x.id) === String(currentNoticeId));
+        if (!n) return;
+        if (!n.source_url) { toast('A source URL is required before verification.', true); return; }
+        if (n.verification === 'verified') { toast('Already verified.', true); return; }
+
+        const btn = document.getElementById('verifyBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+
+        try {
+          await api('/api/admissions/' + encodeURIComponent(currentNoticeId) + '/verify', { method: 'POST' });
+          await loadAll();
+          toast('Notice marked as verified.');
+          openEditor(currentNoticeId);
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-circle-check"></i> Mark as verified';
         }
       }
 
       async function publishNotice() {
-        if (!currentNoticeId) {
-          toast('Save the notice first before publishing.', true);
-          return;
-        }
-        const n = notices.find(x => x.id === currentNoticeId);
+        if (!currentNoticeId) { toast('Save the notice first before publishing.', true); return; }
+        const n = notices.find(x => String(x.id) === String(currentNoticeId));
         if (!n) return;
-
         if (n.verification !== 'verified') {
           toast('Notice must be verified before it can be published.', true);
           return;
         }
-
         if (!confirm('Publish this notice? It will be visible on the public site.')) return;
 
         const btn = document.getElementById('publishBtn');
@@ -1222,7 +1234,7 @@
           toast(e.message, true);
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish notice';
+          btn.innerHTML = '<i class="fas fa-bullhorn"></i> Publish';
         }
       }
 
@@ -1273,7 +1285,6 @@
         window.location.replace(LOGIN_URL);
       });
 
-      // Footer year
       document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
 
       /* BOOT */
@@ -1286,12 +1297,12 @@
         await loadAll();
       })();
 
-      // Expose functions used by inline onclick
       window.filterNotices = filterNotices;
       window.openEditor = openEditor;
       window.showDirectory = showDirectory;
       window.selectStatus = selectStatus;
       window.saveNotice = saveNotice;
+      window.verifyNotice = verifyNotice;
       window.publishNotice = publishNotice;
       window.deleteNotice = deleteNotice;
     })();

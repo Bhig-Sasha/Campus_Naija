@@ -32,7 +32,7 @@
       --sidebar-w: 260px;
     }
 
-    /* ── Skeleton shimmer ───────────────────────────────────── */
+    /* Skeleton shimmer */
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -344,7 +344,6 @@
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
 
-    /* READ-ONLY display */
     .info-display-grid {
       display: grid; grid-template-columns: 1fr; gap: 18px 24px;
     }
@@ -361,7 +360,6 @@
     .info-display-value.empty { color: var(--muted); font-style: italic; font-weight: 400; }
     .info-display-value a { color: var(--primary); }
 
-    /* EDIT mode */
     .edit-mode { display: none; }
     .edit-mode.active { display: block; }
     .view-mode { display: block; }
@@ -575,16 +573,16 @@
               <div class="stat-mini-value" id="statTotal"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Verified <i class="fas fa-circle-check"></i></div>
-              <div class="stat-mini-value" id="statVerified"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
-            </div>
-            <div class="stat-mini">
               <div class="stat-mini-label">Published <i class="fas fa-eye"></i></div>
               <div class="stat-mini-value" id="statPublished"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
             <div class="stat-mini">
-              <div class="stat-mini-label">Needs review <i class="fas fa-clock gold"></i></div>
-              <div class="stat-mini-value" id="statPending"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+              <div class="stat-mini-label">Draft <i class="fas fa-file gold"></i></div>
+              <div class="stat-mini-value" id="statDraft"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-label">Archived <i class="fas fa-box-archive gold"></i></div>
+              <div class="stat-mini-value" id="statArchived"><span class="skeleton" style="width:40px;height:24px;display:inline-block;"></span></div>
             </div>
           </div>
 
@@ -606,11 +604,11 @@
               <select id="stateFilter" onchange="filterSchools()">
                 <option value="">All states</option>
               </select>
-              <select id="verifyFilter" onchange="filterSchools()">
-                <option value="">All statuses</option>
-                <option value="verified">Verified</option>
-                <option value="unverified">Unverified</option>
-                <option value="pending">Pending</option>
+              <select id="publicationFilter" onchange="filterSchools()">
+                <option value="">All publication states</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
               </select>
             </div>
           </div>
@@ -627,9 +625,9 @@
               <div class="form-group">
                 <label>Institution type <span class="req">*</span></label>
                 <select id="newSchoolType">
-                  <option value="university">University</option>
-                  <option value="polytechnic">Polytechnic</option>
-                  <option value="college">College of Education</option>
+                  <option value="University">University</option>
+                  <option value="Polytechnic">Polytechnic</option>
+                  <option value="College of Education">College of Education</option>
                 </select>
               </div>
               <div class="form-group">
@@ -661,6 +659,10 @@
               <button class="btn-primary" id="saveSchoolBtn" onclick="saveNewSchool()"><i class="fas fa-check"></i> Create school</button>
               <button class="btn-outline" onclick="closeAddSchool()">Cancel</button>
             </div>
+            <p class="form-hint" style="margin-top: 12px;">
+              <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+              New schools are created as published by default.
+            </p>
           </div>
 
           <div class="panel-header" style="margin: 8px 0 14px;">
@@ -669,40 +671,6 @@
           </div>
 
           <div class="school-list" id="schoolList">
-            <div class="school-row">
-              <div class="school-logo skeleton" style="border-radius: 12px;"></div>
-              <div class="school-main">
-                <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 6px;"></div>
-                <div class="skeleton" style="height: 10px; width: 40%;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 10px; width: 50%; margin-bottom: 6px;"></div>
-                <div class="skeleton" style="height: 12px; width: 80%;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
-              </div>
-            </div>
-            <div class="school-row">
-              <div class="school-logo skeleton" style="border-radius: 12px;"></div>
-              <div class="school-main">
-                <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 6px;"></div>
-                <div class="skeleton" style="height: 10px; width: 40%;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 10px; width: 50%; margin-bottom: 6px;"></div>
-                <div class="skeleton" style="height: 12px; width: 80%;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
-              </div>
-              <div class="school-meta-cell">
-                <div class="skeleton" style="height: 22px; width: 80px; border-radius: 40px;"></div>
-              </div>
-            </div>
             <div class="school-row">
               <div class="school-logo skeleton" style="border-radius: 12px;"></div>
               <div class="school-main">
@@ -755,7 +723,7 @@
             <button class="workspace-tab" data-tab="fees"><i class="fas fa-money-bill"></i> Fees</button>
             <button class="workspace-tab" data-tab="admissions"><i class="fas fa-clipboard-list"></i> Admissions</button>
             <button class="workspace-tab" data-tab="calendar"><i class="fas fa-calendar"></i> Calendar</button>
-            <button class="workspace-tab" data-tab="verification"><i class="fas fa-shield-halved"></i> Verification</button>
+            <button class="workspace-tab" data-tab="publication"><i class="fas fa-eye"></i> Publication</button>
           </div>
 
           <!-- OVERVIEW -->
@@ -819,9 +787,9 @@
                   <div class="form-group">
                     <label>Institution type</label>
                     <select id="editType">
-                      <option value="university">University</option>
-                      <option value="polytechnic">Polytechnic</option>
-                      <option value="college">College of Education</option>
+                      <option value="University">University</option>
+                      <option value="Polytechnic">Polytechnic</option>
+                      <option value="College of Education">College of Education</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -925,10 +893,10 @@
                   <div class="form-group">
                     <label>Category <span class="req">*</span></label>
                     <select id="newFeeCategory">
-                      <option value="Tuition">Tuition</option>
-                      <option value="Acceptance">Acceptance</option>
-                      <option value="Hostel">Hostel</option>
-                      <option value="Other">Other</option>
+                      <option value="tuition">Tuition</option>
+                      <option value="acceptance">Acceptance</option>
+                      <option value="hostel">Hostel</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -994,39 +962,38 @@
             </div>
           </div>
 
-          <!-- VERIFICATION -->
-          <div class="workspace-panel" id="tab-verification">
+          <!-- PUBLICATION -->
+          <div class="workspace-panel" id="tab-publication">
             <div class="panel">
               <div class="panel-header">
-                <div class="panel-title"><i class="fas fa-shield-halved"></i> Verification &amp; publication</div>
+                <div class="panel-title"><i class="fas fa-eye"></i> Publication controls</div>
               </div>
-              <div class="verify-notice" id="verificationNotice">
+              <div class="verify-notice" id="publicationNotice">
                 <i class="fas fa-triangle-exclamation"></i>
-                <p id="verificationText">Verification status: loading…</p>
+                <p id="publicationText">Publication status: loading…</p>
               </div>
               <div class="info-display-grid">
-                <div class="info-display-item">
-                  <div class="info-display-label">Verification</div>
-                  <div class="info-display-value" id="verifyStateDisplay">—</div>
-                </div>
                 <div class="info-display-item">
                   <div class="info-display-label">Publication</div>
                   <div class="info-display-value" id="publishStateDisplay">—</div>
                 </div>
                 <div class="info-display-item">
                   <div class="info-display-label">Last updated</div>
-                  <div class="info-display-value" id="verifyUpdatedDisplay">—</div>
+                  <div class="info-display-value" id="pubUpdatedDisplay">—</div>
                 </div>
                 <div class="info-display-item">
                   <div class="info-display-label">Created</div>
-                  <div class="info-display-value" id="verifyCreatedDisplay">—</div>
+                  <div class="info-display-value" id="pubCreatedDisplay">—</div>
                 </div>
               </div>
               <div class="form-actions">
-                <button class="btn-outline" id="verifyBtn" onclick="verifySchool()"><i class="fas fa-shield-halved"></i> Mark as verified</button>
                 <button class="btn-outline" id="publishBtn" onclick="publishSchool()"><i class="fas fa-eye"></i> Publish</button>
                 <button class="btn-danger" id="archiveBtn" onclick="archiveSchool()"><i class="fas fa-box-archive"></i> Archive</button>
               </div>
+              <p class="form-hint" style="margin-top: 12px;">
+                <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+                Publishing makes the school visible on the public site. Archiving removes it from public browsing.
+              </p>
             </div>
           </div>
 
@@ -1067,9 +1034,7 @@
           .map(w => w[0].toUpperCase()).join('') || '?';
       };
 
-      const typeLabel = (t) => ({
-        university: 'University', polytechnic: 'Polytechnic', college: 'College of Education'
-      }[t] || t);
+      const typeLabel = (t) => String(t || '—');
 
       const fmtDate = (d) => {
         if (!d) return '—';
@@ -1118,16 +1083,28 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
 
-      function statusPill(status) {
+      // Publication-only pill. No "verified" / "unverified" — that concept
+      // doesn't apply to schools anymore. The server only tracks publication.
+      function publicationPill(status) {
         const map = {
-          verified: ['status-verified', 'fas fa-check-circle', 'Verified'],
-          pending:  ['status-unverified', 'fas fa-clock', 'Pending'],
-          unverified: ['status-unverified', 'fas fa-clock', 'Unverified'],
-          draft:    ['status-draft', 'fas fa-file', 'Draft'],
           published: ['status-verified', 'fas fa-eye', 'Published'],
-          archived: ['status-archived', 'fas fa-box-archive', 'Archived']
+          draft:     ['status-draft', 'fas fa-file', 'Draft'],
+          archived:  ['status-archived', 'fas fa-box-archive', 'Archived'],
         };
-        const [cls, icon, label] = map[status] || map.unverified;
+        const [cls, icon, label] = map[status] || map.draft;
+        return `<span class="status-pill ${cls}"><i class="${icon}"></i> ${label}</span>`;
+      }
+
+      // Content-record pill (courses, fees, admissions, events). These
+      // records still use draft/published/archived status.
+      function contentPill(status) {
+        const map = {
+          draft:     ['status-draft', 'fas fa-file', 'Draft'],
+          pending:   ['status-unverified', 'fas fa-clock', 'Pending'],
+          published: ['status-verified', 'fas fa-eye', 'Published'],
+          archived:  ['status-archived', 'fas fa-box-archive', 'Archived'],
+        };
+        const [cls, icon, label] = map[status] || map.draft;
         return `<span class="status-pill ${cls}"><i class="${icon}"></i> ${label}</span>`;
       }
 
@@ -1189,9 +1166,9 @@
       function renderStats() {
         const set = (id, val) => { document.getElementById(id).textContent = val; };
         set('statTotal', schools.length);
-        set('statVerified', schools.filter(s => s.verification === 'verified').length);
         set('statPublished', schools.filter(s => s.publication === 'published').length);
-        set('statPending', schools.filter(s => s.verification === 'pending').length);
+        set('statDraft', schools.filter(s => !s.publication || s.publication === 'draft').length);
+        set('statArchived', schools.filter(s => s.publication === 'archived').length);
       }
 
       function renderDirectory() {
@@ -1199,14 +1176,14 @@
         const query = (document.getElementById('schoolSearch').value || '').toLowerCase().trim();
         const type = document.getElementById('typeFilter').value;
         const state = document.getElementById('stateFilter').value;
-        const verify = document.getElementById('verifyFilter').value;
+        const pub = document.getElementById('publicationFilter').value;
 
         const filtered = schools.filter(s => {
           const matchQ = !query || (s.name || '').toLowerCase().includes(query) || (s.city || '').toLowerCase().includes(query);
-          const matchT = !type || s.type === type;
+          const matchT = !type || String(s.type || '').toLowerCase() === type;
           const matchS = !state || s.state === state;
-          const matchV = !verify || s.verification === verify;
-          return matchQ && matchT && matchS && matchV;
+          const matchP = !pub || s.publication === pub;
+          return matchQ && matchT && matchS && matchP;
         });
 
         document.getElementById('schoolCount').textContent = `Showing ${filtered.length} of ${schools.length} records`;
@@ -1228,12 +1205,8 @@
               <div class="meta-value-sm">${esc(typeLabel(s.type))}</div>
             </div>
             <div class="school-meta-cell">
-              <div class="meta-label-sm">Verification</div>
-              ${statusPill(s.verification)}
-            </div>
-            <div class="school-meta-cell">
               <div class="meta-label-sm">Publication</div>
-              ${statusPill(s.publication)}
+              ${publicationPill(s.publication || 'draft')}
             </div>
             <div class="school-actions">
               <button class="btn-outline" onclick="openProfile('${esc(s.id)}')"><i class="fas fa-arrow-right"></i> View</button>
@@ -1273,7 +1246,7 @@
           ['newSchoolName','newSchoolState','newSchoolCity','newSchoolWebsite','newSchoolEmail'].forEach(id => document.getElementById(id).value = '');
           closeAddSchool();
           await loadSchools();
-          toast('School created as draft.');
+          toast('School created and published.');
         } catch (e) {
           toast(e.message, true);
         } finally {
@@ -1306,10 +1279,10 @@
            <span class="dot">●</span>
            <span>${esc(typeLabel(currentSchool.type))}</span>`;
         document.getElementById('profileBadges').innerHTML =
-          statusPill(currentSchool.verification) + statusPill(currentSchool.publication);
+          publicationPill(currentSchool.publication || 'draft');
 
         const previewLink = document.getElementById('previewPublicLink');
-        if (currentSchool.slug) {
+        if (currentSchool.slug && currentSchool.publication === 'published') {
           previewLink.href = `/Schools?school=${encodeURIComponent(currentSchool.slug)}`;
           previewLink.style.display = '';
         } else {
@@ -1353,7 +1326,7 @@
         }
 
         document.getElementById('editName').value = currentSchool.name || '';
-        document.getElementById('editType').value = currentSchool.type || 'university';
+        document.getElementById('editType').value = currentSchool.type || 'University';
         document.getElementById('editOwnership').value = currentSchool.ownership || 'Federal';
         document.getElementById('editState').value = currentSchool.state || '';
         document.getElementById('editCity').value = currentSchool.city || '';
@@ -1362,7 +1335,7 @@
         document.getElementById('editEstablished').value = currentSchool.established || '';
         document.getElementById('editDescription').value = currentSchool.description || '';
 
-        renderVerificationTab();
+        renderPublicationTab();
         toggleEditMode(false);
 
         document.querySelectorAll('.workspace-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === 'overview'));
@@ -1376,30 +1349,34 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      function renderVerificationTab() {
+      function renderPublicationTab() {
         const s = currentSchool;
         if (!s) return;
 
-        document.getElementById('verifyStateDisplay').innerHTML = statusPill(s.verification);
-        document.getElementById('publishStateDisplay').innerHTML = statusPill(s.publication);
-        document.getElementById('verifyUpdatedDisplay').textContent = fmtDate(s.updated_at);
-        document.getElementById('verifyCreatedDisplay').textContent = fmtDate(s.created_at);
+        const pub = s.publication || 'draft';
+        document.getElementById('publishStateDisplay').innerHTML = publicationPill(pub);
+        document.getElementById('pubUpdatedDisplay').textContent = fmtDate(s.updated_at);
+        document.getElementById('pubCreatedDisplay').textContent = fmtDate(s.created_at);
 
-        const notice = document.getElementById('verificationNotice');
-        const text = document.getElementById('verificationText');
+        const notice = document.getElementById('publicationNotice');
+        const text = document.getElementById('publicationText');
         notice.classList.remove('ok');
 
-        if (s.verification === 'verified') {
+        if (pub === 'published') {
           notice.classList.add('ok');
           notice.querySelector('i').className = 'fas fa-circle-check';
-          text.innerHTML = '<strong>Verified.</strong> This school has been reviewed and is eligible for publishing.';
-        } else if (s.verification === 'pending') {
-          notice.querySelector('i').className = 'fas fa-clock';
-          text.innerHTML = '<strong>Verification pending.</strong> Review the details before approving.';
+          text.innerHTML = '<strong>Published.</strong> This school is visible on the public site.';
+        } else if (pub === 'archived') {
+          notice.querySelector('i').className = 'fas fa-box-archive';
+          text.innerHTML = '<strong>Archived.</strong> This school is hidden from public browsing. Un-archive to restore.';
         } else {
           notice.querySelector('i').className = 'fas fa-triangle-exclamation';
-          text.innerHTML = '<strong>Unverified.</strong> Confirm details with official sources before marking this profile verified.';
+          text.innerHTML = '<strong>Draft.</strong> This school is not visible on the public site.';
         }
+
+        // Disable buttons that would be no-ops for the current state
+        document.getElementById('publishBtn').disabled = (pub === 'published');
+        document.getElementById('archiveBtn').disabled = (pub === 'archived');
       }
 
       function showDirectory() {
@@ -1439,24 +1416,6 @@
           toast(e.message, true);
         } finally {
           btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Save changes';
-        }
-      }
-
-      async function verifySchool() {
-        if (!currentSchool) return;
-        const btn = document.getElementById('verifyBtn');
-        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
-        try {
-          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/verify', {
-            method: 'POST', body: JSON.stringify({ verification: 'verified' })
-          });
-          await openProfile(currentSchool.id);
-          await loadSchools();
-          toast('School verified.');
-        } catch (e) {
-          toast(e.message, true);
-        } finally {
-          btn.disabled = false; btn.innerHTML = '<i class="fas fa-shield-halved"></i> Mark as verified';
         }
       }
 
@@ -1508,7 +1467,7 @@
               <td>${esc(c.name)}</td>
               <td>${esc(c.faculty || '—')}</td>
               <td>${esc(c.duration || '—')}</td>
-              <td>${statusPill(c.status)}</td>
+              <td>${contentPill(c.status || 'published')}</td>
               <td>
                 <div class="table-actions">
                   <button class="icon-action danger" onclick="deleteCourse('${esc(c.id)}')" title="Delete"><i class="fas fa-trash"></i></button>
@@ -1540,7 +1499,7 @@
           ['newCourseName','newCourseFaculty','newCourseDuration'].forEach(id => document.getElementById(id).value = '');
           toggleAddCourse();
           await loadCourses();
-          toast('Course added as draft.');
+          toast('Course added and published.');
         } catch (e) {
           toast(e.message, true);
         } finally {
@@ -1610,7 +1569,7 @@
           ['newFeeProgram','newFeeSession','newFeeAmount'].forEach(id => document.getElementById(id).value = '');
           toggleAddFee();
           await loadFees();
-          toast('Fee added as draft.');
+          toast('Fee added and published.');
         } catch (e) {
           toast(e.message, true);
         } finally {
@@ -1645,7 +1604,7 @@
               <td>${esc(a.session || '—')}</td>
               <td>${esc(a.entry_route || '—')}</td>
               <td>${fmtDate(a.close_date)}</td>
-              <td>${statusPill(a.status)}</td>
+              <td>${contentPill(a.status || 'published')}</td>
             </tr>`).join('');
         } catch (e) {
           body.innerHTML = `<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-triangle-exclamation"></i>${esc(e.message)}</div></td></tr>`;
@@ -1656,7 +1615,7 @@
       async function loadCalendar() {
         const body = document.getElementById('calendarTableBody');
         try {
-          const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/calendar');
+          const res = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/events');
           const rows = res.events || [];
           if (!rows.length) {
             body.innerHTML = '<tr><td colspan="5"><div class="empty-mini"><i class="fas fa-calendar"></i>No calendar events for this school yet.</div></td></tr>';
@@ -1710,17 +1669,14 @@
         window.location.replace(LOGIN_URL);
       });
 
-      /* BOOT — no spinner, show shell immediately */
+      /* BOOT */
       (async function boot() {
-        // Fast check: if no token at all, redirect before painting the shell
         let hasToken = false;
         try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!hasToken) { redirectToLogin('not_signed_in'); return; }
 
-        // Show shell — skeletons are already in the HTML
         document.getElementById('appShell').style.display = 'flex';
 
-        // Verify in background, then load data
         const ok = await verifySession();
         if (!ok) return;
 
@@ -1735,7 +1691,6 @@
       window.openProfile = openProfile;
       window.showDirectory = showDirectory;
       window.saveProfile = saveProfile;
-      window.verifySchool = verifySchool;
       window.publishSchool = publishSchool;
       window.archiveSchool = archiveSchool;
       window.toggleEditMode = toggleEditMode;
