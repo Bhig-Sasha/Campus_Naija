@@ -80,7 +80,7 @@
       border-radius: 40px;
       background-color: rgba(245,185,66,0.12); color: var(--accent);
     }
-    .sidebar-institution .inst-status.verified {
+    .sidebar-institution .inst-status.published {
       background-color: rgba(0,201,130,0.12); color: var(--primary);
     }
 
@@ -266,7 +266,7 @@
       background-color: rgba(245,185,66,0.12); color: var(--accent);
       border: 1px solid rgba(245,185,66,0.3);
     }
-    .badge-verified.verified {
+    .badge-verified.published {
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       border-color: rgba(0,201,130,0.3);
     }
@@ -807,8 +807,10 @@
        * Three states:
        *   - 'ok'         → currentSchool is a real, joined row. Show name/location/type.
        *   - 'orphaned'   → currentUser.school_id is set but /api/schools/:id returned 404.
-       *                    Show a red banner with the raw school_id for the admin to fix.
-       *   - 'unassigned' → no school_id at all. Yellow banner, "contact admin".
+       *   - 'unassigned' → no school_id at all.
+       *
+       * NOTE: schools no longer use a "verification" workflow. The badge
+       * now reflects `publication` (published / draft / archived).
        */
       function renderSchool() {
         const banner = document.getElementById('institutionBanner');
@@ -826,7 +828,7 @@
 
           sidebarName.textContent = 'No institution assigned';
           sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
-          sidebarStatus.classList.remove('verified');
+          sidebarStatus.classList.remove('published');
 
           initialsEl.textContent = '?';
           nameEl.textContent = 'No institution assigned';
@@ -843,7 +845,7 @@
 
           sidebarName.textContent = 'School reference invalid';
           sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Orphaned';
-          sidebarStatus.classList.remove('verified');
+          sidebarStatus.classList.remove('published');
 
           initialsEl.textContent = '!';
           nameEl.textContent = 'Assigned school could not be found';
@@ -864,15 +866,27 @@
         const type = currentSchool.type || '—';
 
         sidebarName.textContent = name;
-        if (currentSchool.verification === 'verified') {
-          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          sidebarStatus.classList.add('verified');
-        } else if (currentSchool.verification === 'pending') {
-          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
-          sidebarStatus.classList.remove('verified');
+
+        // Sidebar pill + banner badge now reflect PUBLICATION status
+        // (schools no longer have a verification gate).
+        if (currentSchool.publication === 'published') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Published';
+          sidebarStatus.classList.add('published');
+
+          badge.className = 'badge-verified published';
+          badge.innerHTML = '<i class="fas fa-circle-check"></i> Published';
+        } else if (currentSchool.publication === 'archived') {
+          sidebarStatus.innerHTML = '<i class="fas fa-archive"></i> Archived';
+          sidebarStatus.classList.remove('published');
+
+          badge.className = 'badge-verified';
+          badge.innerHTML = '<i class="fas fa-archive"></i> Archived';
         } else {
-          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
-          sidebarStatus.classList.remove('verified');
+          sidebarStatus.innerHTML = '<i class="fas fa-pen"></i> Draft';
+          sidebarStatus.classList.remove('published');
+
+          badge.className = 'badge-verified';
+          badge.innerHTML = '<i class="fas fa-pen"></i> Draft';
         }
 
         initialsEl.textContent = initials(name);
@@ -881,17 +895,6 @@
           '<span><i class="fas fa-map-marker-alt"></i> ' + esc(location) + '</span>' +
           '<span class="dot">●</span>' +
           '<span>' + esc(type) + '</span>';
-
-        if (currentSchool.verification === 'verified') {
-          badge.className = 'badge-verified verified';
-          badge.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-        } else if (currentSchool.verification === 'pending') {
-          badge.className = 'badge-verified';
-          badge.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
-        } else {
-          badge.className = 'badge-verified';
-          badge.innerHTML = '<i class="fas fa-clock"></i> Unverified';
-        }
       }
 
       async function loadStats() {
@@ -1008,15 +1011,10 @@
       /**
        * loadSchool
        * ----------
-       * Uses the enriched /auth/me response directly when possible.
-       *
        *   1. If currentUser has school_name + school_id → we already know the school.
-       *      Build a light `currentSchool` object from the joined fields + fetch the
-       *      full row (for verification status, city, state, type) in the background.
+       *      Try direct fetch to get full row + publication status.
        *
-       *   2. If currentUser has school_id but no school_name → the join is empty,
-       *      which means school_id points to a missing school. Try the direct
-       *      fetch anyway, and if it 404s, flag as 'orphaned'.
+       *   2. If currentUser has school_id but the fetch 404s → 'orphaned'.
        *
        *   3. If currentUser has no school_id → 'unassigned'.
        */
@@ -1029,7 +1027,6 @@
           return;
         }
 
-        // Try direct fetch first — always gives us full row + verification.
         try {
           const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
           if (data && data.school) {
@@ -1038,7 +1035,6 @@
             return;
           }
         } catch (err) {
-          // 404 → the school was deleted / id is stale
           if (/not found|404/i.test(err.message)) {
             console.error('[loadSchool] school_id=' + currentUser.school_id + ' points to a school that no longer exists. Contact the platform admin.');
             schoolState = 'orphaned';
@@ -1047,8 +1043,6 @@
           console.error('[loadSchool]', err.message);
         }
 
-        // If we couldn't fetch the full row but the enriched /auth/me response
-        // still had school_name, treat it as ok (partial).
         if (currentUser.school_name) {
           currentSchool = {
             id: currentUser.school_id,
@@ -1059,7 +1053,6 @@
           return;
         }
 
-        // Nothing usable → orphaned
         schoolState = 'orphaned';
       }
 

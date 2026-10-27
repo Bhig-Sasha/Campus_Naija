@@ -218,9 +218,6 @@ function signToken(user) {
  * ----------
  * Serialize a user row for the frontend. Includes school info so the
  * frontend never has to guess whether a school_manager has a school.
- *
- * If you pass a row that was already joined with `school_name` / `school_slug`
- * (i.e. from `fetchUserWithSchool`), those fields pass through.
  */
 function publicUser(u) {
   if (!u) return null;
@@ -238,9 +235,7 @@ function publicUser(u) {
 /**
  * fetchUserWithSchool
  * -------------------
- * Loads a user and LEFT-JOINs the school row. This is what `authenticate()`
- * and `/auth/login` use so `school_name` / `school_slug` are always available
- * to the frontend, even when `school_id` is non-null but stale.
+ * Loads a user and LEFT-JOINs the school row.
  */
 async function fetchUserWithSchool(userId) {
   return one(
@@ -324,10 +319,8 @@ router.post('/auth/login', asyncH(async (req, res) => {
   if (user.status === 'suspended') throw httpError(403, 'This account is suspended. Contact the platform owner.');
   if (user.status === 'pending') throw httpError(403, 'This account is awaiting approval. Contact the platform owner.');
 
-  // Enrich with school info for the response
   const fullUser = await fetchUserWithSchool(user.id);
 
-  // Loud warning in logs when a school_manager has no school assigned
   if (fullUser.role === 'school_manager' && !fullUser.school_id) {
     console.warn(`[auth] school_manager ${fullUser.email} (id=${fullUser.id}) has NO school_id assigned — dashboard will show "Unassigned".`);
   }
@@ -477,13 +470,14 @@ router.get('/public/placements', asyncH(async (req, res) => {
 }));
 
 /* ---------- SCHOOLS ---------- */
+
+// Admin listing. NOTE: no more `verification` filter — schools don't use it.
 router.get('/schools', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
-  const { q: query, type, state, verification, publication } = req.query;
+  const { q: query, type, state, publication } = req.query;
   const clauses = []; const params = [];
   if (query) { params.push(`%${query}%`, `%${query}%`); clauses.push(`(name ilike $${params.length-1} or city ilike $${params.length})`); }
   if (type) { params.push(type); clauses.push(`type = $${params.length}`); }
   if (state) { params.push(state); clauses.push(`state = $${params.length}`); }
-  if (verification) { params.push(verification); clauses.push(`verification = $${params.length}`); }
   if (publication) { params.push(publication); clauses.push(`publication = $${params.length}`); }
   const rows = await many(`select * from public.schools ${clauses.length ? 'where ' + clauses.join(' and ') : ''} order by name`, params);
   res.json({ schools: rows });
@@ -516,6 +510,7 @@ router.get('/schools/:id/summary', authenticate, requireRole('owner','admin','ed
   res.json({ school, counts });
 }));
 
+// New schools are born verified + published. No more "pending verification" gate.
 router.post('/schools', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const b = req.body || {};
   if (!b.name || !b.type || !b.ownership) throw httpError(400, 'name, type and ownership are required.');
@@ -523,8 +518,10 @@ router.post('/schools', authenticate, requireRole('owner','admin'), asyncH(async
   if (await one('select 1 from public.schools where slug=$1', [slug]))
     slug += '-' + Date.now().toString(36);
   const school = await one(
-    `insert into public.schools (name, slug, type, ownership, state, city, address, website, email, description, established)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning *`,
+    `insert into public.schools
+       (name, slug, type, ownership, state, city, address, website, email, description, established,
+        verification, publication)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'verified','published') returning *`,
     [b.name, slug, b.type, b.ownership, b.state||null, b.city||null, b.address||null,
      b.website||null, b.email||null, b.description||null, b.established||null]
   );
@@ -550,22 +547,10 @@ router.patch('/schools/:id', authenticate, requireRole('owner','admin','school_m
   res.json({ school: updated });
 }));
 
-router.post('/schools/:id/verify', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
-  const school = await one('select * from public.schools where id=$1', [req.params.id]);
-  if (!school) throw httpError(404, 'School not found.');
-  const v = (req.body && req.body.verification) || 'verified';
-  if (!['unverified','pending','verified'].includes(v))
-    throw httpError(400, 'Invalid verification value.');
-  await run(`update public.schools set verification=$1, updated_at=now() where id=$2`, [v, school.id]);
-  await audit(req, 'verify_school', 'school', school.id, school.name, { verification: v });
-  res.json({ ok: true, verification: v });
-}));
-
+// Publish — no verification gate anymore. Straight flip to 'published'.
 router.post('/schools/:id/publish', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const school = await one('select * from public.schools where id=$1', [req.params.id]);
   if (!school) throw httpError(404, 'School not found.');
-  if (school.verification !== 'verified')
-    throw httpError(400, 'School must be verified before it can be published.');
   await run(`update public.schools set publication='published', updated_at=now() where id=$1`, [school.id]);
   await audit(req, 'publish_school', 'school', school.id, school.name);
   res.json({ ok: true });
@@ -578,6 +563,14 @@ router.post('/schools/:id/archive', authenticate, requireRole('owner','admin'), 
   await audit(req, 'archive_school', 'school', school.id, school.name);
   res.json({ ok: true });
 }));
+
+/*
+ * NOTE: POST /schools/:id/verify has been REMOVED.
+ * Schools no longer use a verification workflow. The `verification` column
+ * still exists for backward compatibility, but it's set to 'verified' on
+ * create and never checked again. Verification is now only for
+ * editorial content: admissions, exams, scholarships, trending.
+ */
 
 /* ---------- COURSES ---------- */
 router.get('/schools/:schoolId/courses', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
@@ -684,7 +677,7 @@ router.delete('/fees/:id', authenticate, requireRole('owner','admin','school_man
   res.json({ ok: true });
 }));
 
-/* ---------- ADMISSIONS ---------- */
+/* ---------- ADMISSIONS (keeps verification — editorial content) ---------- */
 router.get('/admissions', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const scoped = scopedSchoolFilter(req.user, req.query.school_id);
   const clauses = []; const params = [];
@@ -835,7 +828,7 @@ router.delete('/calendar/:id', authenticate, requireRole('owner','admin','school
   res.json({ ok: true });
 }));
 
-/* ---------- EXAMS ---------- */
+/* ---------- EXAMS (keeps verification — editorial content) ---------- */
 router.get('/exams', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ exams: await many('select * from public.exams order by created_at desc') });
 }));
@@ -903,7 +896,7 @@ router.post('/exams/:id/publish', authenticate, requireRole('owner','admin'), as
   res.json({ ok: true });
 }));
 
-/* ---------- SCHOLARSHIPS ---------- */
+/* ---------- SCHOLARSHIPS (keeps verification — editorial content) ---------- */
 router.get('/scholarships', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ scholarships: await many('select * from public.scholarships order by created_at desc') });
 }));
@@ -978,7 +971,7 @@ router.post('/scholarships/:id/publish', authenticate, requireRole('owner','admi
   res.json({ ok: true });
 }));
 
-/* ---------- TRENDING ---------- */
+/* ---------- TRENDING (keeps verification — editorial content) ---------- */
 router.get('/trending', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ stories: await many('select * from public.trending order by created_at desc') });
 }));
@@ -1118,7 +1111,6 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   res.status(201).json({ media: row });
 }));
 
-// GET /media — enriched with placements[] per file
 router.get('/media', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const clauses = []; const params = [];
   if (req.user.role === 'school_manager') { params.push(req.user.school_id); clauses.push(`school_id = $${params.length}`); }
@@ -1288,7 +1280,6 @@ router.post('/users', authenticate, requireRole('owner'), asyncH(async (req, res
   let schoolId = null;
   if (b.role === 'school_manager') {
     if (!b.school_id) throw httpError(400, 'school_id is required for school managers.');
-    // Validate that the school actually exists so we don't create orphans.
     const school = await one('select id, name from public.schools where id=$1', [b.school_id]);
     if (!school) throw httpError(400, `School id=${b.school_id} does not exist.`);
     schoolId = school.id;
@@ -1309,12 +1300,6 @@ router.post('/users', authenticate, requireRole('owner'), asyncH(async (req, res
   res.status(201).json({ user: publicUser(user), initial_password: initialPassword, note: 'Share the initial password securely. The user must change it after first sign-in.' });
 }));
 
-/**
- * Owner-only helper: assign or reassign a school_manager to a school.
- * Also useful for fixing accounts that were created without a school.
- *
- * Body: { school_id: <uuid or null> }
- */
 router.post('/users/:id/assign-school', authenticate, requireRole('owner'), asyncH(async (req, res) => {
   const { school_id } = req.body || {};
   const user = await one('select * from public.users where id=$1', [req.params.id]);
@@ -1517,7 +1502,7 @@ router.get('/health', asyncH(async (req, res) => {
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
 
-    // Surface orphaned school_manager accounts so you notice them fast.
+    // Surface orphaned school_manager accounts
     let orphanManagers = 0;
     try {
       const orphanRow = await one(
@@ -1530,20 +1515,36 @@ router.get('/health', asyncH(async (req, res) => {
       }
     } catch (_) {}
 
+    // Surface legacy schools that are still 'unverified' from before this
+    // verification model change. They can be batch-fixed at any time.
+    let unverifiedSchools = 0;
+    try {
+      const legRow = await one(
+        `select count(*)::int as c from public.schools
+          where verification <> 'verified'`
+      );
+      unverifiedSchools = legRow ? legRow.c : 0;
+      if (unverifiedSchools > 0) {
+        console.warn(`[health] ${unverifiedSchools} school row(s) still have verification != 'verified'. These are legacy rows — safe to leave, or batch-update to 'verified'.`);
+      }
+    } catch (_) {}
+
     res.json({
       ok: true,
       time: r.rows[0].now,
-      version: '1.6.0',
+      version: '1.7.0',
       media: 'supabase-storage',
       placements: true,
+      school_verification_removed: true,
       orphan_school_managers: orphanManagers,
+      legacy_unverified_schools: unverifiedSchools,
     });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.6.0',
+      version: '1.7.0',
     });
   }
 }));
