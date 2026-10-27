@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — School Profile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -39,7 +39,7 @@
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -124,13 +113,8 @@
       background: transparent; border: none; cursor: pointer;
       text-align: left; transition: background 0.15s, color 0.15s;
     }
-    .signout-nav-btn i {
-      width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0;
-    }
-    .signout-nav-btn:hover {
-      background-color: rgba(224, 112, 112, 0.1);
-      color: var(--danger);
-    }
+    .signout-nav-btn i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+    .signout-nav-btn:hover { background-color: rgba(224, 112, 112, 0.1); color: var(--danger); }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -153,7 +137,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -187,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -200,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -221,17 +197,22 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* DRAFT PREVIEW BANNER                                         */
-    /* ============================================================ */
+    /* DRAFT BANNER */
     .draft-banner {
       background: linear-gradient(135deg, rgba(245,185,66,0.08) 0%, rgba(17,24,21,1) 60%);
       border: 1px solid var(--border);
       border-left: 4px solid var(--accent);
       border-radius: var(--radius-card);
-      padding: 22px 24px;
-      margin-bottom: 24px;
+      padding: 22px 24px; margin-bottom: 24px;
       display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
+    }
+    .draft-banner.verified {
+      border-left-color: var(--primary);
+      background: linear-gradient(135deg, rgba(0,201,130,0.08) 0%, rgba(17,24,21,1) 60%);
+    }
+    .draft-banner.unassigned {
+      border-left-color: var(--danger);
+      background: linear-gradient(135deg, rgba(224,112,112,0.08) 0%, rgba(17,24,21,1) 60%);
     }
     .draft-logo {
       width: 56px; height: 56px; border-radius: 12px;
@@ -240,15 +221,19 @@
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 1.1rem; color: var(--accent);
       flex-shrink: 0;
+      background-size: cover; background-position: center;
+    }
+    .draft-banner.verified .draft-logo {
+      background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(0,201,130,0.05));
+      color: var(--primary);
     }
     .draft-info { flex: 1; min-width: 200px; }
     .draft-info .draft-label {
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
     }
-    .draft-info .draft-name {
-      font-size: 1.2rem; font-weight: 800; margin-bottom: 3px;
-    }
+    .draft-banner.verified .draft-info .draft-label { color: var(--primary); }
+    .draft-info .draft-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 3px; }
     .draft-info .draft-meta {
       font-size: 0.82rem; color: var(--muted);
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -265,10 +250,16 @@
       border: 1px solid rgba(245,185,66,0.3);
       white-space: nowrap;
     }
+    .draft-badge.verified {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+      border-color: rgba(0,201,130,0.3);
+    }
+    .draft-badge.unassigned {
+      background-color: rgba(224,112,112,0.12); color: var(--danger);
+      border-color: rgba(224,112,112,0.3);
+    }
 
-    /* ============================================================ */
-    /* PROFILE TABS                                                 */
-    /* ============================================================ */
+    /* TABS */
     .profile-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 24px;
@@ -284,13 +275,10 @@
     .profile-tab:hover { color: var(--text); }
     .profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .profile-tab i { font-size: 0.85rem; }
-
     .profile-panel { display: none; }
     .profile-panel.active { display: block; }
 
-    /* ============================================================ */
-    /* PANEL / FORM                                                 */
-    /* ============================================================ */
+    /* PANELS */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -325,8 +313,7 @@
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-input); padding: 10px 14px;
       font-size: 0.88rem; color: var(--text); outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
+      transition: border-color 0.15s; width: 100%;
     }
     .form-group input::placeholder,
     .form-group textarea::placeholder { color: #6b7c74; }
@@ -337,17 +324,13 @@
     .form-group input:disabled,
     .form-group select:disabled,
     .form-group textarea:disabled {
-      background-color: rgba(17,24,21,0.5);
-      color: var(--muted);
-      cursor: not-allowed;
-      border-color: var(--border);
+      background-color: rgba(17,24,21,0.5); color: var(--muted);
+      cursor: not-allowed; border-color: var(--border);
     }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 
-    /* Ownership radio group */
-    .radio-group {
-      display: flex; flex-wrap: wrap; gap: 10px;
-    }
+    /* Radio */
+    .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
     .radio-option {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 9px 16px;
@@ -364,10 +347,7 @@
       cursor: pointer; position: relative; flex-shrink: 0;
       transition: all 0.15s;
     }
-    .radio-option input:checked {
-      border-color: var(--primary);
-      background-color: var(--primary);
-    }
+    .radio-option input:checked { border-color: var(--primary); background-color: var(--primary); }
     .radio-option input:checked::after {
       content: ''; position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -379,11 +359,8 @@
       background-color: rgba(0,201,130,0.06);
     }
 
-    /* Media selection */
-    .media-row {
-      display: grid; grid-template-columns: 1fr; gap: 16px;
-      margin-bottom: 20px;
-    }
+    /* Media */
+    .media-row { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 20px; }
     @media (min-width: 700px) { .media-row { grid-template-columns: 1fr 1fr; } }
     .media-block {
       background-color: var(--surface); border: 1px solid var(--border);
@@ -405,13 +382,25 @@
       align-items: center; justify-content: center; gap: 6px;
       color: var(--muted); font-size: 0.78rem; cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
-      margin-bottom: 10px;
+      margin-bottom: 10px; overflow: hidden; position: relative;
+      background-size: cover; background-position: center;
     }
     .media-preview:hover { border-color: var(--primary); color: var(--primary); }
+    .media-preview.has-image {
+      border-style: solid; border-color: var(--border);
+    }
+    .media-preview.has-image:hover { border-color: var(--primary); }
+    .media-preview .media-preview-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      color: #fff; padding: 16px 8px 6px; font-size: 0.65rem;
+      text-align: center; pointer-events: none;
+    }
     .media-preview i { font-size: 1.4rem; }
     .media-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .media-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Form actions */
+    /* Actions */
     .form-actions {
       display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
       padding-top: 20px; border-top: 1px solid var(--border);
@@ -423,6 +412,7 @@
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -431,16 +421,8 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-gold {
-      background-color: transparent; color: var(--accent); font-weight: 600;
-      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
-      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: all 0.15s;
-    }
-    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Review / publication notice */
     .review-notice {
       display: flex; gap: 12px; padding: 14px 16px;
       background-color: rgba(245,185,66,0.06);
@@ -451,9 +433,7 @@
     .review-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
     .review-notice strong { color: var(--accent); }
 
-    /* ============================================================ */
-    /* ABOUT TAB — Rich editor preview                              */
-    /* ============================================================ */
+    /* Rich editor */
     .rich-toolbar {
       display: flex; flex-wrap: wrap; gap: 4px;
       padding: 8px; background-color: var(--surface);
@@ -476,9 +456,7 @@
     }
     .rich-editor:focus { border-color: var(--primary); }
 
-    /* ============================================================ */
-    /* CHANGE HISTORY                                               */
-    /* ============================================================ */
+    /* History */
     .history-list { display: flex; flex-direction: column; gap: 0; }
     .history-item {
       display: flex; gap: 14px; padding: 16px 0;
@@ -510,9 +488,7 @@
     }
 
     /* Empty state */
-    .empty-state {
-      text-align: center; padding: 40px 20px; color: var(--muted);
-    }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty-state i {
       font-size: 2rem; color: var(--border); margin-bottom: 12px;
       display: inline-block;
@@ -520,27 +496,69 @@
     .empty-state h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.82rem; color: var(--muted); }
 
-    /* Public preview link */
-    .preview-link {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.8rem; font-weight: 700; color: var(--primary);
-      padding: 8px 14px; border-radius: 8px;
-      border: 1px solid var(--border);
-      transition: all 0.15s;
+    /* Media picker modal */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.75); z-index: 250;
+      backdrop-filter: blur(4px);
     }
-    .preview-link:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.05); }
+    .modal-backdrop.active { display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-card); width: 100%; max-width: 720px;
+      max-height: 85vh; display: flex; flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .modal-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .modal-title i { color: var(--primary); }
+    .modal-close {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 30px; height: 30px;
+      border-radius: 8px; cursor: pointer;
+    }
+    .modal-close:hover { color: var(--danger); border-color: var(--danger); }
+    .modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+    .modal-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+    .media-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    }
+    @media (min-width: 500px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 700px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
+    .media-tile {
+      aspect-ratio: 1; background-color: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; cursor: pointer; position: relative;
+      transition: border-color 0.15s;
+    }
+    .media-tile:hover { border-color: var(--primary); }
+    .media-tile.selected { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
+    .media-tile img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .media-tile-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      color: #fff; font-size: 0.65rem; padding: 14px 6px 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
 
-    /* Footer note */
+    /* Footer */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
+    .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      position: fixed; bottom: 24px; right: 24px; z-index: 300;
       background-color: var(--elevated); border: 1px solid var(--primary);
       border-left: 4px solid var(--primary);
       border-radius: 12px; padding: 14px 18px;
@@ -551,17 +569,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -578,15 +596,9 @@
       .draft-banner { padding: 18px; }
       .panel { padding: 18px; }
       .form-actions { flex-direction: column; }
-      .form-actions .btn-primary,
-      .form-actions .btn-outline,
-      .form-actions .btn-gold { width: 100%; justify-content: center; }
-      .profile-tabs { gap: 0; }
+      .form-actions button { width: 100%; justify-content: center; }
       .profile-tab { padding: 10px 14px; font-size: 0.8rem; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -599,7 +611,7 @@
 
   <div class="admin-shell" style="display:flex; min-height:100vh;">
 
-    <!-- ==================== SIDEBAR ==================== -->
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -608,25 +620,22 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="profile.html" class="nav-item active"><i class="fas fa-building-columns"></i> School Profile</a>
-        <a href="courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="#" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="#" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="#" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-paper-plane"></i> Submissions
-          <span class="nav-badge">—</span>
-        </a>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./profile.html" class="nav-item active"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
       <div class="sidebar-signout">
@@ -637,16 +646,16 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
+    <!-- MAIN -->
     <div class="main-area">
 
       <header class="topbar">
@@ -660,16 +669,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -679,35 +687,28 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-building-columns"></i> School profile management</div>
           <h1>School Profile</h1>
-          <p>Manage your institution's public identity and information. Changes remain a draft until submitted for review.</p>
+          <p>Manage your institution's public identity and information. Changes are saved directly to your school's record.</p>
         </div>
 
-        <!-- Draft preview banner -->
-        <div class="draft-banner">
-          <div class="draft-logo" id="draftLogo">UL</div>
+        <div class="draft-banner" id="draftBanner">
+          <div class="draft-logo" id="draftLogo">—</div>
           <div class="draft-info">
-            <div class="draft-label">Draft preview</div>
-            <div class="draft-name" id="draftName">University of Lagos</div>
-            <div class="draft-meta">
-              <span><i class="fas fa-building-columns"></i> University</span>
-              <span class="dot">●</span>
-              <span><i class="fas fa-map-marker-alt"></i> Lagos State</span>
-            </div>
-            <div class="draft-note">Logo and cover images can be selected from the media library.</div>
+            <div class="draft-label" id="draftLabel">Loading…</div>
+            <div class="draft-name" id="draftName">—</div>
+            <div class="draft-meta" id="draftMeta">—</div>
+            <div class="draft-note" id="draftNote"></div>
           </div>
           <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
-            <span class="draft-badge"><i class="fas fa-pen"></i> Draft</span>
-            <a href="#" class="preview-link" onclick="toast('Public profile preview opened (demo).'); return false;">
+            <span class="draft-badge" id="draftBadge"><i class="fas fa-circle-notch fa-spin"></i> Loading</span>
+            <a href="#" id="previewLink" class="preview-link" style="display:none;">
               <i class="fas fa-eye"></i> Preview public page
             </a>
           </div>
         </div>
 
-        <!-- Profile tabs -->
         <div class="profile-tabs">
           <button class="profile-tab active" data-tab="basic" onclick="switchTab('basic', this)">
             <i class="fas fa-circle-info"></i> Basic information
@@ -723,33 +724,30 @@
           </button>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: BASIC INFORMATION                                       -->
-        <!-- ============================================================ -->
+        <!-- BASIC TAB -->
         <div class="profile-panel active" id="panel-basic">
 
-          <!-- Media selection -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-photo-film"></i> Logo &amp; cover images</div>
             </div>
-            <p class="panel-desc">Select images from the media library. Changes to logos and cover images are submitted for approval along with the rest of your profile.</p>
+            <p class="panel-desc">Select images from the media library. The logo appears beside your school's name across the platform. The cover image appears at the top of your public profile.</p>
             <div class="media-row">
               <div class="media-block">
                 <div class="media-label">
                   <span>School logo</span>
-                  <span class="media-tag">Required</span>
+                  <span class="media-tag">Recommended</span>
                 </div>
-                <div class="media-preview" onclick="toast('Media library opened to select a logo (demo).')">
+                <div class="media-preview" id="logoPreview" onclick="openMediaPicker('logo')">
                   <i class="fas fa-image"></i>
                   <span>Choose from media library</span>
                 </div>
                 <div class="media-actions">
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="toast('Media library opened (demo).')">
+                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="openMediaPicker('logo')" id="logoSelectBtn">
                     <i class="fas fa-photo-film"></i> Select
                   </button>
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="toast('Upload dialog opened (demo).')">
-                    <i class="fas fa-upload"></i> Upload
+                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="clearMedia('logo')" id="logoClearBtn">
+                    <i class="fas fa-xmark"></i> Clear
                   </button>
                 </div>
               </div>
@@ -758,27 +756,22 @@
                   <span>Campus cover image</span>
                   <span class="media-tag">Optional</span>
                 </div>
-                <div class="media-preview" onclick="toast('Media library opened to select a cover (demo).')">
+                <div class="media-preview" id="coverPreview" onclick="openMediaPicker('cover')">
                   <i class="fas fa-image"></i>
                   <span>Choose from media library</span>
                 </div>
                 <div class="media-actions">
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="toast('Media library opened (demo).')">
+                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="openMediaPicker('cover')" id="coverSelectBtn">
                     <i class="fas fa-photo-film"></i> Select
                   </button>
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="toast('Upload dialog opened (demo).')">
-                    <i class="fas fa-upload"></i> Upload
+                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="clearMedia('cover')" id="coverClearBtn">
+                    <i class="fas fa-xmark"></i> Clear
                   </button>
                 </div>
               </div>
             </div>
-            <div class="form-group">
-              <label>Cover image alternative text <span class="optional">(accessibility)</span></label>
-              <input type="text" placeholder="Describe the campus image for screen readers">
-            </div>
           </div>
 
-          <!-- Basic info form -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-circle-info"></i> Basic information</div>
@@ -786,26 +779,28 @@
             <div class="form-grid">
               <div class="form-group full">
                 <label>Official school name <span class="req">*</span></label>
-                <input type="text" id="schoolName" value="University of Lagos" placeholder="Official institution name">
+                <input type="text" id="schoolName" placeholder="Official institution name">
                 <span class="form-hint">This must match the name used on official documents.</span>
               </div>
               <div class="form-group">
                 <label>Institution type <span class="req">*</span></label>
                 <select id="schoolType">
-                  <option value="university" selected>University</option>
-                  <option value="polytechnic">Polytechnic</option>
-                  <option value="college">College of Education</option>
+                  <option value="">Select type</option>
+                  <option value="University">University</option>
+                  <option value="Polytechnic">Polytechnic</option>
+                  <option value="College of Education">College of Education</option>
+                  <option value="College">College</option>
                 </select>
               </div>
               <div class="form-group">
                 <label>Ownership <span class="req">*</span></label>
                 <div class="radio-group" id="ownershipGroup">
-                  <label class="radio-option selected">
-                    <input type="radio" name="ownership" value="public" checked>
+                  <label class="radio-option">
+                    <input type="radio" name="ownership" value="Public">
                     Public
                   </label>
                   <label class="radio-option">
-                    <input type="radio" name="ownership" value="private">
+                    <input type="radio" name="ownership" value="Private">
                     Private
                   </label>
                 </div>
@@ -815,37 +810,63 @@
                 <select id="schoolState">
                   <option value="">Select state</option>
                   <option value="Abuja">Abuja (FCT)</option>
-                  <option value="Lagos" selected>Lagos</option>
+                  <option value="Abia">Abia</option>
+                  <option value="Adamawa">Adamawa</option>
+                  <option value="Akwa Ibom">Akwa Ibom</option>
+                  <option value="Anambra">Anambra</option>
+                  <option value="Bauchi">Bauchi</option>
+                  <option value="Bayelsa">Bayelsa</option>
+                  <option value="Benue">Benue</option>
+                  <option value="Borno">Borno</option>
+                  <option value="Cross River">Cross River</option>
+                  <option value="Delta">Delta</option>
+                  <option value="Ebonyi">Ebonyi</option>
                   <option value="Edo">Edo</option>
+                  <option value="Ekiti">Ekiti</option>
+                  <option value="Enugu">Enugu</option>
+                  <option value="Gombe">Gombe</option>
+                  <option value="Imo">Imo</option>
+                  <option value="Jigawa">Jigawa</option>
                   <option value="Kaduna">Kaduna</option>
                   <option value="Kano">Kano</option>
-                  <option value="Rivers">Rivers</option>
+                  <option value="Katsina">Katsina</option>
+                  <option value="Kebbi">Kebbi</option>
+                  <option value="Kogi">Kogi</option>
+                  <option value="Kwara">Kwara</option>
+                  <option value="Lagos">Lagos</option>
+                  <option value="Nasarawa">Nasarawa</option>
+                  <option value="Niger">Niger</option>
+                  <option value="Ogun">Ogun</option>
+                  <option value="Ondo">Ondo</option>
+                  <option value="Osun">Osun</option>
                   <option value="Oyo">Oyo</option>
-                  <option value="Enugu">Enugu</option>
-                  <option value="Anambra">Anambra</option>
-                  <option value="Delta">Delta</option>
+                  <option value="Plateau">Plateau</option>
+                  <option value="Rivers">Rivers</option>
+                  <option value="Sokoto">Sokoto</option>
+                  <option value="Taraba">Taraba</option>
+                  <option value="Yobe">Yobe</option>
+                  <option value="Zamfara">Zamfara</option>
                 </select>
               </div>
               <div class="form-group">
                 <label>City</label>
-                <input type="text" id="schoolCity" value="Akoka" placeholder="City or town">
+                <input type="text" id="schoolCity" placeholder="City or town">
               </div>
               <div class="form-group full">
                 <label>Campus address or location <span class="req">*</span></label>
-                <input type="text" id="schoolAddress" value="Akoka, Yaba, Lagos" placeholder="Full campus address">
+                <input type="text" id="schoolAddress" placeholder="Full campus address">
               </div>
               <div class="form-group">
                 <label>Year established</label>
-                <input type="text" id="schoolEstablished" value="1962" placeholder="e.g. 1962">
+                <input type="text" id="schoolEstablished" placeholder="e.g. 1962">
               </div>
               <div class="form-group">
                 <label>Official website</label>
-                <input type="url" id="schoolWebsite" value="https://unilag.edu.ng" placeholder="https://">
+                <input type="url" id="schoolWebsite" placeholder="https://">
               </div>
             </div>
           </div>
 
-          <!-- Protected fields -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-lock"></i> Protected fields</div>
@@ -854,34 +875,30 @@
             <div class="form-grid">
               <div class="form-group">
                 <label>Verification status <span class="protected">Protected</span></label>
-                <input type="text" value="Pending verification" disabled>
+                <input type="text" id="schoolVerification" disabled>
               </div>
               <div class="form-group">
-                <label>Institution ID <span class="protected">Protected</span></label>
-                <input type="text" value="CN-INST-1024" disabled>
+                <label>Publication status <span class="protected">Protected</span></label>
+                <input type="text" id="schoolPublication" disabled>
               </div>
             </div>
           </div>
 
-          <!-- Review and publication -->
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Review and publication</div>
+              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
             </div>
             <div class="review-notice">
               <i class="fas fa-triangle-exclamation"></i>
-              <p><strong>Changes remain a draft until submitted.</strong> The platform owner can review, approve or request corrections. Your current public profile stays visible until the changes are approved.</p>
+              <p><strong>Changes are saved to your school record immediately.</strong> Fields marked with a red asterisk are required. Contact the platform owner if a change needs to be reverted.</p>
             </div>
             <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-outline" onclick="saveDraft()"><i class="fas fa-save"></i> Save draft</button>
-              <button class="btn-primary" onclick="submitForReview()"><i class="fas fa-paper-plane"></i> Submit for review</button>
+              <button class="btn-primary" onclick="saveBasic()" id="saveBasicBtn"><i class="fas fa-save"></i> Save changes</button>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: CONTACT DETAILS                                         -->
-        <!-- ============================================================ -->
+        <!-- CONTACT TAB -->
         <div class="profile-panel" id="panel-contact">
           <div class="panel">
             <div class="panel-header">
@@ -891,151 +908,53 @@
             <div class="form-grid">
               <div class="form-group full">
                 <label>Official contact email <span class="req">*</span></label>
-                <input type="email" id="schoolEmail" value="info@unilag.edu.ng" placeholder="info@institution.edu.ng">
-              </div>
-              <div class="form-group">
-                <label>Admissions email</label>
-                <input type="email" id="schoolAdmissionsEmail" value="admissions@unilag.edu.ng" placeholder="admissions@institution.edu.ng">
-              </div>
-              <div class="form-group">
-                <label>Main phone number</label>
-                <input type="tel" id="schoolPhone" value="+234 1 234 5678" placeholder="+234 ...">
-              </div>
-              <div class="form-group">
-                <label>Admissions phone</label>
-                <input type="tel" id="schoolAdmissionsPhone" placeholder="+234 ...">
-              </div>
-              <div class="form-group">
-                <label>Postal address</label>
-                <input type="text" id="schoolPostal" placeholder="P.O. Box or postal address">
-              </div>
-              <div class="form-group full">
-                <label>Public contact notes</label>
-                <textarea id="schoolContactNotes" placeholder="Any additional contact information, hours, or instructions for applicants..." style="min-height: 80px;">Office hours: Monday – Friday, 8:00 AM – 4:00 PM.</textarea>
+                <input type="email" id="schoolEmail" placeholder="info@institution.edu.ng">
               </div>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Review and publication</div>
+              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
             </div>
             <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-outline" onclick="saveDraft()"><i class="fas fa-save"></i> Save draft</button>
-              <button class="btn-primary" onclick="submitForReview()"><i class="fas fa-paper-plane"></i> Submit for review</button>
+              <button class="btn-primary" onclick="saveContact()" id="saveContactBtn"><i class="fas fa-save"></i> Save changes</button>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: ABOUT SCHOOL                                            -->
-        <!-- ============================================================ -->
+        <!-- ABOUT TAB -->
         <div class="profile-panel" id="panel-about">
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-file-lines"></i> About the school</div>
             </div>
-            <p class="panel-desc">A public description of your institution. This appears on your school profile and is used in search results and social previews.</p>
-            <div class="form-group full" style="margin-bottom: 16px;">
-              <label>Short summary <span class="optional">(shown in cards and search results, max 200 characters)</span></label>
-              <textarea id="schoolSummary" placeholder="A brief summary of your institution..." maxlength="200" style="min-height: 70px;">The University of Lagos is one of Nigeria's premier federal universities, known for academic excellence and research innovation.</textarea>
-              <span class="form-hint"><span id="summaryCount">0</span> / 200 characters</span>
-            </div>
+            <p class="panel-desc">A public description of your institution shown on the school profile.</p>
             <div class="form-group full">
-              <label>Full description <span class="req">*</span></label>
-              <div class="rich-toolbar">
-                <button type="button" title="Bold" onclick="toast('Formatting applied (demo).')"><i class="fas fa-bold"></i></button>
-                <button type="button" title="Italic" onclick="toast('Formatting applied (demo).')"><i class="fas fa-italic"></i></button>
-                <button type="button" title="Heading" onclick="toast('Formatting applied (demo).')"><i class="fas fa-heading"></i></button>
-                <div class="divider"></div>
-                <button type="button" title="Bullet list" onclick="toast('Formatting applied (demo).')"><i class="fas fa-list-ul"></i></button>
-                <button type="button" title="Numbered list" onclick="toast('Formatting applied (demo).')"><i class="fas fa-list-ol"></i></button>
-                <button type="button" title="Link" onclick="toast('Link dialog opened (demo).')"><i class="fas fa-link"></i></button>
-              </div>
-              <textarea class="rich-editor" id="schoolDescription" placeholder="Describe your institution, its history, academic focus, campus environment and student life...">The University of Lagos was established in 1962 and has grown into one of Nigeria's most prestigious higher education institutions. It offers a wide range of undergraduate and postgraduate programmes across multiple faculties, including science, arts, social sciences, management, law, engineering, and medicine.
-
-The university is known for its commitment to academic excellence, research, and community service. Its campus in Akoka provides a vibrant learning environment with modern facilities, libraries, laboratories, and student support services.</textarea>
+              <label>Full description <span class="optional">(plain text)</span></label>
+              <textarea class="rich-editor" id="schoolDescription" placeholder="Describe your institution, its history, academic focus, campus environment and student life..."></textarea>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-star"></i> Highlights &amp; facilities</div>
-            </div>
-            <p class="panel-desc">Selected facts about your institution shown on the public profile.</p>
-            <div class="form-grid">
-              <div class="form-group full">
-                <label>Facilities and student life <span class="optional">(one per line)</span></label>
-                <textarea id="schoolFacilities" placeholder="List key facilities and aspects of student life..." style="min-height: 90px;">On-campus hostels
-Library and research centres
-Sports and recreation facilities
-Student union and associations
-Health centre</textarea>
-              </div>
-              <div class="form-group full">
-                <label>Accreditation notes <span class="optional">(only where verified)</span></label>
-                <input type="text" id="schoolAccreditation" placeholder="e.g. Accredited by the National Universities Commission (NUC)">
-                <span class="form-hint">Only include accreditation information you can confirm with an official source.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Review and publication</div>
+              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
             </div>
             <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-outline" onclick="saveDraft()"><i class="fas fa-save"></i> Save draft</button>
-              <button class="btn-primary" onclick="submitForReview()"><i class="fas fa-paper-plane"></i> Submit for review</button>
+              <button class="btn-primary" onclick="saveAbout()" id="saveAboutBtn"><i class="fas fa-save"></i> Save changes</button>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: CHANGE HISTORY                                          -->
-        <!-- ============================================================ -->
+        <!-- HISTORY TAB -->
         <div class="profile-panel" id="panel-history">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Change history</div>
+              <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent changes</div>
             </div>
-            <p class="panel-desc">Important profile updates and their review decisions. Only changes to your institution are shown.</p>
-            <div class="history-list">
-              <div class="history-item">
-                <div class="history-dot gold"><i class="fas fa-paper-plane"></i></div>
-                <div class="history-body">
-                  <p><strong>Dr. Funmi Adeyemi</strong> submitted changes for review — <span class="hl-gold">Basic information, Contact details</span></p>
-                  <div class="history-time"><i class="far fa-clock"></i> 2 hours ago · Pending review</div>
-                </div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot green"><i class="fas fa-circle-check"></i></div>
-                <div class="history-body">
-                  <p><strong>Platform Owner</strong> approved changes to <span class="hl">About the school</span></p>
-                  <div class="history-time"><i class="far fa-clock"></i> 3 days ago · Approved</div>
-                </div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot red"><i class="fas fa-xmark"></i></div>
-                <div class="history-body">
-                  <p><strong>Platform Owner</strong> requested corrections to <span class="hl-gold">Contact details</span> — "Official email must match the institutional domain."</p>
-                  <div class="history-time"><i class="far fa-clock"></i> 1 week ago · Returned for correction</div>
-                </div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot green"><i class="fas fa-circle-check"></i></div>
-                <div class="history-body">
-                  <p><strong>Platform Owner</strong> approved the original <span class="hl">School Profile</span> submission</p>
-                  <div class="history-time"><i class="far fa-clock"></i> 2 weeks ago · Approved</div>
-                </div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot"><i class="fas fa-file"></i></div>
-                <div class="history-body">
-                  <p><strong>System</strong> created the school profile draft</p>
-                  <div class="history-time"><i class="far fa-clock"></i> 3 weeks ago · Draft created</div>
-                </div>
-              </div>
+            <p class="panel-desc" id="historyDesc">Loading recent changes…</p>
+            <div id="historyList">
+              <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading history…</p></div>
             </div>
           </div>
 
@@ -1043,91 +962,313 @@ Health centre</textarea>
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-circle-info"></i> About this history</div>
             </div>
-            <p class="panel-desc" style="margin-bottom: 0;">Every submitted change and review decision is recorded here. Approved changes become visible on the public profile. Returned submissions remain editable, and new versions can be submitted. Full audit details are retained by the platform owner.</p>
+            <p class="panel-desc" style="margin-bottom: 0;">Changes to school data are recorded in the audit log and visible to platform owners. The full audit trail is available to platform administrators.</p>
           </div>
         </div>
 
         <p class="footnote">
-          <i class="fas fa-circle-info"></i> Interactive mockup only. These actions do not save data or submit changes to the live CampusNaija platform.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Media picker modal -->
+  <div class="modal-backdrop" id="mediaPickerBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-photo-film"></i> <span id="pickerTitle">Select media</span></div>
+        <button class="modal-close" onclick="closeMediaPicker()"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="mediaPickerContent">
+          <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading media…</p></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeMediaPicker()">Cancel</button>
+        <button class="btn-primary" onclick="confirmMediaSelection()" id="mediaConfirmBtn" disabled>
+          <i class="fas fa-check"></i> Use selected
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          ownership: 'Public',
-          state: 'Lagos State',
-          city: 'Akoka',
-          address: 'Akoka, Yaba, Lagos',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let selectedMedia = { logo: null, cover: null };
+      let mediaPickerTarget = null;
+      let pendingPickerSelection = null;
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
-        }
-
-        document.getElementById('draftLogo').textContent = demoAccount.school.initials;
-        document.getElementById('draftName').textContent = demoAccount.school.name;
-        document.querySelector('.draft-meta').innerHTML =
-          `<span><i class="fas fa-building-columns"></i> ${demoAccount.school.type}</span>
-           <span class="dot">●</span>
-           <span><i class="fas fa-map-marker-alt"></i> ${demoAccount.school.state}</span>`;
-
-        document.getElementById('schoolName').value = demoAccount.school.name;
-        document.getElementById('schoolType').value = demoAccount.school.type.toLowerCase();
-        document.getElementById('schoolState').value = demoAccount.school.state.replace(' State', '');
-        document.getElementById('schoolCity').value = demoAccount.school.city;
-        document.getElementById('schoolAddress').value = demoAccount.school.address;
-
-        document.querySelectorAll('input[name="ownership"]').forEach(r => {
-          r.checked = r.value.toLowerCase() === demoAccount.school.ownership.toLowerCase();
-          r.closest('.radio-option').classList.toggle('selected', r.checked);
-        });
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      /* ============================================================ */
-      /* TAB SWITCHING                                                */
-      /* ============================================================ */
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
+
+      function renderBanner() {
+        const banner = document.getElementById('draftBanner');
+        const logoEl = document.getElementById('draftLogo');
+        const nameEl = document.getElementById('draftName');
+        const metaEl = document.getElementById('draftMeta');
+        const labelEl = document.getElementById('draftLabel');
+        const noteEl = document.getElementById('draftNote');
+        const badge = document.getElementById('draftBadge');
+        const previewLink = document.getElementById('previewLink');
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const footnote = document.getElementById('footnoteInstName');
+
+        if (!currentSchool) {
+          banner.classList.add('unassigned');
+          banner.classList.remove('verified');
+          logoEl.textContent = '!';
+          labelEl.textContent = 'No institution assigned';
+          nameEl.textContent = 'Unassigned';
+          metaEl.innerHTML = '<span>Contact the platform administrator to be assigned to your institution.</span>';
+          noteEl.textContent = '';
+          badge.className = 'draft-badge unassigned';
+          badge.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          previewLink.style.display = 'none';
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          footnote.textContent = 'Unassigned';
+          return;
+        }
+
+        const name = currentSchool.name || '—';
+        const type = currentSchool.type || '—';
+        const location = [currentSchool.city, currentSchool.state].filter(Boolean).join(', ') || '—';
+        const verified = currentSchool.verification === 'verified';
+        const published = currentSchool.publication === 'published';
+
+        banner.classList.toggle('verified', verified);
+        banner.classList.remove('unassigned');
+
+        if (currentSchool.logo_media_id) {
+          const url = getMediaUrlById(currentSchool.logo_media_id);
+          if (url) {
+            logoEl.style.backgroundImage = 'url("' + url + '")';
+            logoEl.textContent = '';
+          } else {
+            logoEl.textContent = initials(name);
+          }
+        } else {
+          logoEl.style.backgroundImage = '';
+          logoEl.textContent = initials(name);
+        }
+
+        labelEl.textContent = verified ? 'Verified institution' : 'Institution record';
+        nameEl.textContent = name;
+        metaEl.innerHTML =
+          '<span><i class="fas fa-building-columns"></i> ' + esc(type) + '</span>' +
+          '<span class="dot">●</span>' +
+          '<span><i class="fas fa-map-marker-alt"></i> ' + esc(location) + '</span>';
+
+        noteEl.textContent = published
+          ? 'This profile is published on the public site.'
+          : 'This profile is not yet published on the public site.';
+
+        if (verified) {
+          badge.className = 'draft-badge verified';
+          badge.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+        } else if (currentSchool.verification === 'pending') {
+          badge.className = 'draft-badge';
+          badge.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+        } else {
+          badge.className = 'draft-badge';
+          badge.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+        }
+
+        if (published && currentSchool.slug) {
+          previewLink.style.display = 'inline-flex';
+          previewLink.href = API_BASE + '/schools/' + encodeURIComponent(currentSchool.slug);
+          previewLink.target = '_blank';
+          previewLink.onclick = null;
+        } else {
+          previewLink.style.display = 'inline-flex';
+          previewLink.removeAttribute('href');
+          previewLink.onclick = (e) => { e.preventDefault(); toast('This profile is not yet published.', true); };
+        }
+
+        sidebarName.textContent = name;
+        if (verified) {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+        footnote.textContent = name;
+      }
+
+      // Media URL cache (per-school media)
+      let mediaCache = {};
+      function getMediaUrlById(id) {
+        return mediaCache[id] || null;
+      }
+
+      async function loadMediaCache() {
+        if (!currentSchool) return;
+        try {
+          const data = await api('/api/media?school_id=' + encodeURIComponent(currentSchool.id));
+          const items = data.media || [];
+          mediaCache = {};
+          for (const m of items) mediaCache[m.id] = m.public_url;
+        } catch (err) {
+          console.error('[media cache]', err);
+        }
+      }
+
+      function populateForm() {
+        const s = currentSchool || {};
+        document.getElementById('schoolName').value = s.name || '';
+        document.getElementById('schoolType').value = s.type || '';
+        document.getElementById('schoolState').value = s.state || '';
+        document.getElementById('schoolCity').value = s.city || '';
+        document.getElementById('schoolAddress').value = s.address || '';
+        document.getElementById('schoolEstablished').value = s.established || '';
+        document.getElementById('schoolWebsite').value = s.website || '';
+        document.getElementById('schoolEmail').value = s.email || '';
+        document.getElementById('schoolDescription').value = s.description || '';
+
+        document.querySelectorAll('input[name="ownership"]').forEach(r => {
+          const checked = r.value.toLowerCase() === String(s.ownership || '').toLowerCase();
+          r.checked = checked;
+          r.closest('.radio-option').classList.toggle('selected', checked);
+        });
+
+        document.getElementById('schoolVerification').value = s.verification || '—';
+        document.getElementById('schoolPublication').value = s.publication || '—';
+
+        // Media previews
+        updateMediaPreview('logo', s.logo_media_id);
+        updateMediaPreview('cover', s.cover_media_id);
+      }
+
+      function updateMediaPreview(kind, mediaId) {
+        const el = document.getElementById(kind === 'logo' ? 'logoPreview' : 'coverPreview');
+        const clearBtn = document.getElementById(kind === 'logo' ? 'logoClearBtn' : 'coverClearBtn');
+        if (!el) return;
+
+        const url = mediaId ? getMediaUrlById(mediaId) : null;
+        if (url) {
+          el.classList.add('has-image');
+          el.style.backgroundImage = 'url("' + url + '")';
+          el.innerHTML = '<div class="media-preview-label">' +
+            (kind === 'logo' ? 'Current logo' : 'Current cover') +
+            ' · Click to change</div>';
+          clearBtn.disabled = false;
+        } else {
+          el.classList.remove('has-image');
+          el.style.backgroundImage = '';
+          el.innerHTML = '<i class="fas fa-image"></i><span>Choose from media library</span>';
+          clearBtn.disabled = true;
+        }
+      }
+
+      function disableAllForms(disabled) {
+        const ids = [
+          'schoolName', 'schoolType', 'schoolState', 'schoolCity', 'schoolAddress',
+          'schoolEstablished', 'schoolWebsite', 'schoolEmail', 'schoolDescription'
+        ];
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.disabled = disabled;
+        });
+        document.querySelectorAll('input[name="ownership"]').forEach(r => r.disabled = disabled);
+        document.getElementById('saveBasicBtn').disabled = disabled;
+        document.getElementById('saveContactBtn').disabled = disabled;
+        document.getElementById('saveAboutBtn').disabled = disabled;
+        document.getElementById('logoSelectBtn').disabled = disabled;
+        document.getElementById('coverSelectBtn').disabled = disabled;
+      }
+
+      /* TABS */
       window.switchTab = function(tab, el) {
         document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
         document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
         const panel = document.getElementById('panel-' + tab);
         if (panel) panel.classList.add('active');
-        // Update topbar title
         const titles = { basic: 'School Profile', contact: 'Contact Details', about: 'About School', history: 'Change History' };
         const titleEl = document.querySelector('.topbar-title .t-name');
         if (titleEl) titleEl.textContent = titles[tab] || 'School Profile';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (tab === 'history') loadHistory();
       };
 
-      /* ============================================================ */
-      /* OWNERSHIP RADIO SELECTION                                    */
-      /* ============================================================ */
+      /* RADIO */
       document.querySelectorAll('input[name="ownership"]').forEach(radio => {
         radio.addEventListener('change', () => {
           document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
@@ -1135,60 +1276,229 @@ Health centre</textarea>
         });
       });
 
-      /* ============================================================ */
-      /* SUMMARY CHARACTER COUNT                                      */
-      /* ============================================================ */
-      const summaryEl = document.getElementById('schoolSummary');
-      const summaryCount = document.getElementById('summaryCount');
-      function updateSummaryCount() {
-        if (summaryEl && summaryCount) {
-          summaryCount.textContent = summaryEl.value.length;
+      /* SAVE HANDLERS */
+      async function patchSchool(payload, successMsg) {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id), {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+          });
+          currentSchool = data.school || currentSchool;
+          populateForm();
+          renderBanner();
+          toast(successMsg || 'Saved.');
+        } catch (err) {
+          toast(err.message, true);
         }
       }
-      if (summaryEl) {
-        summaryEl.addEventListener('input', updateSummaryCount);
-        updateSummaryCount();
-      }
 
-      /* ============================================================ */
-      /* DRAFT & SUBMIT ACTIONS                                       */
-      /* ============================================================ */
-      window.saveDraft = function() {
-        toast('Draft saved locally. In production this persists to the backend.');
-      };
-
-      window.submitForReview = function() {
+      window.saveBasic = async function() {
         const name = document.getElementById('schoolName').value.trim();
         const address = document.getElementById('schoolAddress').value.trim();
-        if (!name) { toast('Please enter the official school name before submitting.'); return; }
-        if (!address) { toast('Please enter the campus address before submitting.'); return; }
-        if (!confirm('Submit these profile changes for review?\n\nYour current public profile stays visible until an administrator approves the changes.')) return;
-        toast('Submitted for review · you will be notified of the decision.');
+        if (!name) { toast('Please enter the official school name.', true); return; }
+        if (!address) { toast('Please enter the campus address.', true); return; }
+        const payload = {
+          name,
+          type: document.getElementById('schoolType').value || null,
+          state: document.getElementById('schoolState').value || null,
+          city: document.getElementById('schoolCity').value.trim() || null,
+          address,
+          established: document.getElementById('schoolEstablished').value.trim() || null,
+          website: document.getElementById('schoolWebsite').value.trim() || null,
+        };
+        const ownership = document.querySelector('input[name="ownership"]:checked');
+        if (ownership) payload.ownership = ownership.value;
+
+        const btn = document.getElementById('saveBasicBtn');
+        btn.disabled = true;
+        await patchSchool(payload, 'Basic information saved.');
+        btn.disabled = false;
       };
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      window.saveContact = async function() {
+        const email = document.getElementById('schoolEmail').value.trim();
+        if (!email) { toast('Please enter a contact email.', true); return; }
+        const payload = { email };
+        const btn = document.getElementById('saveContactBtn');
+        btn.disabled = true;
+        await patchSchool(payload, 'Contact details saved.');
+        btn.disabled = false;
       };
 
-      window.signOut = function() {
+      window.saveAbout = async function() {
+        const description = document.getElementById('schoolDescription').value.trim();
+        const payload = { description: description || null };
+        const btn = document.getElementById('saveAboutBtn');
+        btn.disabled = true;
+        await patchSchool(payload, 'About section saved.');
+        btn.disabled = false;
+      };
+
+      /* MEDIA PICKER */
+      window.openMediaPicker = async function(target) {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
+        mediaPickerTarget = target;
+        pendingPickerSelection = null;
+        document.getElementById('pickerTitle').textContent =
+          target === 'logo' ? 'Select school logo' : 'Select cover image';
+        document.getElementById('mediaConfirmBtn').disabled = true;
+        document.getElementById('mediaPickerBackdrop').classList.add('active');
+
+        const content = document.getElementById('mediaPickerContent');
+        content.innerHTML = '<div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading media…</p></div>';
+
+        try {
+          const data = await api('/api/media?school_id=' + encodeURIComponent(currentSchool.id));
+          const items = (data.media || []).filter(m => (m.mime_type || '').startsWith('image/'));
+          if (!items.length) {
+            content.innerHTML = '<div class="empty-state">' +
+              '<i class="fas fa-photo-film"></i>' +
+              '<h3>No images uploaded yet</h3>' +
+              '<p>Upload images in the <a href="./media-library.html" style="color:var(--primary);font-weight:700;">Media Library</a> first, then come back to select one.</p>' +
+              '</div>';
+            return;
+          }
+          content.innerHTML = '<div class="media-grid">' + items.map(m => {
+            return '<div class="media-tile" data-id="' + esc(m.id) + '" onclick="selectMediaTile(this)">' +
+              '<img src="' + esc(m.public_url) + '" alt="' + esc(m.alt_text || m.display_name || '') + '" loading="lazy">' +
+              '<div class="media-tile-label">' + esc(m.display_name || m.original_name || '') + '</div>' +
+            '</div>';
+          }).join('') + '</div>';
+        } catch (err) {
+          content.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Could not load media</h3><p>' + esc(err.message) + '</p></div>';
+        }
+      };
+
+      window.closeMediaPicker = function() {
+        document.getElementById('mediaPickerBackdrop').classList.remove('active');
+        mediaPickerTarget = null;
+        pendingPickerSelection = null;
+      };
+
+      window.selectMediaTile = function(tile) {
+        document.querySelectorAll('.media-tile').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+        pendingPickerSelection = tile.getAttribute('data-id');
+        document.getElementById('mediaConfirmBtn').disabled = !pendingPickerSelection;
+      };
+
+      window.confirmMediaSelection = async function() {
+        if (!pendingPickerSelection || !mediaPickerTarget || !currentSchool) return;
+        const field = mediaPickerTarget === 'logo' ? 'logo_media_id' : 'cover_media_id';
+        const payload = {}; payload[field] = pendingPickerSelection;
+        await patchSchool(payload, (mediaPickerTarget === 'logo' ? 'Logo' : 'Cover') + ' updated.');
+        closeMediaPicker();
+      };
+
+      window.clearMedia = async function(kind) {
+        if (!currentSchool) return;
+        if (!confirm('Remove this ' + kind + '? The image file will not be deleted from your media library.')) return;
+        const field = kind === 'logo' ? 'logo_media_id' : 'cover_media_id';
+        const payload = {}; payload[field] = null;
+        await patchSchool(payload, (kind === 'logo' ? 'Logo' : 'Cover') + ' cleared.');
+      };
+
+      /* HISTORY */
+      async function loadHistory() {
+        const el = document.getElementById('historyList');
+        const desc = document.getElementById('historyDesc');
+
+        if (!currentSchool) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>No institution assigned</h3><p>Contact the platform administrator.</p></div>';
+          desc.textContent = '';
+          return;
+        }
+
+        // /api/audit is owner-only. Show clean note for school_manager.
+        if (currentUser.role !== 'owner') {
+          el.innerHTML = '<div class="empty-state">' +
+            '<i class="fas fa-lock"></i>' +
+            '<h3>Full audit history is not available here</h3>' +
+            '<p>Detailed change history is retained by the platform owner. Contact the platform administrator if you need to review past changes to your institution.</p>' +
+            '</div>';
+          desc.textContent = 'Full audit history is available to the platform owner only.';
+          return;
+        }
+
+        desc.textContent = 'Loading recent changes…';
+        try {
+          const data = await api('/api/audit');
+          const rows = (data.audit || []).filter(a =>
+            a.target_type === 'school' && String(a.target_id) === String(currentSchool.id)
+          ).slice(0, 20);
+
+          if (!rows.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-clock-rotate-left"></i><h3>No changes recorded yet</h3><p>Changes to your school profile will appear here as they are made.</p></div>';
+            desc.textContent = 'No changes recorded.';
+            return;
+          }
+
+          desc.textContent = 'Recent changes to your institution record.';
+          el.innerHTML = '<div class="history-list">' + rows.map(r => {
+            const action = (r.action || '').toLowerCase();
+            const dotClass = action.includes('delete') || action.includes('suspend') ? 'red'
+                            : action.includes('verify') || action.includes('publish') || action.includes('approve') ? 'green'
+                            : 'gold';
+            const icon = action.includes('delete') ? 'fa-xmark'
+                        : action.includes('verify') || action.includes('publish') || action.includes('approve') ? 'fa-circle-check'
+                        : action.includes('update') ? 'fa-pen' : 'fa-file';
+            return '<div class="history-item">' +
+              '<div class="history-dot ' + dotClass + '"><i class="fas ' + icon + '"></i></div>' +
+              '<div class="history-body">' +
+                '<p><strong>' + esc(r.actor_name || 'System') + '</strong> ' + esc(r.action || '') +
+                  (r.target_label ? ' — <span class="hl">' + esc(r.target_label) + '</span>' : '') + '</p>' +
+                '<div class="history-time"><i class="far fa-clock"></i> ' +
+                  esc((r.created_at || '').toString().replace('T', ' ').slice(0, 16)) + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') + '</div>';
+        } catch (err) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Could not load history</h3><p>' + esc(err.message) + '</p></div>';
+        }
+      }
+
+      /* SESSION */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* MOBILE SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1203,15 +1513,17 @@ Health centre</textarea>
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* INIT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        await loadMediaCache();
+        renderBanner();
+        populateForm();
+        disableAllForms(!currentSchool);
+      })();
 
     })();
   </script>

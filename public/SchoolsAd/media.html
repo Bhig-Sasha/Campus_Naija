@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — School Media Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -39,7 +39,7 @@
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -148,7 +137,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -182,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -195,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -216,23 +197,24 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* SCOPE BANNER                                                 */
-    /* ============================================================ */
+    /* SCOPE BANNER */
     .scope-banner {
       display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px; margin-bottom: 24px;
+    }
+    .scope-banner.unassigned {
+      background-color: rgba(245,185,66,0.05);
+      border-color: rgba(245,185,66,0.25);
+      border-left-color: var(--accent);
     }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner.unassigned i { color: var(--accent); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
-    .scope-banner .scope-text strong {
-      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
-    }
+    .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
     .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
     .scope-banner .scope-pill {
       font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
@@ -240,10 +222,11 @@
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       white-space: nowrap;
     }
+    .scope-banner.unassigned .scope-pill {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
 
-    /* ============================================================ */
-    /* STATS                                                        */
-    /* ============================================================ */
+    /* STATS */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
@@ -262,14 +245,12 @@
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text);
+      line-height: 1; min-height: 1em;
     }
-    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
+    /* TOOLBAR */
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
       margin-bottom: 20px;
@@ -281,6 +262,7 @@
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -289,10 +271,18 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem;
+      border: 1px solid rgba(224,112,112,0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224,112,112,0.1); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
-    /* ============================================================ */
-    /* TABS                                                         */
-    /* ============================================================ */
+    /* TABS */
     .media-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 20px;
@@ -308,10 +298,16 @@
     .media-tab:hover { color: var(--text); }
     .media-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .media-tab i { font-size: 0.85rem; }
+    .media-tab .tab-count {
+      background-color: var(--elevated); color: var(--muted);
+      font-size: 0.65rem; font-weight: 800; padding: 1px 7px;
+      border-radius: 40px; min-width: 20px; text-align: center;
+    }
+    .media-tab.active .tab-count {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+    }
 
-    /* ============================================================ */
-    /* PANEL / EMPTY STATE                                          */
-    /* ============================================================ */
+    /* PANEL */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -324,9 +320,8 @@
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
-    .empty-state {
-      text-align: center; padding: 48px 24px; color: var(--muted);
-    }
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
     .empty-state .es-icon {
       width: 64px; height: 64px; border-radius: 16px;
       background-color: var(--surface); border: 1px solid var(--border);
@@ -338,28 +333,63 @@
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
       max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
-    .empty-state .empty-actions {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    }
-    .empty-state .data-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; color: var(--muted);
-      padding: 6px 14px; border-radius: 40px;
-      background-color: var(--surface); border: 1px solid var(--border);
-      margin-top: 16px; font-style: italic;
-    }
-    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+    .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* ============================================================ */
-    /* UPLOAD FORM (inline)                                         */
-    /* ============================================================ */
+    /* Media grid */
+    .media-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    }
+    @media (min-width: 700px) { .media-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1000px) { .media-grid { grid-template-columns: repeat(4, 1fr); } }
+    .media-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      transition: border-color 0.15s;
+      display: flex; flex-direction: column;
+    }
+    .media-card:hover { border-color: var(--primary); }
+    .media-thumb {
+      aspect-ratio: 16 / 10;
+      background-color: #0a0f0d;
+      background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 1.8rem;
+      position: relative;
+    }
+    .media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-thumb.document { background: linear-gradient(135deg, rgba(245,185,66,0.08), rgba(17,24,21,1)); color: var(--accent); }
+    .media-body { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .media-title {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .media-meta {
+      font-size: 0.7rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .media-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+    .media-tag {
+      font-size: 0.62rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 40px;
+      background-color: var(--elevated); color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .media-tag.in-use {
+      background-color: rgba(0,201,130,0.12); color: var(--primary);
+    }
+    .media-actions {
+      padding: 10px 14px; border-top: 1px solid var(--border);
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .media-actions button { flex: 1; justify-content: center; min-width: 0; }
+
+    /* Upload form */
     .add-inline {
       display: none;
       background-color: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: 12px; padding: 20px; margin-bottom: 20px;
     }
     .add-inline.open { display: block; }
     .add-inline .ai-header {
@@ -408,9 +438,7 @@
       display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
       padding-top: 16px; border-top: 1px solid var(--border);
     }
-    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
-    /* Upload drop zone */
     .upload-zone {
       border: 2px dashed var(--border);
       border-radius: 12px;
@@ -420,7 +448,9 @@
       transition: border-color 0.15s, background 0.15s;
       margin-bottom: 16px;
     }
-    .upload-zone:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.03); }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--primary); background-color: rgba(0,201,130,0.03);
+    }
     .upload-zone .uz-icon {
       width: 56px; height: 56px; border-radius: 50%;
       background-color: rgba(0,201,130,0.1); color: var(--primary);
@@ -429,6 +459,12 @@
     }
     .upload-zone h4 { font-size: 0.9rem; margin-bottom: 4px; }
     .upload-zone p { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+    .upload-zone .file-name {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; color: var(--primary); font-weight: 700;
+      background-color: rgba(0,201,130,0.08);
+      padding: 4px 12px; border-radius: 40px; margin-top: 8px;
+    }
     .upload-formats {
       display: inline-flex; flex-wrap: wrap; gap: 6px; justify-content: center;
     }
@@ -438,7 +474,6 @@
       padding: 2px 10px; border-radius: 40px;
     }
 
-    /* Category card grid inside form */
     .type-cards {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
     }
@@ -454,9 +489,7 @@
     .type-card.selected i { color: var(--primary); }
     .type-card span { font-size: 0.72rem; font-weight: 600; }
 
-    /* ============================================================ */
-    /* CATEGORY OVERVIEW CARDS                                      */
-    /* ============================================================ */
+    /* Category cards */
     .category-overview {
       display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px;
     }
@@ -479,13 +512,11 @@
     .cat-text h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
     .cat-text p { font-size: 0.78rem; color: var(--muted); margin: 0; }
     .cat-count {
-      font-size: 0.85rem; font-weight: 800; color: var(--muted);
+      font-size: 0.95rem; font-weight: 800; color: var(--text);
       flex-shrink: 0;
     }
 
-    /* ============================================================ */
-    /* GUIDELINES PANEL                                             */
-    /* ============================================================ */
+    /* Guidelines */
     .guidelines-grid {
       display: grid; grid-template-columns: 1fr; gap: 12px;
     }
@@ -506,37 +537,26 @@
     .guideline-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
     .guideline-item p { font-size: 0.78rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
-    /* ============================================================ */
-    /* IMPORTANT NOTE                                               */
-    /* ============================================================ */
     .important-note {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 18px 22px;
       background-color: rgba(245,185,66,0.06);
       border: 1px solid rgba(245,185,66,0.3);
       border-left: 4px solid var(--accent);
-      border-radius: 12px;
-      margin-top: 20px;
+      border-radius: 12px; margin-top: 20px;
     }
     .important-note i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
     .important-note .in-text { flex: 1; }
-    .important-note h4 {
-      font-size: 0.9rem; margin-bottom: 4px; color: var(--accent);
-    }
-    .important-note p {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
-    }
+    .important-note h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--accent); }
+    .important-note p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    /* Footer note */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
     .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -549,17 +569,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -575,17 +595,10 @@
       .page-heading h1 { font-size: 1.6rem; }
       .panel { padding: 18px; }
       .form-actions { flex-direction: column; }
-      .form-actions .btn-primary,
-      .form-actions .btn-outline { width: 100%; justify-content: center; }
-      .empty-state { padding: 32px 16px; }
-      .empty-state .empty-actions { flex-direction: column; }
-      .empty-state .empty-actions button { width: 100%; justify-content: center; }
+      .form-actions button { width: 100%; justify-content: center; }
       .media-tab { padding: 9px 12px; font-size: 0.8rem; }
       .cat-card { padding: 16px; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -598,7 +611,6 @@
 
   <div class="admin-shell" style="display:flex; min-height:100vh;">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -607,25 +619,22 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
-        <a href="courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="media.html" class="nav-item active"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-paper-plane"></i> Submissions
-          <span class="nav-badge">—</span>
-        </a>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item active"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
       <div class="sidebar-signout">
@@ -636,16 +645,15 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -659,16 +667,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -678,63 +685,57 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-photo-film"></i> School branding &amp; assets</div>
           <h1>Media Library</h1>
           <p>Manage the visual content and documents associated with your institution.</p>
         </div>
 
-        <!-- Scoped access banner -->
-        <div class="scope-banner">
+        <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-lock"></i>
           <div class="scope-text">
             <strong>School-scoped access</strong>
             <span>Media access is restricted to the representative's assigned institution.</span>
           </div>
-          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+          <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Media assets <i class="fas fa-photo-film"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statTotal">—</div>
+            <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Submitted for approval</div>
+            <div class="stat-mini-label">Images <i class="fas fa-image gold"></i></div>
+            <div class="stat-mini-value" id="statImages">—</div>
+            <div class="stat-mini-sub" id="statImagesSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Visible publicly</div>
+            <div class="stat-mini-label">Documents <i class="fas fa-file-pdf"></i></div>
+            <div class="stat-mini-value" id="statDocs">—</div>
+            <div class="stat-mini-sub" id="statDocsSub"></div>
           </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
-          <button class="btn-primary" onclick="toggleAddForm()">
-            <i class="fas fa-plus"></i> Add media asset
+          <button class="btn-primary" id="addMediaBtn" onclick="toggleAddForm()">
+            <i class="fas fa-plus"></i> Upload media
           </button>
         </div>
 
-        <!-- Tabs -->
         <div class="media-tabs">
           <button class="media-tab active" data-cat="all" onclick="switchTab('all', this)">
-            <i class="fas fa-list"></i> All media
+            <i class="fas fa-list"></i> All media <span class="tab-count" id="countAll">—</span>
           </button>
           <button class="media-tab" data-cat="images" onclick="switchTab('images', this)">
-            <i class="fas fa-image"></i> Images
+            <i class="fas fa-image"></i> Images <span class="tab-count" id="countImages">—</span>
           </button>
           <button class="media-tab" data-cat="documents" onclick="switchTab('documents', this)">
-            <i class="fas fa-file-pdf"></i> Documents
+            <i class="fas fa-file-pdf"></i> Documents <span class="tab-count" id="countDocs">—</span>
           </button>
         </div>
 
-        <!-- Category overview -->
         <div class="category-overview">
           <div class="cat-card" onclick="switchTab('images', document.querySelector('.media-tab[data-cat=\'images\']'))">
             <div class="cat-icon"><i class="fas fa-image"></i></div>
@@ -742,7 +743,7 @@
               <h4>School images</h4>
               <p>Logos, photos and banners</p>
             </div>
-            <div class="cat-count">—</div>
+            <div class="cat-count" id="catCountImages">—</div>
           </div>
           <div class="cat-card" onclick="switchTab('documents', document.querySelector('.media-tab[data-cat=\'documents\']'))">
             <div class="cat-icon gold"><i class="fas fa-file-pdf"></i></div>
@@ -750,11 +751,10 @@
               <h4>Documents</h4>
               <p>Brochures and approved PDFs</p>
             </div>
-            <div class="cat-count">—</div>
+            <div class="cat-count" id="catCountDocs">—</div>
           </div>
         </div>
 
-        <!-- Upload form (inline) -->
         <div class="add-inline" id="addMediaForm">
           <div class="ai-header">
             <div class="ai-title"><i class="fas fa-plus"></i> New media asset</div>
@@ -763,24 +763,31 @@
             </button>
           </div>
 
-          <!-- Upload drop zone -->
-          <div class="upload-zone" onclick="toast('File picker opened (demo).')">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
             <div class="uz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
-            <h4>Upload media</h4>
-            <p>Drag and drop a file here, or click to browse.</p>
+            <h4 id="uploadLabel">Upload media</h4>
+            <p id="uploadSub">Drag and drop a file here, or click to browse.</p>
             <div class="upload-formats">
               <span class="format-tag">JPG</span>
               <span class="format-tag">PNG</span>
               <span class="format-tag">WebP</span>
+              <span class="format-tag">SVG</span>
               <span class="format-tag">PDF</span>
             </div>
+            <div id="fileNameChip" style="display:none;" class="file-name">
+              <i class="fas fa-file"></i> <span id="fileNameText"></span>
+            </div>
           </div>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/svg+xml,application/pdf" style="display:none;">
 
           <div class="form-grid">
             <div class="form-group full">
-              <label>Media category <span class="req">*</span></label>
+              <label>Media category <span class="optional">(optional)</span></label>
               <div class="type-cards" id="typeCards">
-                <div class="type-card selected" data-type="logo" onclick="selectType('logo', this)">
+                <div class="type-card selected" data-type="" onclick="selectType('', this)">
+                  <i class="fas fa-shapes"></i><span>Generic</span>
+                </div>
+                <div class="type-card" data-type="logo" onclick="selectType('logo', this)">
                   <i class="fas fa-certificate"></i><span>Logo</span>
                 </div>
                 <div class="type-card" data-type="photo" onclick="selectType('photo', this)">
@@ -796,66 +803,47 @@
             </div>
 
             <div class="form-group full">
-              <label>Display name <span class="req">*</span></label>
+              <label>Display name <span class="optional">(optional — defaults to file name)</span></label>
               <input type="text" id="mediaName" placeholder="e.g. Main Campus Gate — 2026">
             </div>
-            <div class="form-group">
-              <label>File type</label>
-              <input type="text" id="mediaType" value="" placeholder="Detected from uploaded file" readonly>
-            </div>
-            <div class="form-group">
-              <label>File size</label>
-              <input type="text" id="mediaSize" value="" placeholder="Detected from uploaded file" readonly>
-            </div>
             <div class="form-group full">
-              <label>Alternative text <span class="req">*</span></label>
+              <label>Alternative text <span class="optional">(recommended for images)</span></label>
               <input type="text" id="mediaAlt" placeholder="Describe the image for screen readers">
-              <span class="form-hint">Required for images. Helps accessibility and search.</span>
+              <span class="form-hint">Helps accessibility and search. Required for images if display name is empty.</span>
             </div>
             <div class="form-group full">
               <label>Caption <span class="optional">(optional)</span></label>
               <input type="text" id="mediaCaption" placeholder="Short caption shown under the image">
             </div>
             <div class="form-group full">
-              <label>Source or rights notes <span class="optional">(optional)</span></label>
-              <textarea id="mediaRights" placeholder="Confirm you have permission to use this image, or note the source..." style="min-height: 70px;"></textarea>
+              <label>Tags <span class="optional">(optional, comma-separated)</span></label>
+              <input type="text" id="mediaTags" placeholder="e.g. campus, gate, front">
             </div>
           </div>
 
           <div class="form-actions">
-            <button class="btn-outline btn-sm" onclick="saveDraft()">
-              <i class="fas fa-save"></i> Save as draft
-            </button>
-            <button class="btn-primary btn-sm" onclick="submitForReview()">
-              <i class="fas fa-paper-plane"></i> Submit for review
+            <button class="btn-primary btn-sm" id="uploadBtn" onclick="uploadMedia()" disabled>
+              <i class="fas fa-cloud-arrow-up"></i> Upload
             </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
+          <p class="form-hint" style="margin-top: 10px;">
+            <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+            Max file size 8MB. Uploaded assets are available immediately for use on your school profile.
+          </p>
         </div>
 
-        <!-- Media list panel -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-photo-film"></i> All media</div>
           </div>
-          <p class="panel-desc">Real uploaded assets and review statuses will appear here when storage and the school database are connected.</p>
+          <p class="panel-desc" id="mediaListDesc">Loading your media library…</p>
 
-          <div class="empty-state">
-            <div class="es-icon"><i class="fas fa-photo-film"></i></div>
-            <h3>No assets loaded</h3>
-            <p>Real uploaded assets and review statuses will appear here when storage and the school database are connected.</p>
-            <div class="empty-actions">
-              <button class="btn-primary" onclick="toggleAddForm()">
-                <i class="fas fa-plus"></i> Upload first asset
-              </button>
-            </div>
-            <div class="data-note">
-              <i class="fas fa-circle-info"></i> No sample files or counts are being presented as real school data.
-            </div>
+          <div id="mediaList">
+            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading media…</p></div>
           </div>
         </div>
 
-        <!-- Media guidelines -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-list-check"></i> Media guidelines</div>
@@ -894,164 +882,446 @@
               <div class="gl-icon gold"><i class="fas fa-circle-check"></i></div>
               <div class="gl-text">
                 <h4>Review before publishing</h4>
-                <p>Uploading or registering an asset does not automatically make it public. Approved assets can be selected for the school profile.</p>
+                <p>Uploading a file makes it available to your school profile tools, but a placement on the public site is only made when you select it from Profile or the relevant content page.</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Important note -->
         <div class="important-note">
           <i class="fas fa-triangle-exclamation"></i>
           <div class="in-text">
             <h4>Media access is restricted</h4>
-            <p>Media access is restricted to the representative's assigned institution. Uploading or registering an asset does not automatically make it public — approved assets become visible on the school profile.</p>
+            <p>Media access is restricted to the representative's assigned institution. Uploading a file does not automatically make it public — you must select it for a school profile field or content placement.</p>
           </div>
         </div>
 
         <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          state: 'Lagos State',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+      const MAX_BYTES = 8 * 1024 * 1024;
+      const ALLOWED_TYPES = ['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf'];
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let allMedia = [];
+      let activeTab = 'all';
+      let selectedCategory = '';
+      let selectedFile = null;
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
-        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
+      const formatBytes = (b) => {
+        const n = Number(b);
+        if (!Number.isFinite(n) || n <= 0) return '—';
+        if (n < 1024) return n + ' B';
+        if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+        return (n / (1024 * 1024)).toFixed(2) + ' MB';
+      };
 
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
+      const isImage = (m) => (m.mime_type || '').startsWith('image/');
+      const isDocument = (m) => (m.mime_type || '') === 'application/pdf';
+
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        // Don't set Content-Type for FormData
+        const isFormData = opts.body instanceof FormData;
+        opts.headers = Object.assign(
+          { 'Accept': 'application/json' },
+          isFormData ? {} : { 'Content-Type': 'application/json' },
+          opts.headers || {}
+        );
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
+
+      function renderSchool() {
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const pill = document.getElementById('scopeSchoolPill');
+        const scopeBanner = document.getElementById('scopeBanner');
+        const footnote = document.getElementById('footnoteInstName');
+        const addBtn = document.getElementById('addMediaBtn');
+
+        if (!currentSchool) {
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Unassigned';
+          scopeBanner.classList.add('unassigned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'Contact the platform administrator to be assigned to your institution before uploading media.';
+          footnote.textContent = 'Unassigned';
+          if (addBtn) addBtn.disabled = true;
+          return;
+        }
+
+        sidebarName.textContent = currentSchool.name || '—';
+        if (currentSchool.verification === 'verified') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+
+        pill.textContent = currentSchool.name;
+        scopeBanner.classList.remove('unassigned');
+        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
+        scopeBanner.querySelector('.scope-text span').textContent =
+          'Media access is restricted to the representative\'s assigned institution.';
+        footnote.textContent = currentSchool.name;
+        if (addBtn) addBtn.disabled = false;
+      }
+
+      /* STATS */
+      function updateStats() {
+        const total = allMedia.length;
+        const images = allMedia.filter(isImage).length;
+        const docs = allMedia.filter(isDocument).length;
+
+        document.getElementById('statTotal').textContent = String(total);
+        document.getElementById('statTotalSub').textContent = total > 0 ? 'In your library' : '';
+
+        document.getElementById('statImages').textContent = String(images);
+        document.getElementById('statImagesSub').textContent = images > 0 ? 'Available for profiles' : '';
+
+        document.getElementById('statDocs').textContent = String(docs);
+        document.getElementById('statDocsSub').textContent = docs > 0 ? 'Brochures & PDFs' : '';
+
+        document.getElementById('countAll').textContent = String(total);
+        document.getElementById('countImages').textContent = String(images);
+        document.getElementById('countDocs').textContent = String(docs);
+        document.getElementById('catCountImages').textContent = String(images);
+        document.getElementById('catCountDocs').textContent = String(docs);
+      }
+
+      /* TABS */
+      window.switchTab = function(cat, el) {
+        activeTab = cat;
+        document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderMedia();
+      };
+
+      /* RENDER */
+      function renderMedia() {
+        const el = document.getElementById('mediaList');
+        const desc = document.getElementById('mediaListDesc');
+
+        if (!currentSchool) {
+          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          desc.textContent = 'No institution is assigned to your account.';
+          return;
+        }
+
+        let list = allMedia.slice();
+        if (activeTab === 'images') list = list.filter(isImage);
+        else if (activeTab === 'documents') list = list.filter(isDocument);
+
+        if (!list.length) {
+          const hasAny = allMedia.length > 0;
+          el.innerHTML = '<div class="empty-state">' +
+            '<div class="es-icon"><i class="fas fa-photo-film"></i></div>' +
+            '<h3>' + (hasAny ? 'No media in this category' : 'No media yet') + '</h3>' +
+            '<p>' + (hasAny
+              ? 'Try a different tab or upload a new asset.'
+              : 'Upload your first asset to start building your media library.') + '</p>' +
+            (hasAny ? '' :
+              '<div class="empty-actions">' +
+              '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Upload first asset</button>' +
+              '</div>') +
+            '</div>';
+          desc.textContent = hasAny
+            ? 'No media in this category.'
+            : 'No media yet for ' + currentSchool.name + '.';
+          return;
+        }
+
+        desc.textContent = 'Showing ' + list.length + ' of ' + allMedia.length + ' asset' +
+          (allMedia.length === 1 ? '' : 's') + ' for ' + currentSchool.name + '.';
+
+        list.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+        el.innerHTML = '<div class="media-grid">' + list.map(m => {
+          const doc = isDocument(m);
+          const img = isImage(m);
+          const name = m.display_name || m.original_name || m.filename || 'Untitled';
+
+          const thumbContent = img && m.public_url
+            ? '<img src="' + esc(m.public_url) + '" alt="' + esc(m.alt_text || name) + '" loading="lazy">'
+            : '<i class="fas ' + (doc ? 'fa-file-pdf' : 'fa-file') + '"></i>';
+
+          const placements = Array.isArray(m.placements) ? m.placements : [];
+          const placementsHtml = placements.length
+            ? '<span class="media-tag in-use">' + placements.length + ' placement' + (placements.length === 1 ? '' : 's') + '</span>'
+            : '';
+
+          const categoryHtml = m.category
+            ? '<span class="media-tag">' + esc(m.category) + '</span>'
+            : '';
+
+          return '<div class="media-card">' +
+            '<div class="media-thumb ' + (doc ? 'document' : '') + '">' + thumbContent + '</div>' +
+            '<div class="media-body">' +
+              '<div class="media-title" title="' + esc(name) + '">' + esc(name) + '</div>' +
+              '<div class="media-meta">' + esc(formatBytes(m.size)) +
+                ' · ' + esc((m.mime_type || '').replace('image/', '').replace('application/', '')) + '</div>' +
+              '<div class="media-tags">' + categoryHtml + placementsHtml + '</div>' +
+            '</div>' +
+            '<div class="media-actions">' +
+              (m.public_url ? '<a class="btn-outline btn-sm" href="' + esc(m.public_url) + '" target="_blank" rel="noopener" style="text-decoration:none;"><i class="fas fa-external-link"></i> Open</a>' : '') +
+              '<button class="btn-danger btn-sm" onclick="deleteMedia(\'' + esc(m.id) + '\', \'' + esc(name.replace(/'/g, "\\'")) + '\')"><i class="fas fa-trash"></i></button>' +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      /* LOAD */
+      async function loadMedia() {
+        if (!currentSchool) {
+          allMedia = [];
+          updateStats(); renderMedia();
+          return;
+        }
+        try {
+          const data = await api('/api/media');
+          allMedia = data.media || [];
+          updateStats();
+          renderMedia();
+        } catch (err) {
+          console.error('[media]', err);
+          document.getElementById('mediaList').innerHTML =
+            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load media</h3><p>' + esc(err.message) + '</p></div>';
         }
       }
 
-      /* ============================================================ */
-      /* TABS                                                         */
-      /* ============================================================ */
-      window.switchTab = function(cat, el) {
-        document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
-        if (el) el.classList.add('active');
-        if (cat !== 'all') {
-          toast('Filtering media by type: ' + cat);
-        }
-      };
-
-      /* ============================================================ */
-      /* INLINE UPLOAD FORM                                           */
-      /* ============================================================ */
+      /* UPLOAD FORM */
       window.toggleAddForm = function() {
         const form = document.getElementById('addMediaForm');
         form.classList.toggle('open');
         if (form.classList.contains('open')) {
-          const firstInput = form.querySelector('input, select, textarea');
-          if (firstInput) firstInput.focus();
+          const first = form.querySelector('input, select');
+          if (first) first.focus();
+        } else {
+          resetForm();
         }
       };
 
-      /* ============================================================ */
-      /* MEDIA TYPE SELECTION                                         */
-      /* ============================================================ */
-      let selectedType = 'logo';
       window.selectType = function(type, el) {
-        selectedType = type;
+        selectedCategory = type;
         document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
+        if (el) el.classList.add('selected');
       };
 
-      /* ============================================================ */
-      /* SAVE / SUBMIT                                                */
-      /* ============================================================ */
-      function validateMediaForm() {
-        const name = document.getElementById('mediaName').value.trim();
-        const alt = document.getElementById('mediaAlt').value.trim();
-
-        if (!name) { toast('Please enter a display name for the asset.'); return false; }
-        // Alt text required for non-document types
-        if (selectedType !== 'document' && !alt) {
-          toast('Alternative text is required for images.');
-          return false;
-        }
-        return true;
-      }
-
-      window.saveDraft = function() {
-        if (!validateMediaForm()) return;
-        toast('Media asset saved as draft. Connect the backend to upload and persist.');
-        resetMediaForm();
-      };
-
-      window.submitForReview = function() {
-        if (!validateMediaForm()) return;
-        if (!confirm('Submit this media asset for review?\n\nUploading or registering an asset does not automatically make it public. Approved assets can be selected for the school profile.')) return;
-        toast('Media asset submitted for review · you will be notified of the decision.');
-        resetMediaForm();
-      };
-
-      function resetMediaForm() {
+      function resetForm() {
+        selectedFile = null;
+        selectedCategory = '';
         document.getElementById('mediaName').value = '';
-        document.getElementById('mediaType').value = '';
-        document.getElementById('mediaSize').value = '';
         document.getElementById('mediaAlt').value = '';
         document.getElementById('mediaCaption').value = '';
-        document.getElementById('mediaRights').value = '';
-        selectedType = 'logo';
+        document.getElementById('mediaTags').value = '';
+        document.getElementById('fileInput').value = '';
+        document.getElementById('fileNameChip').style.display = 'none';
+        document.getElementById('fileNameText').textContent = '';
+        document.getElementById('uploadBtn').disabled = true;
         document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-        const firstCard = document.querySelector('.type-card[data-type="logo"]');
-        if (firstCard) firstCard.classList.add('selected');
-        toggleAddForm();
+        const first = document.querySelector('.type-card[data-type=""]');
+        if (first) first.classList.add('selected');
+        document.getElementById('uploadLabel').textContent = 'Upload media';
+        document.getElementById('uploadSub').textContent = 'Drag and drop a file here, or click to browse.';
       }
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      /* File picker */
+      const fileInput = document.getElementById('fileInput');
+      fileInput.addEventListener('change', e => {
+        const f = e.target.files && e.target.files[0];
+        handleFileSelected(f);
+      });
+
+      const uploadZone = document.getElementById('uploadZone');
+      uploadZone.addEventListener('dragover', e => {
+        e.preventDefault(); uploadZone.classList.add('drag-over');
+      });
+      uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+      uploadZone.addEventListener('drop', e => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        const f = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) handleFileSelected(f);
+      });
+
+      function handleFileSelected(file) {
+        if (!file) return;
+        if (!ALLOWED_TYPES.includes(file.type)) {
+          toast('File type not allowed. Use JPG, PNG, WebP, SVG or PDF.', true);
+          return;
+        }
+        if (file.size > MAX_BYTES) {
+          toast('File is too large (max 8MB).', true);
+          return;
+        }
+        selectedFile = file;
+        document.getElementById('fileNameChip').style.display = 'inline-flex';
+        document.getElementById('fileNameText').textContent = file.name + ' · ' + formatBytes(file.size);
+        document.getElementById('uploadLabel').textContent = 'File selected';
+        document.getElementById('uploadSub').textContent = 'Ready to upload.';
+        document.getElementById('uploadBtn').disabled = false;
+      }
+
+      window.uploadMedia = async function() {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
+        if (!selectedFile) { toast('Please select a file first.', true); return; }
+
+        const btn = document.getElementById('uploadBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Uploading…';
+
+        try {
+          const fd = new FormData();
+          fd.append('file', selectedFile);
+          if (selectedCategory) fd.append('category', selectedCategory);
+          const name = document.getElementById('mediaName').value.trim();
+          if (name) fd.append('display_name', name);
+          const alt = document.getElementById('mediaAlt').value.trim();
+          if (alt) fd.append('alt_text', alt);
+          const caption = document.getElementById('mediaCaption').value.trim();
+          if (caption) fd.append('caption', caption);
+          const tags = document.getElementById('mediaTags').value.trim();
+          if (tags) fd.append('tags', tags);
+
+          await api('/api/media', { method: 'POST', body: fd });
+          toast('Media uploaded.');
+          resetForm();
+          toggleAddForm();
+          await loadMedia();
+        } catch (err) {
+          toast(err.message, true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Upload';
+        }
       };
 
-      window.signOut = function() {
+      window.deleteMedia = async function(id, name) {
+        if (!confirm('Delete "' + name + '"?\n\nThe file will be removed from storage. If it\'s used in an active placement, deletion will be blocked.')) return;
+        try {
+          await api('/api/media/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Media deleted.');
+          await loadMedia();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      /* SESSION */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* MOBILE SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1066,15 +1336,15 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* INIT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        renderSchool();
+        await loadMedia();
+      })();
 
     })();
   </script>

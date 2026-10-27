@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — My Submissions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -39,7 +39,7 @@
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -148,7 +137,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -182,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -195,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -216,23 +197,24 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* SCOPE BANNER                                                 */
-    /* ============================================================ */
+    /* SCOPE BANNER */
     .scope-banner {
       display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px; margin-bottom: 24px;
+    }
+    .scope-banner.unassigned {
+      background-color: rgba(245,185,66,0.05);
+      border-color: rgba(245,185,66,0.25);
+      border-left-color: var(--accent);
     }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner.unassigned i { color: var(--accent); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
-    .scope-banner .scope-text strong {
-      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
-    }
+    .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
     .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
     .scope-banner .scope-pill {
       font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
@@ -240,10 +222,11 @@
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       white-space: nowrap;
     }
+    .scope-banner.unassigned .scope-pill {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
 
-    /* ============================================================ */
-    /* STATS                                                        */
-    /* ============================================================ */
+    /* STATS */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
@@ -263,14 +246,12 @@
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-label i.red { color: var(--danger); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text);
+      line-height: 1; min-height: 1em;
     }
-    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
+    /* TOOLBAR */
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
       margin-bottom: 20px;
@@ -285,9 +266,7 @@
     }
     .filter-row select:focus { border-color: var(--primary); }
 
-    /* ============================================================ */
-    /* TABS                                                         */
-    /* ============================================================ */
+    /* TABS */
     .sub-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 20px;
@@ -303,10 +282,16 @@
     .sub-tab:hover { color: var(--text); }
     .sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .sub-tab i { font-size: 0.85rem; }
+    .sub-tab .tab-count {
+      background-color: var(--elevated); color: var(--muted);
+      font-size: 0.65rem; font-weight: 800; padding: 1px 7px;
+      border-radius: 40px; min-width: 20px; text-align: center;
+    }
+    .sub-tab.active .tab-count {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+    }
 
-    /* ============================================================ */
-    /* PANEL / EMPTY STATE                                          */
-    /* ============================================================ */
+    /* PANEL */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -319,9 +304,8 @@
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
-    .empty-state {
-      text-align: center; padding: 48px 24px; color: var(--muted);
-    }
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
     .empty-state .es-icon {
       width: 64px; height: 64px; border-radius: 16px;
       background-color: var(--surface); border: 1px solid var(--border);
@@ -333,18 +317,87 @@
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
       max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
-    .empty-state .data-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; color: var(--muted);
-      padding: 6px 14px; border-radius: 40px;
-      background-color: var(--surface); border: 1px solid var(--border);
-      margin-top: 16px; font-style: italic;
-    }
-    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+    .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* ============================================================ */
-    /* SUBMISSION LIFECYCLE                                         */
-    /* ============================================================ */
+    /* Submission list */
+    .sub-list { display: flex; flex-direction: column; gap: 10px; }
+    .sub-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.15s;
+    }
+    .sub-row:hover { border-color: var(--primary); }
+    .sub-icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .sub-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .sub-icon.red { background-color: rgba(224,112,112,0.1); color: var(--danger); }
+    .sub-body { flex: 1; min-width: 0; }
+    .sub-title {
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 3px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .sub-type-tag {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted);
+      background-color: var(--elevated); padding: 1px 7px;
+      border-radius: 40px; white-space: nowrap;
+    }
+    .sub-meta {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      margin-top: 3px;
+    }
+    .sub-meta .dot { font-size: 0.4rem; }
+    .sub-feedback {
+      margin-top: 10px; padding: 10px 12px;
+      background-color: rgba(245,185,66,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.5;
+    }
+    .sub-feedback strong { color: var(--accent); }
+    .sub-badges {
+      display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap;
+      align-items: center;
+    }
+    .sub-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .sub-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .sub-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .sub-badge.approved { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .sub-badge.published { background-color: rgba(0,201,130,0.15); color: var(--primary); }
+    .sub-badge.changes { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .sub-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; margin-top: 4px; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09; font-weight: 700;
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline {
+      background-color: transparent; color: var(--text); font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Lifecycle */
     .lifecycle-grid {
       display: grid; grid-template-columns: 1fr; gap: 12px;
     }
@@ -352,8 +405,7 @@
     @media (min-width: 1100px) { .lifecycle-grid { grid-template-columns: repeat(5, 1fr); } }
     .lifecycle-step {
       background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px;
-      position: relative;
+      border-radius: 12px; padding: 18px; position: relative;
     }
     .lifecycle-step .step-num {
       display: inline-flex; align-items: center; justify-content: center;
@@ -361,16 +413,12 @@
       background-color: rgba(0,201,130,0.1); color: var(--primary);
       font-weight: 800; font-size: 0.85rem; margin-bottom: 10px;
     }
-    .lifecycle-step:nth-child(2) .step-num { background-color: rgba(0,201,130,0.12); }
     .lifecycle-step:nth-child(3) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .lifecycle-step:nth-child(4) .step-num { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .lifecycle-step:nth-child(5) .step-num { background-color: rgba(0,201,130,0.15); }
     .lifecycle-step h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
     .lifecycle-step p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    /* ============================================================ */
-    /* FEEDBACK PANEL                                               */
-    /* ============================================================ */
+    /* Feedback info */
     .feedback-panel {
       background-color: var(--surface); border: 1px solid var(--border);
       border-left: 4px solid var(--accent);
@@ -386,92 +434,13 @@
       font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
     }
 
-    /* ============================================================ */
-    /* WORKSPACE COMPLETE PANEL                                     */
-    /* ============================================================ */
-    .workspace-panel {
-      background: linear-gradient(135deg, rgba(0,201,130,0.06) 0%, rgba(17,24,21,1) 70%);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--primary);
-      border-radius: var(--radius-card);
-      padding: 24px;
-      margin-top: 24px;
-    }
-    .workspace-panel .wp-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--primary);
-      margin-bottom: 10px;
-    }
-    .workspace-panel .wp-badge i { font-size: 0.8rem; }
-    .workspace-panel h3 {
-      font-size: 1.2rem; margin-bottom: 8px;
-    }
-    .workspace-panel p {
-      font-size: 0.88rem; color: var(--muted); line-height: 1.55;
-      margin-bottom: 20px; max-width: 720px;
-    }
-    .file-tree {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-family: 'SF Mono', 'Consolas', monospace;
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.9;
-      margin-bottom: 18px;
-      overflow-x: auto;
-    }
-    .file-tree .tree-folder {
-      color: var(--primary);
-      font-weight: 700;
-    }
-    .file-tree .tree-file {
-      color: var(--text);
-    }
-    .file-tree .tree-file.complete {
-      color: var(--primary);
-    }
-    .file-tree .tree-branch { color: var(--border); }
-
-    .completion-note {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 14px 16px;
-      background-color: rgba(245,185,66,0.06);
-      border: 1px solid rgba(245,185,66,0.25);
-      border-radius: 10px;
-      margin-bottom: 16px;
-    }
-    .completion-note i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
-    .completion-note p {
-      font-size: 0.8rem; color: var(--muted); margin: 0; line-height: 1.5;
-    }
-    .completion-note strong { color: var(--accent); }
-
-    .next-step {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 14px 16px;
-      background-color: rgba(0,201,130,0.06);
-      border: 1px solid rgba(0,201,130,0.25);
-      border-radius: 10px;
-    }
-    .next-step i { color: var(--primary); margin-top: 2px; flex-shrink: 0; }
-    .next-step p {
-      font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5;
-    }
-    .next-step strong { color: var(--primary); }
-
-    /* Footer note */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
     .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -484,17 +453,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -511,15 +480,10 @@
       .panel { padding: 18px; }
       .filter-row { width: 100%; }
       .filter-row select { flex: 1; }
-      .empty-state { padding: 32px 16px; }
+      .sub-row { flex-wrap: wrap; }
+      .sub-actions { width: 100%; justify-content: flex-end; }
       .sub-tab { padding: 9px 12px; font-size: 0.8rem; }
-      .lifecycle-step { padding: 14px; }
-      .file-tree { font-size: 0.72rem; padding: 12px 14px; }
-      .workspace-panel { padding: 18px; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -532,7 +496,6 @@
 
   <div class="admin-shell" style="display:flex; min-height:100vh;">
 
-    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -541,25 +504,22 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
-        <a href="courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="submissions.html" class="nav-item active">
-          <i class="fas fa-paper-plane"></i> Submissions
-          <span class="nav-badge">—</span>
-        </a>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./submissions.html" class="nav-item active"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
       <div class="sidebar-signout">
@@ -570,16 +530,15 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- ==================== MAIN ==================== -->
     <div class="main-area">
 
       <header class="topbar">
@@ -593,16 +552,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -612,93 +570,78 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-paper-plane"></i> Content review workflow</div>
           <h1>My Submissions</h1>
           <p>Follow each change from draft to review, approval and publication.</p>
         </div>
 
-        <!-- Scoped access banner -->
-        <div class="scope-banner">
+        <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-lock"></i>
           <div class="scope-text">
             <strong>School-scoped access</strong>
             <span>Representatives see only submissions belonging to their assigned institution.</span>
           </div>
-          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+          <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Submitted <i class="fas fa-paper-plane"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Total submissions</div>
+            <div class="stat-mini-value" id="statTotal">—</div>
+            <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">In review queue</div>
+            <div class="stat-mini-value" id="statPending">—</div>
+            <div class="stat-mini-sub" id="statPendingSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Approved <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Ready to publish</div>
+            <div class="stat-mini-label">Approved / Published <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value" id="statApproved">—</div>
+            <div class="stat-mini-sub" id="statApprovedSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Needs changes <i class="fas fa-rotate-left red"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Returned for revision</div>
+            <div class="stat-mini-value" id="statChanges">—</div>
+            <div class="stat-mini-sub" id="statChangesSub"></div>
           </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
           <div class="filter-row">
             <select id="statusFilter" onchange="filterSubmissions()">
               <option value="all">All statuses</option>
               <option value="draft">Draft</option>
-              <option value="submitted">Submitted</option>
-              <option value="review">Under review</option>
-              <option value="approved">Approved</option>
-              <option value="changes">Needs changes</option>
+              <option value="pending">Pending review</option>
               <option value="published">Published</option>
             </select>
           </div>
         </div>
 
-        <!-- Tabs -->
         <div class="sub-tabs">
           <button class="sub-tab active" data-cat="all" onclick="switchTab('all', this)">
-            <i class="fas fa-list"></i> All submissions
+            <i class="fas fa-list"></i> All submissions <span class="tab-count" id="countAll">—</span>
           </button>
           <button class="sub-tab" data-cat="attention" onclick="switchTab('attention', this)">
-            <i class="fas fa-triangle-exclamation"></i> Needs attention
+            <i class="fas fa-triangle-exclamation"></i> Needs attention <span class="tab-count" id="countAttention">—</span>
           </button>
           <button class="sub-tab" data-cat="published" onclick="switchTab('published', this)">
-            <i class="fas fa-circle-check"></i> Published
+            <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="countPublished">—</span>
           </button>
         </div>
 
-        <!-- Submission history panel -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Submission history</div>
           </div>
-          <p class="panel-desc">Your real submission records, reviewer comments and status history will appear here after backend integration.</p>
+          <p class="panel-desc" id="submissionsDesc">Loading your submissions…</p>
 
-          <div class="empty-state">
-            <div class="es-icon"><i class="fas fa-inbox"></i></div>
-            <h3>No submissions loaded</h3>
-            <p>Your real submission records, reviewer comments and status history will appear here after backend integration.</p>
-            <div class="data-note">
-              <i class="fas fa-circle-info"></i> No sample submissions or counts are being presented as real school data.
-            </div>
+          <div id="submissionsList">
+            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading submissions…</p></div>
           </div>
         </div>
 
-        <!-- Submission lifecycle -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-diagram-project"></i> Submission lifecycle</div>
@@ -733,133 +676,436 @@
           </div>
         </div>
 
-        <!-- Reviewer feedback panel -->
         <div class="feedback-panel">
           <i class="fas fa-comment-dots"></i>
           <div class="fb-text">
             <h4>Reviewer feedback</h4>
-            <p>Each reviewed submission should show the reviewer's comments, decision date, and the next action required. Representatives should be able to revise and resubmit returned content.</p>
-          </div>
-        </div>
-
-        <!-- Workspace complete panel -->
-        <div class="workspace-panel">
-          <div class="wp-badge"><i class="fas fa-circle-check"></i> School Representative workspace — complete</div>
-          <h3>All nine pages of the SchoolAd workspace are now designed.</h3>
-          <p>Each page shares the same layout, dark theme, scoped-access banner, and approval workflow. The next step is to connect them to your backend with real authentication, database persistence, file storage, and the review pipeline.</p>
-
-          <div class="file-tree">
-<span class="tree-folder">SchoolAd/</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">login.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">index.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">profile.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">courses.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">fees.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">admissions.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">calendar.html</span>
-<span class="tree-branch">├── </span><span class="tree-file complete">media.html</span>
-<span class="tree-branch">└── </span><span class="tree-file complete">submissions.html</span>
-          </div>
-
-          <div class="completion-note">
-            <i class="fas fa-triangle-exclamation"></i>
-            <p><strong>UI previews only.</strong> Login authentication, database persistence, file uploads, and approval workflows still need to be implemented.</p>
-          </div>
-
-          <div class="next-step">
-            <i class="fas fa-arrow-right"></i>
-            <p><strong>Next step:</strong> build the actual <code style="background:var(--surface); padding:2px 6px; border-radius:4px; font-size:0.78rem;">SchoolAd</code> pages in vanilla HTML, CSS and JavaScript, using shared styling and connecting them to your CampusNaija backend.</p>
+            <p>Reviewer comments appear alongside each returned or decided submission. Use the notes to revise the record on its respective page (Courses, Fees, Admissions or Academic Calendar), then re-submit for review.</p>
           </div>
         </div>
 
         <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          state: 'Lagos State',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let allSubmissions = [];
+      let activeTab = 'all';
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
-        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
+      const timeAgo = (iso) => {
+        if (!iso) return '';
+        const then = new Date(iso).getTime();
+        if (isNaN(then)) return '';
+        const diff = Math.max(0, Date.now() - then);
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return mins + 'm ago';
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h ago';
+        const days = Math.floor(hrs / 24);
+        if (days < 30) return days + 'd ago';
+        return new Date(iso).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' });
+      };
 
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
-        }
+      const typeIcon = (type) => ({
+        course: 'fa-book',
+        fee: 'fa-money-bill',
+        admission: 'fa-clipboard-list',
+        calendar: 'fa-calendar',
+      }[type] || 'fa-file');
+
+      const typeLabel = (type) => ({
+        course: 'Course',
+        fee: 'Fee',
+        admission: 'Admission',
+        calendar: 'Calendar',
+      }[type] || type || 'Record');
+
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      /* ============================================================ */
-      /* TABS                                                         */
-      /* ============================================================ */
-      window.switchTab = function(cat, el) {
-        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-        if (el) el.classList.add('active');
-        if (cat !== 'all') {
-          toast('Filtering submissions: ' + cat);
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
         }
-      };
-
-      /* ============================================================ */
-      /* FILTERING                                                    */
-      /* ============================================================ */
-      window.filterSubmissions = function() {
-        const status = document.getElementById('statusFilter').value;
-        if (status !== 'all') {
-          toast('Filtering submissions by status: ' + status);
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
         }
-      };
+        return data;
+      }
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
+      function toast(msg, isError) {
         const el = document.getElementById('toast');
         document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
         el.classList.add('show');
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
+
+      function renderSchool() {
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const pill = document.getElementById('scopeSchoolPill');
+        const scopeBanner = document.getElementById('scopeBanner');
+        const footnote = document.getElementById('footnoteInstName');
+
+        if (!currentSchool) {
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Unassigned';
+          scopeBanner.classList.add('unassigned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'Contact the platform administrator to be assigned to your institution.';
+          footnote.textContent = 'Unassigned';
+          return;
+        }
+
+        sidebarName.textContent = currentSchool.name || '—';
+        if (currentSchool.verification === 'verified') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+
+        pill.textContent = currentSchool.name;
+        scopeBanner.classList.remove('unassigned');
+        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
+        scopeBanner.querySelector('.scope-text span').textContent =
+          'Representatives see only submissions belonging to their assigned institution.';
+        footnote.textContent = currentSchool.name;
+      }
+
+      /* STATS */
+      function updateStats() {
+        const total = allSubmissions.length;
+        const pending = allSubmissions.filter(s => s.status === 'pending').length;
+        const published = allSubmissions.filter(s => s.status === 'published').length;
+        const draft = allSubmissions.filter(s => s.status === 'draft').length;
+
+        // "Approved" in your schema = published (approved content that became public)
+        // plus recently approved but not-yet-published. Since your backend only stores
+        // 'published' for approved+public, we report published here.
+        document.getElementById('statTotal').textContent = String(total);
+        document.getElementById('statTotalSub').textContent =
+          draft > 0 ? draft + ' in draft' : '';
+
+        document.getElementById('statPending').textContent = String(pending);
+        document.getElementById('statPendingSub').textContent =
+          pending > 0 ? 'In review queue' : '';
+
+        document.getElementById('statApproved').textContent = String(published);
+        document.getElementById('statApprovedSub').textContent =
+          published > 0 ? 'Visible publicly' : '';
+
+        // "Needs changes" state isn't a row status in your backend —
+        // when changes are requested, the record reverts to 'draft'.
+        // We surface a note instead of a fake number.
+        document.getElementById('statChanges').textContent = '0';
+        document.getElementById('statChangesSub').textContent = 'Check notifications for feedback';
+
+        document.getElementById('countAll').textContent = String(total);
+        document.getElementById('countAttention').textContent = String(draft);
+        document.getElementById('countPublished').textContent = String(published);
+      }
+
+      /* TABS */
+      window.switchTab = function(cat, el) {
+        activeTab = cat;
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderSubmissions();
       };
 
-      window.signOut = function() {
+      window.filterSubmissions = function() {
+        renderSubmissions();
+      };
+
+      /* RENDER */
+      function statusBadge(status) {
+        const map = {
+          draft: { cls: 'draft', label: 'Draft' },
+          pending: { cls: 'pending', label: 'Pending review' },
+          published: { cls: 'published', label: 'Published' },
+        };
+        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
+        return '<span class="sub-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      }
+
+      function renderSubmissions() {
+        const el = document.getElementById('submissionsList');
+        const desc = document.getElementById('submissionsDesc');
+
+        if (!currentSchool) {
+          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          desc.textContent = 'No institution is assigned to your account.';
+          return;
+        }
+
+        const status = document.getElementById('statusFilter').value;
+
+        let list = allSubmissions.slice();
+
+        if (activeTab === 'attention') {
+          list = list.filter(s => s.status === 'draft');
+        } else if (activeTab === 'published') {
+          list = list.filter(s => s.status === 'published');
+        }
+
+        if (status !== 'all') {
+          list = list.filter(s => s.status === status);
+        }
+
+        list.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
+
+        if (!list.length) {
+          const hasAny = allSubmissions.length > 0;
+          el.innerHTML = '<div class="empty-state">' +
+            '<div class="es-icon"><i class="fas fa-inbox"></i></div>' +
+            '<h3>' + (hasAny ? 'No submissions match the current filters' : 'No submissions yet') + '</h3>' +
+            '<p>' + (hasAny
+              ? 'Try a different tab or status filter.'
+              : 'When you save or submit content on the Courses, Fees, Admissions or Calendar pages, it will appear here.') + '</p>' +
+            '</div>';
+          desc.textContent = hasAny
+            ? 'No submissions match the current filters.'
+            : 'No submissions yet for ' + currentSchool.name + '.';
+          return;
+        }
+
+        desc.textContent = 'Showing ' + list.length + ' of ' + allSubmissions.length + ' submission' +
+          (allSubmissions.length === 1 ? '' : 's') + ' for ' + currentSchool.name + '.';
+
+        el.innerHTML = '<div class="sub-list">' + list.map(s => {
+          const iconClass = s.status === 'pending' ? 'gold'
+                          : s.status === 'published' ? ''
+                          : 'red';
+          const meta = [];
+          if (s.updated_at) meta.push('Updated ' + timeAgo(s.updated_at));
+          if (s.status === 'draft') meta.push('Not yet submitted');
+          const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '';
+
+          const actions = [];
+          if (s.status === 'draft') {
+            actions.push('<button class="btn-primary" onclick="submitItem(\'' +
+              esc(s.type) + '\', \'' + esc(s.id) + '\')">' +
+              '<i class="fas fa-paper-plane"></i> Submit</button>');
+          } else if (s.status === 'pending') {
+            actions.push('<button class="btn-outline" onclick="withdrawItem(\'' +
+              esc(s.type) + '\', \'' + esc(s.id) + '\')">' +
+              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
+          }
+
+          const feedbackHtml = s.review_comment
+            ? '<div class="sub-feedback"><strong>Reviewer:</strong> ' + esc(s.review_comment) + '</div>'
+            : '';
+
+          return '<div class="sub-row">' +
+            '<div class="sub-icon ' + iconClass + '"><i class="fas ' + typeIcon(s.type) + '"></i></div>' +
+            '<div class="sub-body">' +
+              '<div class="sub-title">' + esc(s.label || ('#' + s.id)) +
+                ' <span class="sub-type-tag">' + esc(typeLabel(s.type)) + '</span>' +
+              '</div>' +
+              (metaHtml ? '<div class="sub-meta">' + metaHtml + '</div>' : '') +
+              feedbackHtml +
+            '</div>' +
+            '<div class="sub-badges">' + statusBadge(s.status) + '</div>' +
+            (actions.length ? '<div class="sub-actions">' + actions.join('') + '</div>' : '') +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      /* ACTIONS */
+      window.submitItem = async function(type, id) {
+        if (!confirm('Submit this ' + typeLabel(type).toLowerCase() + ' for review?')) return;
+        try {
+          await api('/api/school/submissions/' + encodeURIComponent(type) + '/' +
+                    encodeURIComponent(id) + '/submit', { method: 'POST' });
+          toast('Submitted for review.');
+          await loadSubmissions();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      window.withdrawItem = async function(type, id) {
+        if (!confirm('Withdraw this submission and return it to draft?')) return;
+        try {
+          await api('/api/school/submissions/' + encodeURIComponent(type) + '/' +
+                    encodeURIComponent(id) + '/withdraw', { method: 'POST' });
+          toast('Submission withdrawn.');
+          await loadSubmissions();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      /* LOAD */
+      async function loadSubmissions() {
+        if (!currentSchool) {
+          allSubmissions = [];
+          updateStats();
+          renderSubmissions();
+          return;
+        }
+        try {
+          const data = await api('/api/school/submissions');
+          // Server returns only courses/fees/admissions/calendar in ('draft','pending').
+          // To include 'published' records, we also fetch the full lists.
+          const [subs, courses, fees, admissions, events] = await Promise.all([
+            api('/api/school/submissions').catch(() => ({ submissions: [] })),
+            api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses').catch(() => ({ courses: [] })),
+            api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees').catch(() => ({ fees: [] })),
+            api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions').catch(() => ({ admissions: [] })),
+            api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/events').catch(() => ({ events: [] })),
+          ]);
+
+          const known = {};
+          const push = (type, item, label) => {
+            known[type + ':' + item.id] = true;
+            return {
+              type,
+              id: item.id,
+              label,
+              status: item.status,
+              updated_at: item.updated_at,
+              review_comment: item.review_comment || null,
+            };
+          };
+
+          const list = [];
+          for (const c of (courses.courses || [])) list.push(push('course', c, c.name));
+          for (const f of (fees.fees || [])) list.push(push('fee', f, 'Fee — ' + f.session + ' · ' + (f.category || 'fee')));
+          for (const a of (admissions.admissions || [])) list.push(push('admission', a, a.title));
+          for (const e of (events.events || [])) list.push(push('calendar', e, e.title));
+
+          // Add any from submissions endpoint that weren't in the above (defensive)
+          for (const s of (subs.submissions || [])) {
+            const key = s.type + ':' + s.id;
+            if (!known[key]) {
+              list.push({
+                type: s.type,
+                id: s.id,
+                label: s.label || ('#' + s.id),
+                status: s.status,
+                updated_at: s.updated_at,
+                review_comment: null,
+              });
+            }
+          }
+
+          allSubmissions = list;
+          updateStats();
+          renderSubmissions();
+        } catch (err) {
+          console.error('[submissions]', err);
+          document.getElementById('submissionsList').innerHTML =
+            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load submissions</h3><p>' + esc(err.message) + '</p></div>';
+        }
+      }
+
+      /* SESSION */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* MOBILE SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -874,15 +1120,15 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* INIT */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        renderSchool();
+        await loadSubmissions();
+      })();
 
     })();
   </script>

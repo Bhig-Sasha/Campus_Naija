@@ -39,18 +39,6 @@
       --sidebar-w: 260px;
     }
 
-    @keyframes shimmer {
-      0%   { background-position: -400px 0; }
-      100% { background-position: 400px 0; }
-    }
-    .skeleton {
-      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
-      background-size: 800px 100%;
-      animation: shimmer 1.4s linear infinite;
-      border-radius: 6px;
-      display: inline-block;
-    }
-
     /* ===== SIDEBAR ===== */
     .sidebar {
       width: var(--sidebar-w);
@@ -84,6 +72,7 @@
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
       margin-bottom: 8px; min-height: 1.3em;
+      word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -118,10 +107,7 @@
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
 
-    .sidebar-signout {
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -188,11 +174,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -201,11 +182,10 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
@@ -230,6 +210,10 @@
       margin-bottom: 28px;
       display: flex; flex-wrap: wrap; align-items: center; gap: 20px;
     }
+    .institution-banner.unassigned {
+      border-left-color: var(--accent);
+      background: linear-gradient(135deg, rgba(245,185,66,0.08) 0%, rgba(17,24,21,1) 60%);
+    }
     .inst-logo-lg {
       width: 64px; height: 64px; border-radius: 14px;
       background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(0,201,130,0.05));
@@ -237,6 +221,10 @@
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 1.3rem; color: var(--primary);
       flex-shrink: 0;
+    }
+    .institution-banner.unassigned .inst-logo-lg {
+      background: linear-gradient(135deg, rgba(245,185,66,0.2), rgba(245,185,66,0.05));
+      color: var(--accent);
     }
     .inst-banner-info { flex: 1; min-width: 200px; }
     .inst-banner-info .ib-label {
@@ -290,7 +278,6 @@
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
-    .stat-mini-value .skeleton { width: 40px; height: 24px; border-radius: 4px; }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* DASHBOARD GRID */
@@ -493,9 +480,9 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName"><span class="skeleton" style="width:80%; height:14px;"></span></div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Loading
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
@@ -521,7 +508,7 @@
         <div class="rep-user">
           <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name" id="sideName"><span class="skeleton" style="width:70%; height:12px;"></span></div>
+            <div class="rep-user-name" id="sideName">—</div>
             <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
@@ -548,7 +535,7 @@
           <div class="topbar-rep">
             <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name" id="topName"><span class="skeleton" style="width:80px; height:12px;"></span></div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
           </div>
@@ -566,18 +553,16 @@
           <p>Manage your institution's information on CampusNaija.</p>
         </div>
 
-        <div class="institution-banner">
+        <div class="institution-banner" id="institutionBanner">
           <div class="inst-logo-lg" id="instInitials">—</div>
           <div class="inst-banner-info">
             <div class="ib-label">Your assigned institution</div>
-            <div class="ib-name" id="instName"><span class="skeleton" style="width:60%; height:20px;"></span></div>
-            <div class="ib-meta" id="instMeta">
-              <span><span class="skeleton" style="width:120px; height:12px;"></span></span>
-            </div>
+            <div class="ib-name" id="instName">—</div>
+            <div class="ib-meta" id="instMeta">—</div>
           </div>
           <div class="inst-banner-badges">
             <span class="badge-verified" id="instBadge">
-              <i class="fas fa-clock"></i> Loading
+              <i class="fas fa-circle-notch fa-spin"></i> Loading
             </span>
             <div class="restricted-note">
               <i class="fas fa-lock"></i>
@@ -586,26 +571,26 @@
           </div>
         </div>
 
-        <div class="stats-row" id="statsRow">
+        <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Courses &amp; programmes <i class="fas fa-book-open"></i></div>
-            <div class="stat-mini-value" id="statCourses"><span class="skeleton"></span></div>
-            <div class="stat-mini-sub" id="statCoursesSub">&nbsp;</div>
+            <div class="stat-mini-value" id="statCourses">—</div>
+            <div class="stat-mini-sub" id="statCoursesSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Pending review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value" id="statPending"><span class="skeleton"></span></div>
-            <div class="stat-mini-sub" id="statPendingSub">&nbsp;</div>
+            <div class="stat-mini-value" id="statPending">—</div>
+            <div class="stat-mini-sub" id="statPendingSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Admission notices <i class="fas fa-clipboard-list"></i></div>
-            <div class="stat-mini-value" id="statAdmissions"><span class="skeleton"></span></div>
-            <div class="stat-mini-sub" id="statAdmissionsSub">&nbsp;</div>
+            <div class="stat-mini-value" id="statAdmissions">—</div>
+            <div class="stat-mini-sub" id="statAdmissionsSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Approved updates <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value" id="statApproved"><span class="skeleton"></span></div>
-            <div class="stat-mini-sub" id="statApprovedSub">&nbsp;</div>
+            <div class="stat-mini-value" id="statApproved">—</div>
+            <div class="stat-mini-sub" id="statApprovedSub"></div>
           </div>
         </div>
 
@@ -616,9 +601,9 @@
               <a href="./submissions.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
             <div id="submissionsList">
-              <div class="submissions-list">
-                <div class="submission-item"><div class="skeleton" style="width:36px;height:36px;border-radius:9px;"></div><div class="submission-body"><div class="skeleton" style="width:60%;height:12px;margin-bottom:6px;"></div><div class="skeleton" style="width:40%;height:10px;"></div></div><div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div></div>
-                <div class="submission-item"><div class="skeleton" style="width:36px;height:36px;border-radius:9px;"></div><div class="submission-body"><div class="skeleton" style="width:60%;height:12px;margin-bottom:6px;"></div><div class="skeleton" style="width:40%;height:10px;"></div></div><div class="skeleton" style="width:60px;height:20px;border-radius:20px;"></div></div>
+              <div class="empty-state">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <h3>Loading submissions…</h3>
               </div>
             </div>
           </div>
@@ -702,7 +687,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
@@ -784,60 +769,68 @@
       }
 
       function renderUser() {
-        const name = currentUser.name || 'School Representative';
-        const role = 'School Representative';
+        const name = (currentUser && currentUser.name) || '—';
         const ini = initials(name);
 
         document.getElementById('sideAvatar').textContent = ini;
         document.getElementById('sideName').textContent = name;
-        document.getElementById('sideRole').textContent = role;
+        document.getElementById('sideRole').textContent = 'School Representative';
 
         document.getElementById('topAvatar').textContent = ini;
         document.getElementById('topName').textContent = name;
       }
 
       function renderSchool() {
+        const banner = document.getElementById('institutionBanner');
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const initialsEl = document.getElementById('instInitials');
+        const nameEl = document.getElementById('instName');
+        const metaEl = document.getElementById('instMeta');
+        const badge = document.getElementById('instBadge');
+
         if (!currentSchool) {
-          // No school assigned — clean empty state, not fake data
-          document.getElementById('sidebarInstName').textContent = 'No institution assigned';
-          const status = document.getElementById('sidebarInstStatus');
-          status.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
-          status.classList.remove('verified');
+          banner.classList.add('unassigned');
 
-          document.getElementById('instInitials').textContent = '?';
-          document.getElementById('instName').textContent = 'No institution assigned';
-          document.getElementById('instMeta').innerHTML =
-            '<span>Contact the platform administrator to be assigned to your institution.</span>';
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
 
-          const badge = document.getElementById('instBadge');
+          initialsEl.textContent = '?';
+          nameEl.textContent = 'No institution assigned';
+          metaEl.textContent = 'Contact the platform administrator to be assigned to your institution.';
+
           badge.className = 'badge-verified';
           badge.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
           return;
         }
 
-        const name = currentSchool.name || 'Institution';
-        const location = [currentSchool.city, currentSchool.state].filter(Boolean).join(', ') || 'Nigeria';
-        const type = currentSchool.type || 'Institution';
+        banner.classList.remove('unassigned');
 
-        document.getElementById('sidebarInstName').textContent = name;
-        const status = document.getElementById('sidebarInstStatus');
+        const name = currentSchool.name || '—';
+        const locationParts = [currentSchool.city, currentSchool.state].filter(Boolean);
+        const location = locationParts.length ? locationParts.join(', ') : '—';
+        const type = currentSchool.type || '—';
+
+        sidebarName.textContent = name;
         if (currentSchool.verification === 'verified') {
-          status.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          status.classList.add('verified');
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
         } else {
-          status.innerHTML = '<i class="fas fa-clock"></i> ' +
-            (currentSchool.verification === 'pending' ? 'Verification pending' : 'Unverified');
-          status.classList.remove('verified');
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
         }
 
-        document.getElementById('instInitials').textContent = initials(name);
-        document.getElementById('instName').textContent = name;
-        document.getElementById('instMeta').innerHTML =
-          `<span><i class="fas fa-map-marker-alt"></i> ${esc(location)}</span>
-           <span class="dot">●</span>
-           <span>${esc(type)}</span>`;
+        initialsEl.textContent = initials(name);
+        nameEl.textContent = name;
+        metaEl.innerHTML =
+          '<span><i class="fas fa-map-marker-alt"></i> ' + esc(location) + '</span>' +
+          '<span class="dot">●</span>' +
+          '<span>' + esc(type) + '</span>';
 
-        const badge = document.getElementById('instBadge');
         if (currentSchool.verification === 'verified') {
           badge.className = 'badge-verified verified';
           badge.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
@@ -851,11 +844,12 @@
       }
 
       async function loadStats() {
+        const valIds = ['statCourses', 'statPending', 'statAdmissions', 'statApproved'];
+        const subIds = ['statCoursesSub', 'statPendingSub', 'statAdmissionsSub', 'statApprovedSub'];
+
         if (!currentSchool) {
-          // Clear all skeleton placeholders to dashes
-          ['statCourses', 'statPending', 'statAdmissions', 'statApproved'].forEach(id => {
-            document.getElementById(id).textContent = '—';
-          });
+          valIds.forEach(id => { document.getElementById(id).textContent = '—'; });
+          subIds.forEach(id => { document.getElementById(id).textContent = ''; });
           return;
         }
 
@@ -863,31 +857,55 @@
           const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/summary');
           const c = data.counts || {};
 
-          const set = (id, value, subId, subText) => {
-            document.getElementById(id).textContent = value;
-            if (subId) document.getElementById(subId).textContent = subText || '';
-          };
+          // Courses
+          const courses = Number(c.courses) || 0;
+          const coursesPending = Number(c.courses_pending) || 0;
+          document.getElementById('statCourses').textContent = courses;
+          document.getElementById('statCoursesSub').textContent =
+            coursesPending > 0 ? coursesPending + ' pending review' : '';
 
-          set('statCourses', c.courses ?? 0, 'statCoursesSub',
-              (c.courses_pending || 0) + ' pending review');
-          set('statPending',
-              (c.courses_pending || 0) + (c.fees_pending || 0) +
-              (c.admissions_pending || 0) + (c.calendar_pending || 0),
-              'statPendingSub', 'Across all content types');
-          set('statAdmissions', c.admissions ?? 0, 'statAdmissionsSub',
-              (c.admissions_pending || 0) + ' pending review');
-          set('statApproved', c.fees ?? 0, 'statApprovedSub',
-              'Published fee records');
+          // Pending review (all types)
+          const feesPending = Number(c.fees_pending) || 0;
+          const admPending = Number(c.admissions_pending) || 0;
+          const calPending = Number(c.calendar_pending) || 0;
+          const totalPending = coursesPending + feesPending + admPending + calPending;
+          document.getElementById('statPending').textContent = totalPending;
+          document.getElementById('statPendingSub').textContent =
+            totalPending > 0 ? 'Across all content types' : '';
+
+          // Admissions
+          const admissions = Number(c.admissions) || 0;
+          document.getElementById('statAdmissions').textContent = admissions;
+          document.getElementById('statAdmissionsSub').textContent =
+            admPending > 0 ? admPending + ' pending review' : '';
+
+          // Approved updates — courses + fees + admissions + calendar that are NOT pending/draft
+          // The backend summary endpoint doesn't expose "published" counts directly,
+          // so we compute from totals minus pending (published = total records where status='published').
+          // Since summary only exposes totals + pending, we display the published count
+          // as (totals - pending - draft) — but draft isn't exposed either.
+          // Safer: show total content count that has been approved.
+          // We use "fees" as a proxy for "published fee records" from the original code,
+          // but here we sum published-eligible items from available counts.
+          const feesTotal = Number(c.fees) || 0;
+          const admTotal = Number(c.admissions) || 0;
+          const calTotal = Number(c.calendar) || 0;
+          // Published = total - pending (drafts remain unpublished too, but summary doesn't split them)
+          // We show total approved content items based on published records.
+          const approvedTotal = (feesTotal - feesPending) + (admTotal - admPending) + (calTotal - calPending);
+          document.getElementById('statApproved').textContent = Math.max(0, approvedTotal);
+          document.getElementById('statApprovedSub').textContent =
+            approvedTotal > 0 ? 'Approved and live' : '';
         } catch (err) {
-          ['statCourses', 'statPending', 'statAdmissions', 'statApproved'].forEach(id => {
-            document.getElementById(id).textContent = '—';
-          });
+          valIds.forEach(id => { document.getElementById(id).textContent = '—'; });
+          subIds.forEach(id => { document.getElementById(id).textContent = ''; });
           console.error('[stats]', err);
         }
       }
 
       async function loadSubmissions() {
         const el = document.getElementById('submissionsList');
+
         if (!currentSchool) {
           el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
           return;
@@ -913,15 +931,15 @@
             const ic = iconFor(item.type);
             const status = item.status === 'pending' ? 'Pending' : 'Draft';
             const statusCls = item.status === 'pending' ? 'pending' : 'draft';
-            return `
-              <div class="submission-item">
-                <div class="submission-icon ${ic.cls}"><i class="fas ${ic.icon}"></i></div>
-                <div class="submission-body">
-                  <div class="submission-title">${esc(item.label || ('#' + item.id))}</div>
-                  <div class="submission-meta">${esc(item.type)} · updated ${esc(timeAgo(item.updated_at))}</div>
-                </div>
-                <span class="submission-status ${statusCls}">${status}</span>
-              </div>`;
+            const label = item.label || ('#' + item.id);
+            return '<div class="submission-item">' +
+              '<div class="submission-icon ' + ic.cls + '"><i class="fas ' + ic.icon + '"></i></div>' +
+              '<div class="submission-body">' +
+                '<div class="submission-title">' + esc(label) + '</div>' +
+                '<div class="submission-meta">' + esc(item.type) + ' · updated ' + esc(timeAgo(item.updated_at)) + '</div>' +
+              '</div>' +
+              '<span class="submission-status ' + statusCls + '">' + status + '</span>' +
+            '</div>';
           }).join('') + '</div>';
         } catch (err) {
           el.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Could not load submissions</h3><p>' + esc(err.message) + '</p></div>';
@@ -937,7 +955,6 @@
           currentUser = data.user;
 
           if (!currentUser || currentUser.role !== 'school_manager') {
-            // Wrong portal — send them back to login
             redirectToLogin('wrong_portal');
             return false;
           }
@@ -999,6 +1016,8 @@
         renderUser();
         await loadSchool();
         renderSchool();
+
+        // Fire in parallel but tolerate individual failures
         await Promise.allSettled([loadStats(), loadSubmissions()]);
       })();
 

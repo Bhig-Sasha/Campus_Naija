@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Fees Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -182,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -195,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -216,23 +197,24 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* SCOPE BANNER                                                 */
-    /* ============================================================ */
+    /* SCOPE BANNER */
     .scope-banner {
       display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px; margin-bottom: 24px;
+    }
+    .scope-banner.unassigned {
+      background-color: rgba(245,185,66,0.05);
+      border-color: rgba(245,185,66,0.25);
+      border-left-color: var(--accent);
     }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner.unassigned i { color: var(--accent); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
-    .scope-banner .scope-text strong {
-      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
-    }
+    .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
     .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
     .scope-banner .scope-pill {
       font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
@@ -240,10 +222,11 @@
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       white-space: nowrap;
     }
+    .scope-banner.unassigned .scope-pill {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
 
-    /* ============================================================ */
-    /* STATS                                                        */
-    /* ============================================================ */
+    /* STATS */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
@@ -262,14 +245,12 @@
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text);
+      line-height: 1; min-height: 1em;
     }
-    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
+    /* TOOLBAR */
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
       margin-bottom: 20px;
@@ -281,6 +262,7 @@
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -289,14 +271,15 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-gold {
-      background-color: transparent; color: var(--accent); font-weight: 600;
-      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
-      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 6px 12px; border-radius: var(--radius-btn); font-size: 0.78rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
       transition: all 0.15s;
     }
-    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row select {
@@ -308,9 +291,7 @@
     }
     .filter-row select:focus { border-color: var(--primary); }
 
-    /* ============================================================ */
-    /* TABS                                                         */
-    /* ============================================================ */
+    /* TABS */
     .fee-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 20px;
@@ -327,9 +308,7 @@
     .fee-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .fee-tab i { font-size: 0.85rem; }
 
-    /* ============================================================ */
-    /* PANEL / EMPTY STATE                                          */
-    /* ============================================================ */
+    /* PANEL */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -342,6 +321,7 @@
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
+    /* Empty state */
     .empty-state {
       text-align: center; padding: 48px 24px; color: var(--muted);
     }
@@ -356,28 +336,55 @@
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
       max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
-    .empty-state .empty-actions {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    }
-    .empty-state .data-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; color: var(--muted);
-      padding: 6px 14px; border-radius: 40px;
-      background-color: var(--surface); border: 1px solid var(--border);
-      margin-top: 16px; font-style: italic;
-    }
-    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+    .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* ============================================================ */
-    /* ADD FORM (inline, collapsed)                                 */
-    /* ============================================================ */
+    /* Data list */
+    .data-list { display: flex; flex-direction: column; gap: 10px; }
+    .data-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.15s;
+    }
+    .data-row:hover { border-color: var(--primary); }
+    .data-row-icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-body { flex: 1; min-width: 0; }
+    .data-row-title {
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    }
+    .data-row-title .amount {
+      font-size: 1rem; color: var(--primary); font-weight: 800;
+    }
+    .data-row-meta {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+
+    /* Add form */
     .add-inline {
       display: none;
       background-color: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 20px;
+      border-radius: 12px; padding: 18px; margin-bottom: 20px;
     }
     .add-inline.open { display: block; }
     .add-inline .ai-header {
@@ -426,9 +433,7 @@
       display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
       padding-top: 16px; border-top: 1px solid var(--border);
     }
-    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
-    /* Fee amount input with currency */
     .currency-input {
       display: flex; align-items: stretch;
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -448,9 +453,7 @@
     }
     .currency-input input:focus { border: none; }
 
-    /* ============================================================ */
-    /* FEE REQUIREMENTS PANEL                                       */
-    /* ============================================================ */
+    /* Req grid */
     .req-grid {
       display: grid; grid-template-columns: 1fr; gap: 12px;
     }
@@ -471,37 +474,26 @@
     .req-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
     .req-item p { font-size: 0.78rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
-    /* ============================================================ */
-    /* IMPORTANT NOTE                                               */
-    /* ============================================================ */
     .important-note {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 18px 22px;
       background-color: rgba(245,185,66,0.06);
       border: 1px solid rgba(245,185,66,0.3);
       border-left: 4px solid var(--accent);
-      border-radius: 12px;
-      margin-top: 20px;
+      border-radius: 12px; margin-top: 20px;
     }
     .important-note i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
     .important-note .in-text { flex: 1; }
-    .important-note h4 {
-      font-size: 0.9rem; margin-bottom: 4px; color: var(--accent);
-    }
-    .important-note p {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
-    }
+    .important-note h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--accent); }
+    .important-note p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    /* Footer note */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
     .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -514,17 +506,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -540,19 +532,13 @@
       .page-heading h1 { font-size: 1.6rem; }
       .panel { padding: 18px; }
       .form-actions { flex-direction: column; }
-      .form-actions .btn-primary,
-      .form-actions .btn-outline,
-      .form-actions .btn-gold { width: 100%; justify-content: center; }
+      .form-actions button { width: 100%; justify-content: center; }
       .filter-row { width: 100%; margin-left: 0; }
       .filter-row select { flex: 1; }
-      .empty-state { padding: 32px 16px; }
-      .empty-state .empty-actions { flex-direction: column; }
-      .empty-state .empty-actions button { width: 100%; justify-content: center; }
+      .data-row { flex-wrap: wrap; }
+      .data-row-actions { width: 100%; justify-content: flex-end; }
       .fee-tab { padding: 9px 12px; font-size: 0.8rem; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -574,25 +560,22 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
-        <a href="courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="fees.html" class="nav-item active"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="#" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="#" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-paper-plane"></i> Submissions
-          <span class="nav-badge">—</span>
-        </a>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="./fees.html" class="nav-item active"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
       <div class="sidebar-signout">
@@ -603,10 +586,10 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
@@ -626,16 +609,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -645,51 +627,45 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-money-bill"></i> School finance information</div>
           <h1>Fees Management</h1>
           <p>Maintain published fee information for prospective and current students.</p>
         </div>
 
-        <!-- Scoped access banner -->
-        <div class="scope-banner">
+        <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-lock"></i>
           <div class="scope-text">
             <strong>School-scoped access</strong>
             <span>You can only manage fee records for the institution assigned to your account.</span>
           </div>
-          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+          <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Fee records <i class="fas fa-money-bill"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statTotal">—</div>
+            <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Submitted changes</div>
+            <div class="stat-mini-value" id="statPending">—</div>
+            <div class="stat-mini-sub" id="statPendingSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Approved &amp; published <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Visible publicly</div>
+            <div class="stat-mini-value" id="statPublished">—</div>
+            <div class="stat-mini-sub" id="statPublishedSub"></div>
           </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
-          <button class="btn-primary" onclick="toggleAddForm()">
+          <button class="btn-primary" id="addFeeBtn" onclick="toggleAddForm()">
             <i class="fas fa-plus"></i> Add fee record
           </button>
           <div class="filter-row">
             <select id="sessionFilter" onchange="filterFees()">
-              <option value="2026/2027" selected>2026/2027</option>
-              <option value="2025/2026">2025/2026</option>
               <option value="all">All sessions</option>
             </select>
             <select id="categoryFilter" onchange="filterFees()">
@@ -700,10 +676,9 @@
           </div>
         </div>
 
-        <!-- Fee category tabs -->
         <div class="fee-tabs">
           <button class="fee-tab active" data-cat="all" onclick="switchCategory('all', this)">
-            <i class="fas fa-list"></i> All fees
+            <i class="fas fa-list"></i> All fees <span id="tabCountAll" style="color:var(--muted);font-size:0.75rem;font-weight:700;margin-left:4px;"></span>
           </button>
           <button class="fee-tab" data-cat="tuition" onclick="switchCategory('tuition', this)">
             <i class="fas fa-graduation-cap"></i> Tuition
@@ -713,7 +688,6 @@
           </button>
         </div>
 
-        <!-- Add fee form (inline, collapsed) -->
         <div class="add-inline" id="addFeeForm">
           <div class="ai-header">
             <div class="ai-title"><i class="fas fa-plus"></i> New fee record</div>
@@ -724,12 +698,8 @@
           <div class="form-grid">
             <div class="form-group">
               <label>Academic session <span class="req">*</span></label>
-              <select id="feeSession">
-                <option value="">Select session</option>
-                <option value="2026/2027">2026/2027</option>
-                <option value="2025/2026">2025/2026</option>
-                <option value="2024/2025">2024/2025</option>
-              </select>
+              <input type="text" id="feeSession" placeholder="e.g. 2025/2026" autocomplete="off">
+              <span class="form-hint">Format: YYYY/YYYY</span>
             </div>
             <div class="form-group">
               <label>Fee category <span class="req">*</span></label>
@@ -745,26 +715,18 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Programme <span class="req">*</span></label>
+              <label>Programme <span class="optional">(optional)</span></label>
               <input type="text" id="feeProgramme" placeholder="e.g. B.Sc. Computer Science">
-              <span class="form-hint">Leave as "All programmes" for institution-wide fees.</span>
+              <span class="form-hint">Leave blank for institution-wide fees.</span>
             </div>
             <div class="form-group">
-              <label>Level</label>
-              <select id="feeLevel">
-                <option value="all">All levels</option>
-                <option value="100">100 Level</option>
-                <option value="200">200 Level</option>
-                <option value="300">300 Level</option>
-                <option value="400">400 Level</option>
-                <option value="500">500 Level</option>
-                <option value="postgraduate">Postgraduate</option>
-              </select>
+              <label>Level <span class="optional">(optional)</span></label>
+              <input type="text" id="feeLevel" placeholder="e.g. 100, 200, Postgraduate">
             </div>
             <div class="form-group">
-              <label>Student category</label>
+              <label>Student category <span class="optional">(optional)</span></label>
               <select id="feeStudentCategory">
-                <option value="all">All students</option>
+                <option value="">Any student</option>
                 <option value="new">New / Fresh students</option>
                 <option value="returning">Returning students</option>
                 <option value="indigene">State indigenes</option>
@@ -773,61 +735,53 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Amount <span class="req">*</span></label>
+              <label>Amount (NGN) <span class="req">*</span></label>
               <div class="currency-input">
                 <span class="currency-symbol">₦</span>
                 <input type="text" id="feeAmount" placeholder="e.g. 150000" inputmode="numeric">
               </div>
-              <span class="form-hint">Nigerian naira (₦). Do not include commas.</span>
+              <span class="form-hint">Digits only — no commas or ₦ symbol.</span>
             </div>
             <div class="form-group">
-              <label>Official source URL <span class="req">*</span></label>
+              <label>Official source URL <span class="optional">(optional for draft)</span></label>
               <input type="url" id="feeSourceUrl" placeholder="https://official-source.example/fees">
-              <span class="form-hint">Required before the fee can be verified and published.</span>
+              <span class="form-hint">Required before submission for review.</span>
             </div>
             <div class="form-group">
-              <label>Source verified on</label>
+              <label>Source verified on <span class="optional">(optional)</span></label>
               <input type="date" id="feeVerifiedDate">
             </div>
             <div class="form-group full">
               <label>Notes <span class="optional">(optional)</span></label>
-              <textarea id="feeNotes" placeholder="Any context or breakdown (e.g. excludes accommodation)..." style="min-height: 70px;"></textarea>
+              <textarea id="feeNotes" placeholder="Context or breakdown..." style="min-height: 70px;"></textarea>
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn-outline btn-sm" onclick="saveFeeDraft()">
+            <button class="btn-outline btn-sm" id="saveDraftBtn" onclick="saveFeeDraft()">
               <i class="fas fa-save"></i> Save draft
             </button>
-            <button class="btn-primary btn-sm" onclick="submitFeeForReview()">
-              <i class="fas fa-paper-plane"></i> Submit for review
+            <button class="btn-primary btn-sm" id="submitFeeBtn" onclick="saveAndSubmit()" disabled
+              title="Save a draft first, then submit for review from the fee record list">
+              <i class="fas fa-paper-plane"></i> Save &amp; submit
             </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
+          <p class="form-hint" style="margin-top: 10px;">
+            <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+            New records are saved as drafts. Use "Submit for review" from the fee list to send them to the platform owner.
+          </p>
         </div>
 
-        <!-- Fee records panel -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-money-bill"></i> Fee records</div>
           </div>
-          <p class="panel-desc">Actual fees, amounts and review statuses will appear here when connected to the school's database.</p>
-
-          <div class="empty-state">
-            <div class="es-icon"><i class="fas fa-money-bill"></i></div>
-            <h3>No fee records loaded</h3>
-            <p>Fee records will appear here once the backend is connected. Add the first fee record to begin managing your school's tuition and charges.</p>
-            <div class="empty-actions">
-              <button class="btn-primary" onclick="toggleAddForm()">
-                <i class="fas fa-plus"></i> Add first fee record
-              </button>
-            </div>
-            <div class="data-note">
-              <i class="fas fa-circle-info"></i> Currency: Nigerian naira (₦). No sample amounts are presented as official fees.
-            </div>
+          <p class="panel-desc" id="feeListDesc">Loading fee records from your institution's database…</p>
+          <div id="feesList">
+            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading fees…</p></div>
           </div>
         </div>
 
-        <!-- Fee record requirements -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-list-check"></i> Fee record requirements</div>
@@ -865,7 +819,6 @@
           </div>
         </div>
 
-        <!-- Important note -->
         <div class="important-note">
           <i class="fas fa-triangle-exclamation"></i>
           <div class="in-text">
@@ -875,52 +828,172 @@
         </div>
 
         <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          state: 'Lagos State',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let allFees = [];
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
-        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
+      const formatNaira = (n) => {
+        const num = Number(n);
+        if (!Number.isFinite(num)) return '—';
+        return '₦' + num.toLocaleString('en-NG');
+      };
 
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
-        }
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      /* ============================================================ */
-      /* CATEGORY TABS                                                */
-      /* ============================================================ */
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      /* ----- USER/SCHOOL ----- */
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
+
+      function renderSchool() {
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const pill = document.getElementById('scopeSchoolPill');
+        const scopeBanner = document.getElementById('scopeBanner');
+        const footnote = document.getElementById('footnoteInstName');
+        const addBtn = document.getElementById('addFeeBtn');
+
+        if (!currentSchool) {
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Unassigned';
+          scopeBanner.classList.add('unassigned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'Contact the platform administrator to be assigned to your institution before adding fee records.';
+          footnote.textContent = 'Unassigned';
+          if (addBtn) addBtn.disabled = true;
+          return;
+        }
+
+        sidebarName.textContent = currentSchool.name || '—';
+        if (currentSchool.verification === 'verified') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+
+        pill.textContent = currentSchool.name;
+        scopeBanner.classList.remove('unassigned');
+        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
+        scopeBanner.querySelector('.scope-text span').textContent =
+          'You can only manage fee records for the institution assigned to your account.';
+        footnote.textContent = currentSchool.name;
+        if (addBtn) addBtn.disabled = false;
+      }
+
+      /* ----- STATS ----- */
+      function updateStats() {
+        const total = allFees.length;
+        const pending = allFees.filter(f => f.status === 'pending').length;
+        const published = allFees.filter(f => f.status === 'published').length;
+        const drafts = allFees.filter(f => f.status === 'draft').length;
+
+        document.getElementById('statTotal').textContent = String(total);
+        document.getElementById('statTotalSub').textContent =
+          drafts > 0 ? drafts + ' draft' + (drafts === 1 ? '' : 's') : '';
+
+        document.getElementById('statPending').textContent = String(pending);
+        document.getElementById('statPendingSub').textContent =
+          pending > 0 ? 'Submitted changes' : '';
+
+        document.getElementById('statPublished').textContent = String(published);
+        document.getElementById('statPublishedSub').textContent =
+          published > 0 ? 'Visible publicly' : '';
+
+        document.getElementById('tabCountAll').textContent = total > 0 ? '(' + total + ')' : '';
+      }
+
+      /* ----- POPULATE SESSION FILTER FROM DATA ----- */
+      function populateSessionFilter() {
+        const sel = document.getElementById('sessionFilter');
+        const current = sel.value;
+        const sessions = Array.from(new Set(allFees.map(f => f.session).filter(Boolean)))
+          .sort((a, b) => b.localeCompare(a));
+        sel.innerHTML = '<option value="all">All sessions</option>' +
+          sessions.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('');
+        if (sessions.includes(current)) sel.value = current;
+      }
+
+      /* ----- CATEGORY TAB ----- */
       window.switchCategory = function(cat, el) {
         document.querySelectorAll('.fee-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
@@ -928,106 +1001,292 @@
         filterFees();
       };
 
-      /* ============================================================ */
-      /* FILTERING                                                    */
-      /* ============================================================ */
+      /* ----- FILTERING ----- */
       window.filterFees = function() {
         const session = document.getElementById('sessionFilter').value;
         const category = document.getElementById('categoryFilter').value;
-        // In production, this would filter the fee records list.
-        // For this preview, we simply confirm the filter state.
-        if (session !== 'all' || category !== 'all') {
-          toast('Filtering fees by session: ' + (session === 'all' ? 'all' : session) + ' · category: ' + (category === 'all' ? 'all' : category));
-        }
+
+        let list = allFees.slice();
+        if (session !== 'all') list = list.filter(f => f.session === session);
+        if (category === 'tuition') list = list.filter(f => f.category === 'tuition');
+        else if (category === 'other') list = list.filter(f => f.category && f.category !== 'tuition');
+
+        renderFees(list);
       };
 
-      /* ============================================================ */
-      /* INLINE ADD FORM                                              */
-      /* ============================================================ */
+      /* ----- RENDER ----- */
+      function statusBadge(status) {
+        const map = {
+          draft: { cls: 'draft', label: 'Draft' },
+          pending: { cls: 'pending', label: 'Pending review' },
+          published: { cls: 'published', label: 'Published' },
+        };
+        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
+        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      }
+
+      function renderFees(list) {
+        const el = document.getElementById('feesList');
+        if (!currentSchool) {
+          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          return;
+        }
+
+        if (!list.length) {
+          const hasAnyFees = allFees.length > 0;
+          el.innerHTML = '<div class="empty-state">' +
+            '<div class="es-icon"><i class="fas fa-money-bill"></i></div>' +
+            '<h3>' + (hasAnyFees ? 'No fees match the current filters' : 'No fee records yet') + '</h3>' +
+            '<p>' + (hasAnyFees
+              ? 'Try changing the session or category filter.'
+              : 'Add your first fee record to begin managing your school\'s tuition and charges.') + '</p>' +
+            (hasAnyFees ? '' :
+              '<div class="empty-actions">' +
+              '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Add first fee record</button>' +
+              '</div>') +
+            '</div>';
+          return;
+        }
+
+        const sorted = list.slice().sort((a, b) => {
+          const s = (b.session || '').localeCompare(a.session || '');
+          if (s !== 0) return s;
+          return (a.category || '').localeCompare(b.category || '');
+        });
+
+        el.innerHTML = '<div class="data-list">' + sorted.map(f => {
+          const titleParts = [];
+          const cat = f.category || 'Fee';
+          const prog = f.programme ? ' — ' + esc(f.programme) : '';
+          const amt = formatNaira(f.amount);
+
+          const meta = [];
+          if (f.session) meta.push(esc(f.session));
+          if (f.level) meta.push('Level ' + esc(f.level));
+          if (f.student_category) meta.push(esc(f.student_category));
+          if (f.verified_date) meta.push('verified ' + esc(f.verified_date));
+          const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '<span>—</span>';
+
+          const isDraft = f.status === 'draft';
+          const isPending = f.status === 'pending';
+          const actions = [];
+          if (isDraft) {
+            actions.push('<button class="btn-outline btn-sm" onclick="submitFee(\'' + esc(f.id) + '\')">' +
+              '<i class="fas fa-paper-plane"></i> Submit for review</button>');
+          }
+          if (isPending) {
+            actions.push('<button class="btn-outline btn-sm" onclick="withdrawFee(\'' + esc(f.id) + '\')">' +
+              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
+          }
+          if (f.status !== 'published') {
+            actions.push('<button class="btn-danger btn-sm" onclick="deleteFee(\'' + esc(f.id) + '\')">' +
+              '<i class="fas fa-trash"></i> Delete</button>');
+          }
+
+          return '<div class="data-row">' +
+            '<div class="data-row-icon ' + (isPending ? 'gold' : '') + '"><i class="fas fa-money-bill"></i></div>' +
+            '<div class="data-row-body">' +
+              '<div class="data-row-title">' +
+                '<span>' + esc(cat.charAt(0).toUpperCase() + cat.slice(1)) + prog + '</span>' +
+                ' <span class="amount">' + esc(amt) + '</span>' +
+              '</div>' +
+              '<div class="data-row-meta">' + metaHtml + '</div>' +
+            '</div>' +
+            statusBadge(f.status) +
+            (actions.length ? '<div class="data-row-actions">' + actions.join('') + '</div>' : '') +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      /* ----- LOAD ----- */
+      async function loadFees() {
+        if (!currentSchool) {
+          allFees = [];
+          updateStats(); renderFees([]);
+          document.getElementById('feeListDesc').textContent =
+            'No institution is assigned to your account.';
+          return;
+        }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees');
+          allFees = data.fees || [];
+          document.getElementById('feeListDesc').textContent =
+            allFees.length > 0
+              ? 'Fee records for ' + currentSchool.name + '. Use the filters above to narrow the list.'
+              : 'No fee records yet for ' + currentSchool.name + '.';
+          updateStats();
+          populateSessionFilter();
+          filterFees();
+        } catch (err) {
+          console.error('[fees]', err);
+          document.getElementById('feesList').innerHTML =
+            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load fees</h3><p>' + esc(err.message) + '</p></div>';
+        }
+      }
+
+      /* ----- FORM ----- */
       window.toggleAddForm = function() {
         const form = document.getElementById('addFeeForm');
         form.classList.toggle('open');
         if (form.classList.contains('open')) {
-          const firstInput = form.querySelector('select, input');
-          if (firstInput) firstInput.focus();
+          const first = form.querySelector('input, select');
+          if (first) first.focus();
         }
       };
 
-      /* ============================================================ */
-      /* SAVE / SUBMIT                                                */
-      /* ============================================================ */
-      function validateFeeForm() {
-        const session = document.getElementById('feeSession').value;
+      function validateDraftForm() {
+        const session = document.getElementById('feeSession').value.trim();
         const category = document.getElementById('feeCategory').value;
-        const programme = document.getElementById('feeProgramme').value.trim();
-        const amount = document.getElementById('feeAmount').value.trim();
-        const sourceUrl = document.getElementById('feeSourceUrl').value.trim();
+        const amountRaw = document.getElementById('feeAmount').value.trim();
 
-        if (!session) { toast('Please select the academic session.'); return false; }
-        if (!category) { toast('Please select the fee category.'); return false; }
-        if (!programme) { toast('Please enter the programme (or "All programmes").'); return false; }
-        if (!amount) { toast('Please enter the fee amount.'); return false; }
-        if (!/^\d+$/.test(amount.replace(/[,\s]/g, ''))) {
-          toast('Amount must be a number (no commas or symbols).');
-          return false;
+        if (!session) { toast('Please enter the academic session.', true); return null; }
+        if (!/^\d{4}\/\d{4}$/.test(session)) {
+          toast('Session should look like 2025/2026.', true); return null;
         }
-        if (!sourceUrl) { toast('An official source URL is required.'); return false; }
-        try { new URL(sourceUrl); } catch (e) {
-          toast('Please enter a valid source URL (including https://).');
-          return false;
+        if (!category) { toast('Please select the fee category.', true); return null; }
+        if (!amountRaw) { toast('Please enter the fee amount.', true); return null; }
+        const cleaned = amountRaw.replace(/[,\s₦]/g, '');
+        if (!/^\d+$/.test(cleaned)) {
+          toast('Amount must be a whole number (no commas or symbols).', true); return null;
         }
-        return true;
+
+        const verifiedDate = document.getElementById('feeVerifiedDate').value;
+        const sourceUrl = document.getElementById('feeSourceUrl').value.trim();
+        if (sourceUrl) {
+          try { new URL(sourceUrl); } catch (e) {
+            toast('Source URL must be a valid URL including https://', true); return null;
+          }
+        }
+
+        return {
+          session,
+          category,
+          programme: document.getElementById('feeProgramme').value.trim() || null,
+          level: document.getElementById('feeLevel').value.trim() || null,
+          student_category: document.getElementById('feeStudentCategory').value || null,
+          amount: Number(cleaned),
+          source_url: sourceUrl || null,
+          verified_date: verifiedDate || null,
+          notes: document.getElementById('feeNotes').value.trim() || null,
+        };
       }
 
-      window.saveFeeDraft = function() {
-        if (!validateFeeForm()) return;
-        toast('Fee record saved as draft. Connect the backend to persist.');
-        resetFeeForm();
-      };
-
-      window.submitFeeForReview = function() {
-        if (!validateFeeForm()) return;
-        if (!confirm('Submit this fee record for review?\n\nYour current published fees stay visible until the change is approved.')) return;
-        toast('Fee record submitted for review · you will be notified of the decision.');
-        resetFeeForm();
-      };
-
       function resetFeeForm() {
-        document.getElementById('feeSession').value = '';
-        document.getElementById('feeCategory').value = '';
-        document.getElementById('feeProgramme').value = '';
-        document.getElementById('feeLevel').value = 'all';
-        document.getElementById('feeStudentCategory').value = 'all';
-        document.getElementById('feeAmount').value = '';
-        document.getElementById('feeSourceUrl').value = '';
-        document.getElementById('feeVerifiedDate').value = '';
-        document.getElementById('feeNotes').value = '';
+        ['feeSession', 'feeCategory', 'feeProgramme', 'feeLevel',
+         'feeStudentCategory', 'feeAmount', 'feeSourceUrl', 'feeVerifiedDate', 'feeNotes']
+          .forEach(id => { document.getElementById(id).value = ''; });
         toggleAddForm();
       }
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      window.saveFeeDraft = async function() {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
+        const payload = validateDraftForm();
+        if (!payload) return;
+
+        const btn = document.getElementById('saveDraftBtn');
+        btn.disabled = true;
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          toast('Fee record saved as draft.');
+          resetFeeForm();
+          await loadFees();
+        } catch (err) {
+          toast(err.message, true);
+        } finally {
+          btn.disabled = false;
+        }
       };
 
-      window.signOut = function() {
+      window.saveAndSubmit = function() {
+        // Intentionally disabled — the draft must be created first,
+        // then submitted from the fee record list.
+        toast('Save as draft first, then submit from the fee list.', true);
+      };
+
+      /* ----- SUBMIT / WITHDRAW / DELETE ----- */
+      window.submitFee = async function(id) {
+        const fee = allFees.find(f => String(f.id) === String(id));
+        if (!fee) return;
+        if (!fee.source_url) {
+          toast('Add an official source URL before submitting for review.', true);
+          return;
+        }
+        if (!confirm('Submit this fee record for review?\n\nYour current published fees stay visible until the change is approved.')) return;
+        try {
+          await api('/api/school/submissions/fee/' + encodeURIComponent(id) + '/submit', { method: 'POST' });
+          toast('Fee submitted for review.');
+          await loadFees();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      window.withdrawFee = async function(id) {
+        if (!confirm('Withdraw this submission and return it to draft?')) return;
+        try {
+          await api('/api/school/submissions/fee/' + encodeURIComponent(id) + '/withdraw', { method: 'POST' });
+          toast('Submission withdrawn.');
+          await loadFees();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      window.deleteFee = async function(id) {
+        if (!confirm('Delete this fee record? This cannot be undone.')) return;
+        try {
+          await api('/api/fees/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Fee record deleted.');
+          await loadFees();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      /* ----- SESSION ----- */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* ----- MOBILE SIDEBAR ----- */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1042,15 +1301,15 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* ----- INIT ----- */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        renderSchool();
+        await loadFees();
+      })();
 
     })();
   </script>

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Faculties &amp; Courses</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -182,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -195,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -216,36 +197,36 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* SCOPED ACCESS BANNER                                         */
-    /* ============================================================ */
+    /* SCOPE BANNER */
     .scope-banner {
       display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px; margin-bottom: 24px;
+    }
+    .scope-banner.unassigned {
+      background-color: rgba(245,185,66,0.05);
+      border-color: rgba(245,185,66,0.25);
+      border-left-color: var(--accent);
     }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner.unassigned i { color: var(--accent); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
-    .scope-banner .scope-text strong {
-      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
-    }
-    .scope-banner .scope-text span {
-      font-size: 0.78rem; color: var(--muted);
-    }
+    .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
+    .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
     .scope-banner .scope-pill {
       font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
       border-radius: 40px;
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       white-space: nowrap;
     }
+    .scope-banner.unassigned .scope-pill {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
 
-    /* ============================================================ */
-    /* STATS                                                        */
-    /* ============================================================ */
+    /* STATS */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
@@ -262,16 +243,13 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
-    .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text);
+      line-height: 1; min-height: 1em;
     }
-    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
-    /* ============================================================ */
-    /* TABS                                                         */
-    /* ============================================================ */
+    /* TABS */
     .section-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 24px;
@@ -299,9 +277,7 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ============================================================ */
-    /* PANEL / EMPTY STATE                                          */
-    /* ============================================================ */
+    /* PANEL */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -322,6 +298,7 @@
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -330,17 +307,9 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-gold {
-      background-color: transparent; color: var(--accent); font-weight: 600;
-      padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
-      border: 1px solid rgba(245, 185, 66, 0.35); cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: all 0.15s;
-    }
-    .btn-gold:hover { background-color: rgba(245, 185, 66, 0.1); }
     .btn-danger {
       background-color: transparent; color: var(--danger); font-weight: 600;
-      padding: 8px 14px; border-radius: var(--radius-btn); font-size: 0.8rem;
+      padding: 6px 12px; border-radius: var(--radius-btn); font-size: 0.78rem;
       border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
       display: inline-flex; align-items: center; gap: 6px;
       transition: all 0.15s;
@@ -350,8 +319,7 @@
 
     /* Empty state */
     .empty-state {
-      text-align: center; padding: 48px 24px;
-      color: var(--muted);
+      text-align: center; padding: 48px 24px; color: var(--muted);
     }
     .empty-state .es-icon {
       width: 64px; height: 64px; border-radius: 16px;
@@ -359,36 +327,19 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
     }
-    .empty-state h3 {
-      font-size: 1rem; color: var(--text); margin-bottom: 8px;
-    }
+    .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
     .empty-state p {
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
-      max-width: 420px; margin-left: auto; margin-right: auto;
-      line-height: 1.5;
+      max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
-    .empty-state .empty-actions {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    }
-    .empty-state .data-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; color: var(--muted);
-      padding: 6px 14px; border-radius: 40px;
-      background-color: var(--surface); border: 1px solid var(--border);
-      margin-top: 16px; font-style: italic;
-    }
-    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+    .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* ============================================================ */
-    /* ADD FORM (inline, collapsed)                                 */
-    /* ============================================================ */
+    /* Add form */
     .add-inline {
       display: none;
       background-color: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 20px;
+      border-radius: 12px; padding: 18px; margin-bottom: 20px;
     }
     .add-inline.open { display: block; }
     .add-inline .ai-header {
@@ -437,25 +388,56 @@
       padding-top: 16px; border-top: 1px solid var(--border);
     }
 
-    /* ============================================================ */
-    /* PUBLISHING WORKFLOW                                          */
-    /* ============================================================ */
+    /* Data list */
+    .data-list { display: flex; flex-direction: column; gap: 10px; }
+    .data-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.15s;
+    }
+    .data-row:hover { border-color: var(--primary); }
+    .data-row-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-body { flex: 1; min-width: 0; }
+    .data-row-title {
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .data-row-meta {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* Workflow */
     .workflow-panel {
       background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 22px 24px;
-      margin-top: 28px;
+      border-radius: var(--radius-card); padding: 22px 24px; margin-top: 28px;
     }
     .workflow-panel h3 {
       font-size: 1rem; margin-bottom: 6px;
       display: flex; align-items: center; gap: 10px;
     }
     .workflow-panel h3 i { color: var(--primary); font-size: 0.95rem; }
-    .workflow-panel .wf-sub {
-      font-size: 0.82rem; color: var(--muted); margin-bottom: 20px;
-    }
-    .workflow-steps {
-      display: grid; grid-template-columns: 1fr; gap: 14px;
-    }
+    .workflow-panel .wf-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+    .workflow-steps { display: grid; grid-template-columns: 1fr; gap: 14px; }
     @media (min-width: 700px) { .workflow-steps { grid-template-columns: repeat(3, 1fr); } }
     .wf-step {
       background-color: var(--elevated); border: 1px solid var(--border);
@@ -468,23 +450,16 @@
       font-weight: 800; font-size: 0.82rem; margin-bottom: 10px;
     }
     .wf-step-num.gold { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .wf-step h4 {
-      font-size: 0.88rem; margin-bottom: 6px;
-    }
-    .wf-step p {
-      font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0;
-    }
+    .wf-step h4 { font-size: 0.88rem; margin-bottom: 6px; }
+    .wf-step p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    /* Footer note */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
     .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -497,17 +472,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -523,17 +498,11 @@
       .page-heading h1 { font-size: 1.6rem; }
       .panel { padding: 18px; }
       .form-actions { flex-direction: column; }
-      .form-actions .btn-primary,
-      .form-actions .btn-outline,
-      .form-actions .btn-gold { width: 100%; justify-content: center; }
+      .form-actions button { width: 100%; justify-content: center; }
       .section-tab { padding: 10px 14px; font-size: 0.8rem; }
-      .empty-state { padding: 32px 16px; }
-      .empty-state .empty-actions { flex-direction: column; }
-      .empty-state .empty-actions button { width: 100%; justify-content: center; }
+      .data-row { flex-wrap: wrap; }
+      .data-row-actions { width: 100%; justify-content: flex-end; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -555,25 +524,22 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
-        <a href="courses.html" class="nav-item active"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="#" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="#" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-paper-plane"></i> Submissions
-          <span class="nav-badge">—</span>
-        </a>
+        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+        <a href="./courses.html" class="nav-item active"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+        <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
       <div class="sidebar-signout">
@@ -584,10 +550,10 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
@@ -607,16 +573,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -626,43 +591,39 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-book-open"></i> Academic management</div>
           <h1>Faculties &amp; Courses</h1>
           <p>Manage the academic programmes shown on your school's public profile.</p>
         </div>
 
-        <!-- Scoped access banner -->
-        <div class="scope-banner">
+        <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-lock"></i>
           <div class="scope-text">
             <strong>School-scoped access</strong>
             <span>You can only manage academic records for the institution assigned to your account.</span>
           </div>
-          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+          <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Faculties <i class="fas fa-building"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statFaculties">—</div>
+            <div class="stat-mini-sub" id="statFacultiesSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Departments <i class="fas fa-sitemap"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statDepartments">—</div>
+            <div class="stat-mini-sub" id="statDepartmentsSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Courses / programmes <i class="fas fa-book-open"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statCourses">—</div>
+            <div class="stat-mini-sub" id="statCoursesSub"></div>
           </div>
         </div>
 
-        <!-- Section tabs -->
         <div class="section-tabs">
           <button class="section-tab active" data-tab="faculties" onclick="switchTab('faculties', this)">
             <i class="fas fa-building"></i> Faculties
@@ -678,143 +639,42 @@
           </button>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: FACULTIES                                               -->
-        <!-- ============================================================ -->
+        <!-- FACULTIES TAB -->
         <div class="tab-panel active" id="panel-faculties">
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-building"></i> Faculties</div>
-              <button class="btn-primary" onclick="toggleAddForm('faculty')">
-                <i class="fas fa-plus"></i> Add new faculty
-              </button>
             </div>
-            <p class="panel-desc">Faculties group the departments and programmes offered by your institution. Each faculty must be linked to a verified school record.</p>
-
-            <!-- Inline add form -->
-            <div class="add-inline" id="form-faculty">
-              <div class="ai-header">
-                <div class="ai-title"><i class="fas fa-plus"></i> New faculty</div>
-                <button class="ai-close" onclick="toggleAddForm('faculty')" aria-label="Close">
-                  <i class="fas fa-xmark"></i>
-                </button>
-              </div>
-              <div class="form-grid">
-                <div class="form-group full">
-                  <label>Faculty name <span class="req">*</span></label>
-                  <input type="text" id="facultyName" placeholder="e.g. Faculty of Science">
-                </div>
-                <div class="form-group">
-                  <label>Faculty code</label>
-                  <input type="text" id="facultyCode" placeholder="e.g. SCI">
-                </div>
-                <div class="form-group">
-                  <label>Dean (optional)</label>
-                  <input type="text" id="facultyDean" placeholder="Dean's name">
-                </div>
-                <div class="form-group full">
-                  <label>Description</label>
-                  <textarea id="facultyDesc" placeholder="Brief description of the faculty..." style="min-height: 60px;"></textarea>
-                </div>
-              </div>
-              <div class="form-actions">
-                <button class="btn-primary btn-sm" onclick="saveFaculty()"><i class="fas fa-save"></i> Save draft</button>
-                <button class="btn-outline btn-sm" onclick="toggleAddForm('faculty')">Cancel</button>
-              </div>
-            </div>
-
-            <!-- Empty state -->
-            <div class="empty-state">
-              <div class="es-icon"><i class="fas fa-building"></i></div>
-              <h3>No faculty records loaded</h3>
-              <p>The directory will display faculties from your school's database when the backend is connected.</p>
-              <div class="empty-actions">
-                <button class="btn-primary" onclick="toggleAddForm('faculty')">
-                  <i class="fas fa-plus"></i> Add first faculty
-                </button>
-              </div>
-              <div class="data-note">
-                <i class="fas fa-circle-info"></i> No sample records or counts are being presented as real school data.
-              </div>
+            <p class="panel-desc">Faculties are derived from the courses already stored for your institution. Add a course with a new faculty name to introduce one.</p>
+            <div id="facultiesList">
+              <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading faculties…</p></div>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: DEPARTMENTS                                             -->
-        <!-- ============================================================ -->
+        <!-- DEPARTMENTS TAB -->
         <div class="tab-panel" id="panel-departments">
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-sitemap"></i> Departments</div>
-              <button class="btn-primary" onclick="toggleAddForm('department')">
-                <i class="fas fa-plus"></i> Add new department
-              </button>
             </div>
-            <p class="panel-desc">Departments sit within a faculty and own the individual courses and programmes offered.</p>
-
-            <div class="add-inline" id="form-department">
-              <div class="ai-header">
-                <div class="ai-title"><i class="fas fa-plus"></i> New department</div>
-                <button class="ai-close" onclick="toggleAddForm('department')" aria-label="Close">
-                  <i class="fas fa-xmark"></i>
-                </button>
-              </div>
-              <div class="form-grid">
-                <div class="form-group full">
-                  <label>Department name <span class="req">*</span></label>
-                  <input type="text" id="deptName" placeholder="e.g. Department of Computer Science">
-                </div>
-                <div class="form-group">
-                  <label>Faculty <span class="req">*</span></label>
-                  <select id="deptFaculty">
-                    <option value="">Select faculty</option>
-                  </select>
-                  <span class="form-hint">Faculties are loaded from your school's records.</span>
-                </div>
-                <div class="form-group">
-                  <label>Department code</label>
-                  <input type="text" id="deptCode" placeholder="e.g. CSC">
-                </div>
-                <div class="form-group full">
-                  <label>Description</label>
-                  <textarea id="deptDesc" placeholder="Brief description of the department..." style="min-height: 60px;"></textarea>
-                </div>
-              </div>
-              <div class="form-actions">
-                <button class="btn-primary btn-sm" onclick="saveDepartment()"><i class="fas fa-save"></i> Save draft</button>
-                <button class="btn-outline btn-sm" onclick="toggleAddForm('department')">Cancel</button>
-              </div>
-            </div>
-
-            <div class="empty-state">
-              <div class="es-icon"><i class="fas fa-sitemap"></i></div>
-              <h3>No department records loaded</h3>
-              <p>The directory will display departments from your school's database when the backend is connected.</p>
-              <div class="empty-actions">
-                <button class="btn-primary" onclick="toggleAddForm('department')">
-                  <i class="fas fa-plus"></i> Add first department
-                </button>
-              </div>
-              <div class="data-note">
-                <i class="fas fa-circle-info"></i> No sample records or counts are being presented as real school data.
-              </div>
+            <p class="panel-desc">Departments are derived from the courses already stored for your institution. Add a course with a new department to introduce one.</p>
+            <div id="departmentsList">
+              <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading departments…</p></div>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- TAB: COURSES                                                 -->
-        <!-- ============================================================ -->
+        <!-- COURSES TAB -->
         <div class="tab-panel" id="panel-courses">
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-book-open"></i> Courses / programmes</div>
-              <button class="btn-primary" onclick="toggleAddForm('course')">
+              <button class="btn-primary" onclick="toggleAddForm('course')" id="addCourseBtn">
                 <i class="fas fa-plus"></i> Add new course
               </button>
             </div>
-            <p class="panel-desc">Individual courses and programmes offered by your institution. Each course belongs to a department and can be submitted for review.</p>
+            <p class="panel-desc">Individual courses and programmes offered by your institution. New records start as drafts and can be submitted for review.</p>
 
             <div class="add-inline" id="form-course">
               <div class="ai-header">
@@ -829,10 +689,12 @@
                   <input type="text" id="courseName" placeholder="e.g. B.Sc. Computer Science">
                 </div>
                 <div class="form-group">
-                  <label>Department <span class="req">*</span></label>
-                  <select id="courseDept">
-                    <option value="">Select department</option>
-                  </select>
+                  <label>Faculty</label>
+                  <input type="text" id="courseFaculty" placeholder="e.g. Faculty of Science">
+                </div>
+                <div class="form-group">
+                  <label>Department</label>
+                  <input type="text" id="courseDept" placeholder="e.g. Department of Computer Science">
                 </div>
                 <div class="form-group">
                   <label>Qualification awarded</label>
@@ -871,30 +733,19 @@
                 </div>
               </div>
               <div class="form-actions">
-                <button class="btn-primary btn-sm" onclick="saveCourse()"><i class="fas fa-save"></i> Save draft</button>
+                <button class="btn-primary btn-sm" id="saveCourseBtn" onclick="saveCourse()">
+                  <i class="fas fa-save"></i> Save draft
+                </button>
                 <button class="btn-outline btn-sm" onclick="toggleAddForm('course')">Cancel</button>
               </div>
             </div>
 
-            <div class="empty-state">
-              <div class="es-icon"><i class="fas fa-book-open"></i></div>
-              <h3>No course records loaded</h3>
-              <p>The directory will display courses from your school's database when the backend is connected.</p>
-              <div class="empty-actions">
-                <button class="btn-primary" onclick="toggleAddForm('course')">
-                  <i class="fas fa-plus"></i> Add first course
-                </button>
-              </div>
-              <div class="data-note">
-                <i class="fas fa-circle-info"></i> No sample courses or counts are being presented as real school data.
-              </div>
+            <div id="coursesList">
+              <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading courses…</p></div>
             </div>
           </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- PUBLISHING WORKFLOW                                          -->
-        <!-- ============================================================ -->
         <div class="workflow-panel">
           <h3><i class="fas fa-diagram-project"></i> Publishing workflow</h3>
           <p class="wf-sub">Changes to academic records follow the same review process as your profile.</p>
@@ -902,7 +753,7 @@
             <div class="wf-step">
               <div class="wf-step-num">1</div>
               <h4>Edit academic records</h4>
-              <p>Create or update faculties, departments, programmes and course details.</p>
+              <p>Create or update courses with their faculty and department details.</p>
             </div>
             <div class="wf-step">
               <div class="wf-step-num gold">2</div>
@@ -918,139 +769,420 @@
         </div>
 
         <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          state: 'Lagos State',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let allCourses = [];
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
-        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
-
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
-        }
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
       }
 
-      /* ============================================================ */
-      /* TAB SWITCHING                                                */
-      /* ============================================================ */
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
       window.switchTab = function(tab, el) {
         document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         const panel = document.getElementById('panel-' + tab);
         if (panel) panel.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       };
 
-      /* ============================================================ */
-      /* INLINE ADD FORMS                                             */
-      /* ============================================================ */
       window.toggleAddForm = function(type) {
         const form = document.getElementById('form-' + type);
         if (!form) return;
         form.classList.toggle('open');
         if (form.classList.contains('open')) {
-          const firstInput = form.querySelector('input, select, textarea');
-          if (firstInput) firstInput.focus();
+          const first = form.querySelector('input, select, textarea');
+          if (first) first.focus();
         }
       };
 
-      /* ============================================================ */
-      /* SAVE ACTIONS (demo)                                          */
-      /* ============================================================ */
-      window.saveFaculty = function() {
-        const name = document.getElementById('facultyName').value.trim();
-        if (!name) { toast('Please enter a faculty name.'); return; }
-        toast('Faculty "' + name + '" saved as draft. Connect the backend to persist.');
-        document.getElementById('facultyName').value = '';
-        document.getElementById('facultyCode').value = '';
-        document.getElementById('facultyDean').value = '';
-        document.getElementById('facultyDesc').value = '';
-        toggleAddForm('faculty');
-      };
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
 
-      window.saveDepartment = function() {
-        const name = document.getElementById('deptName').value.trim();
-        const faculty = document.getElementById('deptFaculty').value;
-        if (!name) { toast('Please enter a department name.'); return; }
-        if (!faculty) { toast('Please select the parent faculty.'); return; }
-        toast('Department "' + name + '" saved as draft. Connect the backend to persist.');
-        document.getElementById('deptName').value = '';
-        document.getElementById('deptFaculty').value = '';
-        document.getElementById('deptCode').value = '';
-        document.getElementById('deptDesc').value = '';
-        toggleAddForm('department');
-      };
+      function renderSchool() {
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const pill = document.getElementById('scopeSchoolPill');
+        const scopeBanner = document.getElementById('scopeBanner');
+        const footnote = document.getElementById('footnoteInstName');
+        const addBtn = document.getElementById('addCourseBtn');
 
-      window.saveCourse = function() {
+        if (!currentSchool) {
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Unassigned';
+          scopeBanner.classList.add('unassigned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'Contact the platform administrator to be assigned to your institution before adding academic records.';
+          footnote.textContent = 'Unassigned';
+          if (addBtn) addBtn.disabled = true;
+          return;
+        }
+
+        sidebarName.textContent = currentSchool.name || '—';
+        if (currentSchool.verification === 'verified') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+
+        pill.textContent = currentSchool.name;
+        scopeBanner.classList.remove('unassigned');
+        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
+        scopeBanner.querySelector('.scope-text span').textContent =
+          'You can only manage academic records for the institution assigned to your account.';
+        footnote.textContent = currentSchool.name;
+        if (addBtn) addBtn.disabled = false;
+      }
+
+      function emptyState(icon, title, desc) {
+        return '<div class="empty-state">' +
+          '<div class="es-icon"><i class="fas ' + icon + '"></i></div>' +
+          '<h3>' + esc(title) + '</h3>' +
+          '<p>' + esc(desc) + '</p>' +
+          '</div>';
+      }
+
+      function renderFaculties(courses) {
+        const el = document.getElementById('facultiesList');
+        if (!currentSchool) {
+          el.innerHTML = emptyState('fa-triangle-exclamation', 'No institution assigned',
+            'Contact the platform administrator to be assigned to your institution.');
+          document.getElementById('countFaculties').textContent = '0';
+          return;
+        }
+        const set = new Map();
+        for (const c of courses) {
+          const name = (c.faculty || '').trim();
+          if (!name) continue;
+          if (!set.has(name)) set.set(name, { name, count: 0, departments: new Set() });
+          const rec = set.get(name);
+          rec.count += 1;
+          if (c.department) rec.departments.add(c.department);
+        }
+        const list = Array.from(set.values()).sort((a, b) => a.name.localeCompare(b.name));
+        document.getElementById('countFaculties').textContent = String(list.length);
+
+        if (!list.length) {
+          el.innerHTML = emptyState('fa-building', 'No faculties yet',
+            'Faculties appear when you add courses with a faculty name.');
+          return;
+        }
+
+        el.innerHTML = '<div class="data-list">' + list.map(f =>
+          '<div class="data-row">' +
+            '<div class="data-row-icon"><i class="fas fa-building"></i></div>' +
+            '<div class="data-row-body">' +
+              '<div class="data-row-title">' + esc(f.name) + '</div>' +
+              '<div class="data-row-meta">' +
+                '<span>' + f.count + ' course' + (f.count === 1 ? '' : 's') + '</span>' +
+                '<span class="dot">●</span>' +
+                '<span>' + f.departments.size + ' department' + (f.departments.size === 1 ? '' : 's') + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        ).join('') + '</div>';
+      }
+
+      function renderDepartments(courses) {
+        const el = document.getElementById('departmentsList');
+        if (!currentSchool) {
+          el.innerHTML = emptyState('fa-triangle-exclamation', 'No institution assigned',
+            'Contact the platform administrator to be assigned to your institution.');
+          document.getElementById('countDepartments').textContent = '0';
+          return;
+        }
+        const set = new Map();
+        for (const c of courses) {
+          const dept = (c.department || '').trim();
+          if (!dept) continue;
+          const key = (c.faculty || '') + '|' + dept;
+          if (!set.has(key)) set.set(key, { department: dept, faculty: c.faculty || '', count: 0 });
+          set.get(key).count += 1;
+        }
+        const list = Array.from(set.values()).sort((a, b) =>
+          (a.faculty + a.department).localeCompare(b.faculty + b.department));
+        document.getElementById('countDepartments').textContent = String(list.length);
+
+        if (!list.length) {
+          el.innerHTML = emptyState('fa-sitemap', 'No departments yet',
+            'Departments appear when you add courses with a department name.');
+          return;
+        }
+
+        el.innerHTML = '<div class="data-list">' + list.map(d =>
+          '<div class="data-row">' +
+            '<div class="data-row-icon gold"><i class="fas fa-sitemap"></i></div>' +
+            '<div class="data-row-body">' +
+              '<div class="data-row-title">' + esc(d.department) + '</div>' +
+              '<div class="data-row-meta">' +
+                (d.faculty ? '<span>' + esc(d.faculty) + '</span><span class="dot">●</span>' : '') +
+                '<span>' + d.count + ' course' + (d.count === 1 ? '' : 's') + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        ).join('') + '</div>';
+      }
+
+      function statusBadge(status) {
+        const map = {
+          draft: { cls: 'draft', label: 'Draft' },
+          pending: { cls: 'pending', label: 'Pending review' },
+          published: { cls: 'published', label: 'Published' },
+        };
+        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
+        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      }
+
+      function renderCourses(courses) {
+        const el = document.getElementById('coursesList');
+        if (!currentSchool) {
+          el.innerHTML = emptyState('fa-triangle-exclamation', 'No institution assigned',
+            'Contact the platform administrator to be assigned to your institution.');
+          document.getElementById('countCourses').textContent = '0';
+          return;
+        }
+        document.getElementById('countCourses').textContent = String(courses.length);
+
+        if (!courses.length) {
+          el.innerHTML = emptyState('fa-book-open', 'No courses yet',
+            'Add your first course to build your academic directory.');
+          return;
+        }
+
+        const sorted = courses.slice().sort((a, b) =>
+          (a.name || '').localeCompare(b.name || ''));
+
+        el.innerHTML = '<div class="data-list">' + sorted.map(c => {
+          const meta = [];
+          if (c.faculty) meta.push(esc(c.faculty));
+          if (c.department) meta.push(esc(c.department));
+          if (c.qualification) meta.push(esc(c.qualification));
+          if (c.duration) meta.push(esc(c.duration));
+          const metaHtml = meta.length
+            ? meta.join('<span class="dot">●</span>')
+            : '<span>—</span>';
+
+          return '<div class="data-row">' +
+            '<div class="data-row-icon"><i class="fas fa-book"></i></div>' +
+            '<div class="data-row-body">' +
+              '<div class="data-row-title">' + esc(c.name || 'Untitled') + '</div>' +
+              '<div class="data-row-meta">' + metaHtml + '</div>' +
+            '</div>' +
+            statusBadge(c.status) +
+            '<div class="data-row-actions">' +
+              '<button class="btn-danger btn-sm" onclick="deleteCourse(\'' + esc(c.id) + '\', \'' +
+                esc((c.name || '').replace(/'/g, '\\\'')) + '\')">' +
+                '<i class="fas fa-trash"></i> Delete' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      function updateStats(courses) {
+        const faculties = new Set();
+        const departments = new Set();
+        for (const c of courses) {
+          if (c.faculty) faculties.add(c.faculty.trim());
+          if (c.department) departments.add((c.faculty || '') + '|' + c.department.trim());
+        }
+        document.getElementById('statFaculties').textContent = String(faculties.size);
+        document.getElementById('statDepartments').textContent = String(departments.size);
+        document.getElementById('statCourses').textContent = String(courses.length);
+
+        const pending = courses.filter(c => c.status === 'pending').length;
+        document.getElementById('statCoursesSub').textContent =
+          pending > 0 ? pending + ' pending review' : '';
+        document.getElementById('statFacultiesSub').textContent =
+          faculties.size > 0 ? 'Derived from courses' : '';
+        document.getElementById('statDepartmentsSub').textContent =
+          departments.size > 0 ? 'Derived from courses' : '';
+      }
+
+      async function loadCourses() {
+        if (!currentSchool) {
+          allCourses = [];
+          renderFaculties([]); renderDepartments([]); renderCourses([]); updateStats([]);
+          return;
+        }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses');
+          allCourses = data.courses || [];
+          renderFaculties(allCourses);
+          renderDepartments(allCourses);
+          renderCourses(allCourses);
+          updateStats(allCourses);
+        } catch (err) {
+          console.error('[courses]', err);
+          document.getElementById('coursesList').innerHTML =
+            emptyState('fa-triangle-exclamation', 'Could not load courses', err.message);
+        }
+      }
+
+      window.saveCourse = async function() {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
         const name = document.getElementById('courseName').value.trim();
-        const dept = document.getElementById('courseDept').value;
-        if (!name) { toast('Please enter a course name.'); return; }
-        if (!dept) { toast('Please select the parent department.'); return; }
-        toast('Course "' + name + '" saved as draft. Connect the backend to persist.');
-        document.getElementById('courseName').value = '';
-        document.getElementById('courseDept').value = '';
-        document.getElementById('courseQualification').value = '';
-        document.getElementById('courseDuration').value = '';
-        document.getElementById('courseRoute').value = '';
-        document.getElementById('courseReqs').value = '';
-        toggleAddForm('course');
+        if (!name) { toast('Please enter a course name.', true); return; }
+
+        const payload = {
+          name,
+          faculty: document.getElementById('courseFaculty').value.trim() || null,
+          department: document.getElementById('courseDept').value.trim() || null,
+          qualification: document.getElementById('courseQualification').value || null,
+          duration: document.getElementById('courseDuration').value.trim() || null,
+          entry_route: document.getElementById('courseRoute').value || null,
+          requirements: document.getElementById('courseReqs').value.trim() || null,
+        };
+
+        const btn = document.getElementById('saveCourseBtn');
+        btn.disabled = true;
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          toast('Course "' + name + '" saved as draft.');
+          ['courseName', 'courseFaculty', 'courseDept', 'courseQualification',
+           'courseDuration', 'courseRoute', 'courseReqs'].forEach(id => {
+            document.getElementById(id).value = '';
+          });
+          toggleAddForm('course');
+          await loadCourses();
+        } catch (err) {
+          toast(err.message, true);
+        } finally {
+          btn.disabled = false;
+        }
       };
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      window.deleteCourse = async function(id, name) {
+        if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+        try {
+          await api('/api/courses/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Course deleted.');
+          await loadCourses();
+        } catch (err) {
+          toast(err.message, true);
+        }
       };
 
-      window.signOut = function() {
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1065,15 +1197,14 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        renderSchool();
+        await loadCourses();
+      })();
 
     })();
   </script>

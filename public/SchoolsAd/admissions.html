@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>CampusNaija — Admissions Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ----- RESET & BASE ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -39,7 +39,7 @@
       --sidebar-w: 260px;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -59,11 +59,9 @@
     .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
     .sidebar-institution {
-      margin: 14px 14px 0;
-      padding: 14px;
+      margin: 14px 14px 0; padding: 14px;
       background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid var(--border); border-radius: 12px;
     }
     .sidebar-institution .inst-label {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
@@ -71,7 +69,7 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px;
+      margin-bottom: 8px; word-break: break-word;
     }
     .sidebar-institution .inst-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -105,17 +103,8 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .nav-badge {
-      margin-left: auto; background-color: var(--accent); color: #070A09;
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
-      border-radius: 40px; min-width: 22px; text-align: center;
-    }
 
-    .sidebar-signout {
-      margin-top: auto;
-      padding: 12px 14px 4px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
     .signout-nav-btn {
       width: 100%;
       display: flex; align-items: center; gap: 12px;
@@ -148,7 +137,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -182,11 +171,6 @@
       transition: all 0.15s;
     }
     .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
-    .icon-btn .dot-indicator {
-      position: absolute; top: 7px; right: 8px;
-      width: 7px; height: 7px; background-color: var(--accent);
-      border-radius: 50%; border: 2px solid var(--surface);
-    }
     .icon-btn.signout-icon:hover {
       color: var(--danger);
       border-color: rgba(224, 112, 112, 0.4);
@@ -195,18 +179,15 @@
     .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
     .topbar-rep {
       display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer;
+      padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
-    .topbar-rep:hover { background-color: var(--elevated); }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
-    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; }
+    .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
     .content { padding: 32px 24px 56px; flex: 1; }
 
-    /* ============================================================ */
-    /* PAGE HEADING                                                 */
-    /* ============================================================ */
+    /* HEADING */
     .page-heading { margin-bottom: 24px; }
     .page-heading .eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
@@ -216,23 +197,24 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* ============================================================ */
-    /* SCOPE BANNER                                                 */
-    /* ============================================================ */
+    /* SCOPE BANNER */
     .scope-banner {
       display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 12px; margin-bottom: 24px;
+    }
+    .scope-banner.unassigned {
+      background-color: rgba(245,185,66,0.05);
+      border-color: rgba(245,185,66,0.25);
+      border-left-color: var(--accent);
     }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .scope-banner.unassigned i { color: var(--accent); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
-    .scope-banner .scope-text strong {
-      font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px;
-    }
+    .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
     .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
     .scope-banner .scope-pill {
       font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
@@ -240,10 +222,11 @@
       background-color: rgba(0,201,130,0.12); color: var(--primary);
       white-space: nowrap;
     }
+    .scope-banner.unassigned .scope-pill {
+      background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
 
-    /* ============================================================ */
-    /* STATS                                                        */
-    /* ============================================================ */
+    /* STATS */
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
@@ -262,14 +245,12 @@
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
     .stat-mini-value {
-      font-size: 1.7rem; font-weight: 800; color: var(--muted);
-      letter-spacing: 0.05em; line-height: 1;
+      font-size: 1.7rem; font-weight: 800; color: var(--text);
+      line-height: 1; min-height: 1em;
     }
-    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+    .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
-    /* ============================================================ */
-    /* TOOLBAR                                                      */
-    /* ============================================================ */
+    /* TOOLBAR */
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
       margin-bottom: 20px;
@@ -281,6 +262,7 @@
       transition: background 0.15s;
     }
     .btn-primary:hover { background-color: #00b374; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-outline {
       background-color: transparent; color: var(--text); font-weight: 600;
       padding: 10px 18px; border-radius: var(--radius-btn); font-size: 0.85rem;
@@ -289,10 +271,17 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 6px 12px; border-radius: var(--radius-btn); font-size: 0.78rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
-    /* ============================================================ */
-    /* TABS                                                         */
-    /* ============================================================ */
+    /* TABS */
     .notice-tabs {
       display: flex; gap: 4px; overflow-x: auto;
       border-bottom: 1px solid var(--border); margin-bottom: 20px;
@@ -308,10 +297,16 @@
     .notice-tab:hover { color: var(--text); }
     .notice-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .notice-tab i { font-size: 0.85rem; }
+    .notice-tab .tab-count {
+      background-color: var(--elevated); color: var(--muted);
+      font-size: 0.65rem; font-weight: 800; padding: 1px 7px;
+      border-radius: 40px; min-width: 20px; text-align: center;
+    }
+    .notice-tab.active .tab-count {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+    }
 
-    /* ============================================================ */
-    /* PANEL / EMPTY STATE                                          */
-    /* ============================================================ */
+    /* PANEL */
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
@@ -324,9 +319,8 @@
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
-    .empty-state {
-      text-align: center; padding: 48px 24px; color: var(--muted);
-    }
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
     .empty-state .es-icon {
       width: 64px; height: 64px; border-radius: 16px;
       background-color: var(--surface); border: 1px solid var(--border);
@@ -338,28 +332,55 @@
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
       max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
-    .empty-state .empty-actions {
-      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    }
-    .empty-state .data-note {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; color: var(--muted);
-      padding: 6px 14px; border-radius: 40px;
-      background-color: var(--surface); border: 1px solid var(--border);
-      margin-top: 16px; font-style: italic;
-    }
-    .empty-state .data-note i { color: var(--accent); font-size: 0.7rem; }
+    .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* ============================================================ */
-    /* ADD NOTICE FORM (inline)                                     */
-    /* ============================================================ */
+    /* Data list */
+    .data-list { display: flex; flex-direction: column; gap: 10px; }
+    .data-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.15s;
+    }
+    .data-row:hover { border-color: var(--primary); }
+    .data-row-icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-body { flex: 1; min-width: 0; }
+    .data-row-title {
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .data-row-meta {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-badges { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
+    .data-row-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .data-row-badge.verified { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .data-row-badge.unverified { background-color: rgba(245,185,66,0.08); color: var(--accent); }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+
+    /* Add form */
     .add-inline {
       display: none;
       background-color: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: 12px; padding: 20px; margin-bottom: 20px;
     }
     .add-inline.open { display: block; }
     .add-inline .ai-header {
@@ -408,9 +429,6 @@
       display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
       padding-top: 16px; border-top: 1px solid var(--border);
     }
-    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
-
-    /* Section divider in add form */
     .form-section-title {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted);
@@ -422,9 +440,7 @@
     .form-section-title i { color: var(--primary); font-size: 0.75rem; }
     .form-section-title:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
 
-    /* ============================================================ */
-    /* CHECKLIST PANEL                                              */
-    /* ============================================================ */
+    /* Checklist */
     .checklist-grid {
       display: grid; grid-template-columns: 1fr; gap: 12px;
     }
@@ -445,37 +461,26 @@
     .checklist-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
     .checklist-item p { font-size: 0.78rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
-    /* ============================================================ */
-    /* IMPORTANT NOTE                                               */
-    /* ============================================================ */
     .important-note {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 18px 22px;
       background-color: rgba(245,185,66,0.06);
       border: 1px solid rgba(245,185,66,0.3);
       border-left: 4px solid var(--accent);
-      border-radius: 12px;
-      margin-top: 20px;
+      border-radius: 12px; margin-top: 20px;
     }
     .important-note i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
     .important-note .in-text { flex: 1; }
-    .important-note h4 {
-      font-size: 0.9rem; margin-bottom: 4px; color: var(--accent);
-    }
-    .important-note p {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0;
-    }
+    .important-note h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--accent); }
+    .important-note p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    /* Footer note */
     .footnote {
       font-size: 0.72rem; color: var(--muted); text-align: center;
       padding: 24px 0 0; font-style: italic;
     }
     .footnote i { color: var(--accent); margin-right: 6px; }
 
-    /* ============================================================ */
-    /* TOAST                                                        */
-    /* ============================================================ */
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated); border: 1px solid var(--primary);
@@ -488,17 +493,17 @@
       max-width: 360px;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
-    /* Sidebar overlay */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px);
     }
     .sidebar-overlay.active { display: block; }
 
-    /* Responsive */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -514,16 +519,11 @@
       .page-heading h1 { font-size: 1.6rem; }
       .panel { padding: 18px; }
       .form-actions { flex-direction: column; }
-      .form-actions .btn-primary,
-      .form-actions .btn-outline { width: 100%; justify-content: center; }
-      .empty-state { padding: 32px 16px; }
-      .empty-state .empty-actions { flex-direction: column; }
-      .empty-state .empty-actions button { width: 100%; justify-content: center; }
+      .form-actions button { width: 100%; justify-content: center; }
+      .data-row { flex-wrap: wrap; }
+      .data-row-actions { width: 100%; justify-content: flex-end; }
       .notice-tab { padding: 9px 12px; font-size: 0.8rem; }
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -545,9 +545,9 @@
 
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">University of Lagos</div>
+        <div class="inst-name" id="sidebarInstName">—</div>
         <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-clock"></i> Pending verification
+          <i class="fas fa-circle-notch fa-spin"></i> Loading
         </span>
       </div>
 
@@ -558,8 +558,8 @@
         <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
         <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
         <a href="./admissions.html" class="nav-item active"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
         <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
       </nav>
 
@@ -571,10 +571,10 @@
 
       <div class="sidebar-footer">
         <div class="rep-user">
-          <div class="rep-avatar">FA</div>
+          <div class="rep-avatar" id="sideAvatar">—</div>
           <div class="rep-user-info">
-            <div class="rep-user-name">Dr. Funmi Adeyemi</div>
-            <div class="rep-user-role">School Representative</div>
+            <div class="rep-user-name" id="sideName">—</div>
+            <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
         </div>
       </div>
@@ -594,16 +594,15 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i><span class="dot-indicator"></span></button>
+          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
           <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
-            <div class="rep-avatar">FA</div>
+            <div class="rep-avatar" id="topAvatar">—</div>
             <div>
-              <div class="topbar-rep-name">Dr. Funmi Adeyemi</div>
+              <div class="topbar-rep-name" id="topName">—</div>
               <div class="topbar-rep-role">School Representative</div>
             </div>
-            <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--muted);"></i>
           </div>
           <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -613,63 +612,57 @@
 
       <main class="content">
 
-        <!-- Page heading -->
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-clipboard-list"></i> Student recruitment</div>
           <h1>Admissions</h1>
           <p>Publish accurate admission information after approval. Unverified dates must not be shown as confirmed.</p>
         </div>
 
-        <!-- Scoped access banner -->
-        <div class="scope-banner">
+        <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-lock"></i>
           <div class="scope-text">
             <strong>School-scoped access</strong>
             <span>You can only manage admission notices for the institution assigned to your account.</span>
           </div>
-          <span class="scope-pill" id="scopeSchoolPill">University of Lagos</span>
+          <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
 
-        <!-- Stats -->
         <div class="stats-row">
           <div class="stat-mini">
             <div class="stat-mini-label">Admission notices <i class="fas fa-clipboard-list"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Database count</div>
+            <div class="stat-mini-value" id="statTotal">—</div>
+            <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Pending review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Submitted changes</div>
+            <div class="stat-mini-value" id="statPending">—</div>
+            <div class="stat-mini-sub" id="statPendingSub"></div>
           </div>
           <div class="stat-mini">
             <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value">—</div>
-            <div class="stat-mini-sub">Visible publicly</div>
+            <div class="stat-mini-value" id="statPublished">—</div>
+            <div class="stat-mini-sub" id="statPublishedSub"></div>
           </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
-          <button class="btn-primary" onclick="toggleAddForm()">
+          <button class="btn-primary" id="addNoticeBtn" onclick="toggleAddForm()">
             <i class="fas fa-plus"></i> Create admission notice
           </button>
         </div>
 
-        <!-- Tabs -->
         <div class="notice-tabs">
           <button class="notice-tab active" data-cat="all" onclick="switchCategory('all', this)">
-            <i class="fas fa-list"></i> All notices
+            <i class="fas fa-list"></i> All notices <span class="tab-count" id="countAll">—</span>
           </button>
           <button class="notice-tab" data-cat="draft" onclick="switchCategory('draft', this)">
-            <i class="fas fa-file"></i> Drafts
+            <i class="fas fa-file"></i> Drafts <span class="tab-count" id="countDraft">—</span>
           </button>
           <button class="notice-tab" data-cat="submitted" onclick="switchCategory('submitted', this)">
-            <i class="fas fa-paper-plane"></i> Submitted
+            <i class="fas fa-paper-plane"></i> Submitted <span class="tab-count" id="countSubmitted">—</span>
           </button>
         </div>
 
-        <!-- Add notice form (inline) -->
         <div class="add-inline" id="addNoticeForm">
           <div class="ai-header">
             <div class="ai-title"><i class="fas fa-plus"></i> New admission notice</div>
@@ -678,7 +671,6 @@
             </button>
           </div>
           <div class="form-grid">
-            <!-- Section: Basic details -->
             <div class="form-section-title"><i class="fas fa-circle-info"></i> Basic details</div>
             <div class="form-group full">
               <label>Notice title <span class="req">*</span></label>
@@ -686,11 +678,8 @@
             </div>
             <div class="form-group">
               <label>Academic session <span class="req">*</span></label>
-              <select id="noticeSession">
-                <option value="">Select session</option>
-                <option value="2026/2027">2026/2027</option>
-                <option value="2025/2026">2025/2026</option>
-              </select>
+              <input type="text" id="noticeSession" placeholder="e.g. 2025/2026" autocomplete="off">
+              <span class="form-hint">Format: YYYY/YYYY</span>
             </div>
             <div class="form-group">
               <label>Entry route <span class="req">*</span></label>
@@ -705,14 +694,13 @@
               </select>
             </div>
 
-            <!-- Section: Application dates -->
             <div class="form-section-title"><i class="fas fa-calendar"></i> Application dates</div>
             <div class="form-group">
-              <label>Opening date</label>
+              <label>Opening date <span class="optional">(optional)</span></label>
               <input type="date" id="noticeOpenDate">
             </div>
             <div class="form-group">
-              <label>Closing date</label>
+              <label>Closing date <span class="optional">(optional)</span></label>
               <input type="date" id="noticeCloseDate">
             </div>
             <div class="form-group full">
@@ -720,42 +708,17 @@
               <input type="text" id="noticeExtension" placeholder="e.g. Extended to 30 Sep 2026 — official source confirmed">
             </div>
 
-            <!-- Section: Entry requirements -->
             <div class="form-section-title"><i class="fas fa-list-check"></i> Entry requirements</div>
             <div class="form-group full">
-              <label>O'Level requirements</label>
-              <textarea id="noticeOlevel" placeholder="e.g. Five O'Level credits including English Language and Mathematics in not more than two sittings..." style="min-height: 70px;"></textarea>
-            </div>
-            <div class="form-group">
-              <label>UTME score requirement</label>
-              <input type="text" id="noticeUtmeScore" placeholder="e.g. Minimum 180">
-            </div>
-            <div class="form-group">
-              <label>UTME subject combination</label>
-              <input type="text" id="noticeUtmeSubjects" placeholder="e.g. English, Mathematics, Physics, Chemistry">
+              <label>Requirements summary <span class="optional">(optional)</span></label>
+              <textarea id="noticeRequirements" placeholder="O'Level, UTME subjects, Direct Entry criteria..." style="min-height: 70px;"></textarea>
             </div>
             <div class="form-group full">
-              <label>Direct Entry or other eligibility</label>
-              <textarea id="noticeEligibility" placeholder="e.g. A-Level / NCE / ND with minimum Lower Credit..." style="min-height: 70px;"></textarea>
+              <label>Eligibility / additional criteria <span class="optional">(optional)</span></label>
+              <textarea id="noticeEligibility" placeholder="Special eligibility notes..." style="min-height: 60px;"></textarea>
             </div>
 
-            <!-- Section: Eligible programmes -->
-            <div class="form-section-title"><i class="fas fa-book-open"></i> Eligible programmes</div>
-            <div class="form-group full">
-              <label>Linked programmes <span class="optional">(leave empty for all eligible programmes)</span></label>
-              <select id="noticeProgrammes" multiple size="5" style="min-height: 110px;">
-                <option value="all">All eligible programmes</option>
-                <option value="computer-science">B.Sc. Computer Science</option>
-                <option value="law">LL.B. Law</option>
-                <option value="economics">B.Sc. Economics</option>
-                <option value="engineering">B.Eng. Engineering</option>
-                <option value="accounting">B.Sc. Accounting</option>
-              </select>
-              <span class="form-hint">Programmes are loaded from your school's course records.</span>
-            </div>
-
-            <!-- Section: Application link -->
-            <div class="form-section-title"><i class="fas fa-link"></i> Official application link</div>
+            <div class="form-section-title"><i class="fas fa-link"></i> Official links</div>
             <div class="form-group full">
               <label>Official application URL <span class="req">*</span></label>
               <input type="url" id="noticeApplyUrl" placeholder="https://official-application-portal.example">
@@ -767,44 +730,33 @@
               <span class="form-hint">Required before the notice can be verified and published.</span>
             </div>
             <div class="form-group full">
-              <label>Additional instructions <span class="optional">(optional)</span></label>
-              <textarea id="noticeInstructions" placeholder="Any additional instructions for applicants..." style="min-height: 70px;"></textarea>
+              <label>Additional notes <span class="optional">(optional)</span></label>
+              <textarea id="noticeNotes" placeholder="Any additional instructions..." style="min-height: 60px;"></textarea>
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn-outline btn-sm" onclick="saveDraft()">
+            <button class="btn-outline btn-sm" id="saveDraftBtn" onclick="saveDraft()">
               <i class="fas fa-save"></i> Save draft
-            </button>
-            <button class="btn-primary btn-sm" onclick="submitForReview()">
-              <i class="fas fa-paper-plane"></i> Submit for review
             </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
+          <p class="form-hint" style="margin-top: 10px;">
+            <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+            New notices are saved as drafts. Use "Submit for review" from the notice list to send them to the platform owner.
+          </p>
         </div>
 
-        <!-- Notice list panel -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-clipboard-list"></i> Admission notices</div>
           </div>
-          <p class="panel-desc">Admission announcements and their actual review statuses will appear when the school database is connected.</p>
+          <p class="panel-desc" id="noticeListDesc">Loading admission notices from your institution's database…</p>
 
-          <div class="empty-state">
-            <div class="es-icon"><i class="fas fa-clipboard-list"></i></div>
-            <h3>No notices loaded</h3>
-            <p>Admission announcements and their actual review statuses will appear here once the school database is connected.</p>
-            <div class="empty-actions">
-              <button class="btn-primary" onclick="toggleAddForm()">
-                <i class="fas fa-plus"></i> Create first admission notice
-              </button>
-            </div>
-            <div class="data-note">
-              <i class="fas fa-circle-info"></i> No sample notices or counts are being presented as real school data.
-            </div>
+          <div id="noticesList">
+            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading notices…</p></div>
           </div>
         </div>
 
-        <!-- Admission information checklist -->
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-list-check"></i> Admission information checklist</div>
@@ -849,7 +801,6 @@
           </div>
         </div>
 
-        <!-- Important note -->
         <div class="important-note">
           <i class="fas fa-triangle-exclamation"></i>
           <div class="in-text">
@@ -859,159 +810,441 @@
         </div>
 
         <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">University of Lagos</span>.
+          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
         </p>
 
       </main>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
-    <span id="toastText">Loaded</span>
+    <span id="toastText"></span>
   </div>
 
   <script>
     (function() {
       'use strict';
 
-      /* ============================================================ */
-      /* DEMO: institution loaded from account                        */
-      /* ============================================================ */
-      const demoAccount = {
-        representative: { name: 'Dr. Funmi Adeyemi', initials: 'FA', role: 'School Representative' },
-        school: {
-          name: 'University of Lagos',
-          initials: 'UL',
-          type: 'University',
-          state: 'Lagos State',
-          verified: false
-        }
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_admin_token';
+      const LOGIN_URL = '/SchoolsAd/login.html';
+
+      let token = null;
+      let currentUser = null;
+      let currentSchool = null;
+      let allNotices = [];
+      let activeCategory = 'all';
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return '—';
+        const parts = String(name).trim().split(/\s+/).filter(w => w.length > 1);
+        if (!parts.length) return '—';
+        return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
 
-      function applyAccount() {
-        document.getElementById('sidebarInstName').textContent = demoAccount.school.name;
-        document.getElementById('scopeSchoolPill').textContent = demoAccount.school.name;
-        document.getElementById('footnoteInstName').textContent = demoAccount.school.name;
+      function redirectToLogin(reason) {
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
+        window.location.replace(url);
+      }
 
-        const statusEl = document.getElementById('sidebarInstStatus');
-        if (demoAccount.school.verified) {
-          statusEl.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
-          statusEl.classList.add('verified');
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }, opts.headers || {});
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = document.getElementById('toast');
+        document.getElementById('toastText').textContent = msg;
+        el.classList.toggle('error', !!isError);
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+      window.toast = toast;
+
+      function renderUser() {
+        const name = (currentUser && currentUser.name) || '—';
+        const ini = initials(name);
+        document.getElementById('sideAvatar').textContent = ini;
+        document.getElementById('sideName').textContent = name;
+        document.getElementById('sideRole').textContent = 'School Representative';
+        document.getElementById('topAvatar').textContent = ini;
+        document.getElementById('topName').textContent = name;
+      }
+
+      function renderSchool() {
+        const sidebarName = document.getElementById('sidebarInstName');
+        const sidebarStatus = document.getElementById('sidebarInstStatus');
+        const pill = document.getElementById('scopeSchoolPill');
+        const scopeBanner = document.getElementById('scopeBanner');
+        const footnote = document.getElementById('footnoteInstName');
+        const addBtn = document.getElementById('addNoticeBtn');
+
+        if (!currentSchool) {
+          sidebarName.textContent = 'No institution assigned';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Unassigned';
+          scopeBanner.classList.add('unassigned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'Contact the platform administrator to be assigned to your institution before managing admissions.';
+          footnote.textContent = 'Unassigned';
+          if (addBtn) addBtn.disabled = true;
+          return;
+        }
+
+        sidebarName.textContent = currentSchool.name || '—';
+        if (currentSchool.verification === 'verified') {
+          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+          sidebarStatus.classList.add('verified');
+        } else if (currentSchool.verification === 'pending') {
+          sidebarStatus.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+          sidebarStatus.classList.remove('verified');
+        } else {
+          sidebarStatus.innerHTML = '<i class="fas fa-clock"></i> Unverified';
+          sidebarStatus.classList.remove('verified');
+        }
+
+        pill.textContent = currentSchool.name;
+        scopeBanner.classList.remove('unassigned');
+        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
+        scopeBanner.querySelector('.scope-text span').textContent =
+          'You can only manage admission notices for the institution assigned to your account.';
+        footnote.textContent = currentSchool.name;
+        if (addBtn) addBtn.disabled = false;
+      }
+
+      /* ----- STATS ----- */
+      function updateStats() {
+        const total = allNotices.length;
+        const pending = allNotices.filter(n => n.status === 'pending').length;
+        const published = allNotices.filter(n => n.status === 'published').length;
+        const drafts = allNotices.filter(n => n.status === 'draft').length;
+
+        document.getElementById('statTotal').textContent = String(total);
+        document.getElementById('statTotalSub').textContent =
+          drafts > 0 ? drafts + ' draft' + (drafts === 1 ? '' : 's') : '';
+
+        document.getElementById('statPending').textContent = String(pending);
+        document.getElementById('statPendingSub').textContent =
+          pending > 0 ? 'Submitted changes' : '';
+
+        document.getElementById('statPublished').textContent = String(published);
+        document.getElementById('statPublishedSub').textContent =
+          published > 0 ? 'Visible publicly' : '';
+
+        document.getElementById('countAll').textContent = String(total);
+        document.getElementById('countDraft').textContent = String(drafts);
+        const submitted = allNotices.filter(n => n.status === 'pending' || n.status === 'published').length;
+        document.getElementById('countSubmitted').textContent = String(submitted);
+      }
+
+      /* ----- CATEGORY TAB ----- */
+      window.switchCategory = function(cat, el) {
+        activeCategory = cat;
+        document.querySelectorAll('.notice-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderNotices();
+      };
+
+      /* ----- RENDER ----- */
+      function statusBadge(status) {
+        const map = {
+          draft: { cls: 'draft', label: 'Draft' },
+          pending: { cls: 'pending', label: 'Pending review' },
+          published: { cls: 'published', label: 'Published' },
+        };
+        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
+        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      }
+
+      function verificationBadge(v) {
+        if (v === 'verified') return '<span class="data-row-badge verified"><i class="fas fa-circle-check"></i> Verified</span>';
+        return '<span class="data-row-badge unverified"><i class="fas fa-clock"></i> Unverified</span>';
+      }
+
+      function renderNotices() {
+        const el = document.getElementById('noticesList');
+        if (!currentSchool) {
+          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          return;
+        }
+
+        let list = allNotices.slice();
+        if (activeCategory === 'draft') list = list.filter(n => n.status === 'draft');
+        else if (activeCategory === 'submitted') list = list.filter(n => n.status === 'pending' || n.status === 'published');
+
+        if (!list.length) {
+          const hasAny = allNotices.length > 0;
+          el.innerHTML = '<div class="empty-state">' +
+            '<div class="es-icon"><i class="fas fa-clipboard-list"></i></div>' +
+            '<h3>' + (hasAny ? 'No notices in this tab' : 'No admission notices yet') + '</h3>' +
+            '<p>' + (hasAny
+              ? 'Try a different tab to see other admission notices.'
+              : 'Create your first admission notice to publish it on your school\'s public page.') + '</p>' +
+            (hasAny ? '' :
+              '<div class="empty-actions">' +
+              '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Create first admission notice</button>' +
+              '</div>') +
+            '</div>';
+          return;
+        }
+
+        const sorted = list.slice().sort((a, b) => {
+          const t = (b.updated_at || '').localeCompare(a.updated_at || '');
+          if (t !== 0) return t;
+          return (b.created_at || '').localeCompare(a.created_at || '');
+        });
+
+        el.innerHTML = '<div class="data-list">' + sorted.map(n => {
+          const meta = [];
+          if (n.session) meta.push(esc(n.session));
+          if (n.entry_route) meta.push(esc(n.entry_route));
+          if (n.open_date) meta.push('opens ' + esc(n.open_date));
+          if (n.close_date) meta.push('closes ' + esc(n.close_date));
+          const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '<span>—</span>';
+
+          const isDraft = n.status === 'draft';
+          const isPending = n.status === 'pending';
+          const isPublished = n.status === 'published';
+          const actions = [];
+          if (isDraft) {
+            actions.push('<button class="btn-outline btn-sm" onclick="submitNotice(\'' + esc(n.id) + '\')">' +
+              '<i class="fas fa-paper-plane"></i> Submit for review</button>');
+            actions.push('<button class="btn-danger btn-sm" onclick="deleteNotice(\'' + esc(n.id) + '\')">' +
+              '<i class="fas fa-trash"></i> Delete</button>');
+          } else if (isPending) {
+            actions.push('<button class="btn-outline btn-sm" onclick="withdrawNotice(\'' + esc(n.id) + '\')">' +
+              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
+          } else if (isPublished) {
+            // published — no destructive action from this UI
+          }
+
+          return '<div class="data-row">' +
+            '<div class="data-row-icon ' + (isPending ? 'gold' : '') + '"><i class="fas fa-clipboard-list"></i></div>' +
+            '<div class="data-row-body">' +
+              '<div class="data-row-title">' + esc(n.title || 'Untitled notice') + '</div>' +
+              '<div class="data-row-meta">' + metaHtml + '</div>' +
+            '</div>' +
+            '<div class="data-row-badges">' +
+              statusBadge(n.status) +
+              verificationBadge(n.verification) +
+            '</div>' +
+            (actions.length ? '<div class="data-row-actions">' + actions.join('') + '</div>' : '') +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      /* ----- LOAD ----- */
+      async function loadNotices() {
+        if (!currentSchool) {
+          allNotices = [];
+          updateStats(); renderNotices();
+          document.getElementById('noticeListDesc').textContent =
+            'No institution is assigned to your account.';
+          return;
+        }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions');
+          allNotices = data.admissions || [];
+          document.getElementById('noticeListDesc').textContent =
+            allNotices.length > 0
+              ? 'Admission notices for ' + currentSchool.name + '.'
+              : 'No admission notices yet for ' + currentSchool.name + '.';
+          updateStats();
+          renderNotices();
+        } catch (err) {
+          console.error('[admissions]', err);
+          document.getElementById('noticesList').innerHTML =
+            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load notices</h3><p>' + esc(err.message) + '</p></div>';
         }
       }
 
-      /* ============================================================ */
-      /* CATEGORY TABS                                                */
-      /* ============================================================ */
-      window.switchCategory = function(cat, el) {
-        document.querySelectorAll('.notice-tab').forEach(t => t.classList.remove('active'));
-        if (el) el.classList.add('active');
-        // In production, this would filter the notice list by draft/submitted status.
-        if (cat !== 'all') {
-          toast('Filtering notices by status: ' + cat);
-        }
-      };
-
-      /* ============================================================ */
-      /* INLINE ADD FORM                                              */
-      /* ============================================================ */
+      /* ----- FORM ----- */
       window.toggleAddForm = function() {
         const form = document.getElementById('addNoticeForm');
         form.classList.toggle('open');
         if (form.classList.contains('open')) {
-          const firstInput = form.querySelector('input, select, textarea');
-          if (firstInput) firstInput.focus();
+          const first = form.querySelector('input, select');
+          if (first) first.focus();
         }
       };
 
-      /* ============================================================ */
-      /* SAVE / SUBMIT                                                */
-      /* ============================================================ */
-      function validateNoticeForm() {
+      function validateForm() {
         const title = document.getElementById('noticeTitle').value.trim();
-        const session = document.getElementById('noticeSession').value;
+        const session = document.getElementById('noticeSession').value.trim();
         const route = document.getElementById('noticeRoute').value;
         const openDate = document.getElementById('noticeOpenDate').value;
         const closeDate = document.getElementById('noticeCloseDate').value;
         const applyUrl = document.getElementById('noticeApplyUrl').value.trim();
         const sourceUrl = document.getElementById('noticeSourceUrl').value.trim();
 
-        if (!title) { toast('Please enter a notice title.'); return false; }
-        if (!session) { toast('Please select the academic session.'); return false; }
-        if (!route) { toast('Please select the entry route.'); return false; }
+        if (!title) { toast('Please enter a notice title.', true); return null; }
+        if (!session) { toast('Please enter the academic session.', true); return null; }
+        if (!/^\d{4}\/\d{4}$/.test(session)) {
+          toast('Session should look like 2025/2026.', true); return null;
+        }
+        if (!route) { toast('Please select the entry route.', true); return null; }
         if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
-          toast('Closing date cannot be before the opening date.');
-          return false;
+          toast('Closing date cannot be before the opening date.', true); return null;
         }
-        if (!applyUrl) { toast('An official application URL is required.'); return false; }
+        if (!applyUrl) { toast('An official application URL is required.', true); return null; }
         try { new URL(applyUrl); } catch (e) {
-          toast('Please enter a valid application URL (including https://).');
-          return false;
+          toast('Please enter a valid application URL (including https://).', true); return null;
         }
-        if (!sourceUrl) { toast('An official source URL is required.'); return false; }
+        if (!sourceUrl) { toast('An official source URL is required.', true); return null; }
         try { new URL(sourceUrl); } catch (e) {
-          toast('Please enter a valid source URL (including https://).');
-          return false;
+          toast('Please enter a valid source URL (including https://).', true); return null;
         }
-        return true;
+
+        return {
+          title,
+          session,
+          entry_route: route,
+          open_date: openDate || null,
+          close_date: closeDate || null,
+          extension_note: document.getElementById('noticeExtension').value.trim() || null,
+          requirements: document.getElementById('noticeRequirements').value.trim() || null,
+          eligibility: document.getElementById('noticeEligibility').value.trim() || null,
+          application_url: applyUrl,
+          source_url: sourceUrl,
+          notes: document.getElementById('noticeNotes').value.trim() || null,
+        };
       }
 
-      window.saveDraft = function() {
-        if (!validateNoticeForm()) return;
-        toast('Admission notice saved as draft. Connect the backend to persist.');
-        resetNoticeForm();
-      };
-
-      window.submitForReview = function() {
-        if (!validateNoticeForm()) return;
-        if (!confirm('Submit this admission notice for review?\n\nYour current published notices stay visible until the change is approved.')) return;
-        toast('Notice submitted for review · you will be notified of the decision.');
-        resetNoticeForm();
-      };
-
-      function resetNoticeForm() {
-        document.getElementById('noticeTitle').value = '';
-        document.getElementById('noticeSession').value = '';
-        document.getElementById('noticeRoute').value = '';
-        document.getElementById('noticeOpenDate').value = '';
-        document.getElementById('noticeCloseDate').value = '';
-        document.getElementById('noticeExtension').value = '';
-        document.getElementById('noticeOlevel').value = '';
-        document.getElementById('noticeUtmeScore').value = '';
-        document.getElementById('noticeUtmeSubjects').value = '';
-        document.getElementById('noticeEligibility').value = '';
-        document.getElementById('noticeProgrammes').selectedIndex = -1;
-        document.getElementById('noticeApplyUrl').value = '';
-        document.getElementById('noticeSourceUrl').value = '';
-        document.getElementById('noticeInstructions').value = '';
+      function resetForm() {
+        ['noticeTitle', 'noticeSession', 'noticeRoute', 'noticeOpenDate', 'noticeCloseDate',
+         'noticeExtension', 'noticeRequirements', 'noticeEligibility',
+         'noticeApplyUrl', 'noticeSourceUrl', 'noticeNotes']
+          .forEach(id => { document.getElementById(id).value = ''; });
         toggleAddForm();
       }
 
-      /* ============================================================ */
-      /* HELPERS                                                      */
-      /* ============================================================ */
-      window.toast = function(msg) {
-        const el = document.getElementById('toast');
-        document.getElementById('toastText').textContent = msg;
-        el.classList.add('show');
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+      window.saveDraft = async function() {
+        if (!currentSchool) { toast('No institution assigned.', true); return; }
+        const payload = validateForm();
+        if (!payload) return;
+
+        const btn = document.getElementById('saveDraftBtn');
+        btn.disabled = true;
+        try {
+          await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          toast('Admission notice saved as draft.');
+          resetForm();
+          await loadNotices();
+        } catch (err) {
+          toast(err.message, true);
+        } finally {
+          btn.disabled = false;
+        }
       };
 
-      window.signOut = function() {
+      /* ----- SUBMIT / WITHDRAW / DELETE ----- */
+      window.submitNotice = async function(id) {
+        const n = allNotices.find(x => String(x.id) === String(id));
+        if (!n) return;
+        if (!n.source_url) {
+          toast('An official source URL is required before submission.', true);
+          return;
+        }
+        if (!confirm('Submit this admission notice for review?\n\nYour current published notices stay visible until the change is approved.')) return;
+        try {
+          await api('/api/school/submissions/admission/' + encodeURIComponent(id) + '/submit', { method: 'POST' });
+          toast('Notice submitted for review.');
+          await loadNotices();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      window.withdrawNotice = async function(id) {
+        if (!confirm('Withdraw this submission and return it to draft?')) return;
+        try {
+          await api('/api/school/submissions/admission/' + encodeURIComponent(id) + '/withdraw', { method: 'POST' });
+          toast('Submission withdrawn.');
+          await loadNotices();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      window.deleteNotice = async function(id) {
+        if (!confirm('Delete this admission notice? This cannot be undone.')) return;
+        try {
+          await api('/api/admissions/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Admission notice deleted.');
+          await loadNotices();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      /* ----- SESSION ----- */
+      async function verifySession() {
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!token) { redirectToLogin('not_signed_in'); return false; }
+        try {
+          const data = await api('/api/auth/me');
+          currentUser = data.user;
+          if (!currentUser || currentUser.role !== 'school_manager') {
+            redirectToLogin('wrong_portal');
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if (err.message === 'Session expired') return false;
+          redirectToLogin('session_error');
+          return false;
+        }
+      }
+
+      async function loadSchool() {
+        if (!currentUser.school_id) { currentSchool = null; return; }
+        try {
+          const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
+          currentSchool = data.school || null;
+        } catch (err) {
+          console.error('[school]', err);
+          currentSchool = null;
+        }
+      }
+
+      window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
-        window.location.href = 'login.html';
+        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        window.location.replace(LOGIN_URL);
       };
 
-      /* ============================================================ */
-      /* MOBILE SIDEBAR                                               */
-      /* ============================================================ */
+      /* ----- MOBILE SIDEBAR ----- */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1026,15 +1259,15 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ============================================================ */
-      /* INIT                                                         */
-      /* ============================================================ */
-      document.addEventListener('DOMContentLoaded', () => {
-        applyAccount();
-        document.querySelectorAll('a[href="#"]').forEach(a => {
-          a.addEventListener('click', e => e.preventDefault());
-        });
-      });
+      /* ----- INIT ----- */
+      (async function boot() {
+        const ok = await verifySession();
+        if (!ok) return;
+        renderUser();
+        await loadSchool();
+        renderSchool();
+        await loadNotices();
+      })();
 
     })();
   </script>
