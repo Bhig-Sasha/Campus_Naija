@@ -24,11 +24,19 @@
     { "source": "/admin/Settings",   "destination": "/admin/Settings.html" },
     { "source": "/admin/Login",      "destination": "/admin/login.html" },
 
-    { "source": "/SchoolsAd",         "destination": "/SchoolsAd/index.html" },
-    { "source": "/SchoolsAd/",        "destination": "/SchoolsAd/index.html" },
-    { "source": "/SchoolsAd/login",   "destination": "/SchoolsAd/login.html" },
-    { "source": "/SchoolsAd/Login",   "destination": "/SchoolsAd/login.html" },
-    { "source": "/SchoolsAd/:path*",  "destination": "/SchoolsAd/:path*.html" }
+    { "source": "/SchoolsAd",                "destination": "/SchoolsAd/index.html" },
+    { "source": "/SchoolsAd/",               "destination": "/SchoolsAd/index.html" },
+    { "source": "/SchoolsAd/login",          "destination": "/SchoolsAd/login.html" },
+    { "source": "/SchoolsAd/Login",          "destination": "/SchoolsAd/login.html" },
+    { "source": "/SchoolsAd/index",          "destination": "/SchoolsAd/index.html" },
+    { "source": "/SchoolsAd/courses",        "destination": "/SchoolsAd/courses.html" },
+    { "source": "/SchoolsAd/fees",           "destination": "/SchoolsAd/fees.html" },
+    { "source": "/SchoolsAd/admissions",     "destination": "/SchoolsAd/admissions.html" },
+    { "source": "/SchoolsAd/calendar",       "destination": "/SchoolsAd/calendar.html" },
+    { "source": "/SchoolsAd/media",          "destination": "/SchoolsAd/media.html" },
+    { "source": "/SchoolsAd/submissions",    "destination": "/SchoolsAd/submissions.html" },
+    { "source": "/SchoolsAd/profile",        "destination": "/SchoolsAd/profile.html" },
+    { "source": "/SchoolsAd/:path*",         "destination": "/SchoolsAd/:path*.html" }
   ],
   "headers": [
     {
@@ -39,21 +47,9 @@
         { "key": "Referrer-Policy",        "value": "strict-origin-when-cross-origin" }
       ]
     },
-    {
-      "source": "/admin/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/admin",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/SchoolsAd/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    },
-    {
-      "source": "/SchoolsAd",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
-    }
+    { "source": "/admin/(.*)",      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
+    { "source": "/admin",           "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
+    { "source": "/SchoolsAd/(.*)",  "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
+    { "source": "/SchoolsAd",       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
   ]
 }
