@@ -443,7 +443,7 @@
     }
     .quick-action:hover .quick-action-arrow { color: var(--primary); transform: translateX(4px); }
 
-    /* ─────── Review queue ─────── */
+    /* ─────── Recent list (schools / articles) ─────── */
     .review-list { display: flex; flex-direction: column; gap: 12px; }
     .review-item {
       display: flex; align-items: center; gap: 14px;
@@ -778,16 +778,16 @@
 
           <div class="stat-card">
             <div class="stat-card-top">
-              <div class="stat-icon gold"><i class="fas fa-clock-rotate-left"></i></div>
-              <span class="stat-card-label">To verify</span>
+              <div class="stat-icon gold"><i class="fas fa-fire"></i></div>
+              <span class="stat-card-label">Trending</span>
             </div>
-            <div class="stat-card-value loading" id="statPending"><span class="skeleton"></span></div>
-            <div class="stat-card-sub"><span class="gold">Pending review</span></div>
+            <div class="stat-card-value loading" id="statTrending"><span class="skeleton"></span></div>
+            <div class="stat-card-sub" id="statTrendingSub"><span class="skeleton skeleton-text short" style="display:inline-block;width:60%;"></span></div>
           </div>
         </section>
 
         <!-- Dashboard grid -->
-        <section class="dashboard-grid" aria-label="Quick actions and review queue">
+        <section class="dashboard-grid" aria-label="Quick actions and latest content">
 
           <div class="panel">
             <div class="panel-header">
@@ -831,10 +831,10 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-magnifying-glass"></i> Review queue</div>
-              <a href="./Audit.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
+              <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Latest schools</div>
+              <a href="./Schools.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="review-list" id="reviewList">
+            <div class="review-list" id="recentSchools">
               <div class="review-item skeleton-item">
                 <div class="skeleton skeleton-circle"></div>
                 <div class="review-text">
@@ -1064,6 +1064,10 @@
         document.getElementById('topRole').textContent = role;
       }
 
+      /* ─────────────────────────────────────────
+         STATS: schools, admissions, scholarships, trending
+         (No more /api/admin/submissions — that route doesn't exist)
+      ───────────────────────────────────────── */
       async function loadStats() {
         const setVal = (id, val, subId, subText, animate) => {
           const el = document.getElementById(id);
@@ -1086,7 +1090,7 @@
           api('/api/schools'),
           api('/api/admissions'),
           api('/api/scholarships'),
-          api('/api/admin/submissions'),
+          api('/api/trending'),
         ]);
 
         if (results[0].status === 'fulfilled') {
@@ -1117,47 +1121,43 @@
         }
 
         if (results[3].status === 'fulfilled') {
-          const list = results[3].value.submissions || [];
-          setVal('statPending', list.length, null, null, true);
-          if (list.length > 0) {
-            document.getElementById('notifDot').classList.add('show');
-          }
+          const list = results[3].value.stories || [];
+          const published = list.filter(s => s.status === 'published').length;
+          setVal('statTrending', published, 'statTrendingSub',
+            list.length + ' total stories', true);
         } else {
-          setVal('statPending', '—');
+          setVal('statTrending', '—', 'statTrendingSub', 'Error loading');
         }
       }
 
-      async function loadReviewQueue() {
-        const el = document.getElementById('reviewList');
+      /* ─────────────────────────────────────────
+         LATEST SCHOOLS (replaces the old review queue)
+      ───────────────────────────────────────── */
+      async function loadRecentSchools() {
+        const el = document.getElementById('recentSchools');
         try {
-          const data = await api('/api/admin/submissions');
-          const items = (data.submissions || []).slice(0, 5);
+          const data = await api('/api/schools');
+          const items = (data.schools || [])
+            .slice()
+            .sort((a, b) => new Date(b.updated_at || b.created_at || 0)
+                          - new Date(a.updated_at || a.created_at || 0))
+            .slice(0, 5);
 
           if (!items.length) {
-            el.innerHTML = '<div class="empty-state"><i class="fas fa-circle-check"></i><p>Nothing pending review.</p></div>';
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-building-columns"></i><p>No schools yet.</p></div>';
             return;
           }
 
-          const iconFor = (type) => ({
-            course: { icon: 'fa-book', cls: 'green' },
-            fee:    { icon: 'fa-money-bill', cls: '' },
-            admission: { icon: 'fa-clipboard-list', cls: '' },
-            calendar: { icon: 'fa-calendar', cls: 'green' },
-          }[type] || { icon: 'fa-file', cls: '' });
-
-          el.innerHTML = items.map((item) => {
-            const ic = iconFor(item.type);
-            const target = ({
-              course: 'Courses', fee: 'Fees', admission: 'Admissions', calendar: 'Calendar',
-            }[item.type] || 'Dashboard');
+          el.innerHTML = items.map((s) => {
+            const loc = [s.city, s.state].filter(Boolean).join(', ');
             return `
               <div class="review-item">
-                <div class="review-icon ${ic.cls}"><i class="fas ${ic.icon}"></i></div>
+                <div class="review-icon green"><i class="fas fa-building-columns"></i></div>
                 <div class="review-text">
-                  <h4>${esc(item.label || ('#' + item.id))}</h4>
-                  <p>${esc(item.type)} · ${esc(item.status)} · ${timeAgo(item.updated_at)}</p>
+                  <h4>${esc(s.name || 'Untitled')}</h4>
+                  <p>${esc(loc || 'Nigeria')} · ${timeAgo(s.updated_at || s.created_at)}</p>
                 </div>
-                <button class="review-btn" onclick="window.location.href='./${target}.html'">Review</button>
+                <button class="review-btn" onclick="window.location.href='./Schools.html?id=${encodeURIComponent(s.id)}'">Open</button>
               </div>`;
           }).join('');
         } catch (e) {
@@ -1165,6 +1165,9 @@
         }
       }
 
+      /* ─────────────────────────────────────────
+         ACTIVITY (audit log)
+      ───────────────────────────────────────── */
       async function loadActivity() {
         const el = document.getElementById('activityList');
         try {
@@ -1207,6 +1210,9 @@
         }
       }
 
+      /* ─────────────────────────────────────────
+         NOTIFICATIONS
+      ───────────────────────────────────────── */
       async function loadNotifications() {
         const el = document.getElementById('notifList');
         try {
@@ -1335,7 +1341,7 @@
         // Load all panels in parallel — each one fails independently
         await Promise.allSettled([
           loadStats(),
-          loadReviewQueue(),
+          loadRecentSchools(),
           loadActivity(),
           loadNotifications(),
         ]);
