@@ -196,11 +196,6 @@
 
     /* HEADING */
     .page-heading { margin-bottom: 24px; }
-    .page-heading .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--accent); font-weight: 700; font-size: 0.68rem;
-      letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px;
-    }
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
@@ -249,13 +244,6 @@
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-height: 1.2em;
     }
     .inst-banner-info .ib-meta .dot { font-size: 0.4rem; }
-    .inst-banner-badges { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-    .restricted-note {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.75rem; color: var(--muted); max-width: 280px;
-      text-align: right; line-height: 1.4;
-    }
-    .restricted-note i { color: var(--accent); font-size: 0.8rem; flex-shrink: 0; }
 
     /* STATS */
     .stats-row {
@@ -451,8 +439,6 @@
       .topbar-divider { display: none; }
       .page-heading h1 { font-size: 1.6rem; }
       .institution-banner { padding: 20px; }
-      .inst-banner-badges { align-items: flex-start; width: 100%; }
-      .restricted-note { text-align: left; max-width: 100%; }
       .dashboard-grid { gap: 16px; }
       .panel { padding: 18px; }
     }
@@ -540,7 +526,6 @@
       <main class="content">
 
         <div class="page-heading">
-          <div class="eyebrow"><i class="fas fa-shield-halved"></i> Restricted school access</div>
           <h1>Dashboard</h1>
           <p>Manage your institution's information on CampusNaija.</p>
         </div>
@@ -551,12 +536,6 @@
             <div class="ib-label">Your assigned institution</div>
             <div class="ib-name" id="instName">—</div>
             <div class="ib-meta" id="instMeta">—</div>
-          </div>
-          <div class="inst-banner-badges">
-            <div class="restricted-note">
-              <i class="fas fa-lock"></i>
-              <span>You can only manage the institution assigned to your account.</span>
-            </div>
           </div>
         </div>
 
@@ -778,9 +757,6 @@
        *   - 'ok'         → currentSchool is a real, joined row.
        *   - 'orphaned'   → school_id set but /api/schools/:id returned 404.
        *   - 'unassigned' → no school_id at all.
-       *
-       * No status badge, pill, verification, or publication display —
-       * those are admin-side concepts and never shown to the rep.
        */
       function renderSchool() {
         const banner = document.getElementById('institutionBanner');

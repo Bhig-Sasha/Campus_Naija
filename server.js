@@ -92,6 +92,19 @@ async function one(text, params) { const r = await q(text, params); return r.row
 async function many(text, params) { const r = await q(text, params); return r.rows; }
 async function run(text, params) { const r = await q(text, params); return r.rowCount; }
 
+/**
+ * idsEqual
+ * --------
+ * Compare two identifiers regardless of whether they're UUID strings,
+ * integer IDs, or mixed. Number() is unsafe here because `Number(uuid)`
+ * returns NaN, and `NaN !== NaN` is always true — which makes every
+ * scope check against a UUID fail closed with a 403.
+ */
+function idsEqual(a, b) {
+  if (a == null || b == null) return false;
+  return String(a) === String(b);
+}
+
 /* ============================================================
  * SEED
  * ============================================================ */
@@ -275,7 +288,7 @@ function requireRole(...roles) {
 function assertSchoolScope(user, schoolId) {
   if (!user) throw httpError(401, 'Authentication required.');
   if (user.role === 'school_manager') {
-    if (!user.school_id || Number(user.school_id) !== Number(schoolId)) {
+    if (!user.school_id || !idsEqual(user.school_id, schoolId)) {
       throw httpError(403, 'You can only manage your assigned institution.', 'school_scope');
     }
   }
@@ -1066,7 +1079,8 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   if (!req.file) throw httpError(400, 'A file is required.');
 
   const b = req.body || {};
-  let schoolId = b.school_id ? Number(b.school_id) : null;
+  // NOTE: school_id may be a UUID string, so do NOT Number() it.
+  let schoolId = b.school_id ? String(b.school_id) : null;
   if (req.user.role === 'school_manager') {
     if (!req.user.school_id) throw httpError(403, 'No school assigned to this account.');
     schoolId = req.user.school_id;
@@ -1147,7 +1161,7 @@ router.get('/schools/:schoolId/media', authenticate, requireRole('owner','admin'
 router.patch('/media/:id', authenticate, requireRole('owner','admin','editor','school_manager'), asyncH(async (req, res) => {
   const row = await one('select * from public.media_assets where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Media not found.');
-  if (req.user.role === 'school_manager' && row.school_id !== req.user.school_id)
+  if (req.user.role === 'school_manager' && !idsEqual(row.school_id, req.user.school_id))
     throw httpError(403, 'You can only edit media for your assigned institution.');
   const allowed = ['display_name','alt_text','caption','category','tags'];
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
@@ -1163,7 +1177,7 @@ router.patch('/media/:id', authenticate, requireRole('owner','admin','editor','s
 router.delete('/media/:id', authenticate, requireRole('owner','admin','school_manager'), asyncH(async (req, res) => {
   const row = await one('select * from public.media_assets where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Media not found.');
-  if (req.user.role === 'school_manager' && row.school_id !== req.user.school_id)
+  if (req.user.role === 'school_manager' && !idsEqual(row.school_id, req.user.school_id))
     throw httpError(403, 'You can only delete media for your assigned institution.');
 
   const activePlacements = await many(
@@ -1385,7 +1399,7 @@ router.post('/school/submissions/:type/:id/submit', authenticate, requireRole('s
   if (!table) throw httpError(400, 'Unsupported submission type.');
   const row = await one(`select * from public.${table} where id=$1`, [id]);
   if (!row) throw httpError(404, 'Record not found.');
-  if (row.school_id !== req.user.school_id) throw httpError(403, 'You can only submit records for your assigned institution.');
+  if (!idsEqual(row.school_id, req.user.school_id)) throw httpError(403, 'You can only submit records for your assigned institution.');
   await run(`update public.${table} set status='pending', updated_at=now() where id=$1`, [id]);
   await audit(req, 'submit', type, id, row.name || row.title || `#${id}`);
   res.json({ ok: true });
@@ -1397,7 +1411,7 @@ router.post('/school/submissions/:type/:id/withdraw', authenticate, requireRole(
   if (!table) throw httpError(400, 'Unsupported submission type.');
   const row = await one(`select * from public.${table} where id=$1`, [id]);
   if (!row) throw httpError(404, 'Record not found.');
-  if (row.school_id !== req.user.school_id) throw httpError(403, 'You can only withdraw records for your assigned institution.');
+  if (!idsEqual(row.school_id, req.user.school_id)) throw httpError(403, 'You can only withdraw records for your assigned institution.');
   if (row.status !== 'pending') throw httpError(400, 'Only records currently pending review can be withdrawn.');
   await run(`update public.${table} set status='draft', updated_at=now() where id=$1`, [id]);
   await audit(req, 'withdraw', type, id, row.name || row.title || `#${id}`);
@@ -1411,7 +1425,7 @@ router.get('/admin/submissions', authenticate, requireRole('owner','admin','revi
   const push = async (table, type, labelExpr) => {
     const rows = await many(`select id, school_id, ${labelExpr} as label, status, updated_at from public.${table} where status='pending'`);
     for (const r of rows) {
-      if (schoolId && r.school_id !== schoolId) continue;
+      if (schoolId && !idsEqual(r.school_id, schoolId)) continue;
       items.push({ type, ...r });
     }
   };
@@ -1464,7 +1478,7 @@ router.get('/notifications', authenticate, asyncH(async (req, res) => {
 router.post('/notifications/:id/read', authenticate, asyncH(async (req, res) => {
   const n = await one('select * from public.notifications where id=$1', [req.params.id]);
   if (!n) throw httpError(404, 'Notification not found.');
-  if (req.user.role !== 'owner' && n.user_id !== req.user.id && n.school_id !== req.user.school_id)
+  if (req.user.role !== 'owner' && n.user_id !== req.user.id && !idsEqual(n.school_id, req.user.school_id))
     throw httpError(403, 'Not allowed.');
   await run('update public.notifications set is_read=true where id=$1', [n.id]);
   res.json({ ok: true });
@@ -1532,10 +1546,11 @@ router.get('/health', asyncH(async (req, res) => {
     res.json({
       ok: true,
       time: r.rows[0].now,
-      version: '1.7.0',
+      version: '1.7.1',
       media: 'supabase-storage',
       placements: true,
       school_verification_removed: true,
+      uuid_scope_check: true,
       orphan_school_managers: orphanManagers,
       legacy_unverified_schools: unverifiedSchools,
     });
@@ -1544,7 +1559,7 @@ router.get('/health', asyncH(async (req, res) => {
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.7.0',
+      version: '1.7.1',
     });
   }
 }));
