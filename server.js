@@ -213,14 +213,43 @@ function signToken(user) {
   );
 }
 
+/**
+ * publicUser
+ * ----------
+ * Serialize a user row for the frontend. Includes school info so the
+ * frontend never has to guess whether a school_manager has a school.
+ *
+ * If you pass a row that was already joined with `school_name` / `school_slug`
+ * (i.e. from `fetchUserWithSchool`), those fields pass through.
+ */
 function publicUser(u) {
   if (!u) return null;
   return {
     id: u.id, name: u.name, email: u.email, role: u.role,
-    school_id: u.school_id, status: u.status,
+    school_id: u.school_id ?? null,
+    school_name: u.school_name ?? null,
+    school_slug: u.school_slug ?? null,
+    status: u.status,
     must_change_password: !!u.must_change_password,
     notes: u.notes, created_at: u.created_at, updated_at: u.updated_at,
   };
+}
+
+/**
+ * fetchUserWithSchool
+ * -------------------
+ * Loads a user and LEFT-JOINs the school row. This is what `authenticate()`
+ * and `/auth/login` use so `school_name` / `school_slug` are always available
+ * to the frontend, even when `school_id` is non-null but stale.
+ */
+async function fetchUserWithSchool(userId) {
+  return one(
+    `select u.*, s.name as school_name, s.slug as school_slug
+       from public.users u
+       left join public.schools s on s.id = u.school_id
+      where u.id = $1`,
+    [userId]
+  );
 }
 
 async function authenticate(req, res, next) {
@@ -231,7 +260,7 @@ async function authenticate(req, res, next) {
     let payload;
     try { payload = jwt.verify(token, JWT_SECRET); }
     catch { throw httpError(401, 'Session expired or invalid token.', 'bad_token'); }
-    const user = await one('select * from public.users where id = $1', [payload.sub]);
+    const user = await fetchUserWithSchool(payload.sub);
     if (!user) throw httpError(401, 'Account no longer exists.', 'no_user');
     if (user.status === 'suspended') throw httpError(403, 'This account is suspended.', 'suspended');
     if (user.status === 'pending') throw httpError(403, 'This account is pending approval.', 'pending_approval');
@@ -295,9 +324,20 @@ router.post('/auth/login', asyncH(async (req, res) => {
   if (user.status === 'suspended') throw httpError(403, 'This account is suspended. Contact the platform owner.');
   if (user.status === 'pending') throw httpError(403, 'This account is awaiting approval. Contact the platform owner.');
 
-  const token = signToken(user);
-  await audit({ user, ip }, 'login', 'auth', user.id, user.email);
-  res.json({ token, user: publicUser(user) });
+  // Enrich with school info for the response
+  const fullUser = await fetchUserWithSchool(user.id);
+
+  // Loud warning in logs when a school_manager has no school assigned
+  if (fullUser.role === 'school_manager' && !fullUser.school_id) {
+    console.warn(`[auth] school_manager ${fullUser.email} (id=${fullUser.id}) has NO school_id assigned — dashboard will show "Unassigned".`);
+  }
+  if (fullUser.role === 'school_manager' && fullUser.school_id && !fullUser.school_name) {
+    console.warn(`[auth] school_manager ${fullUser.email} (id=${fullUser.id}) has school_id=${fullUser.school_id} but no matching school row — orphaned reference.`);
+  }
+
+  const token = signToken(fullUser);
+  await audit({ user: fullUser, ip }, 'login', 'auth', fullUser.id, fullUser.email);
+  res.json({ token, user: publicUser(fullUser) });
 }));
 
 router.post('/auth/refresh', authenticate, asyncH(async (req, res) => {
@@ -405,24 +445,6 @@ router.get('/public/settings', asyncH(async (req, res) => {
 }));
 
 /* ---------- PUBLIC: media placements ---------- */
-/*
- * Used by Home.html, Schools.html, Admissions.html, … to fetch the assigned
- * image for a given page/slot (optionally scoped to a specific record).
- *
- * Query params:
- *   page        – required filter (home / schools / admissions / exams / scholarships / trending)
- *   slot        – optional filter (hero / school_cover / …)
- *   content_ref – OPTIONAL. Behaviour:
- *                 • missing      → return ALL active placements for the page
- *                                  (frontend filters per-record client-side)
- *                 • empty ('')   → return only GLOBAL placements (content_ref IS NULL)
- *                 • value        → return only placements for that specific record
- *
- * The "missing vs empty" distinction is critical: Home / Schools / Trending
- * pages call `?page=X` without a content_ref and then match client-side.
- * If we force `content_ref IS NULL` on a missing param, per-record covers
- * (school covers, article covers) get stripped before reaching the browser.
- */
 router.get('/public/placements', asyncH(async (req, res) => {
   const { page, slot, content_ref } = req.query;
   const clauses = ['p.is_active = true'];
@@ -1249,7 +1271,12 @@ router.delete('/media/placements/:id', authenticate, requireRole('owner','admin'
 
 /* ---------- USERS ---------- */
 router.get('/users', authenticate, requireRole('owner'), asyncH(async (req, res) => {
-  const rows = await many('select * from public.users order by created_at desc');
+  const rows = await many(
+    `select u.*, s.name as school_name, s.slug as school_slug
+       from public.users u
+       left join public.schools s on s.id = u.school_id
+      order by u.created_at desc`
+  );
   res.json({ users: rows.map(publicUser) });
 }));
 
@@ -1257,24 +1284,70 @@ router.post('/users', authenticate, requireRole('owner'), asyncH(async (req, res
   const b = req.body || {};
   if (!b.name || !b.email || !b.role) throw httpError(400, 'name, email and role are required.');
   if (!['owner','admin','editor','reviewer','school_manager'].includes(b.role)) throw httpError(400, 'Invalid role.');
-  if (b.role === 'school_manager' && !b.school_id) throw httpError(400, 'school_id is required for school managers.');
+
+  let schoolId = null;
+  if (b.role === 'school_manager') {
+    if (!b.school_id) throw httpError(400, 'school_id is required for school managers.');
+    // Validate that the school actually exists so we don't create orphans.
+    const school = await one('select id, name from public.schools where id=$1', [b.school_id]);
+    if (!school) throw httpError(400, `School id=${b.school_id} does not exist.`);
+    schoolId = school.id;
+  }
+
   if (await one('select 1 from public.users where lower(email)=lower($1)', [b.email]))
     throw httpError(409, 'An account with that email already exists.');
+
   const initialPassword = b.password || crypto.randomBytes(9).toString('base64').slice(0, 12);
   const hash = bcrypt.hashSync(initialPassword, 10);
   const status = b.role === 'school_manager' ? 'pending' : 'active';
   const user = await one(
     `insert into public.users (name, email, password_hash, role, school_id, status, must_change_password, notes)
      values ($1,$2,$3,$4,$5,$6,true,$7) returning *`,
-    [b.name, b.email, hash, b.role, b.school_id || null, status, b.notes || null]
+    [b.name, b.email, hash, b.role, schoolId, status, b.notes || null]
   );
-  await audit(req, 'create', 'user', user.id, user.email, { role: user.role, status: user.status });
+  await audit(req, 'create', 'user', user.id, user.email, { role: user.role, status: user.status, school_id: schoolId });
   res.status(201).json({ user: publicUser(user), initial_password: initialPassword, note: 'Share the initial password securely. The user must change it after first sign-in.' });
+}));
+
+/**
+ * Owner-only helper: assign or reassign a school_manager to a school.
+ * Also useful for fixing accounts that were created without a school.
+ *
+ * Body: { school_id: <uuid or null> }
+ */
+router.post('/users/:id/assign-school', authenticate, requireRole('owner'), asyncH(async (req, res) => {
+  const { school_id } = req.body || {};
+  const user = await one('select * from public.users where id=$1', [req.params.id]);
+  if (!user) throw httpError(404, 'User not found.');
+  if (user.role !== 'school_manager') throw httpError(400, 'Only school_manager accounts can be assigned a school.');
+
+  let newSchoolId = null;
+  if (school_id != null && school_id !== '') {
+    const school = await one('select id, name from public.schools where id=$1', [school_id]);
+    if (!school) throw httpError(400, `School id=${school_id} does not exist.`);
+    newSchoolId = school.id;
+  }
+
+  const updated = await one(
+    `update public.users set school_id=$1, updated_at=now() where id=$2 returning *`,
+    [newSchoolId, user.id]
+  );
+
+  await audit(req, 'assign_school', 'user', user.id, user.email, {
+    previous_school_id: user.school_id,
+    new_school_id: newSchoolId,
+  });
+
+  const enriched = await fetchUserWithSchool(updated.id);
+  res.json({ ok: true, user: publicUser(enriched) });
 }));
 
 router.post('/users/:id/approve', authenticate, requireRole('owner'), asyncH(async (req, res) => {
   const user = await one('select * from public.users where id=$1', [req.params.id]);
   if (!user) throw httpError(404, 'User not found.');
+  if (user.role === 'school_manager' && !user.school_id)
+    throw httpError(400, 'Cannot approve a school manager without an assigned school. Use /users/:id/assign-school first.');
+
   const updated = await one(`update public.users set status='active', updated_at=now() where id=$1 returning *`, [user.id]);
   await audit(req, 'approve_user', 'user', user.id, user.email);
   await notify(user.id, user.school_id, 'Your account has been approved', 'You can now sign in to the CampusNaija school portal.');
@@ -1390,7 +1463,7 @@ router.post('/admin/submissions/:type/:id/decision', authenticate, requireRole('
       m.id, row.school_id,
       decision === 'approved' ? 'Submission approved' : 'Changes requested',
       `${type}: ${row.name || row.title || '#' + id}${comment ? ' — ' + comment : ''}`,
-      '/SchoolAd/submissions.html'
+      '/SchoolsAd/submissions.html'
     );
   }
   res.json({ ok: true, new_status: newStatus });
@@ -1443,13 +1516,34 @@ router.get('/health', asyncH(async (req, res) => {
     );
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
-    res.json({ ok: true, time: r.rows[0].now, version: '1.5.1', media: 'supabase-storage', placements: true });
+
+    // Surface orphaned school_manager accounts so you notice them fast.
+    let orphanManagers = 0;
+    try {
+      const orphanRow = await one(
+        `select count(*)::int as c from public.users
+          where role='school_manager' and school_id is null`
+      );
+      orphanManagers = orphanRow ? orphanRow.c : 0;
+      if (orphanManagers > 0) {
+        console.warn(`[health] ${orphanManagers} school_manager account(s) have no school_id — dashboard will show "Unassigned".`);
+      }
+    } catch (_) {}
+
+    res.json({
+      ok: true,
+      time: r.rows[0].now,
+      version: '1.6.0',
+      media: 'supabase-storage',
+      placements: true,
+      orphan_school_managers: orphanManagers,
+    });
   } catch (e) {
     res.status(503).json({
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.5.1',
+      version: '1.6.0',
     });
   }
 }));
