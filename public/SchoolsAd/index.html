@@ -107,28 +107,25 @@
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
 
-    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
-    .signout-nav-btn {
-      width: 100%;
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 14px; border-radius: 10px;
-      font-size: 0.9rem; font-weight: 600; color: var(--muted);
-      background: transparent; border: none; cursor: pointer;
-      text-align: left; transition: background 0.15s, color 0.15s;
-    }
-    .signout-nav-btn i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
-    .signout-nav-btn:hover { background-color: rgba(224, 112, 112, 0.1); color: var(--danger); }
-
+    /* Sidebar footer — the profile block now contains the logout button */
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 12px; border-radius: 10px;
+      transition: background 0.18s ease;
     }
+    .rep-user:hover { background-color: var(--elevated); }
     .rep-avatar {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, #F5B942, #b88720);
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(245,185,66,0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .rep-user:hover .rep-avatar {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 4px rgba(245,185,66,0.2);
     }
     .rep-user-info { flex: 1; min-width: 0; }
     .rep-user-name {
@@ -138,6 +135,25 @@
     .rep-user-role {
       font-size: 0.7rem; color: var(--muted);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* NEW: sign-out button beside the name (matches admin dashboard) */
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer;
+      padding: 6px; border-radius: 8px;
+      transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+      flex-shrink: 0;
+    }
+    .logout-btn:hover {
+      color: var(--danger);
+      background-color: rgba(224, 112, 112, 0.08);
+      transform: translateX(2px);
+    }
+    .logout-btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(224, 112, 112, 0.25);
+      color: var(--danger);
     }
 
     /* ===== MAIN ===== */
@@ -488,21 +504,15 @@
 
       <nav class="sidebar-nav">
         <div class="nav-group-label">Workspace</div>
-        <a href="./index.html" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
-        <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="./academic-calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
-        <a href="./media-library.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
-        <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
+          <a href="./index.html" class="nav-item active"><i class="fas fa-gauge-high"></i> Dashboard</a>
+          <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
+          <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
+          <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
+          <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
+          <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
+          <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+          <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
-
-      <div class="sidebar-signout">
-        <button class="signout-nav-btn" onclick="signOut()">
-          <i class="fas fa-arrow-right-from-bracket"></i> Sign out
-        </button>
-      </div>
 
       <div class="sidebar-footer">
         <div class="rep-user">
@@ -511,6 +521,9 @@
             <div class="rep-user-name" id="sideName">—</div>
             <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out" onclick="signOut()">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
         </div>
       </div>
     </aside>
@@ -857,14 +870,12 @@
           const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/summary');
           const c = data.counts || {};
 
-          // Courses
           const courses = Number(c.courses) || 0;
           const coursesPending = Number(c.courses_pending) || 0;
           document.getElementById('statCourses').textContent = courses;
           document.getElementById('statCoursesSub').textContent =
             coursesPending > 0 ? coursesPending + ' pending review' : '';
 
-          // Pending review (all types)
           const feesPending = Number(c.fees_pending) || 0;
           const admPending = Number(c.admissions_pending) || 0;
           const calPending = Number(c.calendar_pending) || 0;
@@ -873,25 +884,14 @@
           document.getElementById('statPendingSub').textContent =
             totalPending > 0 ? 'Across all content types' : '';
 
-          // Admissions
           const admissions = Number(c.admissions) || 0;
           document.getElementById('statAdmissions').textContent = admissions;
           document.getElementById('statAdmissionsSub').textContent =
             admPending > 0 ? admPending + ' pending review' : '';
 
-          // Approved updates — courses + fees + admissions + calendar that are NOT pending/draft
-          // The backend summary endpoint doesn't expose "published" counts directly,
-          // so we compute from totals minus pending (published = total records where status='published').
-          // Since summary only exposes totals + pending, we display the published count
-          // as (totals - pending - draft) — but draft isn't exposed either.
-          // Safer: show total content count that has been approved.
-          // We use "fees" as a proxy for "published fee records" from the original code,
-          // but here we sum published-eligible items from available counts.
           const feesTotal = Number(c.fees) || 0;
           const admTotal = Number(c.admissions) || 0;
           const calTotal = Number(c.calendar) || 0;
-          // Published = total - pending (drafts remain unpublished too, but summary doesn't split them)
-          // We show total approved content items based on published records.
           const approvedTotal = (feesTotal - feesPending) + (admTotal - admPending) + (calTotal - calPending);
           document.getElementById('statApproved').textContent = Math.max(0, approvedTotal);
           document.getElementById('statApprovedSub').textContent =
@@ -1017,7 +1017,6 @@
         await loadSchool();
         renderSchool();
 
-        // Fire in parallel but tolerate individual failures
         await Promise.allSettled([loadStats(), loadSubmissions()]);
       })();
 
