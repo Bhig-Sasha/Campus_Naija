@@ -310,7 +310,7 @@
       <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <button class="hamburger" id="hamburgerBtn" type="button" aria-label="Toggle menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
@@ -335,7 +335,7 @@
     <!-- Featured banner (populated from /api/public/placements — admissions / featured_banner) -->
     <section class="featured-banner-section" id="featuredBannerSection">
       <div class="featured-banner" id="featuredBanner">
-        <img id="featuredBannerImg" src="" alt="">
+        <img id="featuredBannerImg" alt="" decoding="async">
         <div class="featured-banner-caption" id="featuredBannerCaption"></div>
       </div>
     </section>
@@ -343,7 +343,7 @@
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
-          <i class="fas fa-search"></i>
+          <i class="fas fa-search" aria-hidden="true"></i>
           <input type="text" id="admissionSearch" placeholder="Search schools, courses or admission types..." aria-label="Search admissions">
           <button onclick="filterAdmissions()">Find Admissions</button>
         </div>
@@ -372,17 +372,21 @@
     <section>
       <div class="section-header"><div class="section-title">Admission categories</div></div>
       <div class="admission-categories">
-        <div class="category-card" onclick="setLevelFilter('utme')">
-          <i class="fas fa-graduation-cap"></i><h4>Undergraduate</h4><p>UTME and Direct Entry</p>
+        <div class="category-card" onclick="setLevelFilter('utme')" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setLevelFilter('utme');}">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i><h4>Undergraduate</h4><p>UTME and Direct Entry</p>
         </div>
-        <div class="category-card" onclick="setLevelFilter('postgraduate')">
-          <i class="fas fa-user-graduate"></i><h4>Postgraduate</h4><p>PGD, Master's and PhD</p>
+        <div class="category-card" onclick="setLevelFilter('postgraduate')" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setLevelFilter('postgraduate');}">
+          <i class="fas fa-user-graduate" aria-hidden="true"></i><h4>Postgraduate</h4><p>PGD, Master's and PhD</p>
         </div>
-        <div class="category-card" onclick="setLevelFilter('diploma')">
-          <i class="fas fa-certificate"></i><h4>Diploma &amp; ND/HND</h4><p>Polytechnics and colleges</p>
+        <div class="category-card" onclick="setLevelFilter('diploma')" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setLevelFilter('diploma');}">
+          <i class="fas fa-certificate" aria-hidden="true"></i><h4>Diploma &amp; ND/HND</h4><p>Polytechnics and colleges</p>
         </div>
-        <div class="category-card" onclick="setLevelFilter('direct entry')">
-          <i class="fas fa-arrows-turn-to-dots"></i><h4>Direct Entry</h4><p>Advanced entry routes</p>
+        <div class="category-card" onclick="setLevelFilter('direct entry')" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setLevelFilter('direct entry');}">
+          <i class="fas fa-arrows-turn-to-dots" aria-hidden="true"></i><h4>Direct Entry</h4><p>Advanced entry routes</p>
         </div>
       </div>
     </section>
@@ -413,7 +417,7 @@
 <div id="view-admission-detail" class="view">
   <main class="container">
     <div class="back-to-directory" onclick="showDirectory()">
-      <i class="fas fa-arrow-left"></i> Back to all admissions
+      <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to all admissions
     </div>
 
     <section class="admission-detail-hero">
@@ -425,7 +429,7 @@
           </div>
           <div class="admission-detail-sub" id="admissionDetailSub"></div>
           <div class="admission-detail-actions">
-            <button class="btn-primary" id="officialApplyBtn" disabled><i class="fas fa-external-link-alt"></i> Visit Official Application Portal</button>
+            <button class="btn-primary" id="officialApplyBtn" type="button" disabled><i class="fas fa-external-link-alt" aria-hidden="true"></i> Visit Official Application Portal</button>
           </div>
         </div>
       </div>
@@ -545,7 +549,7 @@
           <div class="info-card">
             <h3>Scam awareness</h3>
             <div class="scam-warning">
-              <i class="fas fa-triangle-exclamation"></i>
+              <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
               <p><strong>Never pay to gain admission.</strong> Admission is not for sale. Only use the official portal linked above for all payments.</p>
             </div>
           </div>
@@ -562,10 +566,10 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="footer-links">
@@ -612,15 +616,30 @@
   const API_URL = 'https://campus-naija.onrender.com';
   const CLOSING_SOON_DAYS = 14;
 
+  // Nigerian states — used as fallback when the API doesn't expose school_state yet
+  const NG_STATES = [
+    'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
+    'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT','Gombe','Imo',
+    'Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa',
+    'Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba',
+    'Yobe','Zamfara'
+  ];
+
   let admissionsCache = [];
   let currentStatusFilter = 'all';
+  let currentAdmissionRequestId = 0;
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ---------- helpers ---------- */
   const escapeHtml = (s) => String(s ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const escapeAttr = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const safeUrl = (u) => {
     if (!u) return null;
@@ -647,7 +666,7 @@
     return res.json();
   }
 
-  /* ---------- Placement helper (cached per page) ---------- */
+  /* ---------- Placement helper ---------- */
   const placementCache = {};
 
   async function getPlacementsForPage(page) {
@@ -675,7 +694,7 @@
     return list.find(p => p.slot === slot && !p.content_ref) || null;
   }
 
-  /* ---------- status derivation from dates ---------- */
+  /* ---------- status derivation ---------- */
   function computeStatus(openDate, closeDate) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const open = openDate ? new Date(openDate) : null;
@@ -717,7 +736,7 @@
     return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  /* ---------- Featured banner (DB-only, no fallback) ---------- */
+  /* ---------- Featured banner (DB-only) ---------- */
   async function loadFeaturedBanner() {
     const section = document.getElementById('featuredBannerSection');
     const img = document.getElementById('featuredBannerImg');
@@ -766,16 +785,18 @@
       renderAdmissions(admissionsCache);
       renderClosingSoon(admissionsCache);
       populateStateFilter(admissionsCache);
+      return admissionsCache;
     } catch (err) {
       console.error('[admissions]', err);
       grid.innerHTML = `<div class="error-state">
-        <i class="fas fa-triangle-exclamation"></i>
+        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
         <p>We could not load admission opportunities right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadAdmissions()">Try again</button>
       </div>`;
       document.getElementById('admissionCount').textContent = 'Admissions unavailable';
       document.getElementById('closingSoonSection').style.display = 'none';
+      return [];
     }
   }
 
@@ -785,7 +806,7 @@
 
     if (!list.length) {
       grid.innerHTML = `<div class="empty-state">
-        <i class="fas fa-graduation-cap"></i>
+        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
         <p>No admission opportunities have been published yet.</p>
         <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
       </div>`;
@@ -805,19 +826,24 @@
       const initials = school.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'CN';
       const closes = formatDate(a.close_date);
       const opens = formatDate(a.open_date);
-      const state = (a.school_state || '').toLowerCase();
+      // school_state may or may not be returned by the API yet — read all likely names
+      const stateRaw = a.school_state || a.state || '';
+      const state = String(stateRaw).toLowerCase();
       const delay = Math.min(i * 0.05, 0.4);
 
       return `
         <div class="admission-card"
              style="animation-delay: ${delay}s"
-             data-id="${escapeHtml(a.id)}"
-             data-status="${escapeHtml(status)}"
-             data-route="${escapeHtml(route.toLowerCase())}"
-             data-state="${escapeHtml(state)}"
-             data-name="${escapeHtml(school.toLowerCase())}"
-             data-title="${escapeHtml((a.title || '').toLowerCase())}"
-             onclick="openAdmission('${escapeHtml(a.id)}')">
+             data-id="${escapeAttr(String(a.id))}"
+             data-status="${escapeAttr(status)}"
+             data-route="${escapeAttr(route.toLowerCase())}"
+             data-state="${escapeAttr(state)}"
+             data-name="${escapeAttr(school.toLowerCase())}"
+             data-title="${escapeAttr((a.title || '').toLowerCase())}"
+             role="button"
+             tabindex="0"
+             onclick="openAdmission('${escapeAttr(String(a.id))}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAdmission('${escapeAttr(String(a.id))}');}">
           <div class="admission-card-top">
             <div class="admission-logo">${escapeHtml(initials)}</div>
             <div class="ac-text">
@@ -827,12 +853,12 @@
           </div>
           <div class="admission-level">${escapeHtml(route)}${session ? ' · ' + escapeHtml(session) : ''}</div>
           <div class="admission-meta">
-            <div class="meta-line"><i class="fas fa-route"></i><span class="meta-label">Route:</span><span class="meta-value">${escapeHtml(route)}</span></div>
-            <div class="meta-line"><i class="fas fa-calendar-alt"></i><span class="meta-label">Opens:</span><span class="meta-value">${escapeHtml(opens)}</span></div>
-            <div class="meta-line"><i class="fas fa-calendar-xmark"></i><span class="meta-label">Closes:</span><span class="meta-value gold">${escapeHtml(closes)}</span></div>
+            <div class="meta-line"><i class="fas fa-route" aria-hidden="true"></i><span class="meta-label">Route:</span><span class="meta-value">${escapeHtml(route)}</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-alt" aria-hidden="true"></i><span class="meta-label">Opens:</span><span class="meta-value">${escapeHtml(opens)}</span></div>
+            <div class="meta-line"><i class="fas fa-calendar-xmark" aria-hidden="true"></i><span class="meta-label">Closes:</span><span class="meta-value gold">${escapeHtml(closes)}</span></div>
           </div>
-          <span class="admission-status ${st.cls}"><i class="fas fa-${st.icon}"></i> ${escapeHtml(st.label)}</span>
-          <span class="admission-action">View admission details <i class="fas fa-arrow-right"></i></span>
+          <span class="admission-status ${st.cls}"><i class="fas fa-${st.icon}" aria-hidden="true"></i> ${escapeHtml(st.label)}</span>
+          <span class="admission-action">View admission details <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
         </div>`;
     }).join('');
   }
@@ -853,8 +879,10 @@
       const route = a.entry_route || '—';
       const closes = formatDate(a.close_date);
       return `
-        <div class="deadline-item" onclick="openAdmission('${escapeHtml(a.id)}')">
-          <i class="fas fa-clock"></i>
+        <div class="deadline-item" role="button" tabindex="0"
+             onclick="openAdmission('${escapeAttr(String(a.id))}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openAdmission('${escapeAttr(String(a.id))}');}">
+          <i class="fas fa-clock" aria-hidden="true"></i>
           <div class="dl-text">
             <h4>${escapeHtml(school)} — ${escapeHtml(a.title || 'Admission')}</h4>
             <p>${escapeHtml(route)}${a.session ? ' · ' + escapeHtml(a.session) : ''}</p>
@@ -866,23 +894,32 @@
 
   function populateStateFilter(list) {
     const select = document.getElementById('stateFilter');
-    const states = [...new Set(list.map((a) => a.school_state).filter(Boolean))].sort();
+    // Prefer states present in the data; fall back to the full list of NG states.
+    const dataStates = [...new Set(list
+      .map((a) => a.school_state || a.state)
+      .filter(Boolean)
+      .map((s) => String(s).trim())
+    )].sort();
+
+    const states = dataStates.length ? dataStates : NG_STATES;
     const current = select.value;
     select.innerHTML = '<option value="">All states</option>' +
-      states.map((s) => `<option value="${escapeHtml(s.toLowerCase())}">${escapeHtml(s)}</option>`).join('');
+      states.map((s) => `<option value="${escapeAttr(String(s).toLowerCase())}">${escapeHtml(s)}</option>`).join('');
     select.value = current;
   }
 
   /* ---------- views ---------- */
-  function showDirectory() {
+  function showDirectory(pushHistory = true) {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-admission-detail').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetAdmissionTabs();
-    history.pushState({ view: 'directory' }, '', '/Admissions.html');
+    if (pushHistory) {
+      history.pushState({ view: 'directory' }, '', '/Admissions');
+    }
   }
 
-  async function openAdmission(id) {
+  async function openAdmission(id, pushHistory = true) {
     if (!id) return;
 
     document.getElementById('view-directory').classList.remove('active');
@@ -910,13 +947,23 @@
     document.querySelector('.admission-tab-item[data-tab="overview"]').classList.add('active');
     document.getElementById('admission-panel-overview').classList.add('active');
 
-    history.pushState({ view: 'detail', admission: id }, '', `/Admissions.html?admission=${encodeURIComponent(id)}`);
+    if (pushHistory) {
+      history.pushState(
+        { view: 'detail', admission: id },
+        '',
+        `/Admissions?admission=${encodeURIComponent(id)}`
+      );
+    }
+
+    // Guard against out-of-order responses
+    const requestId = ++currentAdmissionRequestId;
 
     const cached = admissionsCache.find((a) => String(a.id) === String(id));
     if (cached) { renderAdmissionDetail(cached); return; }
 
     try {
       const data = await apiGet('/api/public/admissions');
+      if (requestId !== currentAdmissionRequestId) return;
       const list = Array.isArray(data.admissions) ? data.admissions : [];
       const match = list.find((a) => String(a.id) === String(id));
       if (match) {
@@ -926,6 +973,7 @@
         renderError('Admission not found.');
       }
     } catch (err) {
+      if (requestId !== currentAdmissionRequestId) return;
       renderError(err.message);
     }
   }
@@ -950,7 +998,7 @@
     badge.className = 'admission-badge ' + badgeCls;
 
     document.getElementById('admissionDetailSub').innerHTML = `
-      <span><i class="fas fa-building"></i> ${escapeHtml(school)}</span>
+      <span><i class="fas fa-building" aria-hidden="true"></i> ${escapeHtml(school)}</span>
       <span class="dot">●</span>
       <span>${escapeHtml(route)}</span>
       ${session ? `<span class="dot">●</span><span>${escapeHtml(session)}</span>` : ''}
@@ -985,14 +1033,14 @@
     const linksHtml = [];
     if (portalUrl) {
       linksHtml.push(`<a class="resource-item" href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">
-        <i class="fas fa-globe"></i>
+        <i class="fas fa-globe" aria-hidden="true"></i>
         <div class="res-text"><h4>Application portal</h4><p>${escapeHtml(portalUrl)}</p></div>
         <span class="res-action">Open</span></a>`);
     }
     const sourceUrl = safeUrl(a.source_url);
     if (sourceUrl) {
       linksHtml.push(`<a class="resource-item" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">
-        <i class="fas fa-file-shield"></i>
+        <i class="fas fa-file-shield" aria-hidden="true"></i>
         <div class="res-text"><h4>Official source notice</h4><p>${escapeHtml(sourceUrl)}</p></div>
         <span class="res-action">Open</span></a>`);
     }
@@ -1015,13 +1063,13 @@
 
     const docItems = [];
     if (a.requirements) {
-      docItems.push(`<div class="checklist-item"><i class="fas fa-list-check"></i><div class="cl-text"><h4>Programme requirements</h4><p>${escapeHtml(a.requirements)}</p></div></div>`);
+      docItems.push(`<div class="checklist-item"><i class="fas fa-list-check" aria-hidden="true"></i><div class="cl-text"><h4>Programme requirements</h4><p>${escapeHtml(a.requirements)}</p></div></div>`);
     }
     if (a.eligibility) {
-      docItems.push(`<div class="checklist-item"><i class="fas fa-user-check"></i><div class="cl-text"><h4>Eligibility</h4><p>${escapeHtml(a.eligibility)}</p></div></div>`);
+      docItems.push(`<div class="checklist-item"><i class="fas fa-user-check" aria-hidden="true"></i><div class="cl-text"><h4>Eligibility</h4><p>${escapeHtml(a.eligibility)}</p></div></div>`);
     }
     if (!docItems.length) {
-      docItems.push(`<div class="checklist-item"><i class="fas fa-info-circle"></i><div class="cl-text"><h4>No requirements published</h4><p>Check the official source notice for details.</p></div></div>`);
+      docItems.push(`<div class="checklist-item"><i class="fas fa-info-circle" aria-hidden="true"></i><div class="cl-text"><h4>No requirements published</h4><p>Check the official source notice for details.</p></div></div>`);
     }
     document.getElementById('documentsChecklist').innerHTML = docItems.join('');
 
@@ -1043,18 +1091,18 @@
       : '<tr><td colspan="3" style="text-align:center; color:var(--muted);">No dates published.</td></tr>';
 
     const noticeHtml = sourceUrl
-      ? `<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><h4>Official source</h4><p>This admission was verified against the institution's official publication.</p><div class="update-meta"><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div></div></div>`
-      : '<div class="update-item"><i class="fas fa-bullhorn"></i><div class="update-content"><p style="color:var(--muted);">No official source link published.</p></div></div>';
+      ? `<div class="update-item"><i class="fas fa-bullhorn" aria-hidden="true"></i><div class="update-content"><h4>Official source</h4><p>This admission was verified against the institution's official publication.</p><div class="update-meta"><a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(sourceUrl)}</a></div></div></div>`
+      : '<div class="update-item"><i class="fas fa-bullhorn" aria-hidden="true"></i><div class="update-content"><p style="color:var(--muted);">No official source link published.</p></div></div>';
     document.getElementById('officialNoticeContainer').innerHTML = noticeHtml;
 
     document.getElementById('datesSummaryOpens').textContent = formatDate(a.open_date);
     document.getElementById('datesSummaryCloses').textContent = formatDate(a.close_date);
 
     const stepHtml = portalUrl
-      ? `<div class="update-item"><i class="fas fa-1"></i><div class="update-content"><h4>Visit the official portal</h4><p>Open the institution's application portal using the button below.</p><div class="update-meta"><a href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">${escapeHtml(portalUrl)}</a></div></div></div>
-         <div class="update-item"><i class="fas fa-2"></i><div class="update-content"><h4>Create an account and submit</h4><p>Follow the portal's instructions to create your applicant profile and submit your application.</p></div></div>
-         <div class="update-item"><i class="fas fa-3"></i><div class="update-content"><h4>Pay only through the portal</h4><p>All application fees must be paid through the official portal. Never pay anyone directly.</p></div></div>`
-      : '<div class="update-item"><i class="fas fa-circle-info"></i><div class="update-content"><p style="color:var(--muted);">No application portal link is available yet.</p></div></div>';
+      ? `<div class="update-item"><i class="fas fa-1" aria-hidden="true"></i><div class="update-content"><h4>Visit the official portal</h4><p>Open the institution's application portal using the button below.</p><div class="update-meta"><a href="${escapeHtml(portalUrl)}" target="_blank" rel="noopener">${escapeHtml(portalUrl)}</a></div></div></div>
+         <div class="update-item"><i class="fas fa-2" aria-hidden="true"></i><div class="update-content"><h4>Create an account and submit</h4><p>Follow the portal's instructions to create your applicant profile and submit your application.</p></div></div>
+         <div class="update-item"><i class="fas fa-3" aria-hidden="true"></i><div class="update-content"><h4>Pay only through the portal</h4><p>All application fees must be paid through the official portal. Never pay anyone directly.</p></div></div>`
+      : '<div class="update-item"><i class="fas fa-circle-info" aria-hidden="true"></i><div class="update-content"><p style="color:var(--muted);">No application portal link is available yet.</p></div></div>';
     document.getElementById('applicationSteps').innerHTML = stepHtml;
   }
 
@@ -1070,20 +1118,25 @@
     tabItems.forEach((t) => t.classList.remove('active'));
     Object.values(tabPanels).forEach((p) => p.classList.remove('active'));
   }
+  function switchAdmissionTab(key) {
+    resetAdmissionTabs();
+    const target = document.querySelector(`.admission-tab-item[data-tab="${key}"]`);
+    if (target) target.classList.add('active');
+    if (tabPanels[key]) tabPanels[key].classList.add('active');
+    if (window.innerWidth < 900) {
+      const tabsEl = document.querySelector('.admission-tabs');
+      if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
   tabItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      resetAdmissionTabs();
-      item.classList.add('active');
-      const key = item.dataset.tab;
-      if (tabPanels[key]) tabPanels[key].classList.add('active');
-    });
+    item.addEventListener('click', () => switchAdmissionTab(item.dataset.tab));
   });
 
   /* ---------- filters ---------- */
   function setAdmissionFilter(status, btn) {
     currentStatusFilter = status;
     document.querySelectorAll('#admissionFilters .filter-tab').forEach((t) => t.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     filterAdmissions();
   }
   function setLevelFilter(level) {
@@ -1142,8 +1195,11 @@
   let initialised = false;
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
-    if (e.state && e.state.view === 'detail' && e.state.admission) openAdmission(e.state.admission);
-    else showDirectory();
+    if (e.state && e.state.view === 'detail' && e.state.admission) {
+      openAdmission(e.state.admission, false);
+    } else {
+      showDirectory(false);
+    }
   });
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -1153,7 +1209,7 @@
     loadFeaturedBanner();
     loadAdmissions().then(() => {
       initialised = true;
-      if (idParam) openAdmission(idParam);
+      if (idParam) openAdmission(idParam, false);
     });
   });
 
@@ -1162,6 +1218,7 @@
   window.filterAdmissions = filterAdmissions;
   window.setAdmissionFilter = setAdmissionFilter;
   window.setLevelFilter = setLevelFilter;
+  window.switchAdmissionTab = switchAdmissionTab;
   window.loadAdmissions = loadAdmissions;
 })();
 </script>

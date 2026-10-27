@@ -87,10 +87,9 @@
     .school-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; cursor: pointer; animation: cardIn 0.4s ease both; }
     @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .school-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
-    .school-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); overflow: hidden; }
+    .school-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); overflow: hidden; transition: transform 0.4s ease; }
     .school-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
-    .school-card:hover .school-img { transform: scale(1.03); transition: transform 0.4s ease; }
-    .school-img { transition: transform 0.4s ease; }
+    .school-card:hover .school-img { transform: scale(1.03); }
     .school-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
     .school-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .school-name { font-size: 1.1rem; font-weight: 700; transition: color 0.2s; }
@@ -226,7 +225,7 @@
       <a href="/Trending">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <button class="hamburger" id="hamburgerBtn" type="button" aria-label="Toggle menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
@@ -250,7 +249,7 @@
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
-          <i class="fas fa-search"></i>
+          <i class="fas fa-search" aria-hidden="true"></i>
           <input type="text" id="directorySearch" placeholder="Search schools, courses or locations" aria-label="Search schools">
           <button onclick="filterDirectory()">Search Schools</button>
         </div>
@@ -281,7 +280,7 @@
 <div id="view-profile" class="view">
   <main class="container">
     <div class="back-to-directory" onclick="showDirectory()">
-      <i class="fas fa-arrow-left"></i> Back to all schools
+      <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to all schools
     </div>
 
     <section class="profile-hero">
@@ -294,8 +293,8 @@
           </div>
           <div class="profile-sub" id="profileSub"></div>
           <div class="profile-actions">
-            <button class="btn-primary" id="viewAdmissionsBtn" onclick="switchTab('admissions')" disabled><i class="fas fa-clipboard-list"></i> View admissions</button>
-            <button class="btn-outline" id="profileWebsiteBtn" disabled><i class="fas fa-globe"></i> Official website</button>
+            <button class="btn-primary" id="viewAdmissionsBtn" onclick="switchTab('admissions')" disabled><i class="fas fa-clipboard-list" aria-hidden="true"></i> View admissions</button>
+            <button class="btn-outline" id="profileWebsiteBtn" disabled><i class="fas fa-globe" aria-hidden="true"></i> Official website</button>
           </div>
         </div>
       </div>
@@ -332,9 +331,9 @@
           <div class="info-card">
             <h3>Contact and official links</h3>
             <div class="contact-links">
-              <a href="#" id="infoWebsiteLink" target="_blank" rel="noopener"><i class="fas fa-globe"></i> <span id="infoWebsiteText">—</span></a>
-              <a href="#" id="infoEmailLink"><i class="fas fa-envelope"></i> <span id="infoEmail">—</span></a>
-              <a href="#" id="infoAddressLink" target="_blank" rel="noopener"><i class="fas fa-map-pin"></i> <span id="infoAddress">—</span></a>
+              <a href="#" id="infoWebsiteLink" target="_blank" rel="noopener"><i class="fas fa-globe" aria-hidden="true"></i> <span id="infoWebsiteText">—</span></a>
+              <a href="#" id="infoEmailLink"><i class="fas fa-envelope" aria-hidden="true"></i> <span id="infoEmail">—</span></a>
+              <a href="#" id="infoAddressLink" target="_blank" rel="noopener"><i class="fas fa-map-pin" aria-hidden="true"></i> <span id="infoAddress">—</span></a>
             </div>
           </div>
         </aside>
@@ -425,7 +424,7 @@
         <div class="info-card">
           <h3>Source links</h3>
           <div class="contact-links" id="verifSources">
-            <a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle"></i> No source links yet.</a>
+            <a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle" aria-hidden="true"></i> No source links yet.</a>
           </div>
         </div>
       </div>
@@ -440,10 +439,10 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="footer-links">
@@ -490,16 +489,22 @@
   const API_URL = 'https://campus-naija.onrender.com';
 
   let schoolsCache = [];
-  let schoolPlacements = [];   // placements for page = 'schools'
+  let schoolPlacements = [];
   let currentTypeFilter = 'all';
   let currentSchool = null;
+  let currentProfileRequestId = 0;
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ---------- helpers ---------- */
   const escapeHtml = (s) => String(s ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const escapeAttr = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const safeUrl = (u) => (u && /^https?:\/\//i.test(u)) ? u : null;
 
@@ -536,9 +541,9 @@
   }
 
   const verificationBadge = (v) => {
-    if (v === 'verified') return '<span class="badge-soft"><i class="fas fa-circle-check"></i> Verified</span>';
-    if (v === 'pending') return '<span class="badge-gold"><i class="fas fa-hourglass-half"></i> Pending</span>';
-    return '<span class="badge-muted"><i class="fas fa-question-circle"></i> Unverified</span>';
+    if (v === 'verified') return '<span class="badge-soft"><i class="fas fa-circle-check" aria-hidden="true"></i> Verified</span>';
+    if (v === 'pending') return '<span class="badge-gold"><i class="fas fa-hourglass-half" aria-hidden="true"></i> Pending</span>';
+    return '<span class="badge-muted"><i class="fas fa-question-circle" aria-hidden="true"></i> Unverified</span>';
   };
 
   const statusLabel = (s) => {
@@ -574,8 +579,6 @@
     }
   }
 
-  // Resolve a placement for a specific school + slot.
-  // Scoped (content_ref = school.id) wins over global (content_ref = null).
   function resolveSchoolPlacement(slot, schoolId) {
     const idStr = schoolId != null ? String(schoolId) : null;
     if (idStr) {
@@ -591,7 +594,6 @@
     const idStr = String(s.id);
     const coverP = resolveSchoolPlacement('school_cover', idStr);
     const logoP  = resolveSchoolPlacement('school_logo', idStr);
-    // placement first, then record's own cover_url / logo_url (DB-only, no mocks)
     return (coverP && coverP.public_url) || s.cover_url || (logoP && logoP.public_url) || s.logo_url || '';
   }
 
@@ -606,7 +608,6 @@
     `;
 
     try {
-      // Load placements and schools in parallel.
       const [data] = await Promise.all([
         apiGet('/api/public/schools'),
         loadPlacementsForSchools(),
@@ -614,15 +615,17 @@
       schoolsCache = Array.isArray(data.schools) ? data.schools : [];
       renderSchoolCards(schoolsCache);
       populateFilters(schoolsCache);
+      return schoolsCache;
     } catch (err) {
       console.error('[schools]', err);
       grid.innerHTML = `<div class="error-state">
-        <i class="fas fa-triangle-exclamation"></i>
+        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
         <p>We could not load schools right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadSchools()">Try again</button>
       </div>`;
       document.getElementById('directoryCount').textContent = 'Schools unavailable';
+      return [];
     }
   }
 
@@ -632,7 +635,7 @@
 
     if (!list.length) {
       grid.innerHTML = `<div class="empty-state">
-        <i class="fas fa-school"></i>
+        <i class="fas fa-school" aria-hidden="true"></i>
         <p>No schools have been published yet.</p>
         <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
       </div>`;
@@ -657,21 +660,22 @@
       return `
         <div class="school-card"
              style="animation-delay: ${delay}s"
-             data-type="${escapeHtml(typeKey)}"
-             data-state="${escapeHtml((s.state || '').toLowerCase())}"
-             data-name="${escapeHtml(name.toLowerCase())}"
-             data-location="${escapeHtml(location.toLowerCase())}"
-             onclick="openProfile('${escapeHtml(slug)}')">
+             data-type="${escapeAttr(typeKey)}"
+             data-state="${escapeAttr((s.state || '').toLowerCase())}"
+             data-name="${escapeAttr(name.toLowerCase())}"
+             data-location="${escapeAttr(location.toLowerCase())}"
+             data-slug="${escapeAttr(slug)}"
+             onclick="openProfile('${escapeAttr(slug)}')">
           <div class="school-img" ${cover ? `style="background-image:url('${encodeURI(cover)}')"` : ''}></div>
           <div class="school-info">
             <div class="school-name-row">
               <span class="school-name">${escapeHtml(name)}</span>
-              ${isVerified ? '<i class="fas fa-circle-check verified-badge" title="Verified institution"></i>' : ''}
+              ${isVerified ? '<i class="fas fa-circle-check verified-badge" title="Verified institution" aria-label="Verified institution"></i>' : ''}
             </div>
-            <div class="school-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(location)}</div>
+            <div class="school-location"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(location)}</div>
             <div class="school-type">${escapeHtml(type)}</div>
             <div class="school-desc">${escapeHtml(truncate(desc, 140))}</div>
-            <span class="school-action">View full school profile <i class="fas fa-arrow-right"></i></span>
+            <span class="school-action">View full school profile <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
           </div>
         </div>`;
     }).join('');
@@ -685,14 +689,14 @@
     let html = `<button class="filter-tab active" data-type="all" onclick="setTypeFilter('all', this)">All Institutions</button>`;
     for (const t of types) {
       const key = t.toLowerCase();
-      html += `<button class="filter-tab" data-type="${escapeHtml(key)}" onclick="setTypeFilter('${escapeHtml(key)}', this)">${escapeHtml(t)}</button>`;
+      html += `<button class="filter-tab" data-type="${escapeAttr(key)}" onclick="setTypeFilter('${escapeAttr(key)}', this)">${escapeHtml(t)}</button>`;
     }
     tabs.innerHTML = html;
 
     const select = document.getElementById('stateFilter');
     const states = [...new Set(list.map((s) => s.state).filter(Boolean))].sort();
     select.innerHTML = '<option value="">All states</option>' +
-      states.map((st) => `<option value="${escapeHtml(st.toLowerCase())}">${escapeHtml(st)}</option>`).join('');
+      states.map((st) => `<option value="${escapeAttr(st.toLowerCase())}">${escapeHtml(st)}</option>`).join('');
   }
 
   function setTypeFilter(type, btn) {
@@ -738,15 +742,17 @@
   document.getElementById('directorySearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterDirectory(); });
 
   /* ---------- views ---------- */
-  function showDirectory() {
+  function showDirectory(pushHistory = true) {
     document.getElementById('view-directory').classList.add('active');
     document.getElementById('view-profile').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetTabs();
-    history.pushState({ view: 'directory' }, '', '/Schools.html');
+    if (pushHistory) {
+      history.pushState({ view: 'directory' }, '', '/Schools');
+    }
   }
 
-  async function openProfile(slugOrId) {
+  async function openProfile(slugOrId, pushHistory = true) {
     if (!slugOrId) return;
 
     document.getElementById('view-directory').classList.remove('active');
@@ -769,10 +775,21 @@
     document.querySelector('.tab-item[data-tab="overview"]').classList.add('active');
     document.getElementById('panel-overview').classList.add('active');
 
-    history.pushState({ view: 'profile', school: slugOrId }, '', `/Schools.html?school=${encodeURIComponent(slugOrId)}`);
+    if (pushHistory) {
+      history.pushState(
+        { view: 'profile', school: slugOrId },
+        '',
+        `/Schools?school=${encodeURIComponent(slugOrId)}`
+      );
+    }
+
+    // Guard against out-of-order responses
+    const requestId = ++currentProfileRequestId;
 
     try {
       const data = await apiGet(`/api/public/schools/${encodeURIComponent(slugOrId)}`);
+      if (requestId !== currentProfileRequestId) return;
+
       const school = data.school || data;
       const courses = Array.isArray(data.courses) ? data.courses : [];
       const fees = Array.isArray(data.fees) ? data.fees : [];
@@ -782,6 +799,7 @@
       currentSchool = school;
       renderProfile({ school, courses, fees, admissions, calendar });
     } catch (err) {
+      if (requestId !== currentProfileRequestId) return;
       console.error('[profile]', err);
       document.getElementById('profileName').textContent = 'School unavailable';
       document.getElementById('overviewText').textContent = err.message;
@@ -799,23 +817,22 @@
     document.getElementById('profileName').textContent = name;
     const statusBadge = document.getElementById('profileStatus');
     if (school.verification === 'verified') {
-      statusBadge.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
+      statusBadge.innerHTML = '<i class="fas fa-circle-check" aria-hidden="true"></i> Verified';
       statusBadge.className = 'profile-badge';
     } else if (school.verification === 'pending') {
-      statusBadge.innerHTML = '<i class="fas fa-hourglass-half"></i> Verification pending';
+      statusBadge.innerHTML = '<i class="fas fa-hourglass-half" aria-hidden="true"></i> Verification pending';
       statusBadge.className = 'profile-badge warn';
     } else {
-      statusBadge.innerHTML = '<i class="fas fa-question-circle"></i> Unverified';
+      statusBadge.innerHTML = '<i class="fas fa-question-circle" aria-hidden="true"></i> Unverified';
       statusBadge.className = 'profile-badge muted';
     }
 
     document.getElementById('profileSub').innerHTML = `
-      <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(location)}</span>
+      <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(location)}</span>
       <span class="dot">●</span>
       <span>${escapeHtml(type)}</span>
     `;
 
-    // Banner: placement wins, then school record's own cover_url / logo_url
     const banner = document.getElementById('profileBanner');
     const cover = coverForSchool(school);
     if (cover) banner.style.backgroundImage = `url('${encodeURI(cover)}')`;
@@ -823,7 +840,6 @@
 
     const admBtn = document.getElementById('viewAdmissionsBtn');
     admBtn.disabled = admissions.length === 0;
-    admBtn.onclick = () => switchTab('admissions');
 
     const siteBtn = document.getElementById('profileWebsiteBtn');
     if (website) {
@@ -850,6 +866,7 @@
       document.getElementById('infoWebsiteText').textContent = website;
     } else {
       websiteLink.removeAttribute('href');
+      websiteLink.style.pointerEvents = 'none';
       document.getElementById('infoWebsiteText').textContent = 'Not available';
     }
 
@@ -860,6 +877,7 @@
       document.getElementById('infoEmail').textContent = email;
     } else {
       emailLink.removeAttribute('href');
+      emailLink.style.pointerEvents = 'none';
       document.getElementById('infoEmail').textContent = 'Not available';
     }
 
@@ -870,6 +888,7 @@
       document.getElementById('infoAddress').textContent = address;
     } else {
       addrLink.removeAttribute('href');
+      addrLink.style.pointerEvents = 'none';
       document.getElementById('infoAddress').textContent = 'Not available';
     }
 
@@ -928,8 +947,8 @@
           <div class="info-card">
             <h3>${escapeHtml(a.title || 'Admission')}</h3>
             <div class="contact-links">
-              ${app ? `<a href="${escapeHtml(app)}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Application portal</a>` : ''}
-              ${src ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Official source</a>` : ''}
+              ${app ? `<a href="${escapeHtml(app)}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt" aria-hidden="true"></i> Application portal</a>` : ''}
+              ${src ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener"><i class="fas fa-file-shield" aria-hidden="true"></i> Official source</a>` : ''}
             </div>
           </div>`;
       }).filter(Boolean).join('');
@@ -961,18 +980,18 @@
     document.getElementById('verifPublication').innerHTML = statusLabel(school.publication);
 
     const sources = [];
-    if (website) sources.push(`<a href="${escapeHtml(website)}" target="_blank" rel="noopener"><i class="fas fa-globe"></i> Official website</a>`);
+    if (website) sources.push(`<a href="${escapeHtml(website)}" target="_blank" rel="noopener"><i class="fas fa-globe" aria-hidden="true"></i> Official website</a>`);
     for (const a of admissions) {
       const s = safeUrl(a.source_url);
-      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Admission source — ${escapeHtml(a.title || '')}</a>`);
+      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield" aria-hidden="true"></i> Admission source — ${escapeHtml(a.title || '')}</a>`);
     }
     for (const ev of calendar) {
       const s = safeUrl(ev.source_url);
-      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield"></i> Calendar source — ${escapeHtml(ev.title || '')}</a>`);
+      if (s) sources.push(`<a href="${escapeHtml(s)}" target="_blank" rel="noopener"><i class="fas fa-file-shield" aria-hidden="true"></i> Calendar source — ${escapeHtml(ev.title || '')}</a>`);
     }
     document.getElementById('verifSources').innerHTML = sources.length
       ? sources.join('')
-      : '<a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle"></i> No source links published yet.</a>';
+      : '<a href="#" style="pointer-events:none;color:var(--muted);"><i class="fas fa-info-circle" aria-hidden="true"></i> No source links published yet.</a>';
   }
 
   /* ---------- tabs ---------- */
@@ -1003,12 +1022,7 @@
   }
 
   tabItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      resetTabs();
-      item.classList.add('active');
-      const key = item.dataset.tab;
-      if (tabPanels[key]) tabPanels[key].classList.add('active');
-    });
+    item.addEventListener('click', () => switchTab(item.dataset.tab));
   });
 
   /* ---------- program search ---------- */
@@ -1033,18 +1047,24 @@
 
   /* ---------- history ---------- */
   let initialised = false;
+
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
-    if (e.state && e.state.view === 'profile' && e.state.school) openProfile(e.state.school);
-    else showDirectory();
+    if (e.state && e.state.view === 'profile' && e.state.school) {
+      openProfile(e.state.school, false);
+    } else {
+      showDirectory(false);
+    }
   });
 
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    const schoolParam = params.get('school');
+    // Support both ?school= (canonical) and ?slug= (legacy from Home page)
+    const schoolParam = params.get('school') || params.get('slug');
+
     loadSchools().then(() => {
       initialised = true;
-      if (schoolParam) openProfile(schoolParam);
+      if (schoolParam) openProfile(schoolParam, false);
     });
   });
 
