@@ -94,6 +94,14 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -245,13 +253,15 @@
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
-    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px 20px;
       transition: border-color 0.15s;
     }
     .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini.attention { border-color: rgba(245,185,66,0.35); }
+    .stat-mini.attention:hover { border-color: var(--accent); }
     .stat-mini-label {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
@@ -259,10 +269,12 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-label i.muted { color: var(--muted); }
     .stat-mini-value {
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
+    .stat-mini-value.attention { color: var(--accent); }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* TOOLBAR */
@@ -352,6 +364,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
     }
+    .empty-state.success .es-icon { color: rgba(0,201,130,0.5); border-color: rgba(0,201,130,0.25); }
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
     .empty-state p {
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
@@ -362,7 +375,7 @@
     /* Data list */
     .data-list { display: flex; flex-direction: column; gap: 10px; }
     .data-row {
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: flex-start; gap: 14px;
       padding: 14px 16px;
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -370,6 +383,8 @@
       transition: border-color 0.15s;
     }
     .data-row:hover { border-color: var(--primary); }
+    .data-row.needs-fix { border-color: rgba(245,185,66,0.25); }
+    .data-row.needs-fix:hover { border-color: var(--accent); }
     .data-row-icon {
       width: 38px; height: 38px; border-radius: 9px;
       background-color: rgba(0,201,130,0.1); color: var(--primary);
@@ -377,6 +392,7 @@
       font-size: 0.9rem; flex-shrink: 0;
     }
     .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-icon.muted { background-color: rgba(155,169,161,0.1); color: var(--muted); }
     .data-row-body { flex: 1; min-width: 0; }
     .data-row-title {
       font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
@@ -387,6 +403,15 @@
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
     }
     .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-feedback {
+      margin-top: 10px; padding: 10px 12px;
+      background-color: rgba(245,185,66,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.5;
+    }
+    .data-row-feedback strong { color: var(--accent); }
     .data-row-badges { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
     .data-row-badge {
       font-size: 0.68rem; font-weight: 700;
@@ -394,10 +419,11 @@
       white-space: nowrap;
     }
     .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
-    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.sent-back { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .data-row-badge.archived { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .data-row-badge.type-badge { background-color: rgba(0,201,130,0.08); color: var(--primary); }
-    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; margin-top: 4px; }
 
     /* Add form */
     .add-inline {
@@ -597,7 +623,10 @@
         <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item active"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+        <a href="./submissions.html" class="nav-item">
+          <i class="fas fa-folder-open"></i> My Content
+          <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+        </a>
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -649,7 +678,7 @@
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-calendar"></i> Important dates &amp; events</div>
           <h1>Academic Calendar</h1>
-          <p>Organise academic dates and keep students informed.</p>
+          <p>Organise academic dates and keep students informed. Events go live the moment you save them. If the platform administrator spots a fault, they send it back for you to fix.</p>
         </div>
 
         <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
@@ -668,15 +697,20 @@
             <div class="stat-mini-value" id="statTotal">—</div>
             <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
-          <div class="stat-mini">
-            <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value" id="statPending">—</div>
-            <div class="stat-mini-sub" id="statPendingSub"></div>
+          <div class="stat-mini attention">
+            <div class="stat-mini-label">Needs fix <i class="fas fa-triangle-exclamation gold"></i></div>
+            <div class="stat-mini-value attention" id="statSentBack">—</div>
+            <div class="stat-mini-sub" id="statSentBackSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Published <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-label">Live on public site <i class="fas fa-circle-check"></i></div>
             <div class="stat-mini-value" id="statPublished">—</div>
             <div class="stat-mini-sub" id="statPublishedSub"></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Archived <i class="fas fa-archive muted"></i></div>
+            <div class="stat-mini-value" id="statArchived">—</div>
+            <div class="stat-mini-sub" id="statArchivedSub"></div>
           </div>
         </div>
 
@@ -692,14 +726,17 @@
         </div>
 
         <div class="event-tabs">
-          <button class="event-tab active" data-cat="upcoming" onclick="switchTab('upcoming', this)">
-            <i class="fas fa-calendar-days"></i> Upcoming <span class="tab-count" id="countUpcoming">—</span>
-          </button>
-          <button class="event-tab" data-cat="all" onclick="switchTab('all', this)">
+          <button class="event-tab active" data-cat="all" onclick="switchTab('all', this)">
             <i class="fas fa-list"></i> All events <span class="tab-count" id="countAll">—</span>
           </button>
-          <button class="event-tab" data-cat="drafts" onclick="switchTab('drafts', this)">
-            <i class="fas fa-file"></i> Drafts <span class="tab-count" id="countDrafts">—</span>
+          <button class="event-tab" data-cat="sent_back" onclick="switchTab('sent_back', this)">
+            <i class="fas fa-triangle-exclamation"></i> Needs fix <span class="tab-count" id="countSentBack">—</span>
+          </button>
+          <button class="event-tab" data-cat="published" onclick="switchTab('published', this)">
+            <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="countPublished">—</span>
+          </button>
+          <button class="event-tab" data-cat="archived" onclick="switchTab('archived', this)">
+            <i class="fas fa-archive"></i> Archived <span class="tab-count" id="countArchived">—</span>
           </button>
         </div>
 
@@ -769,14 +806,14 @@
           </div>
 
           <div class="form-actions">
-            <button class="btn-outline btn-sm" id="saveDraftBtn" onclick="saveDraft()">
-              <i class="fas fa-save"></i> Save draft
+            <button class="btn-primary btn-sm" id="saveEventBtn" onclick="saveEvent()">
+              <i class="fas fa-save"></i> Save &amp; publish
             </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
           <p class="form-hint" style="margin-top: 10px;">
             <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
-            New events are saved as drafts. Use "Submit for review" from the event list to send them to the platform owner.
+            Saving publishes this event immediately on your school's public page.
           </p>
         </div>
 
@@ -808,9 +845,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -853,7 +890,7 @@
       let currentUser = null;
       let currentSchool = null;
       let allEvents = [];
-      let activeTab = 'upcoming';
+      let activeTab = 'all';
       let selectedType = 'resumption';
       // 'ok' | 'unassigned' | 'orphaned'
       let schoolState = 'unassigned';
@@ -877,6 +914,15 @@
         holiday: 'fa-umbrella-beach',
         event: 'fa-star',
       }[type] || 'fa-calendar');
+
+      const typeLabel = (type) => ({
+        resumption: 'Resumption',
+        registration: 'Registration',
+        lectures: 'Lectures',
+        examination: 'Examination',
+        holiday: 'Holiday',
+        event: 'Special event',
+      }[type] || type || 'Event');
 
       function redirectToLogin(reason) {
         try {
@@ -927,13 +973,6 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderSchool
-       * ------------
-       * - 'ok'         → hide the scope banner entirely; sidebar shows school name.
-       * - 'unassigned' → show yellow scope banner with guidance.
-       * - 'orphaned'   → show red scope banner with reference id.
-       */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
         const banner = document.getElementById('scopeBanner');
@@ -970,35 +1009,51 @@
         if (addBtn) addBtn.disabled = false;
       }
 
+      /* ----- CLASSIFY ----- */
+      function classify(e) {
+        if (e.status === 'archived') return 'archived';
+        if (e.status === 'published') return 'published';
+        if (e.status === 'draft' && e.review_comment) return 'sent_back';
+        return 'draft';
+      }
+
       /* ----- STATS ----- */
       function updateStats() {
         const total = allEvents.length;
-        const pending = allEvents.filter(e => e.status === 'pending').length;
-        const published = allEvents.filter(e => e.status === 'published').length;
-        const drafts = allEvents.filter(e => e.status === 'draft').length;
+        const sentBack = allEvents.filter(e => classify(e) === 'sent_back').length;
+        const published = allEvents.filter(e => classify(e) === 'published').length;
+        const archived = allEvents.filter(e => classify(e) === 'archived').length;
 
         document.getElementById('statTotal').textContent = String(total);
-        document.getElementById('statTotalSub').textContent =
-          drafts > 0 ? drafts + ' draft' + (drafts === 1 ? '' : 's') : '';
+        document.getElementById('statTotalSub').textContent = total > 0 ? 'For your institution' : '';
 
-        document.getElementById('statPending').textContent = String(pending);
-        document.getElementById('statPendingSub').textContent =
-          pending > 0 ? 'Submitted changes' : '';
+        document.getElementById('statSentBack').textContent = String(sentBack);
+        document.getElementById('statSentBackSub').textContent =
+          sentBack > 0 ? 'Fix and re-save to republish' : '';
 
         document.getElementById('statPublished').textContent = String(published);
         document.getElementById('statPublishedSub').textContent =
           published > 0 ? 'Visible publicly' : '';
 
-        const today = new Date(); today.setHours(0,0,0,0);
-        const upcoming = allEvents.filter(e => {
-          if (e.status !== 'published') return false;
-          const end = e.end_date ? new Date(e.end_date) : new Date(e.start_date);
-          return end >= today;
-        }).length;
+        document.getElementById('statArchived').textContent = String(archived);
+        document.getElementById('statArchivedSub').textContent =
+          archived > 0 ? 'Hidden from public site' : '';
 
-        document.getElementById('countUpcoming').textContent = String(upcoming);
         document.getElementById('countAll').textContent = String(total);
-        document.getElementById('countDrafts').textContent = String(drafts);
+        document.getElementById('countSentBack').textContent = String(sentBack);
+        document.getElementById('countPublished').textContent = String(published);
+        document.getElementById('countArchived').textContent = String(archived);
+
+        // Sidebar badge
+        const badge = document.getElementById('myContentBadge');
+        if (badge) {
+          if (sentBack > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = String(sentBack);
+          } else {
+            badge.style.display = 'none';
+          }
+        }
       }
 
       /* ----- SESSION FILTER ----- */
@@ -1025,14 +1080,12 @@
       };
 
       /* ----- RENDER ----- */
-      function statusBadge(status) {
-        const map = {
-          draft: { cls: 'draft', label: 'Draft' },
-          pending: { cls: 'pending', label: 'Pending review' },
-          published: { cls: 'published', label: 'Published' },
-        };
-        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
-        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      function statusBadge(e) {
+        const cat = classify(e);
+        if (cat === 'sent_back') return '<span class="data-row-badge sent-back">Needs fix</span>';
+        if (cat === 'published') return '<span class="data-row-badge published">Published</span>';
+        if (cat === 'archived') return '<span class="data-row-badge archived">Archived</span>';
+        return '<span class="data-row-badge draft">Draft</span>';
       }
 
       function renderEvents() {
@@ -1048,41 +1101,53 @@
         let list = allEvents.slice();
         if (session !== 'all') list = list.filter(e => e.session === session);
 
-        if (activeTab === 'upcoming') {
-          list = list.filter(e => {
-            if (e.status !== 'published') return false;
-            const end = e.end_date ? new Date(e.end_date) : new Date(e.start_date);
-            return end >= today;
-          });
-          list.sort((a, b) => (a.start_date || '').localeCompare(b.start_date || ''));
-        } else if (activeTab === 'drafts') {
-          list = list.filter(e => e.status === 'draft');
-          list.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
-        } else {
-          list.sort((a, b) => {
-            const sa = a.start_date || '';
-            const sb = b.start_date || '';
-            return sb.localeCompare(sa);
-          });
-        }
+        if (activeTab === 'sent_back') list = list.filter(e => classify(e) === 'sent_back');
+        else if (activeTab === 'published') list = list.filter(e => classify(e) === 'published');
+        else if (activeTab === 'archived') list = list.filter(e => classify(e) === 'archived');
+
+        // Sort: sent-back first, then by start_date desc for All, asc for upcoming feel
+        list.sort((a, b) => {
+          const ca = classify(a), cb = classify(b);
+          if (ca === 'sent_back' && cb !== 'sent_back') return -1;
+          if (cb === 'sent_back' && ca !== 'sent_back') return 1;
+          if (activeTab === 'all') {
+            return (b.start_date || '').localeCompare(a.start_date || '');
+          }
+          return (a.start_date || '').localeCompare(b.start_date || '');
+        });
 
         if (!list.length) {
           const hasAny = allEvents.length > 0;
-          el.innerHTML = '<div class="empty-state">' +
-            '<div class="es-icon"><i class="fas fa-calendar"></i></div>' +
-            '<h3>' + (hasAny ? 'No events in this tab' : 'No calendar events yet') + '</h3>' +
-            '<p>' + (hasAny
-              ? 'Try a different tab or session filter.'
-              : 'Add your first calendar event to publish academic dates on your school\'s public profile.') + '</p>' +
-            (hasAny ? '' :
+          let emptyHtml;
+
+          if (!hasAny) {
+            emptyHtml =
+              '<div class="es-icon"><i class="fas fa-calendar"></i></div>' +
+              '<h3>No calendar events yet</h3>' +
+              '<p>Add your first calendar event to publish academic dates on your school\'s public profile. Events go live the moment you save them.</p>' +
               '<div class="empty-actions">' +
               '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Add first calendar event</button>' +
-              '</div>') +
-            '</div>';
+              '</div>';
+          } else if (activeTab === 'sent_back') {
+            emptyHtml =
+              '<div class="es-icon" style="color:rgba(0,201,130,0.5);border-color:rgba(0,201,130,0.25);"><i class="fas fa-circle-check"></i></div>' +
+              '<h3>Nothing needs fixing</h3>' +
+              '<p>Great — no calendar events have been sent back for changes.</p>';
+          } else {
+            emptyHtml =
+              '<div class="es-icon"><i class="fas fa-inbox"></i></div>' +
+              '<h3>No events in this view</h3>' +
+              '<p>Try a different tab or session filter.</p>';
+          }
+
+          el.innerHTML = '<div class="empty-state' + (activeTab === 'sent_back' ? ' success' : '') + '">' + emptyHtml + '</div>';
           return;
         }
 
         el.innerHTML = '<div class="data-list">' + list.map(e => {
+          const cat = classify(e);
+          const isSentBack = cat === 'sent_back';
+
           const dateRange = [];
           if (e.start_date) {
             dateRange.push(esc(e.start_date));
@@ -1094,33 +1159,35 @@
           if (dateRange.length) meta.push(dateRange.join(' '));
           const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '<span>—</span>';
 
-          const isDraft = e.status === 'draft';
-          const isPending = e.status === 'pending';
+          const feedbackHtml = e.review_comment
+            ? '<div class="data-row-feedback"><strong>Admin note:</strong> ' + esc(e.review_comment) + '</div>'
+            : '';
+
           const actions = [];
-          if (isDraft) {
-            actions.push('<button class="btn-outline btn-sm" onclick="submitEvent(\'' + esc(e.id) + '\')">' +
-              '<i class="fas fa-paper-plane"></i> Submit for review</button>');
-            actions.push('<button class="btn-danger btn-sm" onclick="deleteEvent(\'' + esc(e.id) + '\')">' +
-              '<i class="fas fa-trash"></i> Delete</button>');
-          } else if (isPending) {
-            actions.push('<button class="btn-outline btn-sm" onclick="withdrawEvent(\'' + esc(e.id) + '\')">' +
-              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
+
+          if (isSentBack) {
+            actions.push('<button class="btn-primary btn-sm" onclick="editEvent(\'' + esc(e.id) + '\')">' +
+              '<i class="fas fa-pen"></i> Fix &amp; re-publish</button>');
           }
 
-          const typeLabel = (e.type || 'event').replace(/_/g, ' ');
-          const typeLabelCap = typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1);
+          if (cat !== 'published') {
+            actions.push('<button class="btn-danger btn-sm" onclick="deleteEvent(\'' + esc(e.id) + '\', \'' +
+              esc((e.title || '').replace(/'/g, "\\'")) + '\')">' +
+              '<i class="fas fa-trash"></i> Delete</button>');
+          }
 
-          return '<div class="data-row">' +
-            '<div class="data-row-icon ' + (isPending ? 'gold' : '') + '">' +
+          return '<div class="data-row' + (isSentBack ? ' needs-fix' : '') + '">' +
+            '<div class="data-row-icon ' + (isSentBack ? 'gold' : cat === 'archived' ? 'muted' : '') + '">' +
               '<i class="fas ' + typeIcon(e.type) + '"></i>' +
             '</div>' +
             '<div class="data-row-body">' +
               '<div class="data-row-title">' + esc(e.title || 'Untitled event') + '</div>' +
               '<div class="data-row-meta">' + metaHtml + '</div>' +
+              feedbackHtml +
             '</div>' +
             '<div class="data-row-badges">' +
-              '<span class="data-row-badge type-badge">' + esc(typeLabelCap) + '</span>' +
-              statusBadge(e.status) +
+              '<span class="data-row-badge type-badge">' + esc(typeLabel(e.type)) + '</span>' +
+              statusBadge(e) +
             '</div>' +
             (actions.length ? '<div class="data-row-actions">' + actions.join('') + '</div>' : '') +
           '</div>';
@@ -1132,8 +1199,7 @@
         if (schoolState !== 'ok' || !currentSchool) {
           allEvents = [];
           updateStats(); renderEvents();
-          document.getElementById('eventListDesc').textContent =
-            'No institution available.';
+          document.getElementById('eventListDesc').textContent = 'No institution available.';
           return;
         }
         try {
@@ -1213,19 +1279,19 @@
         toggleAddForm();
       }
 
-      window.saveDraft = async function() {
+      window.saveEvent = async function() {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const payload = validateForm();
         if (!payload) return;
 
-        const btn = document.getElementById('saveDraftBtn');
+        const btn = document.getElementById('saveEventBtn');
         btn.disabled = true;
         try {
           await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/calendar', {
             method: 'POST',
             body: JSON.stringify(payload),
           });
-          toast('Calendar event saved as draft.');
+          toast('Calendar event published.');
           resetForm();
           await loadEvents();
         } catch (err) {
@@ -1235,37 +1301,50 @@
         }
       };
 
-      /* ----- SUBMIT / WITHDRAW / DELETE ----- */
-      window.submitEvent = async function(id) {
-        const ev = allEvents.find(x => String(x.id) === String(id));
-        if (!ev) return;
-        if (!ev.source_url) {
-          toast('An official source URL is required before submission.', true);
+      /**
+       * editEvent
+       * ---------
+       * "Fix & re-publish" for a sent-back event. Prompts for the corrected
+       * title + dates + source URL, then PATCHes. Server flips to published.
+       */
+      window.editEvent = async function(id) {
+        const e = allEvents.find(x => String(x.id) === String(id));
+        if (!e) return;
+
+        const newTitle = prompt('Event title:', e.title || '');
+        if (newTitle == null) return;
+        if (!newTitle.trim()) { toast('Title is required.', true); return; }
+
+        const newStart = prompt('Start date (YYYY-MM-DD):', e.start_date || '');
+        if (newStart == null) return;
+        if (!newStart.trim()) { toast('Start date is required.', true); return; }
+
+        const newSource = prompt('Official source URL:', e.source_url || '');
+        if (newSource == null) return;
+        if (!/^https?:\/\//i.test(newSource.trim())) {
+          toast('Source URL must be a valid http(s) URL.', true);
           return;
         }
-        if (!confirm('Submit this calendar event for review?\n\nApproved events become visible on the public school profile.')) return;
+
         try {
-          await api('/api/school/submissions/calendar/' + encodeURIComponent(id) + '/submit', { method: 'POST' });
-          toast('Calendar event submitted for review.');
+          await api('/api/calendar/' + encodeURIComponent(id), {
+            method: 'PATCH',
+            body: JSON.stringify({
+              title: newTitle.trim(),
+              start_date: newStart.trim(),
+              source_url: newSource.trim(),
+            }),
+          });
+          toast('Event re-published.');
           await loadEvents();
         } catch (err) {
           toast(err.message, true);
         }
       };
 
-      window.withdrawEvent = async function(id) {
-        if (!confirm('Withdraw this submission and return it to draft?')) return;
-        try {
-          await api('/api/school/submissions/calendar/' + encodeURIComponent(id) + '/withdraw', { method: 'POST' });
-          toast('Submission withdrawn.');
-          await loadEvents();
-        } catch (err) {
-          toast(err.message, true);
-        }
-      };
-
-      window.deleteEvent = async function(id) {
-        if (!confirm('Delete this calendar event? This cannot be undone.')) return;
+      /* ----- DELETE ----- */
+      window.deleteEvent = async function(id, title) {
+        if (!confirm('Delete "' + (title || 'this event') + '"?\n\nThis cannot be undone.')) return;
         try {
           await api('/api/calendar/' + encodeURIComponent(id), { method: 'DELETE' });
           toast('Calendar event deleted.');
@@ -1360,7 +1439,6 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());

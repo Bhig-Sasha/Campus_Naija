@@ -97,6 +97,14 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -256,6 +264,8 @@
       transition: border-color 0.15s;
     }
     .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini.attention { border-color: rgba(245,185,66,0.35); }
+    .stat-mini.attention:hover { border-color: var(--accent); }
     .stat-mini-label {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
@@ -267,6 +277,7 @@
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
+    .stat-mini-value.attention { color: var(--accent); }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* DASHBOARD GRID */
@@ -285,48 +296,82 @@
     }
     .panel-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
+    .panel-title.attention i { color: var(--accent); }
     .panel-link {
       font-size: 0.8rem; font-weight: 600; color: var(--primary);
       display: inline-flex; align-items: center; gap: 6px;
     }
     .panel-link:hover { text-decoration: underline; }
 
-    /* SUBMISSIONS */
-    .submissions-list { display: flex; flex-direction: column; gap: 10px; }
-    .submission-item {
-      display: flex; align-items: center; gap: 14px;
+    /* LIST ITEMS (shared by attention + activity panels) */
+    .dash-list { display: flex; flex-direction: column; gap: 10px; }
+    .dash-item {
+      display: flex; align-items: flex-start; gap: 14px;
       padding: 14px 16px;
       background-color: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      transition: border-color 0.15s, transform 0.15s;
+      transition: border-color 0.15s;
     }
-    .submission-item:hover { border-color: var(--primary); transform: translateX(2px); }
-    .submission-icon {
+    .dash-item:hover { border-color: var(--primary); }
+    .dash-item.attention { border-color: rgba(245,185,66,0.25); }
+    .dash-item.attention:hover { border-color: var(--accent); }
+    .dash-icon {
       width: 36px; height: 36px; border-radius: 9px;
-      background-color: rgba(245,185,66,0.1); color: var(--accent);
+      background-color: rgba(0,201,130,0.1); color: var(--primary);
       display: flex; align-items: center; justify-content: center;
       font-size: 0.9rem; flex-shrink: 0;
     }
-    .submission-icon.green { background-color: rgba(0,201,130,0.1); color: var(--primary); }
-    .submission-body { flex: 1; min-width: 0; }
-    .submission-title {
+    .dash-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .dash-body { flex: 1; min-width: 0; }
+    .dash-title {
       font-size: 0.88rem; font-weight: 700; margin-bottom: 2px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .submission-meta { font-size: 0.72rem; color: var(--muted); }
-    .submission-status {
-      font-size: 0.68rem; font-weight: 700;
-      padding: 3px 10px; border-radius: 40px;
-      white-space: nowrap;
+    .dash-meta {
+      font-size: 0.72rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
     }
-    .submission-status.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .submission-status.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .dash-meta .dot { font-size: 0.4rem; }
+    .dash-type-tag {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted);
+      background-color: var(--elevated); padding: 1px 6px;
+      border-radius: 40px; white-space: nowrap;
+    }
+    .dash-note {
+      margin-top: 8px; padding: 8px 10px;
+      background-color: rgba(245,185,66,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.75rem; color: var(--muted);
+      line-height: 1.45;
+    }
+    .dash-note strong { color: var(--accent); }
+    .dash-action {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--primary);
+      padding: 4px 10px; border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .dash-action:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.05); }
+    .dash-status {
+      font-size: 0.65rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 40px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .dash-status.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .dash-status.archived { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .dash-status.draft { background-color: rgba(245,185,66,0.12); color: var(--accent); }
 
     .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
     .empty-state i { font-size: 2rem; color: var(--border); margin-bottom: 12px; display: inline-block; }
     .empty-state h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; }
+    .empty-state.success i { color: rgba(0,201,130,0.5); }
 
     /* QUICK ACTIONS */
     .quick-actions { display: flex; flex-direction: column; gap: 10px; }
@@ -486,7 +531,10 @@
           <a href="../SchoolAd/admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
           <a href="../SchoolAd/calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
           <a href="../SchoolAd/media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-          <a href="../SchoolAd/submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+          <a href="../SchoolAd/submissions.html" class="nav-item" id="myContentNavItem">
+            <i class="fas fa-folder-open"></i> My Content
+            <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+          </a>
           <a href="../SchoolAd/profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -551,37 +599,37 @@
 
         <div class="stats-row">
           <div class="stat-mini">
-            <div class="stat-mini-label">Courses &amp; programmes <i class="fas fa-book-open"></i></div>
-            <div class="stat-mini-value" id="statCourses">—</div>
-            <div class="stat-mini-sub" id="statCoursesSub"></div>
+            <div class="stat-mini-label">Total content <i class="fas fa-layer-group"></i></div>
+            <div class="stat-mini-value" id="statTotal">—</div>
+            <div class="stat-mini-sub" id="statTotalSub"></div>
+          </div>
+          <div class="stat-mini attention">
+            <div class="stat-mini-label">Sent back for fixes <i class="fas fa-triangle-exclamation gold"></i></div>
+            <div class="stat-mini-value attention" id="statSentBack">—</div>
+            <div class="stat-mini-sub" id="statSentBackSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Pending review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value" id="statPending">—</div>
-            <div class="stat-mini-sub" id="statPendingSub"></div>
+            <div class="stat-mini-label">Live on public site <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value" id="statPublished">—</div>
+            <div class="stat-mini-sub" id="statPublishedSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Admission notices <i class="fas fa-clipboard-list"></i></div>
-            <div class="stat-mini-value" id="statAdmissions">—</div>
-            <div class="stat-mini-sub" id="statAdmissionsSub"></div>
-          </div>
-          <div class="stat-mini">
-            <div class="stat-mini-label">Approved updates <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value" id="statApproved">—</div>
-            <div class="stat-mini-sub" id="statApprovedSub"></div>
+            <div class="stat-mini-label">Media assets <i class="fas fa-photo-film"></i></div>
+            <div class="stat-mini-value" id="statMedia">—</div>
+            <div class="stat-mini-sub" id="statMediaSub"></div>
           </div>
         </div>
 
         <div class="dashboard-grid">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Recent submissions</div>
-              <a href="./submissions.html" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
+              <div class="panel-title attention"><i class="fas fa-triangle-exclamation"></i> Needs your attention</div>
+              <a href="./submissions.html?filter=sent_back" class="panel-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div id="submissionsList">
+            <div id="attentionList">
               <div class="empty-state">
                 <i class="fas fa-circle-notch fa-spin"></i>
-                <h3>Loading submissions…</h3>
+                <h3>Loading…</h3>
               </div>
             </div>
           </div>
@@ -615,14 +663,27 @@
                 </div>
                 <i class="fas fa-chevron-right quick-action-arrow"></i>
               </a>
-              <a href="./submissions.html" class="quick-action">
-                <div class="quick-action-icon gold"><i class="fas fa-list-check"></i></div>
+              <a href="./media.html" class="quick-action">
+                <div class="quick-action-icon gold"><i class="fas fa-photo-film"></i></div>
                 <div class="quick-action-text">
-                  <div class="quick-action-title">Track reviews</div>
-                  <div class="quick-action-desc">Approval progress</div>
+                  <div class="quick-action-title">Media library</div>
+                  <div class="quick-action-desc">Logos, photos and PDFs</div>
                 </div>
                 <i class="fas fa-chevron-right quick-action-arrow"></i>
               </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom: 28px;">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent activity</div>
+            <a href="./submissions.html" class="panel-link">View all content <i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div id="activityList">
+            <div class="empty-state">
+              <i class="fas fa-circle-notch fa-spin"></i>
+              <h3>Loading…</h3>
             </div>
           </div>
         </div>
@@ -644,9 +705,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -689,6 +750,7 @@
       let token = null;
       let currentUser = null;
       let currentSchool = null;
+      let allContent = [];
       // 'ok' | 'unassigned' | 'orphaned'
       let schoolState = 'unassigned';
 
@@ -717,6 +779,27 @@
         if (days < 30) return days + 'd ago';
         return new Date(iso).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' });
       };
+
+      const typeIcon = (type) => ({
+        course: 'fa-book',
+        fee: 'fa-money-bill',
+        admission: 'fa-clipboard-list',
+        calendar: 'fa-calendar',
+      }[type] || 'fa-file');
+
+      const typeLabel = (type) => ({
+        course: 'Course',
+        fee: 'Fee',
+        admission: 'Admission',
+        calendar: 'Calendar',
+      }[type] || type || 'Record');
+
+      const typePage = (type) => ({
+        course: './courses.html',
+        fee: './fees.html',
+        admission: './admissions.html',
+        calendar: './calendar.html',
+      }[type] || './submissions.html');
 
       function redirectToLogin(reason) {
         try {
@@ -815,9 +898,82 @@
           '<span>' + esc(type) + '</span>';
       }
 
-      async function loadStats() {
-        const valIds = ['statCourses', 'statPending', 'statAdmissions', 'statApproved'];
-        const subIds = ['statCoursesSub', 'statPendingSub', 'statAdmissionsSub', 'statApprovedSub'];
+      /**
+       * fetchAllContent
+       * ---------------
+       * Pulls the four content types from their respective school-scoped
+       * endpoints in parallel. Each item gets normalised to a common shape
+       * so the dashboard can reason over them uniformly. The `has_comment`
+       * flag is what tells us a draft was "sent back" by an admin versus
+       * one the rep just hasn't touched.
+       */
+      async function fetchAllContent() {
+        if (schoolState !== 'ok' || !currentSchool) return [];
+        const [courses, fees, admissions, events] = await Promise.all([
+          api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses').catch(() => ({ courses: [] })),
+          api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees').catch(() => ({ fees: [] })),
+          api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions').catch(() => ({ admissions: [] })),
+          api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/events').catch(() => ({ events: [] })),
+        ]);
+
+        const list = [];
+
+        for (const c of (courses.courses || [])) {
+          list.push({
+            type: 'course',
+            id: c.id,
+            label: c.name || 'Untitled course',
+            status: c.status || 'published',
+            updated_at: c.updated_at || c.created_at,
+            review_comment: c.review_comment || null,
+          });
+        }
+        for (const f of (fees.fees || [])) {
+          const lbl = 'Fee — ' + (f.session || '—') + ' · ' + (f.category || 'fee');
+          list.push({
+            type: 'fee',
+            id: f.id,
+            label: lbl,
+            status: f.status || 'published',
+            updated_at: f.updated_at || f.created_at,
+            review_comment: f.review_comment || null,
+          });
+        }
+        for (const a of (admissions.admissions || [])) {
+          list.push({
+            type: 'admission',
+            id: a.id,
+            label: a.title || 'Untitled notice',
+            status: a.status || 'published',
+            updated_at: a.updated_at || a.created_at,
+            review_comment: a.review_comment || null,
+          });
+        }
+        for (const e of (events.events || [])) {
+          list.push({
+            type: 'calendar',
+            id: e.id,
+            label: e.title || 'Untitled event',
+            status: e.status || 'published',
+            updated_at: e.updated_at || e.created_at,
+            review_comment: e.review_comment || null,
+          });
+        }
+
+        return list;
+      }
+
+      /**
+       * loadStats
+       * ---------
+       * Counts derive from the fetched content list rather than the summary
+       * endpoint, because the summary endpoint's *_sent_back semantics require
+       * the same "draft AND has an admin comment" check we do client-side.
+       * This keeps the dashboard self-consistent.
+       */
+      function loadStats() {
+        const valIds = ['statTotal', 'statSentBack', 'statPublished', 'statMedia'];
+        const subIds = ['statTotalSub', 'statSentBackSub', 'statPublishedSub', 'statMediaSub'];
 
         if (schoolState !== 'ok' || !currentSchool) {
           valIds.forEach(id => { document.getElementById(id).textContent = '—'; });
@@ -825,84 +981,147 @@
           return;
         }
 
-        try {
-          const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/summary');
-          const c = data.counts || {};
+        const total = allContent.length;
+        const sentBack = allContent.filter(i =>
+          i.status === 'draft' && i.review_comment
+        ).length;
+        const published = allContent.filter(i => i.status === 'published').length;
+        const archived = allContent.filter(i => i.status === 'archived').length;
 
-          const courses = Number(c.courses) || 0;
-          const coursesPending = Number(c.courses_pending) || 0;
-          document.getElementById('statCourses').textContent = courses;
-          document.getElementById('statCoursesSub').textContent =
-            coursesPending > 0 ? coursesPending + ' pending review' : '';
+        document.getElementById('statTotal').textContent = String(total);
+        document.getElementById('statTotalSub').textContent =
+          archived > 0 ? archived + ' archived' : '';
 
-          const feesPending = Number(c.fees_pending) || 0;
-          const admPending = Number(c.admissions_pending) || 0;
-          const calPending = Number(c.calendar_pending) || 0;
-          const totalPending = coursesPending + feesPending + admPending + calPending;
-          document.getElementById('statPending').textContent = totalPending;
-          document.getElementById('statPendingSub').textContent =
-            totalPending > 0 ? 'Across all content types' : '';
+        document.getElementById('statSentBack').textContent = String(sentBack);
+        document.getElementById('statSentBackSub').textContent =
+          sentBack > 0 ? 'Fix and re-save to republish' : '';
 
-          const admissions = Number(c.admissions) || 0;
-          document.getElementById('statAdmissions').textContent = admissions;
-          document.getElementById('statAdmissionsSub').textContent =
-            admPending > 0 ? admPending + ' pending review' : '';
+        document.getElementById('statPublished').textContent = String(published);
+        document.getElementById('statPublishedSub').textContent =
+          published > 0 ? 'Visible on public site' : '';
 
-          const feesTotal = Number(c.fees) || 0;
-          const admTotal = Number(c.admissions) || 0;
-          const calTotal = Number(c.calendar) || 0;
-          const approvedTotal = (feesTotal - feesPending) + (admTotal - admPending) + (calTotal - calPending);
-          document.getElementById('statApproved').textContent = Math.max(0, approvedTotal);
-          document.getElementById('statApprovedSub').textContent =
-            approvedTotal > 0 ? 'Approved and live' : '';
-        } catch (err) {
-          valIds.forEach(id => { document.getElementById(id).textContent = '—'; });
-          subIds.forEach(id => { document.getElementById(id).textContent = ''; });
-          console.error('[stats]', err);
+        // Media count comes from the summary endpoint (existing contract).
+        api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/summary')
+          .then(data => {
+            const c = data.counts || {};
+            const m = Number(c.media) || 0;
+            document.getElementById('statMedia').textContent = String(m);
+            document.getElementById('statMediaSub').textContent =
+              m > 0 ? 'In your library' : '';
+          })
+          .catch(() => {
+            document.getElementById('statMedia').textContent = '—';
+            document.getElementById('statMediaSub').textContent = '';
+          });
+
+        // Sidebar badge for "My Content" — count of sent-back items.
+        const badge = document.getElementById('myContentBadge');
+        if (badge) {
+          if (sentBack > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = String(sentBack);
+          } else {
+            badge.style.display = 'none';
+          }
         }
       }
 
-      async function loadSubmissions() {
-        const el = document.getElementById('submissionsList');
-
+      /* ----- ATTENTION PANEL ----- */
+      function renderAttention() {
+        const el = document.getElementById('attentionList');
         if (schoolState !== 'ok' || !currentSchool) {
           el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
           return;
         }
 
-        try {
-          const data = await api('/api/school/submissions');
-          const items = (data.submissions || []).slice(0, 5);
+        const sentBack = allContent
+          .filter(i => i.status === 'draft' && i.review_comment)
+          .sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''))
+          .slice(0, 5);
 
-          if (!items.length) {
-            el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>No submissions yet</h3><p>When you submit content for review, it will show up here.</p><a href="./courses.html" style="display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:8px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--radius-btn);font-size:0.85rem;font-weight:600;">Create your first submission</a></div>';
-            return;
-          }
-
-          const iconFor = (type) => ({
-            course: { icon: 'fa-book', cls: '' },
-            fee: { icon: 'fa-money-bill', cls: 'green' },
-            admission: { icon: 'fa-clipboard-list', cls: '' },
-            calendar: { icon: 'fa-calendar', cls: 'green' },
-          }[type] || { icon: 'fa-file', cls: '' });
-
-          el.innerHTML = '<div class="submissions-list">' + items.map((item) => {
-            const ic = iconFor(item.type);
-            const status = item.status === 'pending' ? 'Pending' : 'Draft';
-            const statusCls = item.status === 'pending' ? 'pending' : 'draft';
-            const label = item.label || ('#' + item.id);
-            return '<div class="submission-item">' +
-              '<div class="submission-icon ' + ic.cls + '"><i class="fas ' + ic.icon + '"></i></div>' +
-              '<div class="submission-body">' +
-                '<div class="submission-title">' + esc(label) + '</div>' +
-                '<div class="submission-meta">' + esc(item.type) + ' · updated ' + esc(timeAgo(item.updated_at)) + '</div>' +
-              '</div>' +
-              '<span class="submission-status ' + statusCls + '">' + status + '</span>' +
+        if (!sentBack.length) {
+          el.innerHTML =
+            '<div class="empty-state success">' +
+            '<i class="fas fa-circle-check"></i>' +
+            '<h3>You\'re all caught up</h3>' +
+            '<p>No content has been sent back for changes. Anything you publish goes live immediately.</p>' +
             '</div>';
-          }).join('') + '</div>';
-        } catch (err) {
-          el.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Could not load submissions</h3><p>' + esc(err.message) + '</p></div>';
+          return;
         }
+
+        el.innerHTML = '<div class="dash-list">' + sentBack.map(i => {
+          return '<div class="dash-item attention">' +
+            '<div class="dash-icon gold"><i class="fas ' + typeIcon(i.type) + '"></i></div>' +
+            '<div class="dash-body">' +
+              '<div class="dash-title">' + esc(i.label) + ' <span class="dash-type-tag">' + esc(typeLabel(i.type)) + '</span></div>' +
+              '<div class="dash-meta">Sent back ' + esc(timeAgo(i.updated_at)) + '</div>' +
+              '<div class="dash-note"><strong>Admin note:</strong> ' + esc(i.review_comment) + '</div>' +
+              '<a href="' + esc(typePage(i.type)) + '" class="dash-action"><i class="fas fa-pen"></i> Fix on ' + esc(typeLabel(i.type)) + ' page</a>' +
+            '</div>' +
+            '<span class="dash-status draft">Needs fix</span>' +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      /* ----- ACTIVITY PANEL ----- */
+      function renderActivity() {
+        const el = document.getElementById('activityList');
+        if (schoolState !== 'ok' || !currentSchool) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          return;
+        }
+
+        const recent = allContent
+          .slice()
+          .sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''))
+          .slice(0, 6);
+
+        if (!recent.length) {
+          el.innerHTML =
+            '<div class="empty-state">' +
+            '<i class="fas fa-folder-open"></i>' +
+            '<h3>No content yet</h3>' +
+            '<p>Add your first course, fee, admission notice or calendar event to get started.</p>' +
+            '<a href="./courses.html" style="display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:8px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--radius-btn);font-size:0.85rem;font-weight:600;"><i class="fas fa-plus"></i> Add your first course</a>' +
+            '</div>';
+          return;
+        }
+
+        el.innerHTML = '<div class="dash-list">' + recent.map(i => {
+          let badgeCls = 'published';
+          let badgeLabel = 'Published';
+          if (i.status === 'archived') { badgeCls = 'archived'; badgeLabel = 'Archived'; }
+          else if (i.status === 'draft' && i.review_comment) { badgeCls = 'draft'; badgeLabel = 'Needs fix'; }
+          else if (i.status === 'draft') { badgeCls = 'draft'; badgeLabel = 'Draft'; }
+
+          return '<div class="dash-item">' +
+            '<div class="dash-icon"><i class="fas ' + typeIcon(i.type) + '"></i></div>' +
+            '<div class="dash-body">' +
+              '<div class="dash-title">' + esc(i.label) + ' <span class="dash-type-tag">' + esc(typeLabel(i.type)) + '</span></div>' +
+              '<div class="dash-meta">Updated ' + esc(timeAgo(i.updated_at)) + '</div>' +
+            '</div>' +
+            '<span class="dash-status ' + badgeCls + '">' + esc(badgeLabel) + '</span>' +
+          '</div>';
+        }).join('') + '</div>';
+      }
+
+      async function loadDashboard() {
+        if (schoolState !== 'ok' || !currentSchool) {
+          allContent = [];
+          loadStats();
+          renderAttention();
+          renderActivity();
+          return;
+        }
+        try {
+          allContent = await fetchAllContent();
+        } catch (err) {
+          console.error('[dashboard]', err);
+          allContent = [];
+        }
+        loadStats();
+        renderAttention();
+        renderActivity();
       }
 
       async function verifySession() {
@@ -992,7 +1211,6 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());
@@ -1006,7 +1224,7 @@
         await loadSchool();
         renderSchool();
 
-        await Promise.allSettled([loadStats(), loadSubmissions()]);
+        await loadDashboard();
       })();
 
     })();

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>CampusNaija — My Submissions</title>
+  <title>CampusNaija — My Content</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -93,6 +93,14 @@
       content: ''; position: absolute; left: 0; top: 50%;
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
+    }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
     }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
@@ -252,6 +260,8 @@
       transition: border-color 0.15s;
     }
     .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini.attention { border-color: rgba(245,185,66,0.35); }
+    .stat-mini.attention:hover { border-color: var(--accent); }
     .stat-mini-label {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
@@ -259,11 +269,12 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
-    .stat-mini-label i.red { color: var(--danger); }
+    .stat-mini-label i.muted { color: var(--muted); }
     .stat-mini-value {
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
+    .stat-mini-value.attention { color: var(--accent); }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* TOOLBAR */
@@ -327,6 +338,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
     }
+    .empty-state.success .es-icon { color: rgba(0,201,130,0.5); border-color: rgba(0,201,130,0.25); }
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
     .empty-state p {
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
@@ -334,7 +346,7 @@
     }
     .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* Submission list */
+    /* Content list */
     .sub-list { display: flex; flex-direction: column; gap: 10px; }
     .sub-row {
       display: flex; align-items: flex-start; gap: 14px;
@@ -345,6 +357,8 @@
       transition: border-color 0.15s;
     }
     .sub-row:hover { border-color: var(--primary); }
+    .sub-row.needs-fix { border-color: rgba(245,185,66,0.25); }
+    .sub-row.needs-fix:hover { border-color: var(--accent); }
     .sub-icon {
       width: 38px; height: 38px; border-radius: 9px;
       background-color: rgba(0,201,130,0.1); color: var(--primary);
@@ -352,7 +366,7 @@
       font-size: 0.9rem; flex-shrink: 0;
     }
     .sub-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
-    .sub-icon.red { background-color: rgba(224,112,112,0.1); color: var(--danger); }
+    .sub-icon.muted { background-color: rgba(155,169,161,0.1); color: var(--muted); }
     .sub-body { flex: 1; min-width: 0; }
     .sub-title {
       font-size: 0.9rem; font-weight: 700; margin-bottom: 3px;
@@ -389,10 +403,9 @@
       white-space: nowrap;
     }
     .sub-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
-    .sub-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .sub-badge.approved { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .sub-badge.sent-back { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .sub-badge.published { background-color: rgba(0,201,130,0.15); color: var(--primary); }
-    .sub-badge.changes { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .sub-badge.archived { background-color: rgba(155,169,161,0.12); color: var(--muted); }
     .sub-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; margin-top: 4px; }
 
     .btn-primary {
@@ -411,6 +424,14 @@
       transition: all 0.15s;
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger {
+      background-color: transparent; color: var(--danger); font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem;
+      border: 1px solid rgba(224, 112, 112, 0.35); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background-color: rgba(224,112,112,0.1); }
 
     /* SITE FOOTER */
     .site-footer {
@@ -535,7 +556,10 @@
         <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item active"><i class="fas fa-paper-plane"></i> Submissions</a>
+        <a href="./submissions.html" class="nav-item active">
+          <i class="fas fa-folder-open"></i> My Content
+          <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+        </a>
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -561,8 +585,8 @@
         </button>
 
         <div class="topbar-title">
-          <span class="t-eyebrow">Content review workflow</span>
-          <span class="t-name">My Submissions</span>
+          <span class="t-eyebrow">Your content library</span>
+          <span class="t-name">My Content</span>
         </div>
 
         <div class="topbar-actions">
@@ -585,9 +609,9 @@
       <main class="content">
 
         <div class="page-heading">
-          <div class="eyebrow"><i class="fas fa-paper-plane"></i> Content review workflow</div>
-          <h1>My Submissions</h1>
-          <p>Follow each change from draft to review, approval and publication.</p>
+          <div class="eyebrow"><i class="fas fa-folder-open"></i> Your content library</div>
+          <h1>My Content</h1>
+          <p>Everything you've published for your institution — courses, fees, admission notices and calendar events. Content goes live the moment you save it. If the platform administrator spots a fault, it's sent back here for you to fix.</p>
         </div>
 
         <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
@@ -602,58 +626,62 @@
 
         <div class="stats-row">
           <div class="stat-mini">
-            <div class="stat-mini-label">Submitted <i class="fas fa-paper-plane"></i></div>
+            <div class="stat-mini-label">Total content <i class="fas fa-layer-group"></i></div>
             <div class="stat-mini-value" id="statTotal">—</div>
             <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
-          <div class="stat-mini">
-            <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value" id="statPending">—</div>
-            <div class="stat-mini-sub" id="statPendingSub"></div>
+          <div class="stat-mini attention">
+            <div class="stat-mini-label">Needs fix <i class="fas fa-triangle-exclamation gold"></i></div>
+            <div class="stat-mini-value attention" id="statSentBack">—</div>
+            <div class="stat-mini-sub" id="statSentBackSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Approved / Published <i class="fas fa-circle-check"></i></div>
-            <div class="stat-mini-value" id="statApproved">—</div>
-            <div class="stat-mini-sub" id="statApprovedSub"></div>
+            <div class="stat-mini-label">Live on public site <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value" id="statPublished">—</div>
+            <div class="stat-mini-sub" id="statPublishedSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Needs changes <i class="fas fa-rotate-left red"></i></div>
-            <div class="stat-mini-value" id="statChanges">—</div>
-            <div class="stat-mini-sub" id="statChangesSub"></div>
+            <div class="stat-mini-label">Archived <i class="fas fa-archive muted"></i></div>
+            <div class="stat-mini-value" id="statArchived">—</div>
+            <div class="stat-mini-sub" id="statArchivedSub"></div>
           </div>
         </div>
 
         <div class="toolbar">
           <div class="filter-row">
-            <select id="statusFilter" onchange="filterSubmissions()">
-              <option value="all">All statuses</option>
-              <option value="draft">Draft</option>
-              <option value="pending">Pending review</option>
-              <option value="published">Published</option>
+            <select id="typeFilter" onchange="renderList()">
+              <option value="all">All content types</option>
+              <option value="course">Courses</option>
+              <option value="fee">Fees</option>
+              <option value="admission">Admission notices</option>
+              <option value="calendar">Calendar events</option>
             </select>
           </div>
         </div>
 
         <div class="sub-tabs">
           <button class="sub-tab active" data-cat="all" onclick="switchTab('all', this)">
-            <i class="fas fa-list"></i> All submissions <span class="tab-count" id="countAll">—</span>
+            <i class="fas fa-list"></i> All <span class="tab-count" id="countAll">—</span>
           </button>
-          <button class="sub-tab" data-cat="attention" onclick="switchTab('attention', this)">
-            <i class="fas fa-triangle-exclamation"></i> Needs attention <span class="tab-count" id="countAttention">—</span>
+          <button class="sub-tab" data-cat="sent_back" onclick="switchTab('sent_back', this)">
+            <i class="fas fa-triangle-exclamation"></i> Needs fix <span class="tab-count" id="countSentBack">—</span>
           </button>
           <button class="sub-tab" data-cat="published" onclick="switchTab('published', this)">
             <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="countPublished">—</span>
+          </button>
+          <button class="sub-tab" data-cat="archived" onclick="switchTab('archived', this)">
+            <i class="fas fa-archive"></i> Archived <span class="tab-count" id="countArchived">—</span>
           </button>
         </div>
 
         <div class="panel">
           <div class="panel-header">
-            <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Submission history</div>
+            <div class="panel-title"><i class="fas fa-folder-open"></i> Your content</div>
           </div>
-          <p class="panel-desc" id="submissionsDesc">Loading your submissions…</p>
+          <p class="panel-desc" id="listDesc">Loading your content…</p>
 
-          <div id="submissionsList">
-            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading submissions…</p></div>
+          <div id="contentList">
+            <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i><p>Loading…</p></div>
           </div>
         </div>
 
@@ -674,9 +702,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -718,10 +746,22 @@
       let token = null;
       let currentUser = null;
       let currentSchool = null;
-      let allSubmissions = [];
+      let allItems = [];
       let activeTab = 'all';
       // 'ok' | 'unassigned' | 'orphaned'
       let schoolState = 'unassigned';
+
+      // Read the `?filter=` query param so links like
+      //   ./submissions.html?filter=sent_back
+      // from the dashboard open the right tab.
+      (function readFilterParam() {
+        try {
+          const p = new URLSearchParams(window.location.search).get('filter');
+          if (p === 'sent_back' || p === 'published' || p === 'archived' || p === 'all') {
+            activeTab = p;
+          }
+        } catch (_) {}
+      })();
 
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -763,6 +803,20 @@
         calendar: 'Calendar',
       }[type] || type || 'Record');
 
+      const typePage = (type) => ({
+        course: './courses.html',
+        fee: './fees.html',
+        admission: './admissions.html',
+        calendar: './calendar.html',
+      }[type] || './submissions.html');
+
+      const typeDeleteEndpoint = (type, id) => ({
+        course: '/api/courses/' + encodeURIComponent(id),
+        fee: '/api/fees/' + encodeURIComponent(id),
+        admission: '/api/admissions/' + encodeURIComponent(id),
+        calendar: '/api/calendar/' + encodeURIComponent(id),
+      }[type] || null);
+
       function redirectToLogin(reason) {
         try {
           localStorage.removeItem(TOKEN_KEY);
@@ -800,7 +854,6 @@
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2800);
       }
-      window.toast = toast;
 
       function renderUser() {
         const name = (currentUser && currentUser.name) || '—';
@@ -812,13 +865,6 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderSchool
-       * ------------
-       * - 'ok'         → hide the scope banner entirely; sidebar shows school name.
-       * - 'unassigned' → show yellow scope banner with guidance.
-       * - 'orphaned'   → show red scope banner with reference id.
-       */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
         const banner = document.getElementById('scopeBanner');
@@ -847,35 +893,58 @@
           return;
         }
 
-        // schoolState === 'ok' — no banner, just plain branding
         sidebarName.textContent = currentSchool.name || '—';
+      }
+
+      /* ----- CLASSIFY -----
+       * A record is "sent back" if it is draft AND has a review comment.
+       * A plain draft with no comment means the rep hasn't published it yet
+       * (rare in the new flow, but possible for staged edits).
+       */
+      function classify(item) {
+        if (item.status === 'archived') return 'archived';
+        if (item.status === 'published') return 'published';
+        if (item.status === 'draft' && item.review_comment) return 'sent_back';
+        return 'draft';
       }
 
       /* STATS */
       function updateStats() {
-        const total = allSubmissions.length;
-        const pending = allSubmissions.filter(s => s.status === 'pending').length;
-        const published = allSubmissions.filter(s => s.status === 'published').length;
-        const draft = allSubmissions.filter(s => s.status === 'draft').length;
+        const total = allItems.length;
+        const sentBack = allItems.filter(i => classify(i) === 'sent_back').length;
+        const published = allItems.filter(i => classify(i) === 'published').length;
+        const archived = allItems.filter(i => classify(i) === 'archived').length;
 
         document.getElementById('statTotal').textContent = String(total);
-        document.getElementById('statTotalSub').textContent =
-          draft > 0 ? draft + ' in draft' : '';
+        document.getElementById('statTotalSub').textContent = total > 0 ? 'Across all types' : '';
 
-        document.getElementById('statPending').textContent = String(pending);
-        document.getElementById('statPendingSub').textContent =
-          pending > 0 ? 'In review queue' : '';
+        document.getElementById('statSentBack').textContent = String(sentBack);
+        document.getElementById('statSentBackSub').textContent =
+          sentBack > 0 ? 'Fix and re-save to republish' : '';
 
-        document.getElementById('statApproved').textContent = String(published);
-        document.getElementById('statApprovedSub').textContent =
-          published > 0 ? 'Visible publicly' : '';
+        document.getElementById('statPublished').textContent = String(published);
+        document.getElementById('statPublishedSub').textContent =
+          published > 0 ? 'Visible on public site' : '';
 
-        document.getElementById('statChanges').textContent = '0';
-        document.getElementById('statChangesSub').textContent = 'Check notifications for feedback';
+        document.getElementById('statArchived').textContent = String(archived);
+        document.getElementById('statArchivedSub').textContent =
+          archived > 0 ? 'Hidden from public site' : '';
 
         document.getElementById('countAll').textContent = String(total);
-        document.getElementById('countAttention').textContent = String(draft);
+        document.getElementById('countSentBack').textContent = String(sentBack);
         document.getElementById('countPublished').textContent = String(published);
+        document.getElementById('countArchived').textContent = String(archived);
+
+        // Sidebar badge (also present on other pages, but this page updates it live)
+        const badge = document.getElementById('myContentBadge');
+        if (badge) {
+          if (sentBack > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = String(sentBack);
+          } else {
+            badge.style.display = 'none';
+          }
+        }
       }
 
       /* TABS */
@@ -883,27 +952,32 @@
         activeTab = cat;
         document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
-        renderSubmissions();
-      };
-
-      window.filterSubmissions = function() {
-        renderSubmissions();
+        else {
+          const btn = document.querySelector('.sub-tab[data-cat="' + cat + '"]');
+          if (btn) btn.classList.add('active');
+        }
+        renderList();
       };
 
       /* RENDER */
-      function statusBadge(status) {
-        const map = {
-          draft: { cls: 'draft', label: 'Draft' },
-          pending: { cls: 'pending', label: 'Pending review' },
-          published: { cls: 'published', label: 'Published' },
-        };
-        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
-        return '<span class="sub-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      function statusBadge(item) {
+        const cat = classify(item);
+        if (cat === 'sent_back') return '<span class="sub-badge sent-back">Needs fix</span>';
+        if (cat === 'published') return '<span class="sub-badge published">Published</span>';
+        if (cat === 'archived') return '<span class="sub-badge archived">Archived</span>';
+        return '<span class="sub-badge draft">Draft</span>';
       }
 
-      function renderSubmissions() {
-        const el = document.getElementById('submissionsList');
-        const desc = document.getElementById('submissionsDesc');
+      function iconClass(item) {
+        const cat = classify(item);
+        if (cat === 'sent_back') return 'gold';
+        if (cat === 'archived') return 'muted';
+        return '';
+      }
+
+      function renderList() {
+        const el = document.getElementById('contentList');
+        const desc = document.getElementById('listDesc');
 
         if (schoolState !== 'ok' || !currentSchool) {
           el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution available</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
@@ -911,161 +985,185 @@
           return;
         }
 
-        const status = document.getElementById('statusFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
 
-        let list = allSubmissions.slice();
+        let list = allItems.slice();
 
-        if (activeTab === 'attention') {
-          list = list.filter(s => s.status === 'draft');
-        } else if (activeTab === 'published') {
-          list = list.filter(s => s.status === 'published');
-        }
+        if (activeTab === 'sent_back') list = list.filter(i => classify(i) === 'sent_back');
+        else if (activeTab === 'published') list = list.filter(i => classify(i) === 'published');
+        else if (activeTab === 'archived') list = list.filter(i => classify(i) === 'archived');
 
-        if (status !== 'all') {
-          list = list.filter(s => s.status === status);
-        }
+        if (typeFilter !== 'all') list = list.filter(i => i.type === typeFilter);
 
-        list.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
+        // Sort: sent-back first, then by updated_at desc
+        list.sort((a, b) => {
+          const ca = classify(a), cb = classify(b);
+          if (ca === 'sent_back' && cb !== 'sent_back') return -1;
+          if (cb === 'sent_back' && ca !== 'sent_back') return 1;
+          return (b.updated_at || '').localeCompare(a.updated_at || '');
+        });
 
         if (!list.length) {
-          const hasAny = allSubmissions.length > 0;
-          el.innerHTML = '<div class="empty-state">' +
-            '<div class="es-icon"><i class="fas fa-inbox"></i></div>' +
-            '<h3>' + (hasAny ? 'No submissions match the current filters' : 'No submissions yet') + '</h3>' +
-            '<p>' + (hasAny
-              ? 'Try a different tab or status filter.'
-              : 'When you save or submit content on the Courses, Fees, Admissions or Calendar pages, it will appear here.') + '</p>' +
-            '</div>';
-          desc.textContent = hasAny
-            ? 'No submissions match the current filters.'
-            : 'No submissions yet for ' + currentSchool.name + '.';
+          const hasAny = allItems.length > 0;
+          let emptyState;
+
+          if (!hasAny) {
+            emptyState =
+              '<div class="es-icon"><i class="fas fa-folder-open"></i></div>' +
+              '<h3>No content yet</h3>' +
+              '<p>Add your first course, fee, admission notice or calendar event to get started. Everything you save goes live immediately on your school\'s public page.</p>' +
+              '<div class="empty-actions">' +
+              '<a href="./courses.html" class="btn-primary" style="text-decoration:none;"><i class="fas fa-book-open"></i> Add courses</a>' +
+              '<a href="./fees.html" class="btn-outline" style="text-decoration:none;"><i class="fas fa-money-bill"></i> Add fees</a>' +
+              '<a href="./admissions.html" class="btn-outline" style="text-decoration:none;"><i class="fas fa-clipboard-list"></i> Add admissions</a>' +
+              '</div>';
+          } else if (activeTab === 'sent_back') {
+            emptyState =
+              '<div class="es-icon" style="color:rgba(0,201,130,0.5);border-color:rgba(0,201,130,0.25);"><i class="fas fa-circle-check"></i></div>' +
+              '<h3>Nothing needs fixing</h3>' +
+              '<p>Great — no content has been sent back for changes.</p>';
+          } else {
+            emptyState =
+              '<div class="es-icon"><i class="fas fa-inbox"></i></div>' +
+              '<h3>No content in this view</h3>' +
+              '<p>Try a different tab or content type.</p>';
+          }
+
+          el.innerHTML = '<div class="empty-state">' + emptyState + '</div>';
+          desc.textContent = hasAny ? 'No content matches the current filters.' : 'No content yet.';
           return;
         }
 
-        desc.textContent = 'Showing ' + list.length + ' of ' + allSubmissions.length + ' submission' +
-          (allSubmissions.length === 1 ? '' : 's') + ' for ' + currentSchool.name + '.';
+        desc.textContent = 'Showing ' + list.length + ' of ' + allItems.length + ' item' +
+          (allItems.length === 1 ? '' : 's') + ' for ' + currentSchool.name + '.';
 
-        el.innerHTML = '<div class="sub-list">' + list.map(s => {
-          const iconClass = s.status === 'pending' ? 'gold'
-                          : s.status === 'published' ? ''
-                          : 'red';
+        el.innerHTML = '<div class="sub-list">' + list.map(item => {
+          const cat = classify(item);
+          const isSentBack = cat === 'sent_back';
+
           const meta = [];
-          if (s.updated_at) meta.push('Updated ' + timeAgo(s.updated_at));
-          if (s.status === 'draft') meta.push('Not yet submitted');
-          const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '';
+          if (item.updated_at) meta.push('Updated ' + timeAgo(item.updated_at));
+          if (isSentBack) meta.push('Sent back by admin');
+          const metaHtml = meta.join('<span class="dot">●</span>');
 
-          const actions = [];
-          if (s.status === 'draft') {
-            actions.push('<button class="btn-primary" onclick="submitItem(\'' +
-              esc(s.type) + '\', \'' + esc(s.id) + '\')">' +
-              '<i class="fas fa-paper-plane"></i> Submit</button>');
-          } else if (s.status === 'pending') {
-            actions.push('<button class="btn-outline" onclick="withdrawItem(\'' +
-              esc(s.type) + '\', \'' + esc(s.id) + '\')">' +
-              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
-          }
-
-          const feedbackHtml = s.review_comment
-            ? '<div class="sub-feedback"><strong>Reviewer:</strong> ' + esc(s.review_comment) + '</div>'
+          const feedbackHtml = item.review_comment
+            ? '<div class="sub-feedback"><strong>Admin note:</strong> ' + esc(item.review_comment) + '</div>'
             : '';
 
-          return '<div class="sub-row">' +
-            '<div class="sub-icon ' + iconClass + '"><i class="fas ' + typeIcon(s.type) + '"></i></div>' +
+          const actions = [];
+
+          if (isSentBack) {
+            actions.push('<a href="' + esc(typePage(item.type)) + '" class="btn-primary" style="text-decoration:none;">' +
+              '<i class="fas fa-pen"></i> Fix on ' + esc(typeLabel(item.type)) + ' page</a>');
+          }
+
+          if (cat !== 'published') {
+            actions.push('<button class="btn-danger" onclick="deleteItem(\'' + esc(item.type) + '\', \'' + esc(item.id) + '\', \'' + esc((item.label || '').replace(/'/g, "\\'")) + '\')">' +
+              '<i class="fas fa-trash"></i> Delete</button>');
+          }
+
+          return '<div class="sub-row' + (isSentBack ? ' needs-fix' : '') + '">' +
+            '<div class="sub-icon ' + iconClass(item) + '"><i class="fas ' + typeIcon(item.type) + '"></i></div>' +
             '<div class="sub-body">' +
-              '<div class="sub-title">' + esc(s.label || ('#' + s.id)) +
-                ' <span class="sub-type-tag">' + esc(typeLabel(s.type)) + '</span>' +
+              '<div class="sub-title">' + esc(item.label || ('#' + item.id)) +
+                ' <span class="sub-type-tag">' + esc(typeLabel(item.type)) + '</span>' +
               '</div>' +
               (metaHtml ? '<div class="sub-meta">' + metaHtml + '</div>' : '') +
               feedbackHtml +
             '</div>' +
-            '<div class="sub-badges">' + statusBadge(s.status) + '</div>' +
+            '<div class="sub-badges">' + statusBadge(item) + '</div>' +
             (actions.length ? '<div class="sub-actions">' + actions.join('') + '</div>' : '') +
           '</div>';
         }).join('') + '</div>';
       }
 
-      /* ACTIONS */
-      window.submitItem = async function(type, id) {
-        if (!confirm('Submit this ' + typeLabel(type).toLowerCase() + ' for review?')) return;
+      /* DELETE */
+      window.deleteItem = async function(type, id, label) {
+        if (!confirm('Delete "' + label + '"?\n\nThis cannot be undone. The content will be removed from your institution.')) return;
+        const endpoint = typeDeleteEndpoint(type, id);
+        if (!endpoint) { toast('Cannot delete this item.', true); return; }
         try {
-          await api('/api/school/submissions/' + encodeURIComponent(type) + '/' +
-                    encodeURIComponent(id) + '/submit', { method: 'POST' });
-          toast('Submitted for review.');
-          await loadSubmissions();
-        } catch (err) {
-          toast(err.message, true);
-        }
-      };
-
-      window.withdrawItem = async function(type, id) {
-        if (!confirm('Withdraw this submission and return it to draft?')) return;
-        try {
-          await api('/api/school/submissions/' + encodeURIComponent(type) + '/' +
-                    encodeURIComponent(id) + '/withdraw', { method: 'POST' });
-          toast('Submission withdrawn.');
-          await loadSubmissions();
+          await api(endpoint, { method: 'DELETE' });
+          toast('Deleted.');
+          await loadContent();
         } catch (err) {
           toast(err.message, true);
         }
       };
 
       /* LOAD */
-      async function loadSubmissions() {
+      async function loadContent() {
         if (schoolState !== 'ok' || !currentSchool) {
-          allSubmissions = [];
+          allItems = [];
           updateStats();
-          renderSubmissions();
+          renderList();
           return;
         }
+
         try {
-          const [subs, courses, fees, admissions, events] = await Promise.all([
-            api('/api/school/submissions').catch(() => ({ submissions: [] })),
+          const [courses, fees, admissions, events] = await Promise.all([
             api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses').catch(() => ({ courses: [] })),
             api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees').catch(() => ({ fees: [] })),
             api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/admissions').catch(() => ({ admissions: [] })),
             api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/events').catch(() => ({ events: [] })),
           ]);
 
-          const known = {};
-          const push = (type, item, label) => {
-            known[type + ':' + item.id] = true;
-            return {
-              type,
-              id: item.id,
-              label,
-              status: item.status,
-              updated_at: item.updated_at,
-              review_comment: item.review_comment || null,
-            };
-          };
-
           const list = [];
-          for (const c of (courses.courses || [])) list.push(push('course', c, c.name));
-          for (const f of (fees.fees || [])) list.push(push('fee', f, 'Fee — ' + f.session + ' · ' + (f.category || 'fee')));
-          for (const a of (admissions.admissions || [])) list.push(push('admission', a, a.title));
-          for (const e of (events.events || [])) list.push(push('calendar', e, e.title));
 
-          for (const s of (subs.submissions || [])) {
-            const key = s.type + ':' + s.id;
-            if (!known[key]) {
-              list.push({
-                type: s.type,
-                id: s.id,
-                label: s.label || ('#' + s.id),
-                status: s.status,
-                updated_at: s.updated_at,
-                review_comment: null,
-              });
-            }
+          for (const c of (courses.courses || [])) {
+            list.push({
+              type: 'course',
+              id: c.id,
+              label: c.name || 'Untitled course',
+              status: c.status || 'published',
+              updated_at: c.updated_at || c.created_at,
+              review_comment: c.review_comment || null,
+            });
+          }
+          for (const f of (fees.fees || [])) {
+            list.push({
+              type: 'fee',
+              id: f.id,
+              label: 'Fee — ' + (f.session || '—') + ' · ' + (f.category || 'fee'),
+              status: f.status || 'published',
+              updated_at: f.updated_at || f.created_at,
+              review_comment: f.review_comment || null,
+            });
+          }
+          for (const a of (admissions.admissions || [])) {
+            list.push({
+              type: 'admission',
+              id: a.id,
+              label: a.title || 'Untitled notice',
+              status: a.status || 'published',
+              updated_at: a.updated_at || a.created_at,
+              review_comment: a.review_comment || null,
+            });
+          }
+          for (const e of (events.events || [])) {
+            list.push({
+              type: 'calendar',
+              id: e.id,
+              label: e.title || 'Untitled event',
+              status: e.status || 'published',
+              updated_at: e.updated_at || e.created_at,
+              review_comment: e.review_comment || null,
+            });
           }
 
-          allSubmissions = list;
+          allItems = list;
           updateStats();
-          renderSubmissions();
+
+          // Sync tab UI with activeTab (which may have come from ?filter=)
+          document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+          const activeBtn = document.querySelector('.sub-tab[data-cat="' + activeTab + '"]');
+          if (activeBtn) activeBtn.classList.add('active');
+
+          renderList();
         } catch (err) {
-          console.error('[submissions]', err);
-          document.getElementById('submissionsList').innerHTML =
-            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load submissions</h3><p>' + esc(err.message) + '</p></div>';
+          console.error('[content]', err);
+          document.getElementById('contentList').innerHTML =
+            '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>Could not load content</h3><p>' + esc(err.message) + '</p></div>';
         }
       }
 
@@ -1093,7 +1191,7 @@
         schoolState = 'unassigned';
 
         if (!currentUser || !currentUser.school_id) {
-          console.warn('[loadSchool] No school_id on current user. Submissions page will show "Unassigned".');
+          console.warn('[loadSchool] No school_id on current user. My Content will show "Unassigned".');
           return;
         }
 
@@ -1154,20 +1252,18 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());
       })();
 
-      /* INIT */
       (async function boot() {
         const ok = await verifySession();
         if (!ok) return;
         renderUser();
         await loadSchool();
         renderSchool();
-        await loadSubmissions();
+        await loadContent();
       })();
 
     })();

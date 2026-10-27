@@ -12,6 +12,23 @@ const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
 /* ============================================================
+ * ONE-TIME MIGRATION (run these SQL statements once after deploy)
+ * ------------------------------------------------------------
+ * All existing rep content that was stuck in 'draft' or 'pending'
+ * needs to be flipped to 'published' because the review queue is
+ * gone. This is safe to run repeatedly — it only touches rows that
+ * are still in the old states.
+ *
+ *   update public.courses            set status='published', updated_at=now() where status in ('draft','pending');
+ *   update public.fee_records        set status='published', updated_at=now() where status in ('draft','pending');
+ *   update public.admission_notices  set status='published', updated_at=now() where status in ('draft','pending');
+ *   update public.academic_events    set status='published', updated_at=now() where status in ('draft','pending');
+ *
+ * The review_comments table is retained — it now holds the admin's
+ * "sent back" notes for the rep to read.
+ * ============================================================ */
+
+/* ============================================================
  * CONFIG
  * ============================================================ */
 const PORT = Number(process.env.PORT) || 10000;
@@ -24,7 +41,6 @@ const FORCE_PASSWORD_CHANGE = process.env.FORCE_PASSWORD_CHANGE === '1';
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*')
   .split(',').map(s => s.trim()).filter(Boolean);
 
-// Supabase Storage
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const MEDIA_BUCKET = 'media';
@@ -69,14 +85,14 @@ function placementNeedsRef(page, slot) {
 }
 
 /* ============================================================
- * SUPABASE CLIENT (Storage only — DB still uses pg)
+ * SUPABASE CLIENT
  * ============================================================ */
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
 /* ============================================================
- * DATABASE (Supabase / Postgres via pg)
+ * DATABASE
  * ============================================================ */
 const pool = new Pool({
   connectionString: DATABASE_URL,
@@ -92,14 +108,6 @@ async function one(text, params) { const r = await q(text, params); return r.row
 async function many(text, params) { const r = await q(text, params); return r.rows; }
 async function run(text, params) { const r = await q(text, params); return r.rowCount; }
 
-/**
- * idsEqual
- * --------
- * Compare two identifiers regardless of whether they're UUID strings,
- * integer IDs, or mixed. Number() is unsafe here because `Number(uuid)`
- * returns NaN, and `NaN !== NaN` is always true — which makes every
- * scope check against a UUID fail closed with a 403.
- */
 function idsEqual(a, b) {
   if (a == null || b == null) return false;
   return String(a) === String(b);
@@ -206,6 +214,24 @@ async function notify(userId, schoolId, title, body, link) {
   } catch (e) { console.error('[notify]', e.message); }
 }
 
+/**
+ * notifySchoolManagers
+ * --------------------
+ * Sends an in-app notification to every school_manager for a school.
+ * Used by the admin "send-back" flow.
+ */
+async function notifySchoolManagers(schoolId, title, body, link) {
+  try {
+    const managers = await many(
+      `select id from public.users where role='school_manager' and school_id=$1`,
+      [schoolId]
+    );
+    for (const m of managers) {
+      await notify(m.id, schoolId, title, body, link);
+    }
+  } catch (e) { console.error('[notifySchoolManagers]', e.message); }
+}
+
 /* ============================================================
  * AUTH
  * ============================================================ */
@@ -226,12 +252,6 @@ function signToken(user) {
   );
 }
 
-/**
- * publicUser
- * ----------
- * Serialize a user row for the frontend. Includes school info so the
- * frontend never has to guess whether a school_manager has a school.
- */
 function publicUser(u) {
   if (!u) return null;
   return {
@@ -245,11 +265,6 @@ function publicUser(u) {
   };
 }
 
-/**
- * fetchUserWithSchool
- * -------------------
- * Loads a user and LEFT-JOINs the school row.
- */
 async function fetchUserWithSchool(userId) {
   return one(
     `select u.*, s.name as school_name, s.slug as school_slug
@@ -450,7 +465,6 @@ router.get('/public/settings', asyncH(async (req, res) => {
   res.json({ site_name: s.site_name, site_tagline: s.site_tagline, site_description: s.site_description });
 }));
 
-/* ---------- PUBLIC: media placements ---------- */
 router.get('/public/placements', asyncH(async (req, res) => {
   const { page, slot, content_ref } = req.query;
   const clauses = ['p.is_active = true'];
@@ -483,8 +497,6 @@ router.get('/public/placements', asyncH(async (req, res) => {
 }));
 
 /* ---------- SCHOOLS ---------- */
-
-// Admin listing. NOTE: no more `verification` filter — schools don't use it.
 router.get('/schools', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { q: query, type, state, publication } = req.query;
   const clauses = []; const params = [];
@@ -509,21 +521,22 @@ router.get('/schools/:id/summary', authenticate, requireRole('owner','admin','ed
   if (!school) throw httpError(404, 'School not found.');
   assertSchoolScope(req.user, id);
   const num = async (sql) => Number((await one(sql, [id])).c);
+  // ── CHANGED ── draft/pending counters dropped; added 'sent_back' which is
+  // draft rows that have an admin review comment (i.e., actively needing a fix).
   const counts = {
     courses: await num('select count(*)::int as c from public.courses where school_id=$1'),
-    courses_pending: await num(`select count(*)::int as c from public.courses where school_id=$1 and status='pending'`),
+    courses_sent_back: await num(`select count(*)::int as c from public.courses c where c.school_id=$1 and c.status='draft' and exists (select 1 from public.review_comments r where r.submission_type='course' and r.submission_target_id=c.id)`),
     fees: await num('select count(*)::int as c from public.fee_records where school_id=$1'),
-    fees_pending: await num(`select count(*)::int as c from public.fee_records where school_id=$1 and status='pending'`),
+    fees_sent_back: await num(`select count(*)::int as c from public.fee_records f where f.school_id=$1 and f.status='draft' and exists (select 1 from public.review_comments r where r.submission_type='fee' and r.submission_target_id=f.id)`),
     admissions: await num('select count(*)::int as c from public.admission_notices where school_id=$1'),
-    admissions_pending: await num(`select count(*)::int as c from public.admission_notices where school_id=$1 and status='pending'`),
+    admissions_sent_back: await num(`select count(*)::int as c from public.admission_notices a where a.school_id=$1 and a.status='draft' and exists (select 1 from public.review_comments r where r.submission_type='admission' and r.submission_target_id=a.id)`),
     calendar: await num('select count(*)::int as c from public.academic_events where school_id=$1'),
-    calendar_pending: await num(`select count(*)::int as c from public.academic_events where school_id=$1 and status='pending'`),
+    calendar_sent_back: await num(`select count(*)::int as c from public.academic_events e where e.school_id=$1 and e.status='draft' and exists (select 1 from public.review_comments r where r.submission_type='calendar' and r.submission_target_id=e.id)`),
     media: await num('select count(*)::int as c from public.media_assets where school_id=$1'),
   };
   res.json({ school, counts });
 }));
 
-// New schools are born verified + published. No more "pending verification" gate.
 router.post('/schools', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const b = req.body || {};
   if (!b.name || !b.type || !b.ownership) throw httpError(400, 'name, type and ownership are required.');
@@ -560,7 +573,6 @@ router.patch('/schools/:id', authenticate, requireRole('owner','admin','school_m
   res.json({ school: updated });
 }));
 
-// Publish — no verification gate anymore. Straight flip to 'published'.
 router.post('/schools/:id/publish', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const school = await one('select * from public.schools where id=$1', [req.params.id]);
   if (!school) throw httpError(404, 'School not found.');
@@ -577,13 +589,149 @@ router.post('/schools/:id/archive', authenticate, requireRole('owner','admin'), 
   res.json({ ok: true });
 }));
 
-/*
- * NOTE: POST /schools/:id/verify has been REMOVED.
- * Schools no longer use a verification workflow. The `verification` column
- * still exists for backward compatibility, but it's set to 'verified' on
- * create and never checked again. Verification is now only for
- * editorial content: admissions, exams, scholarships, trending.
+/* ============================================================
+ * ── CHANGED ── CONTENT HELPERS
+ * ------------------------------------------------------------
+ * These four tables share the same rep-facing lifecycle:
+ *   Rep save / re-save   → status='published'
+ *   Admin send-back      → status='draft' + review_comments row + notify
+ *   Admin archive        → status='archived'
+ *   Rep cannot set status directly.
+ * The content "type" keys match what the frontend and review_comments
+ * already use: course, fee, admission, calendar.
+ * ============================================================ */
+const CONTENT_TYPES = {
+  course: {
+    table: 'courses',
+    labelCol: 'name',
+    schoolIdCol: 'school_id',
+    routeBase: 'courses',
+    friendly: 'course',
+  },
+  fee: {
+    table: 'fee_records',
+    labelCol: "('Fee ' || session || ' ' || category)",
+    schoolIdCol: 'school_id',
+    routeBase: 'fees',
+    friendly: 'fee record',
+  },
+  admission: {
+    table: 'admission_notices',
+    labelCol: 'title',
+    schoolIdCol: 'school_id',
+    routeBase: 'admissions',
+    friendly: 'admission notice',
+  },
+  calendar: {
+    table: 'academic_events',
+    labelCol: 'title',
+    schoolIdCol: 'school_id',
+    routeBase: 'calendar',
+    friendly: 'calendar event',
+  },
+};
+
+/**
+ * sendBackContent
+ * ---------------
+ * Admin-only "send back to school" action. Flips status to 'draft',
+ * records an audit row and a review_comments entry with the admin's
+ * note, and notifies every school_manager for that school.
+ * Option A: the record leaves the public site immediately (because
+ * the public read endpoints filter status='published').
  */
+async function sendBackContent(req, res, type, id) {
+  const meta = CONTENT_TYPES[type];
+  if (!meta) throw httpError(400, 'Unsupported content type.');
+
+  const row = await one(`select * from public.${meta.table} where id=$1`, [id]);
+  if (!row) throw httpError(404, `The ${meta.friendly} was not found.`);
+  if (row.status === 'archived')
+    throw httpError(400, `This ${meta.friendly} is archived and cannot be sent back.`);
+  if (row.status === 'draft')
+    throw httpError(400, `This ${meta.friendly} is already in draft.`);
+
+  const comment = (req.body && req.body.comment) ? String(req.body.comment).trim() : '';
+  if (!comment) throw httpError(400, 'A note for the school is required when sending back.');
+
+  await run(
+    `update public.${meta.table} set status='draft', updated_at=now() where id=$1`,
+    [id]
+  );
+
+  await run(
+    `insert into public.review_comments
+       (submission_type, submission_target_id, school_id, reviewer_id, reviewer_name, decision, comment)
+     values ($1,$2,$3,$4,$5,'changes_requested',$6)`,
+    [type, id, row.school_id, req.user.id, req.user.name, comment]
+  );
+
+  const label = await one(`select ${meta.labelCol} as label from public.${meta.table} where id=$1`, [id]);
+
+  await audit(req, 'send_back', type, id, (label && label.label) || `#${id}`, { comment });
+  await notifySchoolManagers(
+    row.school_id,
+    `Your ${meta.friendly} was sent back for changes`,
+    comment,
+    '/SchoolAd/submissions.html'
+  );
+
+  res.json({ ok: true });
+}
+
+/**
+ * archiveContent
+ * --------------
+ * Admin-only archive. Terminal for the rep (they can't republish).
+ */
+async function archiveContent(req, res, type, id) {
+  const meta = CONTENT_TYPES[type];
+  if (!meta) throw httpError(400, 'Unsupported content type.');
+  const row = await one(`select * from public.${meta.table} where id=$1`, [id]);
+  if (!row) throw httpError(404, `The ${meta.friendly} was not found.`);
+  if (row.status === 'archived') { res.json({ ok: true }); return; }
+
+  await run(
+    `update public.${meta.table} set status='archived', updated_at=now() where id=$1`,
+    [id]
+  );
+  const label = await one(`select ${meta.labelCol} as label from public.${meta.table} where id=$1`, [id]);
+  await audit(req, 'archive', type, id, (label && label.label) || `#${id}`);
+  res.json({ ok: true });
+}
+
+/**
+ * unarchiveContent
+ * ----------------
+ * Admin-only un-archive. Restores the record to 'published'.
+ */
+async function unarchiveContent(req, res, type, id) {
+  const meta = CONTENT_TYPES[type];
+  if (!meta) throw httpError(400, 'Unsupported content type.');
+  const row = await one(`select * from public.${meta.table} where id=$1`, [id]);
+  if (!row) throw httpError(404, `The ${meta.friendly} was not found.`);
+  if (row.status !== 'archived') throw httpError(400, `This ${meta.friendly} is not archived.`);
+  await run(
+    `update public.${meta.table} set status='published', updated_at=now() where id=$1`,
+    [id]
+  );
+  const label = await one(`select ${meta.labelCol} as label from public.${meta.table} where id=$1`, [id]);
+  await audit(req, 'unarchive', type, id, (label && label.label) || `#${id}`);
+  res.json({ ok: true });
+}
+
+/**
+ * applyRepSaveStatus
+ * ------------------
+ * Called at the tail of every rep-facing PATCH. If the row is
+ * currently 'draft' (either a fresh save or a sent-back one), a
+ * successful rep save republishes it. If it's 'archived', refuse.
+ */
+function assertRepCanEdit(row, friendly) {
+  if (row.status === 'archived') {
+    throw httpError(403, `This ${friendly} has been archived by the platform administrator and cannot be edited.`);
+  }
+}
 
 /* ---------- COURSES ---------- */
 router.get('/schools/:schoolId/courses', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
@@ -598,9 +746,10 @@ router.post('/schools/:schoolId/courses', authenticate, requireRole('owner','adm
   assertSchoolScope(req.user, school.id);
   const b = req.body || {};
   if (!b.name) throw httpError(400, 'Course name is required.');
+  // ── CHANGED ── new rep-created courses are published immediately.
   const course = await one(
     `insert into public.courses (school_id, name, faculty, department, duration, qualification, entry_route, requirements, status)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,'draft') returning *`,
+     values ($1,$2,$3,$4,$5,$6,$7,$8,'published') returning *`,
     [schoolId, b.name, b.faculty||null, b.department||null, b.duration||null,
      b.qualification||null, b.entry_route||null, b.requirements||null]
   );
@@ -612,9 +761,16 @@ router.patch('/courses/:id', authenticate, requireRole('owner','admin','school_m
   const course = await one('select * from public.courses where id=$1', [req.params.id]);
   if (!course) throw httpError(404, 'Course not found.');
   assertSchoolScope(req.user, course.school_id);
-  const allowed = ['name','faculty','department','duration','qualification','entry_route','requirements','status'];
+  assertRepCanEdit(course, 'course');
+
+  const allowed = ['name','faculty','department','duration','qualification','entry_route','requirements'];
+  // ── CHANGED ── 'status' is no longer settable by the client. Admin actions go
+  // through dedicated send-back/archive routes.
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
-  if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
+
+  // ── CHANGED ── a rep save always results in status='published'.
+  updates.status = 'published';
+
   const keys = Object.keys(updates); const values = keys.map(k => updates[k]);
   const setSql = keys.map((k, i) => `${k} = $${i+1}`).join(', ');
   values.push(course.id);
@@ -635,6 +791,17 @@ router.delete('/courses/:id', authenticate, requireRole('owner','admin','school_
   res.json({ ok: true });
 }));
 
+// ── NEW ── Admin content moderation routes for courses.
+router.post('/courses/:id/send-back', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await sendBackContent(req, res, 'course', req.params.id);
+}));
+router.post('/courses/:id/archive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await archiveContent(req, res, 'course', req.params.id);
+}));
+router.post('/courses/:id/unarchive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await unarchiveContent(req, res, 'course', req.params.id);
+}));
+
 /* ---------- FEES ---------- */
 router.get('/schools/:schoolId/fees', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
@@ -651,9 +818,10 @@ router.post('/schools/:schoolId/fees', authenticate, requireRole('owner','admin'
     throw httpError(400, 'session, category and amount are required.');
   if (!Number.isFinite(Number(b.amount)) || Number(b.amount) < 0)
     throw httpError(400, 'amount must be a non-negative number.');
+  // ── CHANGED ── published immediately.
   const fee = await one(
     `insert into public.fee_records (school_id, session, category, programme, level, student_category, amount, source_url, verified_date, notes, status)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'draft') returning *`,
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'published') returning *`,
     [schoolId, b.session, b.category, b.programme||null, b.level||null, b.student_category||null,
      Number(b.amount), b.source_url||null, b.verified_date||null, b.notes||null]
   );
@@ -665,11 +833,14 @@ router.patch('/fees/:id', authenticate, requireRole('owner','admin','school_mana
   const fee = await one('select * from public.fee_records where id=$1', [req.params.id]);
   if (!fee) throw httpError(404, 'Fee not found.');
   assertSchoolScope(req.user, fee.school_id);
-  const allowed = ['session','category','programme','level','student_category','amount','source_url','verified_date','notes','status'];
+  assertRepCanEdit(fee, 'fee record');
+
+  const allowed = ['session','category','programme','level','student_category','amount','source_url','verified_date','notes'];
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
   if ('amount' in updates && (!Number.isFinite(Number(updates.amount)) || Number(updates.amount) < 0))
     throw httpError(400, 'amount must be a non-negative number.');
-  if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
+  updates.status = 'published';
+
   const keys = Object.keys(updates); const values = keys.map(k => updates[k]);
   const setSql = keys.map((k, i) => `${k} = $${i+1}`).join(', ');
   values.push(fee.id);
@@ -690,7 +861,17 @@ router.delete('/fees/:id', authenticate, requireRole('owner','admin','school_man
   res.json({ ok: true });
 }));
 
-/* ---------- ADMISSIONS (keeps verification — editorial content) ---------- */
+router.post('/fees/:id/send-back', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await sendBackContent(req, res, 'fee', req.params.id);
+}));
+router.post('/fees/:id/archive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await archiveContent(req, res, 'fee', req.params.id);
+}));
+router.post('/fees/:id/unarchive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await unarchiveContent(req, res, 'fee', req.params.id);
+}));
+
+/* ---------- ADMISSIONS ---------- */
 router.get('/admissions', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   const scoped = scopedSchoolFilter(req.user, req.query.school_id);
   const clauses = []; const params = [];
@@ -720,11 +901,14 @@ router.post('/schools/:schoolId/admissions', authenticate, requireRole('owner','
   if (!/^https?:\/\//i.test(b.source_url))      throw httpError(400, 'source_url must be an http(s) URL.');
   if (b.open_date && b.close_date && new Date(b.close_date) < new Date(b.open_date))
     throw httpError(400, 'close_date cannot be before open_date.');
+  // ── CHANGED ── published immediately. `verification` stays as before — that's
+  // a separate concept the platform uses for the public admissions directory,
+  // not the rep review flow.
   const adm = await one(
     `insert into public.admission_notices
        (school_id, title, session, entry_route, open_date, close_date, extension_note,
         requirements, eligibility, application_url, source_url, notes, status, verification)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'draft','unverified') returning *`,
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'published','unverified') returning *`,
     [schoolId, b.title, b.session, b.entry_route, b.open_date||null, b.close_date||null,
      b.extension_note||null, b.requirements||null, b.eligibility||null,
      b.application_url, b.source_url, b.notes||null]
@@ -737,11 +921,14 @@ router.patch('/admissions/:id', authenticate, requireRole('owner','admin','schoo
   const adm = await one('select * from public.admission_notices where id=$1', [req.params.id]);
   if (!adm) throw httpError(404, 'Admission not found.');
   assertSchoolScope(req.user, adm.school_id);
-  const allowed = ['title','session','entry_route','open_date','close_date','extension_note','requirements','eligibility','application_url','source_url','notes','status'];
+  assertRepCanEdit(adm, 'admission notice');
+
+  const allowed = ['title','session','entry_route','open_date','close_date','extension_note','requirements','eligibility','application_url','source_url','notes'];
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
   if ('application_url' in updates && !/^https?:\/\//i.test(updates.application_url))
     throw httpError(400, 'application_url must be an http(s) URL.');
-  if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
+  updates.status = 'published';
+
   const keys = Object.keys(updates); const values = keys.map(k => updates[k]);
   const setSql = keys.map((k, i) => `${k} = $${i+1}`).join(', ');
   values.push(adm.id);
@@ -762,6 +949,7 @@ router.delete('/admissions/:id', authenticate, requireRole('owner','admin','scho
   res.json({ ok: true });
 }));
 
+// Editorial verification — kept as-is (admissions directory publishing).
 router.post('/admissions/:id/verify', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const adm = await one('select * from public.admission_notices where id=$1', [req.params.id]);
   if (!adm) throw httpError(404, 'Admission not found.');
@@ -771,14 +959,14 @@ router.post('/admissions/:id/verify', authenticate, requireRole('owner','admin')
   res.json({ ok: true });
 }));
 
-router.post('/admissions/:id/publish', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
-  const adm = await one('select * from public.admission_notices where id=$1', [req.params.id]);
-  if (!adm) throw httpError(404, 'Admission not found.');
-  if (adm.verification !== 'verified')
-    throw httpError(400, 'Admission must be verified before it can be published.');
-  await run(`update public.admission_notices set status='published', updated_at=now() where id=$1`, [adm.id]);
-  await audit(req, 'publish', 'admission', adm.id, adm.title);
-  res.json({ ok: true });
+router.post('/admissions/:id/send-back', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await sendBackContent(req, res, 'admission', req.params.id);
+}));
+router.post('/admissions/:id/archive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await archiveContent(req, res, 'admission', req.params.id);
+}));
+router.post('/admissions/:id/unarchive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await unarchiveContent(req, res, 'admission', req.params.id);
 }));
 
 /* ---------- CALENDAR ---------- */
@@ -803,10 +991,11 @@ router.post('/schools/:schoolId/calendar', authenticate, requireRole('owner','ad
   if (b.end_date && new Date(b.end_date) < new Date(b.start_date))
     throw httpError(400, 'end_date cannot be before start_date.');
   if (!/^https?:\/\//i.test(b.source_url)) throw httpError(400, 'source_url must be an http(s) URL.');
+  // ── CHANGED ── published immediately.
   const ev = await one(
     `insert into public.academic_events
        (school_id, title, type, session, semester, start_date, end_date, notes, source_url, status)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,'draft') returning *`,
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,'published') returning *`,
     [schoolId, b.title, b.type, b.session, b.semester||null, b.start_date,
      b.end_date||null, b.notes||null, b.source_url]
   );
@@ -818,9 +1007,12 @@ router.patch('/calendar/:id', authenticate, requireRole('owner','admin','school_
   const ev = await one('select * from public.academic_events where id=$1', [req.params.id]);
   if (!ev) throw httpError(404, 'Event not found.');
   assertSchoolScope(req.user, ev.school_id);
-  const allowed = ['title','type','session','semester','start_date','end_date','notes','source_url','status'];
+  assertRepCanEdit(ev, 'calendar event');
+
+  const allowed = ['title','type','session','semester','start_date','end_date','notes','source_url'];
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
-  if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
+  updates.status = 'published';
+
   const keys = Object.keys(updates); const values = keys.map(k => updates[k]);
   const setSql = keys.map((k, i) => `${k} = $${i+1}`).join(', ');
   values.push(ev.id);
@@ -841,7 +1033,20 @@ router.delete('/calendar/:id', authenticate, requireRole('owner','admin','school
   res.json({ ok: true });
 }));
 
-/* ---------- EXAMS (keeps verification — editorial content) ---------- */
+router.post('/calendar/:id/send-back', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await sendBackContent(req, res, 'calendar', req.params.id);
+}));
+router.post('/calendar/:id/archive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await archiveContent(req, res, 'calendar', req.params.id);
+}));
+router.post('/calendar/:id/unarchive', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  await unarchiveContent(req, res, 'calendar', req.params.id);
+}));
+
+/* ---------- EXAMS / SCHOLARSHIPS / TRENDING ----------
+ * These are editorial content managed by admins/editors, not by reps.
+ * Their verify + publish flow is unchanged.
+ */
 router.get('/exams', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ exams: await many('select * from public.exams order by created_at desc') });
 }));
@@ -909,7 +1114,6 @@ router.post('/exams/:id/publish', authenticate, requireRole('owner','admin'), as
   res.json({ ok: true });
 }));
 
-/* ---------- SCHOLARSHIPS (keeps verification — editorial content) ---------- */
 router.get('/scholarships', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ scholarships: await many('select * from public.scholarships order by created_at desc') });
 }));
@@ -984,7 +1188,6 @@ router.post('/scholarships/:id/publish', authenticate, requireRole('owner','admi
   res.json({ ok: true });
 }));
 
-/* ---------- TRENDING (keeps verification — editorial content) ---------- */
 router.get('/trending', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ stories: await many('select * from public.trending order by created_at desc') });
 }));
@@ -1079,7 +1282,6 @@ router.post('/media', authenticate, requireRole('owner','admin','editor','school
   if (!req.file) throw httpError(400, 'A file is required.');
 
   const b = req.body || {};
-  // NOTE: school_id may be a UUID string, so do NOT Number() it.
   let schoolId = b.school_id ? String(b.school_id) : null;
   if (req.user.role === 'school_manager') {
     if (!req.user.school_id) throw httpError(403, 'No school assigned to this account.');
@@ -1206,7 +1408,6 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   res.json({ ok: true });
 }));
 
-/* ---------- MEDIA PLACEMENTS ---------- */
 router.get('/media/placements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { page, slot, media_id } = req.query;
   const clauses = ['p.is_active = true'];
@@ -1370,104 +1571,6 @@ router.post('/users/:id/reactivate', authenticate, requireRole('owner'), asyncH(
   res.json({ ok: true });
 }));
 
-/* ---------- SCHOOL MANAGER: submissions ---------- */
-router.get('/school/submissions', authenticate, requireRole('school_manager','owner','admin','reviewer'), asyncH(async (req, res) => {
-  let schoolId;
-  if (req.user.role === 'school_manager') schoolId = req.user.school_id;
-  else {
-    schoolId = req.query.school_id;
-    if (!schoolId) throw httpError(400, 'school_id is required.');
-  }
-  const items = [];
-  for (const c of await many(`select id, name as label, status, updated_at from public.courses where school_id=$1 and status in ('draft','pending')`, [schoolId]))
-    items.push({ type: 'course', ...c });
-  for (const f of await many(`select id, ('Fee ' || session || ' ' || category) as label, status, updated_at from public.fee_records where school_id=$1 and status in ('draft','pending')`, [schoolId]))
-    items.push({ type: 'fee', ...f });
-  for (const a of await many(`select id, title as label, status, updated_at from public.admission_notices where school_id=$1 and status in ('draft','pending')`, [schoolId]))
-    items.push({ type: 'admission', ...a });
-  for (const c of await many(`select id, title as label, status, updated_at from public.academic_events where school_id=$1 and status in ('draft','pending')`, [schoolId]))
-    items.push({ type: 'calendar', ...c });
-  items.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
-  res.json({ submissions: items });
-}));
-
-const SUBMISSION_TABLE = { course: 'courses', fee: 'fee_records', admission: 'admission_notices', calendar: 'academic_events' };
-
-router.post('/school/submissions/:type/:id/submit', authenticate, requireRole('school_manager'), asyncH(async (req, res) => {
-  const { type, id } = req.params;
-  const table = SUBMISSION_TABLE[type];
-  if (!table) throw httpError(400, 'Unsupported submission type.');
-  const row = await one(`select * from public.${table} where id=$1`, [id]);
-  if (!row) throw httpError(404, 'Record not found.');
-  if (!idsEqual(row.school_id, req.user.school_id)) throw httpError(403, 'You can only submit records for your assigned institution.');
-  await run(`update public.${table} set status='pending', updated_at=now() where id=$1`, [id]);
-  await audit(req, 'submit', type, id, row.name || row.title || `#${id}`);
-  res.json({ ok: true });
-}));
-
-router.post('/school/submissions/:type/:id/withdraw', authenticate, requireRole('school_manager'), asyncH(async (req, res) => {
-  const { type, id } = req.params;
-  const table = SUBMISSION_TABLE[type];
-  if (!table) throw httpError(400, 'Unsupported submission type.');
-  const row = await one(`select * from public.${table} where id=$1`, [id]);
-  if (!row) throw httpError(404, 'Record not found.');
-  if (!idsEqual(row.school_id, req.user.school_id)) throw httpError(403, 'You can only withdraw records for your assigned institution.');
-  if (row.status !== 'pending') throw httpError(400, 'Only records currently pending review can be withdrawn.');
-  await run(`update public.${table} set status='draft', updated_at=now() where id=$1`, [id]);
-  await audit(req, 'withdraw', type, id, row.name || row.title || `#${id}`);
-  res.json({ ok: true });
-}));
-
-/* ---------- OWNER: unified review queue ---------- */
-router.get('/admin/submissions', authenticate, requireRole('owner','admin','reviewer'), asyncH(async (req, res) => {
-  const schoolId = req.query.school_id;
-  const items = [];
-  const push = async (table, type, labelExpr) => {
-    const rows = await many(`select id, school_id, ${labelExpr} as label, status, updated_at from public.${table} where status='pending'`);
-    for (const r of rows) {
-      if (schoolId && !idsEqual(r.school_id, schoolId)) continue;
-      items.push({ type, ...r });
-    }
-  };
-  await push('courses', 'course', 'name');
-  await push('fee_records', 'fee', "'Fee ' || session || ' ' || category");
-  await push('admission_notices', 'admission', 'title');
-  await push('academic_events', 'calendar', 'title');
-  items.sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''));
-  res.json({ submissions: items });
-}));
-
-router.post('/admin/submissions/:type/:id/decision', authenticate, requireRole('owner','admin','reviewer'), asyncH(async (req, res) => {
-  const { type, id } = req.params;
-  const { decision, comment } = req.body || {};
-  const table = SUBMISSION_TABLE[type];
-  if (!table) throw httpError(400, 'Unsupported submission type.');
-  if (!['approved','changes_requested'].includes(decision))
-    throw httpError(400, 'decision must be "approved" or "changes_requested".');
-  const row = await one(`select * from public.${table} where id=$1`, [id]);
-  if (!row) throw httpError(404, 'Record not found.');
-  if (row.status !== 'pending') throw httpError(400, 'Only records currently pending review can be decided.');
-  const newStatus = decision === 'approved' ? 'published' : 'draft';
-  await run(`update public.${table} set status=$1, updated_at=now() where id=$2`, [newStatus, id]);
-  await run(
-    `insert into public.review_comments
-       (submission_type, submission_target_id, school_id, reviewer_id, reviewer_name, decision, comment)
-     values ($1,$2,$3,$4,$5,$6,$7)`,
-    [type, id, row.school_id, req.user.id, req.user.name, decision, comment || null]
-  );
-  await audit(req, decision, type, id, row.name || row.title || `#${id}`, { comment: comment || null });
-  const managers = await many(`select id from public.users where role='school_manager' and school_id=$1`, [row.school_id]);
-  for (const m of managers) {
-    await notify(
-      m.id, row.school_id,
-      decision === 'approved' ? 'Submission approved' : 'Changes requested',
-      `${type}: ${row.name || row.title || '#' + id}${comment ? ' — ' + comment : ''}`,
-      '/SchoolAd/submissions.html'
-    );
-  }
-  res.json({ ok: true, new_status: newStatus });
-}));
-
 /* ---------- NOTIFICATIONS ---------- */
 router.get('/notifications', authenticate, asyncH(async (req, res) => {
   const where = req.user.role === 'owner' ? '' : 'where (user_id = $1 or school_id = $2)';
@@ -1516,7 +1619,6 @@ router.get('/health', asyncH(async (req, res) => {
     const dbPromise = q('select now() as now');
     const r = await Promise.race([dbPromise, timeoutPromise]);
 
-    // Surface orphaned school_manager accounts
     let orphanManagers = 0;
     try {
       const orphanRow = await one(
@@ -1524,13 +1626,8 @@ router.get('/health', asyncH(async (req, res) => {
           where role='school_manager' and school_id is null`
       );
       orphanManagers = orphanRow ? orphanRow.c : 0;
-      if (orphanManagers > 0) {
-        console.warn(`[health] ${orphanManagers} school_manager account(s) have no school_id — dashboard will show "Unassigned".`);
-      }
     } catch (_) {}
 
-    // Surface legacy schools that are still 'unverified' from before this
-    // verification model change. They can be batch-fixed at any time.
     let unverifiedSchools = 0;
     try {
       const legRow = await one(
@@ -1538,19 +1635,17 @@ router.get('/health', asyncH(async (req, res) => {
           where verification <> 'verified'`
       );
       unverifiedSchools = legRow ? legRow.c : 0;
-      if (unverifiedSchools > 0) {
-        console.warn(`[health] ${unverifiedSchools} school row(s) still have verification != 'verified'. These are legacy rows — safe to leave, or batch-update to 'verified'.`);
-      }
     } catch (_) {}
 
     res.json({
       ok: true,
       time: r.rows[0].now,
-      version: '1.7.1',
+      version: '1.8.0',
       media: 'supabase-storage',
       placements: true,
       school_verification_removed: true,
       uuid_scope_check: true,
+      content_lifecycle: 'publish-now-send-back',
       orphan_school_managers: orphanManagers,
       legacy_unverified_schools: unverifiedSchools,
     });
@@ -1559,7 +1654,7 @@ router.get('/health', asyncH(async (req, res) => {
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.7.1',
+      version: '1.8.0',
     });
   }
 }));

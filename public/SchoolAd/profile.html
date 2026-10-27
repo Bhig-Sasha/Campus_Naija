@@ -94,6 +94,14 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -437,16 +445,6 @@
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
     .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .review-notice {
-      display: flex; gap: 12px; padding: 14px 16px;
-      background-color: rgba(245,185,66,0.06);
-      border: 1px solid rgba(245,185,66,0.25);
-      border-radius: var(--radius-input); margin-bottom: 20px;
-    }
-    .review-notice i { color: var(--accent); margin-top: 2px; flex-shrink: 0; }
-    .review-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
-    .review-notice strong { color: var(--accent); }
-
     /* Rich editor */
     .rich-editor {
       background-color: var(--surface); border: 1px solid var(--border);
@@ -671,7 +669,10 @@
         <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+        <a href="./submissions.html" class="nav-item">
+          <i class="fas fa-folder-open"></i> My Content
+          <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+        </a>
         <a href="./profile.html" class="nav-item active"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -757,7 +758,6 @@
           </button>
         </div>
 
-        <!-- BASIC TAB -->
         <div class="profile-panel active" id="panel-basic">
 
           <div class="panel">
@@ -910,7 +910,6 @@
           </div>
         </div>
 
-        <!-- CONTACT TAB -->
         <div class="profile-panel" id="panel-contact">
           <div class="panel">
             <div class="panel-header">
@@ -935,7 +934,6 @@
           </div>
         </div>
 
-        <!-- ABOUT TAB -->
         <div class="profile-panel" id="panel-about">
           <div class="panel">
             <div class="panel-header">
@@ -958,7 +956,6 @@
           </div>
         </div>
 
-        <!-- HISTORY TAB -->
         <div class="profile-panel" id="panel-history">
           <div class="panel">
             <div class="panel-header">
@@ -988,9 +985,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -1015,7 +1012,6 @@
     </div>
   </div>
 
-  <!-- Media picker modal -->
   <div class="modal-backdrop" id="mediaPickerBackdrop">
     <div class="modal">
       <div class="modal-header">
@@ -1117,13 +1113,6 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderBanner
-       * ------------
-       * No status pill/badge for the sidebar. The draft banner badge
-       * reflects PUBLICATION only (Published / Draft / Archived) —
-       * never "Verified/Unverified".
-       */
       function renderBanner() {
         const banner = document.getElementById('draftBanner');
         const logoEl = document.getElementById('draftLogo');
@@ -1171,7 +1160,6 @@
           return;
         }
 
-        // schoolState === 'ok'
         const name = currentSchool.name || '—';
         const type = currentSchool.type || '—';
         const location = [currentSchool.city, currentSchool.state].filter(Boolean).join(', ') || '—';
@@ -1230,7 +1218,6 @@
         sidebarName.textContent = name;
       }
 
-      // Media URL cache (per-school media)
       let mediaCache = {};
       function getMediaUrlById(id) {
         return mediaCache[id] || null;
@@ -1308,7 +1295,6 @@
         document.getElementById('coverSelectBtn').disabled = disabled;
       }
 
-      /* TABS */
       window.switchTab = function(tab, el) {
         document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
@@ -1322,7 +1308,6 @@
         if (tab === 'history') loadHistory();
       };
 
-      /* RADIO */
       document.querySelectorAll('input[name="ownership"]').forEach(radio => {
         radio.addEventListener('change', () => {
           document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
@@ -1330,7 +1315,6 @@
         });
       });
 
-      /* SAVE HANDLERS */
       async function patchSchool(payload, successMsg) {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         try {
@@ -1392,7 +1376,6 @@
         btn.disabled = false;
       };
 
-      /* MEDIA PICKER */
       window.openMediaPicker = async function(target) {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         mediaPickerTarget = target;
@@ -1456,7 +1439,6 @@
         await patchSchool(payload, (kind === 'logo' ? 'Logo' : 'Cover') + ' cleared.');
       };
 
-      /* HISTORY */
       async function loadHistory() {
         const el = document.getElementById('historyList');
         const desc = document.getElementById('historyDesc');
@@ -1514,7 +1496,6 @@
         }
       }
 
-      /* SESSION */
       async function verifySession() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!token) { redirectToLogin('not_signed_in'); return false; }
@@ -1581,7 +1562,6 @@
         window.location.replace(LOGIN_URL);
       };
 
-      /* MOBILE SIDEBAR */
       const menuToggle = document.getElementById('menuToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
@@ -1599,13 +1579,11 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());
       })();
 
-      /* INIT */
       (async function boot() {
         const ok = await verifySession();
         if (!ok) return;

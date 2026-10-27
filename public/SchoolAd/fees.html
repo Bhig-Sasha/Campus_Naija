@@ -94,6 +94,14 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -245,13 +253,15 @@
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
-    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px 20px;
       transition: border-color 0.15s;
     }
     .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini.attention { border-color: rgba(245,185,66,0.35); }
+    .stat-mini.attention:hover { border-color: var(--accent); }
     .stat-mini-label {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
@@ -259,10 +269,12 @@
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
     .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-label i.muted { color: var(--muted); }
     .stat-mini-value {
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
+    .stat-mini-value.attention { color: var(--accent); }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* TOOLBAR */
@@ -322,6 +334,14 @@
     .fee-tab:hover { color: var(--text); }
     .fee-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
     .fee-tab i { font-size: 0.85rem; }
+    .fee-tab .tab-count {
+      background-color: var(--elevated); color: var(--muted);
+      font-size: 0.65rem; font-weight: 800; padding: 1px 7px;
+      border-radius: 40px; min-width: 20px; text-align: center;
+    }
+    .fee-tab.active .tab-count {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+    }
 
     /* PANEL */
     .panel {
@@ -346,6 +366,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
     }
+    .empty-state.success .es-icon { color: rgba(0,201,130,0.5); border-color: rgba(0,201,130,0.25); }
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
     .empty-state p {
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
@@ -356,7 +377,7 @@
     /* Data list */
     .data-list { display: flex; flex-direction: column; gap: 10px; }
     .data-row {
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: flex-start; gap: 14px;
       padding: 14px 16px;
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -364,6 +385,8 @@
       transition: border-color 0.15s;
     }
     .data-row:hover { border-color: var(--primary); }
+    .data-row.needs-fix { border-color: rgba(245,185,66,0.25); }
+    .data-row.needs-fix:hover { border-color: var(--accent); }
     .data-row-icon {
       width: 38px; height: 38px; border-radius: 9px;
       background-color: rgba(0,201,130,0.1); color: var(--primary);
@@ -371,6 +394,7 @@
       font-size: 0.9rem; flex-shrink: 0;
     }
     .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-icon.muted { background-color: rgba(155,169,161,0.1); color: var(--muted); }
     .data-row-body { flex: 1; min-width: 0; }
     .data-row-title {
       font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
@@ -384,15 +408,25 @@
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
     }
     .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-feedback {
+      margin-top: 10px; padding: 10px 12px;
+      background-color: rgba(245,185,66,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.5;
+    }
+    .data-row-feedback strong { color: var(--accent); }
     .data-row-badge {
       font-size: 0.68rem; font-weight: 700;
       padding: 3px 10px; border-radius: 40px;
       white-space: nowrap;
     }
     .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
-    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.sent-back { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
-    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+    .data-row-badge.archived { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; margin-top: 4px; }
 
     /* Add form */
     .add-inline {
@@ -512,10 +546,6 @@
       border-top: 1px solid var(--border);
       font-size: 0.72rem; color: var(--muted);
     }
-    .footer-bottom .footer-secure {
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .footer-bottom .footer-secure i { color: var(--primary); font-size: 0.7rem; }
 
     /* Toast */
     .toast {
@@ -597,7 +627,10 @@
         <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+        <a href="./submissions.html" class="nav-item">
+          <i class="fas fa-folder-open"></i> My Content
+          <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+        </a>
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -649,7 +682,7 @@
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-money-bill"></i> School finance information</div>
           <h1>Fees Management</h1>
-          <p>Maintain published fee information for prospective and current students.</p>
+          <p>Maintain published fee information for prospective and current students. Fees go live the moment you save them. If the platform administrator spots a fault, they send it back for you to fix.</p>
         </div>
 
         <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
@@ -668,15 +701,20 @@
             <div class="stat-mini-value" id="statTotal">—</div>
             <div class="stat-mini-sub" id="statTotalSub"></div>
           </div>
-          <div class="stat-mini">
-            <div class="stat-mini-label">Awaiting review <i class="fas fa-clock gold"></i></div>
-            <div class="stat-mini-value" id="statPending">—</div>
-            <div class="stat-mini-sub" id="statPendingSub"></div>
+          <div class="stat-mini attention">
+            <div class="stat-mini-label">Needs fix <i class="fas fa-triangle-exclamation gold"></i></div>
+            <div class="stat-mini-value attention" id="statSentBack">—</div>
+            <div class="stat-mini-sub" id="statSentBackSub"></div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-label">Approved &amp; published <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-label">Live on public site <i class="fas fa-circle-check"></i></div>
             <div class="stat-mini-value" id="statPublished">—</div>
             <div class="stat-mini-sub" id="statPublishedSub"></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Archived <i class="fas fa-archive muted"></i></div>
+            <div class="stat-mini-value" id="statArchived">—</div>
+            <div class="stat-mini-sub" id="statArchivedSub"></div>
           </div>
         </div>
 
@@ -698,13 +736,16 @@
 
         <div class="fee-tabs">
           <button class="fee-tab active" data-cat="all" onclick="switchCategory('all', this)">
-            <i class="fas fa-list"></i> All fees <span id="tabCountAll" style="color:var(--muted);font-size:0.75rem;font-weight:700;margin-left:4px;"></span>
+            <i class="fas fa-list"></i> All <span class="tab-count" id="countAll">—</span>
           </button>
-          <button class="fee-tab" data-cat="tuition" onclick="switchCategory('tuition', this)">
-            <i class="fas fa-graduation-cap"></i> Tuition
+          <button class="fee-tab" data-cat="sent_back" onclick="switchCategory('sent_back', this)">
+            <i class="fas fa-triangle-exclamation"></i> Needs fix <span class="tab-count" id="countSentBack">—</span>
           </button>
-          <button class="fee-tab" data-cat="other" onclick="switchCategory('other', this)">
-            <i class="fas fa-receipt"></i> Other charges
+          <button class="fee-tab" data-cat="published" onclick="switchCategory('published', this)">
+            <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="countPublished">—</span>
+          </button>
+          <button class="fee-tab" data-cat="archived" onclick="switchCategory('archived', this)">
+            <i class="fas fa-archive"></i> Archived <span class="tab-count" id="countArchived">—</span>
           </button>
         </div>
 
@@ -763,9 +804,9 @@
               <span class="form-hint">Digits only — no commas or ₦ symbol.</span>
             </div>
             <div class="form-group">
-              <label>Official source URL <span class="optional">(optional for draft)</span></label>
+              <label>Official source URL <span class="optional">(optional)</span></label>
               <input type="url" id="feeSourceUrl" placeholder="https://official-source.example/fees">
-              <span class="form-hint">Required before submission for review.</span>
+              <span class="form-hint">Recommended. Helps reviewers if verification is needed.</span>
             </div>
             <div class="form-group">
               <label>Source verified on <span class="optional">(optional)</span></label>
@@ -777,14 +818,14 @@
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn-outline btn-sm" id="saveDraftBtn" onclick="saveFeeDraft()">
-              <i class="fas fa-save"></i> Save draft
+            <button class="btn-primary btn-sm" id="saveFeeBtn" onclick="saveFee()">
+              <i class="fas fa-save"></i> Save &amp; publish
             </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
           <p class="form-hint" style="margin-top: 10px;">
             <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
-            New records are saved as drafts. Use "Submit for review" from the fee list to send them to the platform owner.
+            Saving publishes this fee record immediately on your school's public page.
           </p>
         </div>
 
@@ -815,9 +856,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -835,7 +876,6 @@
           </div>
           <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
-            <span class="footer-secure"><i class="fas fa-lock"></i> <span id="footerInstitution">—</span></span>
           </div>
         </footer>
 
@@ -861,6 +901,7 @@
       let currentUser = null;
       let currentSchool = null;
       let allFees = [];
+      let activeTab = 'all';
       let schoolState = 'unassigned';
 
       const esc = (s) => String(s ?? '')
@@ -930,20 +971,12 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderSchool
-       * ------------
-       * - 'ok'         → hide the scope banner entirely, show school name in sidebar, footer and pill.
-       * - 'unassigned' → show yellow scope banner with guidance.
-       * - 'orphaned'   → show red scope banner with reference id.
-       */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
         const banner = document.getElementById('scopeBanner');
         const bannerTitle = document.getElementById('scopeBannerTitle');
         const bannerDesc = document.getElementById('scopeBannerDesc');
         const pill = document.getElementById('scopeSchoolPill');
-        const footerInst = document.getElementById('footerInstitution');
         const addBtn = document.getElementById('addFeeBtn');
 
         banner.classList.remove('visible', 'unassigned', 'orphaned');
@@ -954,7 +987,6 @@
           bannerDesc.textContent = 'Contact the platform administrator to be assigned to your institution before adding fee records.';
           pill.textContent = 'Unassigned';
           sidebarName.textContent = 'No institution assigned';
-          footerInst.textContent = 'No institution assigned';
           if (addBtn) addBtn.disabled = true;
           return;
         }
@@ -966,41 +998,60 @@
           bannerDesc.textContent = 'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
           pill.textContent = 'Orphaned reference';
           sidebarName.textContent = 'School reference invalid';
-          footerInst.textContent = 'Orphaned reference';
           if (addBtn) addBtn.disabled = true;
           return;
         }
 
-        // schoolState === 'ok' — no banner, just plain branding
-        const name = currentSchool.name || '—';
-        sidebarName.textContent = name;
-        footerInst.textContent = 'Access limited to ' + name + '.';
+        sidebarName.textContent = currentSchool.name || '—';
         if (addBtn) addBtn.disabled = false;
+      }
+
+      function classify(f) {
+        if (f.status === 'archived') return 'archived';
+        if (f.status === 'published') return 'published';
+        if (f.status === 'draft' && f.review_comment) return 'sent_back';
+        return 'draft';
       }
 
       /* ----- STATS ----- */
       function updateStats() {
         const total = allFees.length;
-        const pending = allFees.filter(f => f.status === 'pending').length;
-        const published = allFees.filter(f => f.status === 'published').length;
-        const drafts = allFees.filter(f => f.status === 'draft').length;
+        const sentBack = allFees.filter(f => classify(f) === 'sent_back').length;
+        const published = allFees.filter(f => classify(f) === 'published').length;
+        const archived = allFees.filter(f => classify(f) === 'archived').length;
 
         document.getElementById('statTotal').textContent = String(total);
-        document.getElementById('statTotalSub').textContent =
-          drafts > 0 ? drafts + ' draft' + (drafts === 1 ? '' : 's') : '';
+        document.getElementById('statTotalSub').textContent = total > 0 ? 'For your institution' : '';
 
-        document.getElementById('statPending').textContent = String(pending);
-        document.getElementById('statPendingSub').textContent =
-          pending > 0 ? 'Submitted changes' : '';
+        document.getElementById('statSentBack').textContent = String(sentBack);
+        document.getElementById('statSentBackSub').textContent =
+          sentBack > 0 ? 'Fix and re-save to republish' : '';
 
         document.getElementById('statPublished').textContent = String(published);
         document.getElementById('statPublishedSub').textContent =
           published > 0 ? 'Visible publicly' : '';
 
-        document.getElementById('tabCountAll').textContent = total > 0 ? '(' + total + ')' : '';
+        document.getElementById('statArchived').textContent = String(archived);
+        document.getElementById('statArchivedSub').textContent =
+          archived > 0 ? 'Hidden from public site' : '';
+
+        document.getElementById('countAll').textContent = String(total);
+        document.getElementById('countSentBack').textContent = String(sentBack);
+        document.getElementById('countPublished').textContent = String(published);
+        document.getElementById('countArchived').textContent = String(archived);
+
+        const badge = document.getElementById('myContentBadge');
+        if (badge) {
+          if (sentBack > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = String(sentBack);
+          } else {
+            badge.style.display = 'none';
+          }
+        }
       }
 
-      /* ----- POPULATE SESSION FILTER FROM DATA ----- */
+      /* ----- SESSION FILTER ----- */
       function populateSessionFilter() {
         const sel = document.getElementById('sessionFilter');
         const current = sel.value;
@@ -1013,9 +1064,9 @@
 
       /* ----- CATEGORY TAB ----- */
       window.switchCategory = function(cat, el) {
+        activeTab = cat;
         document.querySelectorAll('.fee-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
-        document.getElementById('categoryFilter').value = cat;
         filterFees();
       };
 
@@ -1029,18 +1080,20 @@
         if (category === 'tuition') list = list.filter(f => f.category === 'tuition');
         else if (category === 'other') list = list.filter(f => f.category && f.category !== 'tuition');
 
+        if (activeTab === 'sent_back') list = list.filter(f => classify(f) === 'sent_back');
+        else if (activeTab === 'published') list = list.filter(f => classify(f) === 'published');
+        else if (activeTab === 'archived') list = list.filter(f => classify(f) === 'archived');
+
         renderFees(list);
       };
 
       /* ----- RENDER ----- */
-      function statusBadge(status) {
-        const map = {
-          draft: { cls: 'draft', label: 'Draft' },
-          pending: { cls: 'pending', label: 'Pending review' },
-          published: { cls: 'published', label: 'Published' },
-        };
-        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
-        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      function statusBadge(f) {
+        const cat = classify(f);
+        if (cat === 'sent_back') return '<span class="data-row-badge sent-back">Needs fix</span>';
+        if (cat === 'published') return '<span class="data-row-badge published">Published</span>';
+        if (cat === 'archived') return '<span class="data-row-badge archived">Archived</span>';
+        return '<span class="data-row-badge draft">Draft</span>';
       }
 
       function renderFees(list) {
@@ -1052,28 +1105,46 @@
 
         if (!list.length) {
           const hasAnyFees = allFees.length > 0;
-          el.innerHTML = '<div class="empty-state">' +
-            '<div class="es-icon"><i class="fas fa-money-bill"></i></div>' +
-            '<h3>' + (hasAnyFees ? 'No fees match the current filters' : 'No fee records yet') + '</h3>' +
-            '<p>' + (hasAnyFees
-              ? 'Try changing the session or category filter.'
-              : 'Add your first fee record to begin managing your school\'s tuition and charges.') + '</p>' +
-            (hasAnyFees ? '' :
+          let emptyHtml;
+
+          if (!hasAnyFees) {
+            emptyHtml =
+              '<div class="es-icon"><i class="fas fa-money-bill"></i></div>' +
+              '<h3>No fee records yet</h3>' +
+              '<p>Add your first fee record to begin managing your school\'s tuition and charges. Fee records go live the moment you save them.</p>' +
               '<div class="empty-actions">' +
               '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Add first fee record</button>' +
-              '</div>') +
-            '</div>';
+              '</div>';
+          } else if (activeTab === 'sent_back') {
+            emptyHtml =
+              '<div class="es-icon" style="color:rgba(0,201,130,0.5);border-color:rgba(0,201,130,0.25);"><i class="fas fa-circle-check"></i></div>' +
+              '<h3>Nothing needs fixing</h3>' +
+              '<p>Great — no fee records have been sent back for changes.</p>';
+          } else {
+            emptyHtml =
+              '<div class="es-icon"><i class="fas fa-inbox"></i></div>' +
+              '<h3>No fees match the current filters</h3>' +
+              '<p>Try a different tab, session or category filter.</p>';
+          }
+
+          el.innerHTML = '<div class="empty-state' + (activeTab === 'sent_back' ? ' success' : '') + '">' + emptyHtml + '</div>';
           return;
         }
 
         const sorted = list.slice().sort((a, b) => {
+          const ca = classify(a), cb = classify(b);
+          if (ca === 'sent_back' && cb !== 'sent_back') return -1;
+          if (cb === 'sent_back' && ca !== 'sent_back') return 1;
           const s = (b.session || '').localeCompare(a.session || '');
           if (s !== 0) return s;
           return (a.category || '').localeCompare(b.category || '');
         });
 
         el.innerHTML = '<div class="data-list">' + sorted.map(f => {
-          const cat = f.category || 'Fee';
+          const cat = classify(f);
+          const isSentBack = cat === 'sent_back';
+
+          const categoryLabel = f.category || 'Fee';
           const prog = f.programme ? ' — ' + esc(f.programme) : '';
           const amt = formatNaira(f.amount);
 
@@ -1084,32 +1155,36 @@
           if (f.verified_date) meta.push('verified ' + esc(f.verified_date));
           const metaHtml = meta.length ? meta.join('<span class="dot">●</span>') : '<span>—</span>';
 
-          const isDraft = f.status === 'draft';
-          const isPending = f.status === 'pending';
+          const feedbackHtml = f.review_comment
+            ? '<div class="data-row-feedback"><strong>Admin note:</strong> ' + esc(f.review_comment) + '</div>'
+            : '';
+
           const actions = [];
-          if (isDraft) {
-            actions.push('<button class="btn-outline btn-sm" onclick="submitFee(\'' + esc(f.id) + '\')">' +
-              '<i class="fas fa-paper-plane"></i> Submit for review</button>');
+
+          if (isSentBack) {
+            actions.push('<button class="btn-primary btn-sm" onclick="editFee(\'' + esc(f.id) + '\')">' +
+              '<i class="fas fa-pen"></i> Fix &amp; re-publish</button>');
           }
-          if (isPending) {
-            actions.push('<button class="btn-outline btn-sm" onclick="withdrawFee(\'' + esc(f.id) + '\')">' +
-              '<i class="fas fa-rotate-left"></i> Withdraw</button>');
-          }
-          if (f.status !== 'published') {
-            actions.push('<button class="btn-danger btn-sm" onclick="deleteFee(\'' + esc(f.id) + '\')">' +
+
+          if (cat !== 'published') {
+            actions.push('<button class="btn-danger btn-sm" onclick="deleteFee(\'' + esc(f.id) + '\', \'' +
+              esc((categoryLabel + prog).replace(/'/g, "\\'")) + '\')">' +
               '<i class="fas fa-trash"></i> Delete</button>');
           }
 
-          return '<div class="data-row">' +
-            '<div class="data-row-icon ' + (isPending ? 'gold' : '') + '"><i class="fas fa-money-bill"></i></div>' +
+          return '<div class="data-row' + (isSentBack ? ' needs-fix' : '') + '">' +
+            '<div class="data-row-icon ' + (isSentBack ? 'gold' : cat === 'archived' ? 'muted' : '') + '">' +
+              '<i class="fas fa-money-bill"></i>' +
+            '</div>' +
             '<div class="data-row-body">' +
               '<div class="data-row-title">' +
-                '<span>' + esc(cat.charAt(0).toUpperCase() + cat.slice(1)) + prog + '</span>' +
+                '<span>' + esc(categoryLabel.charAt(0).toUpperCase() + categoryLabel.slice(1)) + prog + '</span>' +
                 ' <span class="amount">' + esc(amt) + '</span>' +
               '</div>' +
               '<div class="data-row-meta">' + metaHtml + '</div>' +
+              feedbackHtml +
             '</div>' +
-            statusBadge(f.status) +
+            statusBadge(f) +
             (actions.length ? '<div class="data-row-actions">' + actions.join('') + '</div>' : '') +
           '</div>';
         }).join('') + '</div>';
@@ -1120,8 +1195,7 @@
         if (schoolState !== 'ok' || !currentSchool) {
           allFees = [];
           updateStats(); renderFees([]);
-          document.getElementById('feeListDesc').textContent =
-            'No institution available.';
+          document.getElementById('feeListDesc').textContent = 'No institution available.';
           return;
         }
         try {
@@ -1151,7 +1225,7 @@
         }
       };
 
-      function validateDraftForm() {
+      function validateForm() {
         const session = document.getElementById('feeSession').value.trim();
         const category = document.getElementById('feeCategory').value;
         const amountRaw = document.getElementById('feeAmount').value.trim();
@@ -1195,19 +1269,19 @@
         toggleAddForm();
       }
 
-      window.saveFeeDraft = async function() {
+      window.saveFee = async function() {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
-        const payload = validateDraftForm();
+        const payload = validateForm();
         if (!payload) return;
 
-        const btn = document.getElementById('saveDraftBtn');
+        const btn = document.getElementById('saveFeeBtn');
         btn.disabled = true;
         try {
           await api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/fees', {
             method: 'POST',
             body: JSON.stringify(payload),
           });
-          toast('Fee record saved as draft.');
+          toast('Fee record published.');
           resetFeeForm();
           await loadFees();
         } catch (err) {
@@ -1217,37 +1291,58 @@
         }
       };
 
-      /* ----- SUBMIT / WITHDRAW / DELETE ----- */
-      window.submitFee = async function(id) {
-        const fee = allFees.find(f => String(f.id) === String(id));
-        if (!fee) return;
-        if (!fee.source_url) {
-          toast('Add an official source URL before submitting for review.', true);
+      /**
+       * editFee
+       * -------
+       * "Fix & re-publish" for a sent-back fee record. Prompts for the
+       * amount (the most likely fault) plus session and category, then PATCHes.
+       * Server flips the status back to 'published'.
+       */
+      window.editFee = async function(id) {
+        const f = allFees.find(x => String(x.id) === String(id));
+        if (!f) return;
+
+        const newAmount = prompt(
+          'Fee amount (NGN, digits only):',
+          String(f.amount != null ? f.amount : '')
+        );
+        if (newAmount == null) return;
+        const cleaned = String(newAmount).replace(/[,\s₦]/g, '');
+        if (!/^\d+$/.test(cleaned)) {
+          toast('Amount must be a whole number.', true);
           return;
         }
-        if (!confirm('Submit this fee record for review?\n\nYour current published fees stay visible until the change is approved.')) return;
+
+        const newSession = prompt('Academic session:', f.session || '');
+        if (newSession == null) return;
+        if (!/^\d{4}\/\d{4}$/.test(newSession.trim())) {
+          toast('Session should look like 2025/2026.', true);
+          return;
+        }
+
+        const newCategory = prompt('Fee category:', f.category || '');
+        if (newCategory == null) return;
+        if (!newCategory.trim()) { toast('Category is required.', true); return; }
+
         try {
-          await api('/api/school/submissions/fee/' + encodeURIComponent(id) + '/submit', { method: 'POST' });
-          toast('Fee submitted for review.');
+          await api('/api/fees/' + encodeURIComponent(id), {
+            method: 'PATCH',
+            body: JSON.stringify({
+              amount: Number(cleaned),
+              session: newSession.trim(),
+              category: newCategory.trim(),
+            }),
+          });
+          toast('Fee record re-published.');
           await loadFees();
         } catch (err) {
           toast(err.message, true);
         }
       };
 
-      window.withdrawFee = async function(id) {
-        if (!confirm('Withdraw this submission and return it to draft?')) return;
-        try {
-          await api('/api/school/submissions/fee/' + encodeURIComponent(id) + '/withdraw', { method: 'POST' });
-          toast('Submission withdrawn.');
-          await loadFees();
-        } catch (err) {
-          toast(err.message, true);
-        }
-      };
-
-      window.deleteFee = async function(id) {
-        if (!confirm('Delete this fee record? This cannot be undone.')) return;
+      /* ----- DELETE ----- */
+      window.deleteFee = async function(id, label) {
+        if (!confirm('Delete "' + (label || 'this fee record') + '"?\n\nThis cannot be undone.')) return;
         try {
           await api('/api/fees/' + encodeURIComponent(id), { method: 'DELETE' });
           toast('Fee record deleted.');
@@ -1342,7 +1437,6 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());

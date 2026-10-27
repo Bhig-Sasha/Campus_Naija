@@ -94,6 +94,14 @@
       transform: translateY(-50%); width: 3px; height: 20px;
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: rgba(245,185,66,0.15);
+      color: var(--accent);
+      font-size: 0.65rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
 
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
@@ -201,7 +209,7 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* SCOPE BANNER — now only shown in unassigned / orphaned states */
+    /* SCOPE BANNER — hidden when everything is fine */
     .scope-banner {
       display: none;
       flex-wrap: wrap; align-items: center; gap: 14px;
@@ -245,23 +253,28 @@
     .stats-row {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px;
     }
-    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
     .stat-mini {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px 20px;
       transition: border-color 0.15s;
     }
     .stat-mini:hover { border-color: var(--primary); }
+    .stat-mini.attention { border-color: rgba(245,185,66,0.35); }
+    .stat-mini.attention:hover { border-color: var(--accent); }
     .stat-mini-label {
       font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .stat-mini-label i { color: var(--primary); font-size: 0.85rem; }
+    .stat-mini-label i.gold { color: var(--accent); }
+    .stat-mini-label i.muted { color: var(--muted); }
     .stat-mini-value {
       font-size: 1.7rem; font-weight: 800; color: var(--text);
       line-height: 1; min-height: 1em;
     }
+    .stat-mini-value.attention { color: var(--accent); }
     .stat-mini-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; min-height: 1em; }
 
     /* TABS */
@@ -342,12 +355,37 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 1.6rem; color: var(--border); margin-bottom: 16px;
     }
+    .empty-state.success .es-icon { color: rgba(0,201,130,0.5); border-color: rgba(0,201,130,0.25); }
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
     .empty-state p {
       font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;
       max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5;
     }
     .empty-state .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    /* Course list tabs */
+    .course-tabs {
+      display: flex; gap: 4px; overflow-x: auto;
+      border-bottom: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .course-tab {
+      padding: 10px 16px; font-size: 0.82rem; font-weight: 600;
+      color: var(--muted); cursor: pointer; white-space: nowrap;
+      border: none; background: transparent;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .course-tab:hover { color: var(--text); }
+    .course-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .course-tab .tab-count {
+      background-color: var(--elevated); color: var(--muted);
+      font-size: 0.62rem; font-weight: 800; padding: 1px 7px;
+      border-radius: 40px; min-width: 18px; text-align: center;
+    }
+    .course-tab.active .tab-count {
+      background-color: rgba(0,201,130,0.15); color: var(--primary);
+    }
 
     /* Add form */
     .add-inline {
@@ -406,7 +444,7 @@
     /* Data list */
     .data-list { display: flex; flex-direction: column; gap: 10px; }
     .data-row {
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: flex-start; gap: 14px;
       padding: 14px 16px;
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -414,6 +452,8 @@
       transition: border-color 0.15s;
     }
     .data-row:hover { border-color: var(--primary); }
+    .data-row.needs-fix { border-color: rgba(245,185,66,0.25); }
+    .data-row.needs-fix:hover { border-color: var(--accent); }
     .data-row-icon {
       width: 36px; height: 36px; border-radius: 9px;
       background-color: rgba(0,201,130,0.1); color: var(--primary);
@@ -421,6 +461,7 @@
       font-size: 0.9rem; flex-shrink: 0;
     }
     .data-row-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .data-row-icon.muted { background-color: rgba(155,169,161,0.1); color: var(--muted); }
     .data-row-body { flex: 1; min-width: 0; }
     .data-row-title {
       font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;
@@ -431,15 +472,25 @@
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
     }
     .data-row-meta .dot { font-size: 0.4rem; }
+    .data-row-feedback {
+      margin-top: 10px; padding: 10px 12px;
+      background-color: rgba(245,185,66,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.5;
+    }
+    .data-row-feedback strong { color: var(--accent); }
     .data-row-badge {
       font-size: 0.68rem; font-weight: 700;
       padding: 3px 10px; border-radius: 40px;
       white-space: nowrap;
     }
     .data-row-badge.draft { background-color: rgba(155,169,161,0.12); color: var(--muted); }
-    .data-row-badge.pending { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .data-row-badge.sent-back { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .data-row-badge.published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
-    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .data-row-badge.archived { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .data-row-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; margin-top: 4px; }
 
     /* SITE FOOTER */
     .site-footer {
@@ -485,10 +536,6 @@
       border-top: 1px solid var(--border);
       font-size: 0.72rem; color: var(--muted);
     }
-    .footer-bottom .footer-secure {
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .footer-bottom .footer-secure i { color: var(--primary); font-size: 0.7rem; }
 
     /* Toast */
     .toast {
@@ -531,6 +578,7 @@
       .form-actions { flex-direction: column; }
       .form-actions button { width: 100%; justify-content: center; }
       .section-tab { padding: 10px 14px; font-size: 0.8rem; }
+      .course-tab { padding: 8px 12px; font-size: 0.78rem; }
       .data-row { flex-wrap: wrap; }
       .data-row-actions { width: 100%; justify-content: flex-end; }
       .footer-top { flex-direction: column; gap: 20px; }
@@ -568,7 +616,10 @@
         <a href="./admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
-        <a href="./submissions.html" class="nav-item"><i class="fas fa-paper-plane"></i> Submissions</a>
+        <a href="./submissions.html" class="nav-item">
+          <i class="fas fa-folder-open"></i> My Content
+          <span class="nav-badge" id="myContentBadge" style="display:none;">0</span>
+        </a>
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
@@ -620,7 +671,7 @@
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-book-open"></i> Academic management</div>
           <h1>Faculties &amp; Courses</h1>
-          <p>Manage the academic programmes shown on your school's public profile.</p>
+          <p>Manage the academic programmes shown on your school's public profile. Courses go live the moment you save them. If the platform administrator spots a fault, they send it back for you to fix.</p>
         </div>
 
         <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
@@ -635,19 +686,24 @@
 
         <div class="stats-row">
           <div class="stat-mini">
-            <div class="stat-mini-label">Faculties <i class="fas fa-building"></i></div>
-            <div class="stat-mini-value" id="statFaculties">—</div>
-            <div class="stat-mini-sub" id="statFacultiesSub"></div>
-          </div>
-          <div class="stat-mini">
-            <div class="stat-mini-label">Departments <i class="fas fa-sitemap"></i></div>
-            <div class="stat-mini-value" id="statDepartments">—</div>
-            <div class="stat-mini-sub" id="statDepartmentsSub"></div>
-          </div>
-          <div class="stat-mini">
             <div class="stat-mini-label">Courses / programmes <i class="fas fa-book-open"></i></div>
             <div class="stat-mini-value" id="statCourses">—</div>
             <div class="stat-mini-sub" id="statCoursesSub"></div>
+          </div>
+          <div class="stat-mini attention">
+            <div class="stat-mini-label">Needs fix <i class="fas fa-triangle-exclamation gold"></i></div>
+            <div class="stat-mini-value attention" id="statSentBack">—</div>
+            <div class="stat-mini-sub" id="statSentBackSub"></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Live on public site <i class="fas fa-circle-check"></i></div>
+            <div class="stat-mini-value" id="statPublished">—</div>
+            <div class="stat-mini-sub" id="statPublishedSub"></div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-label">Archived <i class="fas fa-archive muted"></i></div>
+            <div class="stat-mini-value" id="statArchived">—</div>
+            <div class="stat-mini-sub" id="statArchivedSub"></div>
           </div>
         </div>
 
@@ -701,7 +757,22 @@
                 <i class="fas fa-plus"></i> Add new course
               </button>
             </div>
-            <p class="panel-desc">Individual courses and programmes offered by your institution. New records start as drafts and can be submitted for review.</p>
+            <p class="panel-desc">Individual courses and programmes offered by your institution. Courses go live the moment you save them.</p>
+
+            <div class="course-tabs">
+              <button class="course-tab active" data-cat="all" onclick="switchCourseTab('all', this)">
+                <i class="fas fa-list"></i> All <span class="tab-count" id="courseCountAll">—</span>
+              </button>
+              <button class="course-tab" data-cat="sent_back" onclick="switchCourseTab('sent_back', this)">
+                <i class="fas fa-triangle-exclamation"></i> Needs fix <span class="tab-count" id="courseCountSentBack">—</span>
+              </button>
+              <button class="course-tab" data-cat="published" onclick="switchCourseTab('published', this)">
+                <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="courseCountPublished">—</span>
+              </button>
+              <button class="course-tab" data-cat="archived" onclick="switchCourseTab('archived', this)">
+                <i class="fas fa-archive"></i> Archived <span class="tab-count" id="courseCountArchived">—</span>
+              </button>
+            </div>
 
             <div class="add-inline" id="form-course">
               <div class="ai-header">
@@ -761,10 +832,14 @@
               </div>
               <div class="form-actions">
                 <button class="btn-primary btn-sm" id="saveCourseBtn" onclick="saveCourse()">
-                  <i class="fas fa-save"></i> Save draft
+                  <i class="fas fa-save"></i> Save &amp; publish
                 </button>
                 <button class="btn-outline btn-sm" onclick="toggleAddForm('course')">Cancel</button>
               </div>
+              <p class="form-hint" style="margin-top: 10px;">
+                <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
+                Saving publishes this course immediately on your school's public page.
+              </p>
             </div>
 
             <div id="coursesList">
@@ -790,9 +865,9 @@
                 </ul>
               </div>
               <div class="footer-col">
-                <h5>Review</h5>
+                <h5>Content</h5>
                 <ul>
-                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./submissions.html"><i class="fas fa-folder-open"></i> My content</a></li>
                   <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
@@ -810,7 +885,6 @@
           </div>
           <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
-            <span class="footer-secure"><i class="fas fa-lock"></i> <span id="footerInstitution">—</span></span>
           </div>
         </footer>
 
@@ -836,6 +910,7 @@
       let currentUser = null;
       let currentSchool = null;
       let allCourses = [];
+      let activeCourseTab = 'all';
       let schoolState = 'unassigned';
 
       const esc = (s) => String(s ?? '')
@@ -888,12 +963,21 @@
       }
       window.toast = toast;
 
+      /* ----- OUTER TABS ----- */
       window.switchTab = function(tab, el) {
         document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
         if (el) el.classList.add('active');
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         const panel = document.getElementById('panel-' + tab);
         if (panel) panel.classList.add('active');
+      };
+
+      /* ----- COURSE SUB-TABS ----- */
+      window.switchCourseTab = function(cat, el) {
+        activeCourseTab = cat;
+        document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderCourses(allCourses);
       };
 
       window.toggleAddForm = function(type) {
@@ -916,20 +1000,12 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderSchool
-       * ------------
-       * - 'ok'         → hide the scope banner entirely, show school name in sidebar, footer, and pill.
-       * - 'unassigned' → show yellow scope banner with guidance.
-       * - 'orphaned'   → show red scope banner with reference id.
-       */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
         const banner = document.getElementById('scopeBanner');
         const bannerTitle = document.getElementById('scopeBannerTitle');
         const bannerDesc = document.getElementById('scopeBannerDesc');
         const pill = document.getElementById('scopeSchoolPill');
-        const footerInst = document.getElementById('footerInstitution');
         const addBtn = document.getElementById('addCourseBtn');
 
         banner.classList.remove('visible', 'unassigned', 'orphaned');
@@ -940,7 +1016,6 @@
           bannerDesc.textContent = 'Contact the platform administrator to be assigned to your institution before adding academic records.';
           pill.textContent = 'Unassigned';
           sidebarName.textContent = 'No institution assigned';
-          footerInst.textContent = 'No institution assigned';
           if (addBtn) addBtn.disabled = true;
           return;
         }
@@ -952,16 +1027,19 @@
           bannerDesc.textContent = 'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
           pill.textContent = 'Orphaned reference';
           sidebarName.textContent = 'School reference invalid';
-          footerInst.textContent = 'Orphaned reference';
           if (addBtn) addBtn.disabled = true;
           return;
         }
 
-        // schoolState === 'ok' — no banner, just plain branding
-        const name = currentSchool.name || '—';
-        sidebarName.textContent = name;
-        footerInst.textContent = 'Access limited to ' + name + '.';
+        sidebarName.textContent = currentSchool.name || '—';
         if (addBtn) addBtn.disabled = false;
+      }
+
+      function classify(c) {
+        if (c.status === 'archived') return 'archived';
+        if (c.status === 'published') return 'published';
+        if (c.status === 'draft' && c.review_comment) return 'sent_back';
+        return 'draft';
       }
 
       function emptyState(icon, title, desc) {
@@ -972,6 +1050,7 @@
           '</div>';
       }
 
+      /* ----- FACULTIES (derived) ----- */
       function renderFaculties(courses) {
         const el = document.getElementById('facultiesList');
         if (schoolState !== 'ok' || !currentSchool) {
@@ -1013,6 +1092,7 @@
         ).join('') + '</div>';
       }
 
+      /* ----- DEPARTMENTS (derived) ----- */
       function renderDepartments(courses) {
         const el = document.getElementById('departmentsList');
         if (schoolState !== 'ok' || !currentSchool) {
@@ -1053,14 +1133,13 @@
         ).join('') + '</div>';
       }
 
-      function statusBadge(status) {
-        const map = {
-          draft: { cls: 'draft', label: 'Draft' },
-          pending: { cls: 'pending', label: 'Pending review' },
-          published: { cls: 'published', label: 'Published' },
-        };
-        const s = map[status] || { cls: 'draft', label: status || 'Draft' };
-        return '<span class="data-row-badge ' + s.cls + '">' + esc(s.label) + '</span>';
+      /* ----- COURSES ----- */
+      function statusBadge(c) {
+        const cat = classify(c);
+        if (cat === 'sent_back') return '<span class="data-row-badge sent-back">Needs fix</span>';
+        if (cat === 'published') return '<span class="data-row-badge published">Published</span>';
+        if (cat === 'archived') return '<span class="data-row-badge archived">Archived</span>';
+        return '<span class="data-row-badge draft">Draft</span>';
       }
 
       function renderCourses(courses) {
@@ -1071,18 +1150,69 @@
           document.getElementById('countCourses').textContent = '0';
           return;
         }
-        document.getElementById('countCourses').textContent = String(courses.length);
 
-        if (!courses.length) {
-          el.innerHTML = emptyState('fa-book-open', 'No courses yet',
-            'Add your first course to build your academic directory.');
+        // Tab counts
+        const total = courses.length;
+        const sentBack = courses.filter(c => classify(c) === 'sent_back').length;
+        const published = courses.filter(c => classify(c) === 'published').length;
+        const archived = courses.filter(c => classify(c) === 'archived').length;
+
+        document.getElementById('countCourses').textContent = String(total);
+        document.getElementById('courseCountAll').textContent = String(total);
+        document.getElementById('courseCountSentBack').textContent = String(sentBack);
+        document.getElementById('courseCountPublished').textContent = String(published);
+        document.getElementById('courseCountArchived').textContent = String(archived);
+
+        // Sidebar badge
+        const badge = document.getElementById('myContentBadge');
+        if (badge) {
+          if (sentBack > 0) { badge.style.display = 'inline-block'; badge.textContent = String(sentBack); }
+          else badge.style.display = 'none';
+        }
+
+        // Filter by active sub-tab
+        let list = courses.slice();
+        if (activeCourseTab === 'sent_back') list = list.filter(c => classify(c) === 'sent_back');
+        else if (activeCourseTab === 'published') list = list.filter(c => classify(c) === 'published');
+        else if (activeCourseTab === 'archived') list = list.filter(c => classify(c) === 'archived');
+
+        // Sent-back first, then alphabetical
+        list.sort((a, b) => {
+          const ca = classify(a), cb = classify(b);
+          if (ca === 'sent_back' && cb !== 'sent_back') return -1;
+          if (cb === 'sent_back' && ca !== 'sent_back') return 1;
+          return (a.name || '').localeCompare(b.name || '');
+        });
+
+        if (!list.length) {
+          if (!total) {
+            el.innerHTML =
+              '<div class="empty-state">' +
+              '<div class="es-icon"><i class="fas fa-book-open"></i></div>' +
+              '<h3>No courses yet</h3>' +
+              '<p>Add your first course to build your academic directory. Courses go live the moment you save them.</p>' +
+              '<div class="empty-actions">' +
+              '<button class="btn-primary" onclick="toggleAddForm(\'course\')"><i class="fas fa-plus"></i> Add first course</button>' +
+              '</div>' +
+              '</div>';
+          } else if (activeCourseTab === 'sent_back') {
+            el.innerHTML =
+              '<div class="empty-state success">' +
+              '<div class="es-icon"><i class="fas fa-circle-check"></i></div>' +
+              '<h3>Nothing needs fixing</h3>' +
+              '<p>Great — no courses have been sent back for changes.</p>' +
+              '</div>';
+          } else {
+            el.innerHTML = emptyState('fa-inbox', 'No courses in this view',
+              'Try a different tab.');
+          }
           return;
         }
 
-        const sorted = courses.slice().sort((a, b) =>
-          (a.name || '').localeCompare(b.name || ''));
+        el.innerHTML = '<div class="data-list">' + list.map(c => {
+          const cat = classify(c);
+          const isSentBack = cat === 'sent_back';
 
-        el.innerHTML = '<div class="data-list">' + sorted.map(c => {
           const meta = [];
           if (c.faculty) meta.push(esc(c.faculty));
           if (c.department) meta.push(esc(c.department));
@@ -1092,23 +1222,39 @@
             ? meta.join('<span class="dot">●</span>')
             : '<span>—</span>';
 
-          return '<div class="data-row">' +
-            '<div class="data-row-icon"><i class="fas fa-book"></i></div>' +
+          const feedbackHtml = c.review_comment
+            ? '<div class="data-row-feedback"><strong>Admin note:</strong> ' + esc(c.review_comment) + '</div>'
+            : '';
+
+          const actions = [];
+
+          if (isSentBack) {
+            actions.push('<button class="btn-primary btn-sm" onclick="editCourse(\'' + esc(c.id) + '\')">' +
+              '<i class="fas fa-pen"></i> Fix &amp; re-publish</button>');
+          }
+
+          if (cat !== 'published') {
+            actions.push('<button class="btn-danger btn-sm" onclick="deleteCourse(\'' + esc(c.id) + '\', \'' +
+              esc((c.name || '').replace(/'/g, "\\'")) + '\')">' +
+              '<i class="fas fa-trash"></i> Delete</button>');
+          }
+
+          return '<div class="data-row' + (isSentBack ? ' needs-fix' : '') + '">' +
+            '<div class="data-row-icon ' + (isSentBack ? 'gold' : cat === 'archived' ? 'muted' : '') + '">' +
+              '<i class="fas fa-book"></i>' +
+            '</div>' +
             '<div class="data-row-body">' +
               '<div class="data-row-title">' + esc(c.name || 'Untitled') + '</div>' +
               '<div class="data-row-meta">' + metaHtml + '</div>' +
+              feedbackHtml +
             '</div>' +
-            statusBadge(c.status) +
-            '<div class="data-row-actions">' +
-              '<button class="btn-danger btn-sm" onclick="deleteCourse(\'' + esc(c.id) + '\', \'' +
-                esc((c.name || '').replace(/'/g, '\\\'')) + '\')">' +
-                '<i class="fas fa-trash"></i> Delete' +
-              '</button>' +
-            '</div>' +
+            statusBadge(c) +
+            (actions.length ? '<div class="data-row-actions">' + actions.join('') + '</div>' : '') +
           '</div>';
         }).join('') + '</div>';
       }
 
+      /* ----- STATS ----- */
       function updateStats(courses) {
         const faculties = new Set();
         const departments = new Set();
@@ -1116,17 +1262,27 @@
           if (c.faculty) faculties.add(c.faculty.trim());
           if (c.department) departments.add((c.faculty || '') + '|' + c.department.trim());
         }
-        document.getElementById('statFaculties').textContent = String(faculties.size);
-        document.getElementById('statDepartments').textContent = String(departments.size);
-        document.getElementById('statCourses').textContent = String(courses.length);
+        const sentBack = courses.filter(c => classify(c) === 'sent_back').length;
+        const published = courses.filter(c => classify(c) === 'published').length;
+        const archived = courses.filter(c => classify(c) === 'archived').length;
 
-        const pending = courses.filter(c => c.status === 'pending').length;
-        document.getElementById('statCoursesSub').textContent =
-          pending > 0 ? pending + ' pending review' : '';
-        document.getElementById('statFacultiesSub').textContent =
-          faculties.size > 0 ? 'Derived from courses' : '';
-        document.getElementById('statDepartmentsSub').textContent =
-          departments.size > 0 ? 'Derived from courses' : '';
+        document.getElementById('statCourses').textContent = String(courses.length);
+        document.getElementById('statCoursesSub').textContent = courses.length > 0 ? 'Total' : '';
+
+        document.getElementById('statSentBack').textContent = String(sentBack);
+        document.getElementById('statSentBackSub').textContent =
+          sentBack > 0 ? 'Fix and re-save to republish' : '';
+
+        document.getElementById('statPublished').textContent = String(published);
+        document.getElementById('statPublishedSub').textContent =
+          published > 0 ? 'Visible publicly' : '';
+
+        document.getElementById('statArchived').textContent = String(archived);
+        document.getElementById('statArchivedSub').textContent =
+          archived > 0 ? 'Hidden from public site' : '';
+
+        document.getElementById('countFaculties').textContent = String(faculties.size);
+        document.getElementById('countDepartments').textContent = String(departments.size);
       }
 
       async function loadCourses() {
@@ -1149,6 +1305,7 @@
         }
       }
 
+      /* ----- CREATE ----- */
       window.saveCourse = async function() {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const name = document.getElementById('courseName').value.trim();
@@ -1171,7 +1328,7 @@
             method: 'POST',
             body: JSON.stringify(payload),
           });
-          toast('Course "' + name + '" saved as draft.');
+          toast('Course "' + name + '" published.');
           ['courseName', 'courseFaculty', 'courseDept', 'courseQualification',
            'courseDuration', 'courseRoute', 'courseReqs'].forEach(id => {
             document.getElementById(id).value = '';
@@ -1185,6 +1342,38 @@
         }
       };
 
+      /* ----- EDIT (fix sent-back) ----- */
+      window.editCourse = async function(id) {
+        const c = allCourses.find(x => String(x.id) === String(id));
+        if (!c) return;
+
+        const newName = prompt('Course / programme name:', c.name || '');
+        if (newName == null) return;
+        if (!newName.trim()) { toast('Course name is required.', true); return; }
+
+        const newFaculty = prompt('Faculty:', c.faculty || '');
+        if (newFaculty == null) return;
+
+        const newDept = prompt('Department:', c.department || '');
+        if (newDept == null) return;
+
+        try {
+          await api('/api/courses/' + encodeURIComponent(id), {
+            method: 'PATCH',
+            body: JSON.stringify({
+              name: newName.trim(),
+              faculty: newFaculty.trim() || null,
+              department: newDept.trim() || null,
+            }),
+          });
+          toast('Course re-published.');
+          await loadCourses();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      };
+
+      /* ----- DELETE ----- */
       window.deleteCourse = async function(id, name) {
         if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
         try {
@@ -1196,6 +1385,7 @@
         }
       };
 
+      /* ----- SESSION ----- */
       async function verifySession() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!token) { redirectToLogin('not_signed_in'); return false; }
@@ -1279,7 +1469,6 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      // Set footer year dynamically
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());
