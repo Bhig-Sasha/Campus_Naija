@@ -192,7 +192,7 @@
     .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
-    .content { padding: 32px 24px 56px; flex: 1; }
+    .content { padding: 32px 24px 56px; flex: 1; display: flex; flex-direction: column; }
 
     /* HEADING */
     .page-heading { margin-bottom: 24px; }
@@ -358,47 +358,54 @@
     }
     .quick-action:hover .quick-action-arrow { color: var(--primary); transform: translateX(3px); }
 
-    /* SUPPORT */
-    .support-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: var(--radius-card);
-      padding: 20px 22px;
-      display: flex; gap: 16px; align-items: flex-start;
-      margin-top: 24px;
+    /* SITE FOOTER */
+    .site-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .support-card i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
-    .support-card .support-text { flex: 1; }
-    .support-card h4 { font-size: 0.9rem; margin-bottom: 4px; }
-    .support-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-    .support-card .support-link {
+    .footer-top {
+      display: flex; flex-wrap: wrap; gap: 24px;
+      align-items: flex-start; justify-content: space-between;
+    }
+    .footer-brand .footer-logo {
+      font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .footer-brand .footer-logo span { color: var(--primary); }
+    .footer-brand .footer-tagline {
+      font-size: 0.78rem; color: var(--muted); max-width: 320px; line-height: 1.5;
+    }
+    .footer-links {
+      display: flex; flex-wrap: wrap; gap: 32px;
+    }
+    .footer-col h5 {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .footer-col ul {
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
+    }
+    .footer-col a {
+      font-size: 0.82rem; color: var(--muted);
+      transition: color 0.15s;
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.8rem; font-weight: 700; color: var(--primary);
-      margin-top: 8px;
     }
-    .support-card .support-link:hover { text-decoration: underline; }
-
-    /* RULES */
-    .rules-panel {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 22px 24px;
-      margin-top: 28px;
+    .footer-col a:hover { color: var(--primary); }
+    .footer-col a i { font-size: 0.7rem; }
+    .footer-bottom {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      align-items: center; justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--muted);
     }
-    .rules-panel h3 {
-      font-size: 0.95rem; margin-bottom: 14px;
-      display: flex; align-items: center; gap: 10px;
+    .footer-bottom .footer-secure {
+      display: inline-flex; align-items: center; gap: 6px;
     }
-    .rules-panel h3 i { color: var(--primary); font-size: 0.9rem; }
-    .rules-list { display: flex; flex-direction: column; gap: 10px; }
-    .rule-item {
-      display: flex; gap: 10px; align-items: flex-start;
-      font-size: 0.82rem; color: var(--muted); line-height: 1.5;
-    }
-    .rule-item i { color: var(--primary); font-size: 0.72rem; margin-top: 4px; flex-shrink: 0; }
-    .rule-item strong { color: var(--text); }
+    .footer-bottom .footer-secure i { color: var(--primary); font-size: 0.7rem; }
 
     /* TOAST */
     .toast {
@@ -441,6 +448,9 @@
       .institution-banner { padding: 20px; }
       .dashboard-grid { gap: 16px; }
       .panel { padding: 18px; }
+      .footer-top { flex-direction: column; gap: 20px; }
+      .footer-links { gap: 24px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
     }
 
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
@@ -617,38 +627,47 @@
           </div>
         </div>
 
-        <div class="support-card">
-          <i class="fas fa-circle-question"></i>
-          <div class="support-text">
-            <h4>Need help?</h4>
-            <p>Contact the CampusNaija platform administrator for account or school-assignment issues.</p>
-            <a href="mailto:support@campusnaija.ng" class="support-link">
-              <i class="fas fa-envelope"></i> Contact platform administrator
-            </a>
+        <footer class="site-footer">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">Campus<span>Naija</span></div>
+              <p class="footer-tagline">The school administration portal for verified Nigerian institutions. Manage your profile, courses, fees, admissions and calendar in one place.</p>
+            </div>
+            <div class="footer-links">
+              <div class="footer-col">
+                <h5>Workspace</h5>
+                <ul>
+                  <li><a href="./profile.html"><i class="fas fa-building-columns"></i> School profile</a></li>
+                  <li><a href="./courses.html"><i class="fas fa-book-open"></i> Faculties &amp; courses</a></li>
+                  <li><a href="./fees.html"><i class="fas fa-money-bill"></i> Fees</a></li>
+                  <li><a href="./admissions.html"><i class="fas fa-clipboard-list"></i> Admissions</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Review</h5>
+                <ul>
+                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
+                  <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Support</h5>
+                <ul>
+                  <li><a href="/FAQ.html"><i class="fas fa-circle-question"></i> FAQ</a></li>
+                  <li><a href="mailto:support@campusnaija.ng"><i class="fas fa-envelope"></i> Contact admin</a></li>
+                  <li><a href="/privacy.html"><i class="fas fa-shield-halved"></i> Privacy</a></li>
+                  <li><a href="/terms.html"><i class="fas fa-file-contract"></i> Terms</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
+          <div class="footer-bottom">
+            <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
+            <span class="footer-secure"><i class="fas fa-lock"></i> Access limited to your assigned institution.</span>
+          </div>
+        </footer>
 
-        <div class="rules-panel">
-          <h3><i class="fas fa-shield-halved"></i> Dashboard rules</h3>
-          <div class="rules-list">
-            <div class="rule-item">
-              <i class="fas fa-circle-check"></i>
-              <div><strong>School-specific data:</strong> all records are scoped to the institution assigned to the signed-in representative.</div>
-            </div>
-            <div class="rule-item">
-              <i class="fas fa-circle-check"></i>
-              <div><strong>Review workflow:</strong> edits can be saved as drafts and submitted for review. The approved public version remains visible until changes are approved.</div>
-            </div>
-            <div class="rule-item">
-              <i class="fas fa-circle-check"></i>
-              <div><strong>Live statistics:</strong> counts and status labels come from the database, not fixed sample numbers.</div>
-            </div>
-            <div class="rule-item">
-              <i class="fas fa-circle-check"></i>
-              <div><strong>Backend security:</strong> every API request verifies the user's identity, role and assigned school.</div>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   </div>
@@ -750,14 +769,6 @@
         document.getElementById('topName').textContent = name;
       }
 
-      /**
-       * renderSchool
-       * ------------
-       * Three states:
-       *   - 'ok'         → currentSchool is a real, joined row.
-       *   - 'orphaned'   → school_id set but /api/schools/:id returned 404.
-       *   - 'unassigned' → no school_id at all.
-       */
       function renderSchool() {
         const banner = document.getElementById('institutionBanner');
         const sidebarName = document.getElementById('sidebarInstName');
@@ -915,13 +926,6 @@
         }
       }
 
-      /**
-       * loadSchool
-       * ----------
-       *   1. If currentUser has school_id → try direct fetch.
-       *   2. If 404 → 'orphaned'.
-       *   3. If no school_id → 'unassigned'.
-       */
       async function loadSchool() {
         currentSchool = null;
         schoolState = 'unassigned';
@@ -987,6 +991,12 @@
       overlay.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      // Set footer year dynamically
+      (function setFooterYear() {
+        const y = document.getElementById('footerYear');
+        if (y) y.textContent = String(new Date().getFullYear());
+      })();
 
       (async function boot() {
         const ok = await verifySession();

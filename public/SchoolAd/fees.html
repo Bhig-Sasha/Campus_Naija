@@ -189,7 +189,7 @@
     .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
 
-    .content { padding: 32px 24px 56px; flex: 1; }
+    .content { padding: 32px 24px 56px; flex: 1; display: flex; flex-direction: column; }
 
     /* HEADING */
     .page-heading { margin-bottom: 24px; }
@@ -201,15 +201,17 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* SCOPE BANNER */
+    /* SCOPE BANNER — hidden when everything is fine */
     .scope-banner {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+      display: none;
+      flex-wrap: wrap; align-items: center; gap: 14px;
       padding: 14px 18px;
       background-color: rgba(0,201,130,0.05);
       border: 1px solid rgba(0,201,130,0.25);
       border-left: 4px solid var(--primary);
       border-radius: 12px; margin-bottom: 24px;
     }
+    .scope-banner.visible { display: flex; }
     .scope-banner.unassigned {
       background-color: rgba(245,185,66,0.05);
       border-color: rgba(245,185,66,0.25);
@@ -466,45 +468,54 @@
     }
     .currency-input input:focus { border: none; }
 
-    /* Req grid */
-    .req-grid {
-      display: grid; grid-template-columns: 1fr; gap: 12px;
+    /* SITE FOOTER */
+    .site-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 20px;
     }
-    @media (min-width: 700px) { .req-grid { grid-template-columns: 1fr 1fr; } }
-    .req-item {
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 16px;
-      display: flex; gap: 12px; align-items: flex-start;
+    .footer-top {
+      display: flex; flex-wrap: wrap; gap: 24px;
+      align-items: flex-start; justify-content: space-between;
     }
-    .req-item .req-icon {
-      width: 36px; height: 36px; border-radius: 9px;
-      background-color: rgba(0,201,130,0.1); color: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem; flex-shrink: 0;
+    .footer-brand .footer-logo {
+      font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
-    .req-item .req-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
-    .req-item .req-text { flex: 1; }
-    .req-item h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 3px; }
-    .req-item p { font-size: 0.78rem; color: var(--muted); margin: 0; line-height: 1.5; }
-
-    .important-note {
-      display: flex; gap: 14px; align-items: flex-start;
-      padding: 18px 22px;
-      background-color: rgba(245,185,66,0.06);
-      border: 1px solid rgba(245,185,66,0.3);
-      border-left: 4px solid var(--accent);
-      border-radius: 12px; margin-top: 20px;
+    .footer-brand .footer-logo span { color: var(--primary); }
+    .footer-brand .footer-tagline {
+      font-size: 0.78rem; color: var(--muted); max-width: 320px; line-height: 1.5;
     }
-    .important-note i { color: var(--accent); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
-    .important-note .in-text { flex: 1; }
-    .important-note h4 { font-size: 0.9rem; margin-bottom: 4px; color: var(--accent); }
-    .important-note p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin: 0; }
-
-    .footnote {
-      font-size: 0.72rem; color: var(--muted); text-align: center;
-      padding: 24px 0 0; font-style: italic;
+    .footer-links {
+      display: flex; flex-wrap: wrap; gap: 32px;
     }
-    .footnote i { color: var(--accent); margin-right: 6px; }
+    .footer-col h5 {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .footer-col ul {
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
+    }
+    .footer-col a {
+      font-size: 0.82rem; color: var(--muted);
+      transition: color 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .footer-col a:hover { color: var(--primary); }
+    .footer-col a i { font-size: 0.7rem; }
+    .footer-bottom {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      align-items: center; justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .footer-bottom .footer-secure {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .footer-bottom .footer-secure i { color: var(--primary); font-size: 0.7rem; }
 
     /* Toast */
     .toast {
@@ -551,6 +562,9 @@
       .data-row { flex-wrap: wrap; }
       .data-row-actions { width: 100%; justify-content: flex-end; }
       .fee-tab { padding: 9px 12px; font-size: 0.8rem; }
+      .footer-top { flex-direction: column; gap: 20px; }
+      .footer-links { gap: 24px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -638,11 +652,12 @@
           <p>Maintain published fee information for prospective and current students.</p>
         </div>
 
+        <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
         <div class="scope-banner" id="scopeBanner">
-          <i class="fas fa-lock"></i>
+          <i class="fas fa-triangle-exclamation"></i>
           <div class="scope-text">
-            <strong>School-scoped access</strong>
-            <span>You can only manage fee records for the institution assigned to your account.</span>
+            <strong id="scopeBannerTitle">—</strong>
+            <span id="scopeBannerDesc">—</span>
           </div>
           <span class="scope-pill" id="scopeSchoolPill">—</span>
         </div>
@@ -765,10 +780,6 @@
             <button class="btn-outline btn-sm" id="saveDraftBtn" onclick="saveFeeDraft()">
               <i class="fas fa-save"></i> Save draft
             </button>
-            <button class="btn-primary btn-sm" id="submitFeeBtn" onclick="saveAndSubmit()" disabled
-              title="Save a draft first, then submit for review from the fee record list">
-              <i class="fas fa-paper-plane"></i> Save &amp; submit
-            </button>
             <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
           </div>
           <p class="form-hint" style="margin-top: 10px;">
@@ -787,54 +798,46 @@
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title"><i class="fas fa-list-check"></i> Fee record requirements</div>
+        <footer class="site-footer">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <div class="footer-logo">Campus<span>Naija</span></div>
+              <p class="footer-tagline">The school administration portal for verified Nigerian institutions. Manage your profile, courses, fees, admissions and calendar in one place.</p>
+            </div>
+            <div class="footer-links">
+              <div class="footer-col">
+                <h5>Workspace</h5>
+                <ul>
+                  <li><a href="./profile.html"><i class="fas fa-building-columns"></i> School profile</a></li>
+                  <li><a href="./courses.html"><i class="fas fa-book-open"></i> Faculties &amp; courses</a></li>
+                  <li><a href="./fees.html"><i class="fas fa-money-bill"></i> Fees</a></li>
+                  <li><a href="./admissions.html"><i class="fas fa-clipboard-list"></i> Admissions</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Review</h5>
+                <ul>
+                  <li><a href="./submissions.html"><i class="fas fa-paper-plane"></i> Submissions</a></li>
+                  <li><a href="./calendar.html"><i class="fas fa-calendar"></i> Academic calendar</a></li>
+                  <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h5>Support</h5>
+                <ul>
+                  <li><a href="/FAQ.html"><i class="fas fa-circle-question"></i> FAQ</a></li>
+                  <li><a href="mailto:support@campusnaija.ng"><i class="fas fa-envelope"></i> Contact admin</a></li>
+                  <li><a href="/privacy.html"><i class="fas fa-shield-halved"></i> Privacy</a></li>
+                  <li><a href="/terms.html"><i class="fas fa-file-contract"></i> Terms</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <p class="panel-desc">Every fee record should include the following information to be eligible for publication.</p>
-          <div class="req-grid">
-            <div class="req-item">
-              <div class="req-icon"><i class="fas fa-calendar"></i></div>
-              <div class="req-text">
-                <h4>Academic session</h4>
-                <p>Specify the session the fee applies to.</p>
-              </div>
-            </div>
-            <div class="req-item">
-              <div class="req-icon"><i class="fas fa-graduation-cap"></i></div>
-              <div class="req-text">
-                <h4>Programme and level</h4>
-                <p>Support programme-specific and level-specific charges.</p>
-              </div>
-            </div>
-            <div class="req-item">
-              <div class="req-icon gold"><i class="fas fa-link"></i></div>
-              <div class="req-text">
-                <h4>Source and verification</h4>
-                <p>Record the official source and the date the amount was verified.</p>
-              </div>
-            </div>
-            <div class="req-item">
-              <div class="req-icon gold"><i class="fas fa-shield-halved"></i></div>
-              <div class="req-text">
-                <h4>Approval status</h4>
-                <p>Track drafts, submitted changes, approved records and published fees.</p>
-              </div>
-            </div>
+          <div class="footer-bottom">
+            <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
+            <span class="footer-secure"><i class="fas fa-lock"></i> <span id="footerInstitution">—</span></span>
           </div>
-        </div>
-
-        <div class="important-note">
-          <i class="fas fa-triangle-exclamation"></i>
-          <div class="in-text">
-            <h4>Important</h4>
-            <p>This module records and publishes fee information; it does not collect payments or confirm a student's payment. Only authorised representatives can edit their assigned school's records.</p>
-          </div>
-        </div>
-
-        <p class="footnote">
-          <i class="fas fa-lock"></i> Access limited to your assigned institution — <span id="footnoteInstName">—</span>.
-        </p>
+        </footer>
 
       </main>
     </div>
@@ -928,49 +931,50 @@
       }
 
       /**
-       * renderSchool — no status pill/badge. Just sets the school name + scope state.
+       * renderSchool
+       * ------------
+       * - 'ok'         → hide the scope banner entirely, show school name in sidebar, footer and pill.
+       * - 'unassigned' → show yellow scope banner with guidance.
+       * - 'orphaned'   → show red scope banner with reference id.
        */
       function renderSchool() {
         const sidebarName = document.getElementById('sidebarInstName');
+        const banner = document.getElementById('scopeBanner');
+        const bannerTitle = document.getElementById('scopeBannerTitle');
+        const bannerDesc = document.getElementById('scopeBannerDesc');
         const pill = document.getElementById('scopeSchoolPill');
-        const scopeBanner = document.getElementById('scopeBanner');
-        const footnote = document.getElementById('footnoteInstName');
+        const footerInst = document.getElementById('footerInstitution');
         const addBtn = document.getElementById('addFeeBtn');
 
-        scopeBanner.classList.remove('unassigned', 'orphaned');
+        banner.classList.remove('visible', 'unassigned', 'orphaned');
 
         if (schoolState === 'unassigned') {
-          sidebarName.textContent = 'No institution assigned';
+          banner.classList.add('visible', 'unassigned');
+          bannerTitle.textContent = 'No institution assigned';
+          bannerDesc.textContent = 'Contact the platform administrator to be assigned to your institution before adding fee records.';
           pill.textContent = 'Unassigned';
-          scopeBanner.classList.add('unassigned');
-          scopeBanner.querySelector('.scope-text strong').textContent = 'No institution assigned';
-          scopeBanner.querySelector('.scope-text span').textContent =
-            'Contact the platform administrator to be assigned to your institution before adding fee records.';
-          footnote.textContent = 'Unassigned';
+          sidebarName.textContent = 'No institution assigned';
+          footerInst.textContent = 'No institution assigned';
           if (addBtn) addBtn.disabled = true;
           return;
         }
 
         if (schoolState === 'orphaned') {
           const ref = (currentUser && currentUser.school_id) || '—';
-          sidebarName.textContent = 'School reference invalid';
+          banner.classList.add('visible', 'orphaned');
+          bannerTitle.textContent = 'Assigned school could not be found';
+          bannerDesc.textContent = 'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
           pill.textContent = 'Orphaned reference';
-          scopeBanner.classList.add('orphaned');
-          scopeBanner.querySelector('.scope-text strong').textContent = 'Assigned school could not be found';
-          scopeBanner.querySelector('.scope-text span').textContent =
-            'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
-          footnote.textContent = 'Orphaned reference';
+          sidebarName.textContent = 'School reference invalid';
+          footerInst.textContent = 'Orphaned reference';
           if (addBtn) addBtn.disabled = true;
           return;
         }
 
-        // schoolState === 'ok'
-        sidebarName.textContent = currentSchool.name || '—';
-        pill.textContent = currentSchool.name;
-        scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
-        scopeBanner.querySelector('.scope-text span').textContent =
-          'You can only manage fee records for the institution assigned to your account.';
-        footnote.textContent = currentSchool.name;
+        // schoolState === 'ok' — no banner, just plain branding
+        const name = currentSchool.name || '—';
+        sidebarName.textContent = name;
+        footerInst.textContent = 'Access limited to ' + name + '.';
         if (addBtn) addBtn.disabled = false;
       }
 
@@ -1213,10 +1217,6 @@
         }
       };
 
-      window.saveAndSubmit = function() {
-        toast('Save as draft first, then submit from the fee list.', true);
-      };
-
       /* ----- SUBMIT / WITHDRAW / DELETE ----- */
       window.submitFee = async function(id) {
         const fee = allFees.find(f => String(f.id) === String(id));
@@ -1341,6 +1341,12 @@
       overlay.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+      // Set footer year dynamically
+      (function setFooterYear() {
+        const y = document.getElementById('footerYear');
+        if (y) y.textContent = String(new Date().getFullYear());
+      })();
 
       /* ----- INIT ----- */
       (async function boot() {
