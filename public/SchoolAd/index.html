@@ -71,17 +71,8 @@
     }
     .sidebar-institution .inst-name {
       font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      margin-bottom: 8px; min-height: 1.3em;
+      min-height: 1.3em;
       word-break: break-word;
-    }
-    .sidebar-institution .inst-status {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
-      border-radius: 40px;
-      background-color: rgba(245,185,66,0.12); color: var(--accent);
-    }
-    .sidebar-institution .inst-status.published {
-      background-color: rgba(0,201,130,0.12); color: var(--primary);
     }
 
     .sidebar-nav {
@@ -259,21 +250,6 @@
     }
     .inst-banner-info .ib-meta .dot { font-size: 0.4rem; }
     .inst-banner-badges { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-    .badge-verified {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.7rem; font-weight: 700; padding: 4px 12px;
-      border-radius: 40px;
-      background-color: rgba(245,185,66,0.12); color: var(--accent);
-      border: 1px solid rgba(245,185,66,0.3);
-    }
-    .badge-verified.published {
-      background-color: rgba(0,201,130,0.12); color: var(--primary);
-      border-color: rgba(0,201,130,0.3);
-    }
-    .badge-verified.orphaned {
-      background-color: rgba(224,112,112,0.12); color: var(--danger);
-      border-color: rgba(224,112,112,0.3);
-    }
     .restricted-note {
       display: flex; align-items: center; gap: 8px;
       font-size: 0.75rem; color: var(--muted); max-width: 280px;
@@ -504,9 +480,6 @@
       <div class="sidebar-institution">
         <div class="inst-label">Assigned institution</div>
         <div class="inst-name" id="sidebarInstName">—</div>
-        <span class="inst-status" id="sidebarInstStatus">
-          <i class="fas fa-circle-notch fa-spin"></i> Loading
-        </span>
       </div>
 
       <nav class="sidebar-nav">
@@ -580,9 +553,6 @@
             <div class="ib-meta" id="instMeta">—</div>
           </div>
           <div class="inst-banner-badges">
-            <span class="badge-verified" id="instBadge">
-              <i class="fas fa-circle-notch fa-spin"></i> Loading
-            </span>
             <div class="restricted-note">
               <i class="fas fa-lock"></i>
               <span>You can only manage the institution assigned to your account.</span>
@@ -805,57 +775,41 @@
        * renderSchool
        * ------------
        * Three states:
-       *   - 'ok'         → currentSchool is a real, joined row. Show name/location/type.
-       *   - 'orphaned'   → currentUser.school_id is set but /api/schools/:id returned 404.
+       *   - 'ok'         → currentSchool is a real, joined row.
+       *   - 'orphaned'   → school_id set but /api/schools/:id returned 404.
        *   - 'unassigned' → no school_id at all.
        *
-       * NOTE: schools no longer use a "verification" workflow. The badge
-       * now reflects `publication` (published / draft / archived).
+       * No status badge, pill, verification, or publication display —
+       * those are admin-side concepts and never shown to the rep.
        */
       function renderSchool() {
         const banner = document.getElementById('institutionBanner');
         const sidebarName = document.getElementById('sidebarInstName');
-        const sidebarStatus = document.getElementById('sidebarInstStatus');
         const initialsEl = document.getElementById('instInitials');
         const nameEl = document.getElementById('instName');
         const metaEl = document.getElementById('instMeta');
-        const badge = document.getElementById('instBadge');
 
         banner.classList.remove('unassigned', 'orphaned');
 
         if (schoolState === 'unassigned') {
           banner.classList.add('unassigned');
-
           sidebarName.textContent = 'No institution assigned';
-          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
-          sidebarStatus.classList.remove('published');
-
           initialsEl.textContent = '?';
           nameEl.textContent = 'No institution assigned';
           metaEl.textContent = 'Contact the platform administrator to be assigned to your institution.';
-
-          badge.className = 'badge-verified';
-          badge.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
           return;
         }
 
         if (schoolState === 'orphaned') {
           banner.classList.add('orphaned');
           const ref = (currentUser && currentUser.school_id) || '—';
-
           sidebarName.textContent = 'School reference invalid';
-          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Orphaned';
-          sidebarStatus.classList.remove('published');
-
           initialsEl.textContent = '!';
           nameEl.textContent = 'Assigned school could not be found';
           metaEl.innerHTML =
             '<span><i class="fas fa-link"></i> school_id: ' + esc(String(ref)) + '</span>' +
             '<span class="dot">●</span>' +
             '<span>This account is linked to a school that no longer exists.</span>';
-
-          badge.className = 'badge-verified orphaned';
-          badge.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Orphaned reference';
           return;
         }
 
@@ -866,29 +820,6 @@
         const type = currentSchool.type || '—';
 
         sidebarName.textContent = name;
-
-        // Sidebar pill + banner badge now reflect PUBLICATION status
-        // (schools no longer have a verification gate).
-        if (currentSchool.publication === 'published') {
-          sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Published';
-          sidebarStatus.classList.add('published');
-
-          badge.className = 'badge-verified published';
-          badge.innerHTML = '<i class="fas fa-circle-check"></i> Published';
-        } else if (currentSchool.publication === 'archived') {
-          sidebarStatus.innerHTML = '<i class="fas fa-archive"></i> Archived';
-          sidebarStatus.classList.remove('published');
-
-          badge.className = 'badge-verified';
-          badge.innerHTML = '<i class="fas fa-archive"></i> Archived';
-        } else {
-          sidebarStatus.innerHTML = '<i class="fas fa-pen"></i> Draft';
-          sidebarStatus.classList.remove('published');
-
-          badge.className = 'badge-verified';
-          badge.innerHTML = '<i class="fas fa-pen"></i> Draft';
-        }
-
         initialsEl.textContent = initials(name);
         nameEl.textContent = name;
         metaEl.innerHTML =
@@ -1011,12 +942,9 @@
       /**
        * loadSchool
        * ----------
-       *   1. If currentUser has school_name + school_id → we already know the school.
-       *      Try direct fetch to get full row + publication status.
-       *
-       *   2. If currentUser has school_id but the fetch 404s → 'orphaned'.
-       *
-       *   3. If currentUser has no school_id → 'unassigned'.
+       *   1. If currentUser has school_id → try direct fetch.
+       *   2. If 404 → 'orphaned'.
+       *   3. If no school_id → 'unassigned'.
        */
       async function loadSchool() {
         currentSchool = null;
