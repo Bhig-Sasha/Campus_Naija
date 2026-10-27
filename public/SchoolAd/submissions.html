@@ -104,28 +104,25 @@
       background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
 
-    .sidebar-signout { padding: 12px 14px 4px; border-top: 1px solid var(--border); }
-    .signout-nav-btn {
-      width: 100%;
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 14px; border-radius: 10px;
-      font-size: 0.9rem; font-weight: 600; color: var(--muted);
-      background: transparent; border: none; cursor: pointer;
-      text-align: left; transition: background 0.15s, color 0.15s;
-    }
-    .signout-nav-btn i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
-    .signout-nav-btn:hover { background-color: rgba(224,112,112,0.1); color: var(--danger); }
-
+    /* Sidebar footer — profile block with inline sign-out (matches Dashboard) */
     .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
     .rep-user {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 12px; border-radius: 10px;
+      transition: background 0.18s ease;
     }
+    .rep-user:hover { background-color: var(--elevated); }
     .rep-avatar {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, #F5B942, #b88720);
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 0.85rem; color: #070A09; flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(245,185,66,0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .rep-user:hover .rep-avatar {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 4px rgba(245,185,66,0.2);
     }
     .rep-user-info { flex: 1; min-width: 0; }
     .rep-user-name {
@@ -135,6 +132,23 @@
     .rep-user-role {
       font-size: 0.7rem; color: var(--muted);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.95rem; cursor: pointer;
+      padding: 6px; border-radius: 8px;
+      transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+      flex-shrink: 0;
+    }
+    .logout-btn:hover {
+      color: var(--danger);
+      background-color: rgba(224, 112, 112, 0.08);
+      transform: translateX(2px);
+    }
+    .logout-btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(224, 112, 112, 0.25);
+      color: var(--danger);
     }
 
     /* MAIN */
@@ -211,8 +225,14 @@
       border-color: rgba(245,185,66,0.25);
       border-left-color: var(--accent);
     }
+    .scope-banner.orphaned {
+      background-color: rgba(224,112,112,0.05);
+      border-color: rgba(224,112,112,0.25);
+      border-left-color: var(--danger);
+    }
     .scope-banner i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
     .scope-banner.unassigned i { color: var(--accent); }
+    .scope-banner.orphaned i { color: var(--danger); }
     .scope-banner .scope-text { flex: 1; min-width: 200px; }
     .scope-banner .scope-text strong { font-size: 0.85rem; color: var(--text); display: block; margin-bottom: 2px; }
     .scope-banner .scope-text span { font-size: 0.78rem; color: var(--muted); }
@@ -224,6 +244,9 @@
     }
     .scope-banner.unassigned .scope-pill {
       background-color: rgba(245,185,66,0.12); color: var(--accent);
+    }
+    .scope-banner.orphaned .scope-pill {
+      background-color: rgba(224,112,112,0.12); color: var(--danger);
     }
 
     /* STATS */
@@ -522,12 +545,7 @@
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
 
-      <div class="sidebar-signout">
-        <button class="signout-nav-btn" onclick="signOut()">
-          <i class="fas fa-arrow-right-from-bracket"></i> Sign out
-        </button>
-      </div>
-
+      <!-- Sidebar footer — profile block with inline sign-out (matches Dashboard) -->
       <div class="sidebar-footer">
         <div class="rep-user">
           <div class="rep-avatar" id="sideAvatar">—</div>
@@ -535,6 +553,9 @@
             <div class="rep-user-name" id="sideName">—</div>
             <div class="rep-user-role" id="sideRole">School Representative</div>
           </div>
+          <button class="logout-btn" aria-label="Sign out" title="Sign out" onclick="signOut()">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
         </div>
       </div>
     </aside>
@@ -703,6 +724,7 @@
 
       const API_BASE = 'https://campus-naija.onrender.com';
       const TOKEN_KEY = 'campusnaija_admin_token';
+      const USER_KEY  = 'campusnaija_admin_user';
       const LOGIN_URL = '/SchoolAd/login.html';
 
       let token = null;
@@ -710,6 +732,8 @@
       let currentSchool = null;
       let allSubmissions = [];
       let activeTab = 'all';
+      // 'ok' | 'unassigned' | 'orphaned'
+      let schoolState = 'unassigned';
 
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -752,7 +776,10 @@
       }[type] || type || 'Record');
 
       function redirectToLogin(reason) {
-        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
         const url = LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : '');
         window.location.replace(url);
       }
@@ -804,7 +831,9 @@
         const scopeBanner = document.getElementById('scopeBanner');
         const footnote = document.getElementById('footnoteInstName');
 
-        if (!currentSchool) {
+        scopeBanner.classList.remove('unassigned', 'orphaned');
+
+        if (schoolState === 'unassigned') {
           sidebarName.textContent = 'No institution assigned';
           sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Unassigned';
           sidebarStatus.classList.remove('verified');
@@ -817,6 +846,21 @@
           return;
         }
 
+        if (schoolState === 'orphaned') {
+          const ref = (currentUser && currentUser.school_id) || '—';
+          sidebarName.textContent = 'School reference invalid';
+          sidebarStatus.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Orphaned';
+          sidebarStatus.classList.remove('verified');
+          pill.textContent = 'Orphaned reference';
+          scopeBanner.classList.add('orphaned');
+          scopeBanner.querySelector('.scope-text strong').textContent = 'Assigned school could not be found';
+          scopeBanner.querySelector('.scope-text span').textContent =
+            'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
+          footnote.textContent = 'Orphaned reference';
+          return;
+        }
+
+        // schoolState === 'ok'
         sidebarName.textContent = currentSchool.name || '—';
         if (currentSchool.verification === 'verified') {
           sidebarStatus.innerHTML = '<i class="fas fa-circle-check"></i> Verified';
@@ -830,7 +874,6 @@
         }
 
         pill.textContent = currentSchool.name;
-        scopeBanner.classList.remove('unassigned');
         scopeBanner.querySelector('.scope-text strong').textContent = 'School-scoped access';
         scopeBanner.querySelector('.scope-text span').textContent =
           'Representatives see only submissions belonging to their assigned institution.';
@@ -844,9 +887,6 @@
         const published = allSubmissions.filter(s => s.status === 'published').length;
         const draft = allSubmissions.filter(s => s.status === 'draft').length;
 
-        // "Approved" in your schema = published (approved content that became public)
-        // plus recently approved but not-yet-published. Since your backend only stores
-        // 'published' for approved+public, we report published here.
         document.getElementById('statTotal').textContent = String(total);
         document.getElementById('statTotalSub').textContent =
           draft > 0 ? draft + ' in draft' : '';
@@ -859,9 +899,6 @@
         document.getElementById('statApprovedSub').textContent =
           published > 0 ? 'Visible publicly' : '';
 
-        // "Needs changes" state isn't a row status in your backend —
-        // when changes are requested, the record reverts to 'draft'.
-        // We surface a note instead of a fake number.
         document.getElementById('statChanges').textContent = '0';
         document.getElementById('statChangesSub').textContent = 'Check notifications for feedback';
 
@@ -897,9 +934,9 @@
         const el = document.getElementById('submissionsList');
         const desc = document.getElementById('submissionsDesc');
 
-        if (!currentSchool) {
-          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution assigned</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
-          desc.textContent = 'No institution is assigned to your account.';
+        if (schoolState !== 'ok' || !currentSchool) {
+          el.innerHTML = '<div class="empty-state"><div class="es-icon"><i class="fas fa-triangle-exclamation"></i></div><h3>No institution available</h3><p>Contact the platform administrator to be assigned to your institution.</p></div>';
+          desc.textContent = 'No institution available.';
           return;
         }
 
@@ -1003,16 +1040,13 @@
 
       /* LOAD */
       async function loadSubmissions() {
-        if (!currentSchool) {
+        if (schoolState !== 'ok' || !currentSchool) {
           allSubmissions = [];
           updateStats();
           renderSubmissions();
           return;
         }
         try {
-          const data = await api('/api/school/submissions');
-          // Server returns only courses/fees/admissions/calendar in ('draft','pending').
-          // To include 'published' records, we also fetch the full lists.
           const [subs, courses, fees, admissions, events] = await Promise.all([
             api('/api/school/submissions').catch(() => ({ submissions: [] })),
             api('/api/schools/' + encodeURIComponent(currentSchool.id) + '/courses').catch(() => ({ courses: [] })),
@@ -1040,7 +1074,6 @@
           for (const a of (admissions.admissions || [])) list.push(push('admission', a, a.title));
           for (const e of (events.events || [])) list.push(push('calendar', e, e.title));
 
-          // Add any from submissions endpoint that weren't in the above (defensive)
           for (const s of (subs.submissions || [])) {
             const key = s.type + ':' + s.id;
             if (!known[key]) {
@@ -1084,21 +1117,62 @@
         }
       }
 
+      /**
+       * loadSchool
+       * ----------
+       * Mirrors the dashboard version:
+       *   1. No school_id → 'unassigned'
+       *   2. Try /api/schools/:id directly.
+       *      - Success → 'ok'
+       *      - 404 → 'orphaned'
+       *   3. If direct fetch failed but /auth/me enriched fields exist → 'ok' (partial)
+       *   4. Fallback → 'orphaned'
+       */
       async function loadSchool() {
-        if (!currentUser.school_id) { currentSchool = null; return; }
+        currentSchool = null;
+        schoolState = 'unassigned';
+
+        if (!currentUser || !currentUser.school_id) {
+          console.warn('[loadSchool] No school_id on current user. Submissions page will show "Unassigned".');
+          return;
+        }
+
         try {
           const data = await api('/api/schools/' + encodeURIComponent(currentUser.school_id));
-          currentSchool = data.school || null;
+          if (data && data.school) {
+            currentSchool = data.school;
+            schoolState = 'ok';
+            return;
+          }
         } catch (err) {
-          console.error('[school]', err);
-          currentSchool = null;
+          if (/not found|404/i.test(err.message)) {
+            console.error('[loadSchool] school_id=' + currentUser.school_id + ' points to a school that no longer exists.');
+            schoolState = 'orphaned';
+            return;
+          }
+          console.error('[loadSchool]', err.message);
         }
+
+        if (currentUser.school_name) {
+          currentSchool = {
+            id: currentUser.school_id,
+            name: currentUser.school_name,
+            slug: currentUser.school_slug,
+          };
+          schoolState = 'ok';
+          return;
+        }
+
+        schoolState = 'orphaned';
       }
 
       window.signOut = async function() {
         if (!confirm('Sign out of the school portal?')) return;
         try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
-        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
         window.location.replace(LOGIN_URL);
       };
 
