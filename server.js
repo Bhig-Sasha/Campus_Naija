@@ -521,8 +521,6 @@ router.get('/schools/:id/summary', authenticate, requireRole('owner','admin','ed
   if (!school) throw httpError(404, 'School not found.');
   assertSchoolScope(req.user, id);
   const num = async (sql) => Number((await one(sql, [id])).c);
-  // ── CHANGED ── draft/pending counters dropped; added 'sent_back' which is
-  // draft rows that have an admin review comment (i.e., actively needing a fix).
   const counts = {
     courses: await num('select count(*)::int as c from public.courses where school_id=$1'),
     courses_sent_back: await num(`select count(*)::int as c from public.courses c where c.school_id=$1 and c.status='draft' and exists (select 1 from public.review_comments r where r.submission_type='course' and r.submission_target_id=c.id)`),
@@ -590,45 +588,13 @@ router.post('/schools/:id/archive', authenticate, requireRole('owner','admin'), 
 }));
 
 /* ============================================================
- * ── CHANGED ── CONTENT HELPERS
- * ------------------------------------------------------------
- * These four tables share the same rep-facing lifecycle:
- *   Rep save / re-save   → status='published'
- *   Admin send-back      → status='draft' + review_comments row + notify
- *   Admin archive        → status='archived'
- *   Rep cannot set status directly.
- * The content "type" keys match what the frontend and review_comments
- * already use: course, fee, admission, calendar.
+ * CONTENT HELPERS
  * ============================================================ */
 const CONTENT_TYPES = {
-  course: {
-    table: 'courses',
-    labelCol: 'name',
-    schoolIdCol: 'school_id',
-    routeBase: 'courses',
-    friendly: 'course',
-  },
-  fee: {
-    table: 'fee_records',
-    labelCol: "('Fee ' || session || ' ' || category)",
-    schoolIdCol: 'school_id',
-    routeBase: 'fees',
-    friendly: 'fee record',
-  },
-  admission: {
-    table: 'admission_notices',
-    labelCol: 'title',
-    schoolIdCol: 'school_id',
-    routeBase: 'admissions',
-    friendly: 'admission notice',
-  },
-  calendar: {
-    table: 'academic_events',
-    labelCol: 'title',
-    schoolIdCol: 'school_id',
-    routeBase: 'calendar',
-    friendly: 'calendar event',
-  },
+  course:    { table: 'courses',            labelCol: 'name',                                             schoolIdCol: 'school_id', routeBase: 'courses',    friendly: 'course' },
+  fee:       { table: 'fee_records',        labelCol: "('Fee ' || session || ' ' || category)",           schoolIdCol: 'school_id', routeBase: 'fees',       friendly: 'fee record' },
+  admission: { table: 'admission_notices',  labelCol: 'title',                                            schoolIdCol: 'school_id', routeBase: 'admissions', friendly: 'admission notice' },
+  calendar:  { table: 'academic_events',    labelCol: 'title',                                            schoolIdCol: 'school_id', routeBase: 'calendar',   friendly: 'calendar event' },
 };
 
 /**
@@ -720,23 +686,57 @@ async function unarchiveContent(req, res, type, id) {
   res.json({ ok: true });
 }
 
-/**
- * applyRepSaveStatus
- * ------------------
- * Called at the tail of every rep-facing PATCH. If the row is
- * currently 'draft' (either a fresh save or a sent-back one), a
- * successful rep save republishes it. If it's 'archived', refuse.
- */
 function assertRepCanEdit(row, friendly) {
   if (row.status === 'archived') {
     throw httpError(403, `This ${friendly} has been archived by the platform administrator and cannot be edited.`);
   }
 }
 
+/**
+ * getLatestReviewComments
+ * -----------------------
+ * Fetches the most recent review_comment per record for a set of IDs,
+ * keyed by record ID. Used by the four content GET endpoints so each
+ * row carries its `review_comment` field for the frontend to render
+ * the "Needs fix" tab and inline admin note.
+ */
+async function getLatestReviewComments(type, ids) {
+  if (!Array.isArray(ids) || ids.length === 0) return {};
+  const rows = await many(
+    `select distinct on (submission_target_id)
+            submission_target_id, comment, decision, created_at
+       from public.review_comments
+      where submission_type = $1
+        and submission_target_id = ANY($2::uuid[])
+      order by submission_target_id, created_at desc`,
+    [type, ids]
+  );
+  const out = {};
+  for (const r of rows) out[r.submission_target_id] = r.comment;
+  return out;
+}
+
 /* ---------- COURSES ---------- */
 router.get('/schools/:schoolId/courses', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
-  res.json({ courses: await many('select * from public.courses where school_id=$1 order by name', [req.params.schoolId]) });
+  // ── CHANGED ── join latest review comment so the frontend can classify
+  // sent_back vs draft.
+  const rows = await many(
+    `select c.*, rc.comment as review_comment
+       from public.courses c
+       left join lateral (
+         select comment
+           from public.review_comments
+          where submission_type = 'course'
+            and submission_target_id = c.id
+          order by created_at desc
+          limit 1
+       ) rc on true
+      where c.school_id = $1
+      order by c.name`,
+    [req.params.schoolId]
+  );
+  res.json({ courses: rows });
 }));
 
 router.post('/schools/:schoolId/courses', authenticate, requireRole('owner','admin','school_manager'), asyncH(async (req, res) => {
@@ -746,7 +746,6 @@ router.post('/schools/:schoolId/courses', authenticate, requireRole('owner','adm
   assertSchoolScope(req.user, school.id);
   const b = req.body || {};
   if (!b.name) throw httpError(400, 'Course name is required.');
-  // ── CHANGED ── new rep-created courses are published immediately.
   const course = await one(
     `insert into public.courses (school_id, name, faculty, department, duration, qualification, entry_route, requirements, status)
      values ($1,$2,$3,$4,$5,$6,$7,$8,'published') returning *`,
@@ -764,11 +763,7 @@ router.patch('/courses/:id', authenticate, requireRole('owner','admin','school_m
   assertRepCanEdit(course, 'course');
 
   const allowed = ['name','faculty','department','duration','qualification','entry_route','requirements'];
-  // ── CHANGED ── 'status' is no longer settable by the client. Admin actions go
-  // through dedicated send-back/archive routes.
   const updates = {}; for (const k of allowed) if (k in (req.body || {})) updates[k] = req.body[k];
-
-  // ── CHANGED ── a rep save always results in status='published'.
   updates.status = 'published';
 
   const keys = Object.keys(updates); const values = keys.map(k => updates[k]);
@@ -791,7 +786,6 @@ router.delete('/courses/:id', authenticate, requireRole('owner','admin','school_
   res.json({ ok: true });
 }));
 
-// ── NEW ── Admin content moderation routes for courses.
 router.post('/courses/:id/send-back', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   await sendBackContent(req, res, 'course', req.params.id);
 }));
@@ -805,7 +799,23 @@ router.post('/courses/:id/unarchive', authenticate, requireRole('owner','admin')
 /* ---------- FEES ---------- */
 router.get('/schools/:schoolId/fees', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
-  res.json({ fees: await many('select * from public.fee_records where school_id=$1 order by created_at desc', [req.params.schoolId]) });
+  // ── CHANGED ── join latest review comment.
+  const rows = await many(
+    `select f.*, rc.comment as review_comment
+       from public.fee_records f
+       left join lateral (
+         select comment
+           from public.review_comments
+          where submission_type = 'fee'
+            and submission_target_id = f.id
+          order by created_at desc
+          limit 1
+       ) rc on true
+      where f.school_id = $1
+      order by f.created_at desc`,
+    [req.params.schoolId]
+  );
+  res.json({ fees: rows });
 }));
 
 router.post('/schools/:schoolId/fees', authenticate, requireRole('owner','admin','school_manager'), asyncH(async (req, res) => {
@@ -818,7 +828,6 @@ router.post('/schools/:schoolId/fees', authenticate, requireRole('owner','admin'
     throw httpError(400, 'session, category and amount are required.');
   if (!Number.isFinite(Number(b.amount)) || Number(b.amount) < 0)
     throw httpError(400, 'amount must be a non-negative number.');
-  // ── CHANGED ── published immediately.
   const fee = await one(
     `insert into public.fee_records (school_id, session, category, programme, level, student_category, amount, source_url, verified_date, notes, status)
      values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'published') returning *`,
@@ -886,7 +895,23 @@ router.get('/admissions', authenticate, requireRole('owner','admin','editor','re
 
 router.get('/schools/:schoolId/admissions', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
-  res.json({ admissions: await many('select * from public.admission_notices where school_id=$1 order by created_at desc', [req.params.schoolId]) });
+  // ── CHANGED ── join latest review comment.
+  const rows = await many(
+    `select a.*, rc.comment as review_comment
+       from public.admission_notices a
+       left join lateral (
+         select comment
+           from public.review_comments
+          where submission_type = 'admission'
+            and submission_target_id = a.id
+          order by created_at desc
+          limit 1
+       ) rc on true
+      where a.school_id = $1
+      order by a.created_at desc`,
+    [req.params.schoolId]
+  );
+  res.json({ admissions: rows });
 }));
 
 router.post('/schools/:schoolId/admissions', authenticate, requireRole('owner','admin','school_manager'), asyncH(async (req, res) => {
@@ -901,9 +926,6 @@ router.post('/schools/:schoolId/admissions', authenticate, requireRole('owner','
   if (!/^https?:\/\//i.test(b.source_url))      throw httpError(400, 'source_url must be an http(s) URL.');
   if (b.open_date && b.close_date && new Date(b.close_date) < new Date(b.open_date))
     throw httpError(400, 'close_date cannot be before open_date.');
-  // ── CHANGED ── published immediately. `verification` stays as before — that's
-  // a separate concept the platform uses for the public admissions directory,
-  // not the rep review flow.
   const adm = await one(
     `insert into public.admission_notices
        (school_id, title, session, entry_route, open_date, close_date, extension_note,
@@ -949,7 +971,6 @@ router.delete('/admissions/:id', authenticate, requireRole('owner','admin','scho
   res.json({ ok: true });
 }));
 
-// Editorial verification — kept as-is (admissions directory publishing).
 router.post('/admissions/:id/verify', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const adm = await one('select * from public.admission_notices where id=$1', [req.params.id]);
   if (!adm) throw httpError(404, 'Admission not found.');
@@ -972,12 +993,44 @@ router.post('/admissions/:id/unarchive', authenticate, requireRole('owner','admi
 /* ---------- CALENDAR ---------- */
 router.get('/schools/:schoolId/calendar', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
-  res.json({ events: await many('select * from public.academic_events where school_id=$1 order by start_date', [req.params.schoolId]) });
+  // ── CHANGED ── join latest review comment.
+  const rows = await many(
+    `select e.*, rc.comment as review_comment
+       from public.academic_events e
+       left join lateral (
+         select comment
+           from public.review_comments
+          where submission_type = 'calendar'
+            and submission_target_id = e.id
+          order by created_at desc
+          limit 1
+       ) rc on true
+      where e.school_id = $1
+      order by e.start_date`,
+    [req.params.schoolId]
+  );
+  res.json({ events: rows });
 }));
 
 router.get('/schools/:schoolId/events', authenticate, requireRole('owner','admin','editor','reviewer','school_manager'), asyncH(async (req, res) => {
   assertSchoolScope(req.user, req.params.schoolId);
-  res.json({ events: await many('select * from public.academic_events where school_id=$1 order by start_date', [req.params.schoolId]) });
+  // ── CHANGED ── same join, same shape (this is a legacy alias for /calendar).
+  const rows = await many(
+    `select e.*, rc.comment as review_comment
+       from public.academic_events e
+       left join lateral (
+         select comment
+           from public.review_comments
+          where submission_type = 'calendar'
+            and submission_target_id = e.id
+          order by created_at desc
+          limit 1
+       ) rc on true
+      where e.school_id = $1
+      order by e.start_date`,
+    [req.params.schoolId]
+  );
+  res.json({ events: rows });
 }));
 
 router.post('/schools/:schoolId/calendar', authenticate, requireRole('owner','admin','school_manager'), asyncH(async (req, res) => {
@@ -991,7 +1044,6 @@ router.post('/schools/:schoolId/calendar', authenticate, requireRole('owner','ad
   if (b.end_date && new Date(b.end_date) < new Date(b.start_date))
     throw httpError(400, 'end_date cannot be before start_date.');
   if (!/^https?:\/\//i.test(b.source_url)) throw httpError(400, 'source_url must be an http(s) URL.');
-  // ── CHANGED ── published immediately.
   const ev = await one(
     `insert into public.academic_events
        (school_id, title, type, session, semester, start_date, end_date, notes, source_url, status)
@@ -1043,10 +1095,7 @@ router.post('/calendar/:id/unarchive', authenticate, requireRole('owner','admin'
   await unarchiveContent(req, res, 'calendar', req.params.id);
 }));
 
-/* ---------- EXAMS / SCHOLARSHIPS / TRENDING ----------
- * These are editorial content managed by admins/editors, not by reps.
- * Their verify + publish flow is unchanged.
- */
+/* ---------- EXAMS / SCHOLARSHIPS / TRENDING ---------- */
 router.get('/exams', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   res.json({ exams: await many('select * from public.exams order by created_at desc') });
 }));
@@ -1640,12 +1689,13 @@ router.get('/health', asyncH(async (req, res) => {
     res.json({
       ok: true,
       time: r.rows[0].now,
-      version: '1.8.0',
+      version: '1.8.1',
       media: 'supabase-storage',
       placements: true,
       school_verification_removed: true,
       uuid_scope_check: true,
       content_lifecycle: 'publish-now-send-back',
+      review_comment_join: true,
       orphan_school_managers: orphanManagers,
       legacy_unverified_schools: unverifiedSchools,
     });
@@ -1654,7 +1704,7 @@ router.get('/health', asyncH(async (req, res) => {
       ok: false,
       error: 'Database unreachable: ' + e.message,
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
-      version: '1.8.0',
+      version: '1.8.1',
     });
   }
 }));
