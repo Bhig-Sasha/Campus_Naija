@@ -206,7 +206,7 @@
       <a href="/Trending.html">Trending</a>
     </nav>
     <div class="header-actions">
-      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <button class="hamburger" id="hamburgerBtn" type="button" aria-label="Toggle menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
     </div>
   </div>
   <div class="mobile-nav" id="mobileNav">
@@ -231,7 +231,7 @@
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
-          <i class="fas fa-search"></i>
+          <i class="fas fa-search" aria-hidden="true"></i>
           <input type="text" id="newsSearch" placeholder="Search news, topics or headlines" aria-label="Search stories">
           <button onclick="filterNews()">Search</button>
         </div>
@@ -269,12 +269,12 @@
 <div id="view-article" class="view">
   <main class="container">
     <div class="back-to-feed" onclick="showFeed()">
-      <i class="fas fa-arrow-left"></i> Back to all stories
+      <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to all stories
     </div>
 
     <article>
       <header class="article-header">
-        <div class="article-cat" id="articleCategory"><i class="fas fa-newspaper"></i> Loading...</div>
+        <div class="article-cat" id="articleCategory"><i class="fas fa-newspaper" aria-hidden="true"></i> Loading...</div>
         <h1 class="article-title" id="articleTitle">Loading...</h1>
         <div class="article-meta" id="articleMeta"></div>
       </header>
@@ -287,7 +287,7 @@
       </div>
 
       <div class="article-source" id="articleSource" style="display:none;">
-        <i class="fas fa-circle-info"></i>
+        <i class="fas fa-circle-info" aria-hidden="true"></i>
         <p>Source: <a href="#" id="articleSourceLink" target="_blank" rel="noopener">Official source</a>. Always verify time-sensitive information with the official publisher.</p>
       </div>
 
@@ -295,10 +295,10 @@
 
       <div class="share-row">
         <span>Share this story:</span>
-        <button class="share-btn" id="shareTwitter" aria-label="Share on Twitter"><i class="fab fa-twitter"></i></button>
-        <button class="share-btn" id="shareFacebook" aria-label="Share on Facebook"><i class="fab fa-facebook-f"></i></button>
-        <button class="share-btn" id="shareWhatsApp" aria-label="Share on WhatsApp"><i class="fab fa-whatsapp"></i></button>
-        <button class="share-btn" id="shareCopy" aria-label="Copy link"><i class="fas fa-link"></i></button>
+        <button class="share-btn" id="shareTwitter" type="button" aria-label="Share on Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></button>
+        <button class="share-btn" id="shareFacebook" type="button" aria-label="Share on Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></button>
+        <button class="share-btn" id="shareWhatsApp" type="button" aria-label="Share on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></button>
+        <button class="share-btn" id="shareCopy" type="button" aria-label="Copy link"><i class="fas fa-link" aria-hidden="true"></i></button>
       </div>
     </article>
 
@@ -316,10 +316,10 @@
         <div class="logo">Campus<span>Naija</span></div>
         <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
         <div class="social-links">
-          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="footer-links">
@@ -369,13 +369,19 @@
   let trendingPlacements = [];
   let currentStory = null;
   let currentCategoryFilter = 'all';
+  let currentArticleRequestId = 0;
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ---------- helpers ---------- */
   const escapeHtml = (s) => String(s ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const escapeAttr = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const safeUrl = (u) => (u && /^https?:\/\//i.test(u)) ? u : null;
 
@@ -419,7 +425,7 @@
     return res.json();
   }
 
-  /* ---------- placement helper (cached) ---------- */
+  /* ---------- placement helper ---------- */
   async function loadTrendingPlacements() {
     try {
       const data = await apiGet('/api/public/placements?page=trending');
@@ -462,15 +468,17 @@
       renderNewsGrid(storiesCache);
       renderTrendingList(storiesCache);
       populateCategoryFilters(storiesCache);
+      return storiesCache;
     } catch (err) {
       console.error('[trending]', err);
       document.getElementById('featuredContainer').innerHTML = '';
       grid.innerHTML = `<div class="error-state">
-        <i class="fas fa-triangle-exclamation"></i>
+        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
         <p>We could not load stories right now.</p>
         <p style="font-size:0.85rem; margin-top:8px;">${escapeHtml(err.message)}</p>
         <button onclick="loadStories()">Try again</button>
       </div>`;
+      return [];
     }
   }
 
@@ -479,7 +487,7 @@
 
     if (!list.length) {
       container.innerHTML = `<div class="empty-state">
-        <i class="fas fa-newspaper"></i>
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
         <p>No stories have been published yet.</p>
         <p style="font-size:0.85rem; margin-top:8px;">Please check back later.</p>
       </div>`;
@@ -491,16 +499,20 @@
     const date = featured.published_at || featured.created_at || featured.source_date;
 
     container.innerHTML = `
-      <div class="featured-story" onclick="openArticle('${escapeHtml(featured.id)}')">
+      <div class="featured-story"
+           role="button"
+           tabindex="0"
+           onclick="openArticle('${escapeAttr(String(featured.id))}')"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArticle('${escapeAttr(String(featured.id))}');}">
         <div class="featured-img" ${cover ? `style="background-image:url('${encodeURI(cover)}')"` : ''}></div>
         <div class="featured-content">
-          <div class="featured-label"><i class="fas fa-star"></i> Featured story</div>
+          <div class="featured-label"><i class="fas fa-star" aria-hidden="true"></i> Featured story</div>
           <h2>${escapeHtml(featured.title || 'Untitled')}</h2>
           <p>${escapeHtml(truncate(featured.summary || featured.body || '', 180))}</p>
           <div class="featured-meta">
-            <span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(date))}</span>
-            <span><i class="far fa-clock"></i> ${escapeHtml(readingTime(featured.body))}</span>
-            <span><i class="fas fa-building"></i> ${escapeHtml(featured.author || 'CampusNaija')}</span>
+            <span><i class="far fa-calendar-alt" aria-hidden="true"></i> ${escapeHtml(formatDate(date))}</span>
+            <span><i class="far fa-clock" aria-hidden="true"></i> ${escapeHtml(readingTime(featured.body))}</span>
+            <span><i class="fas fa-building" aria-hidden="true"></i> ${escapeHtml(featured.author || 'CampusNaija')}</span>
           </div>
         </div>
       </div>`;
@@ -533,17 +545,21 @@
       return `
         <div class="news-card"
              style="animation-delay: ${delay}s"
-             data-cat="${escapeHtml(cat)}"
-             data-title="${escapeHtml((s.title || '').toLowerCase())}"
-             onclick="openArticle('${escapeHtml(s.id)}')">
+             data-cat="${escapeAttr(cat)}"
+             data-title="${escapeAttr((s.title || '').toLowerCase())}"
+             data-id="${escapeAttr(String(s.id))}"
+             role="button"
+             tabindex="0"
+             onclick="openArticle('${escapeAttr(String(s.id))}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArticle('${escapeAttr(String(s.id))}');}">
           <div class="news-card-img" ${cover ? `style="background-image:url('${encodeURI(cover)}')"` : ''}></div>
           <div class="news-card-body">
             <div class="news-card-cat ${isGold ? 'gold' : ''}">${escapeHtml(s.category || 'Story')}</div>
             <div class="news-card-title">${escapeHtml(s.title || 'Untitled')}</div>
             <div class="news-card-excerpt">${escapeHtml(truncate(s.summary || s.body || '', 130))}</div>
             <div class="news-card-meta">
-              <span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(date))}</span>
-              <span><i class="far fa-clock"></i> ${escapeHtml(readingTime(s.body))}</span>
+              <span><i class="far fa-calendar-alt" aria-hidden="true"></i> ${escapeHtml(formatDate(date))}</span>
+              <span><i class="far fa-clock" aria-hidden="true"></i> ${escapeHtml(readingTime(s.body))}</span>
             </div>
           </div>
         </div>`;
@@ -567,7 +583,10 @@
     container.innerHTML = items.map((s, i) => {
       const date = s.published_at || s.created_at || s.source_date;
       return `
-        <div class="trending-item" onclick="openArticle('${escapeHtml(s.id)}')">
+        <div class="trending-item"
+             role="button" tabindex="0"
+             onclick="openArticle('${escapeAttr(String(s.id))}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArticle('${escapeAttr(String(s.id))}');}">
           <div class="trending-rank">${i + 1}</div>
           <div class="tr-text">
             <h4>${escapeHtml(s.title || 'Untitled')}</h4>
@@ -585,7 +604,7 @@
     let html = `<button class="filter-tab active" data-cat="all" onclick="setNewsFilter('all', this)">All stories</button>`;
     for (const c of cats) {
       const key = c.toLowerCase();
-      html += `<button class="filter-tab" data-cat="${escapeHtml(key)}" onclick="setNewsFilter('${escapeHtml(key)}', this)">${escapeHtml(c)}</button>`;
+      html += `<button class="filter-tab" data-cat="${escapeAttr(key)}" onclick="setNewsFilter('${escapeAttr(key)}', this)">${escapeHtml(c)}</button>`;
     }
     tabs.innerHTML = html;
   }
@@ -600,34 +619,56 @@
   function filterNews() {
     const query = document.getElementById('newsSearch').value.toLowerCase().trim();
     const cards = document.querySelectorAll('#newsGrid .news-card');
+    let visible = 0;
 
     cards.forEach((card) => {
       const cat = card.dataset.cat || '';
       const title = card.dataset.title || '';
       const okCat = currentCategoryFilter === 'all' || cat === currentCategoryFilter;
       const okQuery = !query || title.includes(query);
+
       if (okCat && okQuery) {
         card.style.display = '';
         card.style.animation = 'none';
         void card.offsetWidth;
         card.style.animation = 'cardIn 0.35s ease both';
+        visible++;
       } else {
         card.style.display = 'none';
       }
     });
+
+    // Show a hint if filters produce no results
+    let emptyHint = document.getElementById('filterEmptyHint');
+    const needsHint = storiesCache.length > 0 && visible === 0;
+    if (needsHint) {
+      if (!emptyHint) {
+        emptyHint = document.createElement('div');
+        emptyHint.id = 'filterEmptyHint';
+        emptyHint.className = 'empty-state';
+        emptyHint.style.gridColumn = '1 / -1';
+        emptyHint.innerHTML = '<i class="fas fa-filter" aria-hidden="true"></i><p>No stories match these filters.</p>';
+        document.getElementById('newsGrid').appendChild(emptyHint);
+      }
+    } else if (emptyHint) {
+      emptyHint.remove();
+    }
   }
 
   document.getElementById('newsSearch').addEventListener('input', debouncedFilterNews);
   document.getElementById('newsSearch').addEventListener('keyup', (e) => { if (e.key === 'Enter') filterNews(); });
 
-  function showFeed() {
+  /* ---------- views ---------- */
+  function showFeed(pushHistory = true) {
     document.getElementById('view-feed').classList.add('active');
     document.getElementById('view-article').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    history.pushState({ view: 'feed' }, '', '/Trending.html');
+    if (pushHistory) {
+      history.pushState({ view: 'feed' }, '', '/Trending');
+    }
   }
 
-  async function openArticle(id) {
+  async function openArticle(id, pushHistory = true) {
     if (!id) return;
 
     document.getElementById('view-feed').classList.remove('active');
@@ -635,7 +676,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     document.getElementById('articleTitle').textContent = 'Loading...';
-    document.getElementById('articleCategory').innerHTML = '<i class="fas fa-newspaper"></i> Loading...';
+    document.getElementById('articleCategory').innerHTML = '<i class="fas fa-newspaper" aria-hidden="true"></i> Loading...';
     document.getElementById('articleMeta').innerHTML = '';
     document.getElementById('articleBody').innerHTML = '<div class="skeleton" style="height:80px; margin-bottom:16px;"></div><div class="skeleton" style="height:80px; margin-bottom:16px;"></div><div class="skeleton" style="height:80px;"></div>';
     document.getElementById('articleCover').style.backgroundImage = '';
@@ -644,22 +685,40 @@
     document.getElementById('articleSource').style.display = 'none';
     document.getElementById('relatedGrid').innerHTML = '';
 
-    history.pushState({ view: 'article', article: id }, '', `/Trending.html?article=${encodeURIComponent(id)}`);
+    if (pushHistory) {
+      history.pushState(
+        { view: 'article', article: id },
+        '',
+        `/Trending?article=${encodeURIComponent(id)}`
+      );
+    }
+
+    // Guard against out-of-order responses
+    const requestId = ++currentArticleRequestId;
 
     const cached = storiesCache.find((s) => String(s.id) === String(id));
     if (cached) { renderArticle(cached); return; }
 
     try {
       const data = await apiGet(`/api/public/trending/${encodeURIComponent(id)}`);
+      if (requestId !== currentArticleRequestId) return;
       if (data && data.story) renderArticle(data.story);
       else renderError('Story not found.');
     } catch (err) {
+      if (requestId !== currentArticleRequestId) return;
       renderError(err.message);
     }
   }
 
   function renderError(msg) {
     document.getElementById('articleTitle').textContent = 'Story unavailable';
+    document.getElementById('articleCategory').innerHTML = '<i class="fas fa-newspaper" aria-hidden="true"></i> Story';
+    document.getElementById('articleMeta').innerHTML = '';
+    document.getElementById('articleCover').style.backgroundImage = '';
+    document.getElementById('articleCaption').textContent = '';
+    document.getElementById('articleSource').style.display = 'none';
+    document.getElementById('articleTags').innerHTML = '';
+    document.getElementById('relatedGrid').innerHTML = '';
     document.getElementById('articleBody').innerHTML = `<p>${escapeHtml(msg)}</p>`;
   }
 
@@ -671,15 +730,15 @@
     const cover = safeUrl(coverForStory(s));
     const source = safeUrl(s.source_url);
 
-    document.getElementById('articleCategory').innerHTML = `<i class="fas fa-newspaper"></i> ${escapeHtml(cat)}`;
+    document.getElementById('articleCategory').innerHTML = `<i class="fas fa-newspaper" aria-hidden="true"></i> ${escapeHtml(cat)}`;
     document.getElementById('articleCategory').className = 'article-cat ' + (isGold ? 'gold' : '');
     document.getElementById('articleTitle').textContent = s.title || 'Untitled';
 
     document.getElementById('articleMeta').innerHTML = `
-      <span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(date))}</span>
-      <span><i class="far fa-clock"></i> ${escapeHtml(readingTime(s.body))}</span>
-      <span><i class="fas fa-building"></i> ${escapeHtml(s.author || 'CampusNaija')}</span>
-      ${s.verification === 'verified' ? '<span><i class="fas fa-circle-check" style="color:var(--primary);"></i> Verified</span>' : ''}
+      <span><i class="far fa-calendar-alt" aria-hidden="true"></i> ${escapeHtml(formatDate(date))}</span>
+      <span><i class="far fa-clock" aria-hidden="true"></i> ${escapeHtml(readingTime(s.body))}</span>
+      <span><i class="fas fa-building" aria-hidden="true"></i> ${escapeHtml(s.author || 'CampusNaija')}</span>
+      ${s.verification === 'verified' ? '<span><i class="fas fa-circle-check" style="color:var(--primary);" aria-hidden="true"></i> Verified</span>' : ''}
     `;
 
     if (cover) document.getElementById('articleCover').style.backgroundImage = `url('${encodeURI(cover)}')`;
@@ -736,15 +795,19 @@
           const risGold = /admission|exam|jamb|scholarship/i.test((r.category || '').toLowerCase());
           const delay = Math.min(i * 0.05, 0.4);
           return `
-            <div class="news-card" style="animation-delay:${delay}s" onclick="openArticle('${escapeHtml(r.id)}')">
+            <div class="news-card"
+                 style="animation-delay:${delay}s"
+                 role="button" tabindex="0"
+                 onclick="openArticle('${escapeAttr(String(r.id))}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openArticle('${escapeAttr(String(r.id))}');}">
               <div class="news-card-img" ${rcover ? `style="background-image:url('${encodeURI(rcover)}')"` : ''}></div>
               <div class="news-card-body">
                 <div class="news-card-cat ${risGold ? 'gold' : ''}">${escapeHtml(r.category || 'Story')}</div>
                 <div class="news-card-title">${escapeHtml(r.title || 'Untitled')}</div>
                 <div class="news-card-excerpt">${escapeHtml(truncate(r.summary || r.body || '', 100))}</div>
                 <div class="news-card-meta">
-                  <span><i class="far fa-calendar-alt"></i> ${escapeHtml(formatDate(rdate))}</span>
-                  <span><i class="far fa-clock"></i> ${escapeHtml(readingTime(r.body))}</span>
+                  <span><i class="far fa-calendar-alt" aria-hidden="true"></i> ${escapeHtml(formatDate(rdate))}</span>
+                  <span><i class="far fa-clock" aria-hidden="true"></i> ${escapeHtml(readingTime(r.body))}</span>
                 </div>
               </div>
             </div>`;
@@ -761,12 +824,13 @@
       try {
         await navigator.clipboard.writeText(pageUrl);
         const btn = document.getElementById('shareCopy');
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        setTimeout(() => { btn.innerHTML = '<i class="fas fa-link"></i>'; }, 1500);
+        btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
+        setTimeout(() => { btn.innerHTML = '<i class="fas fa-link" aria-hidden="true"></i>'; }, 1500);
       } catch (e) { console.warn('Copy failed', e); }
     };
   }
 
+  /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   if (hamburger && mobileNav) {
@@ -776,11 +840,15 @@
     });
   }
 
+  /* ---------- history ---------- */
   let initialised = false;
   window.addEventListener('popstate', (e) => {
     if (!initialised) return;
-    if (e.state && e.state.view === 'article' && e.state.article) openArticle(e.state.article);
-    else showFeed();
+    if (e.state && e.state.view === 'article' && e.state.article) {
+      openArticle(e.state.article, false);
+    } else {
+      showFeed(false);
+    }
   });
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -788,7 +856,7 @@
     const articleParam = params.get('article');
     loadStories().then(() => {
       initialised = true;
-      if (articleParam) openArticle(articleParam);
+      if (articleParam) openArticle(articleParam, false);
     });
   });
 
