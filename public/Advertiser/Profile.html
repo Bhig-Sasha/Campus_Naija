@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Business Profile — CampusNaija Advertiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Inter', sans-serif;
+      color: #F5F7F6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Inter', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --primary-dark: #00b374;
+      --accent: #F5B942;
+      --text: #F5F7F6;
+      --muted: #9AA8A0;
+      --border: #29352F;
+      --danger: #e07070;
+      --info: #8ab5ff;
+      --radius-card: 16px;
+      --radius-btn: 11px;
+      --radius-input: 11px;
+      --sidebar-w: 264px;
+      --shadow-soft: 0 12px 32px rgba(0,0,0,0.35);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      display: block;
+      min-height: 12px;
+    }
+
+    .adv-shell { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar-brand {
+      padding: 24px 22px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
+      padding: 4px 10px; border-radius: 40px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.25);
+    }
+    .sidebar-nav {
+      flex: 1; overflow-y: auto;
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-group-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item i {
+      width: 20px; text-align: center;
+      font-size: 0.9rem; flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+    .nav-item:hover {
+      background-color: var(--elevated); color: var(--text);
+      transform: translateX(2px);
+    }
+    .nav-item:hover i { transform: scale(1.1); }
+    .nav-item.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background-color: var(--primary);
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar-footer {
+      padding: 14px 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .adv-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .adv-user:hover { background-color: var(--elevated); }
+    .adv-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.82rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .adv-user-info { flex: 1; min-width: 0; }
+    .adv-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .adv-user-role {
+      font-size: 0.68rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.9rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ─── Main ─── */
+    .main-area {
+      flex: 1; margin-left: var(--sidebar-w);
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ─── Topbar ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 72px;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .topbar-heading { flex: 1; min-width: 0; }
+    .topbar-heading h1 {
+      font-size: 1.25rem; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-heading p {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover {
+      background-color: var(--elevated); color: var(--primary);
+      border-color: var(--border);
+    }
+    .topbar-divider {
+      width: 1px; height: 26px;
+      background-color: var(--border); margin: 0 6px;
+    }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09;
+      font-weight: 800; font-size: 0.85rem;
+      padding: 11px 18px; border-radius: var(--radius-btn);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,201,130,0.28);
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-outline {
+      background-color: transparent; color: var(--text);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      font-weight: 600; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--primary); }
+    .btn-sm { padding: 7px 12px; font-size: 0.76rem; border-radius: 8px; }
+
+    .content { padding: 28px 24px 96px; flex: 1; max-width: 1080px; margin: 0 auto; width: 100%; }
+
+    /* ─── Page heading / hero ─── */
+    .page-heading {
+      margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+    }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.92rem; }
+
+    /* ─── Identity hero ─── */
+    .identity-hero {
+      background: linear-gradient(135deg, #0D1210 0%, #111815 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 22px;
+      margin-bottom: 22px;
+      display: flex; align-items: center;
+      gap: 18px; flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.35s ease both;
+    }
+    .identity-hero::after {
+      content: '';
+      position: absolute; right: -60px; top: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,201,130,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-logo {
+      width: 76px; height: 76px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.7rem; font-weight: 800;
+      color: #051410;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-body { flex: 1; min-width: 200px; }
+    .hero-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.4rem; font-weight: 800;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .hero-meta {
+      font-size: 0.78rem; color: var(--muted);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .hero-meta .dot-sep { opacity: 0.5; }
+
+    .pill-active {
+      display: inline-flex; align-items: center; gap: 5px;
+      background-color: rgba(0,201,130,0.12);
+      color: var(--primary);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 40px;
+    }
+    .pill-verified {
+      display: inline-flex; align-items: center; gap: 5px;
+      background-color: rgba(138,181,255,0.12);
+      color: var(--info);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 40px;
+    }
+    .pill-pending {
+      display: inline-flex; align-items: center; gap: 5px;
+      background-color: rgba(245,185,66,0.12);
+      color: var(--accent);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 40px;
+    }
+    .pill-unverified {
+      display: inline-flex; align-items: center; gap: 5px;
+      background-color: rgba(155,169,161,0.12);
+      color: var(--muted);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 40px;
+    }
+    .pill i { font-size: 0.55rem; }
+
+    /* ─── Tab nav ─── */
+    .profile-tabs {
+      display: flex; gap: 4px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 5px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      animation: slideUp 0.4s ease both;
+    }
+    .profile-tabs::-webkit-scrollbar { display: none; }
+    .profile-tab {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 0.82rem; font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .profile-tab i { font-size: 0.78rem; }
+    .profile-tab:hover { color: var(--text); }
+    .profile-tab.active {
+      background-color: var(--primary);
+      color: #051410;
+    }
+
+    /* ─── Tab panel ─── */
+    .tab-panel { display: none; animation: slideUp 0.3s ease both; }
+    .tab-panel.active { display: block; }
+
+    .panel {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+    .panel-title {
+      font-size: 1.1rem; font-weight: 800;
+      margin-bottom: 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title i { color: var(--primary); font-size: 1rem; }
+    .panel-sub {
+      color: var(--muted); font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+
+    /* ─── Fields ─── */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 0.72rem;
+      font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .field label .req { color: var(--accent); }
+    .field label .opt {
+      color: var(--muted); font-weight: 500;
+      text-transform: none; letter-spacing: 0; font-size: 0.68rem;
+      margin-left: 4px;
+    }
+    .input, .textarea, select.input {
+      width: 100%;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-input);
+      padding: 11px 14px; font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input:focus, .textarea:focus, select.input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .textarea { min-height: 90px; resize: vertical; }
+    select.input {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239AA8A0' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 34px;
+      cursor: pointer;
+    }
+    .field-hint {
+      font-size: 0.72rem; color: var(--muted);
+      margin-top: 6px;
+    }
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ─── Logo uploader ─── */
+    .logo-uploader {
+      display: flex; align-items: center; gap: 18px;
+      flex-wrap: wrap;
+    }
+    .logo-preview {
+      width: 96px; height: 96px;
+      border-radius: 20px;
+      background-color: var(--surface);
+      border: 2px dashed var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 1.6rem;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color 0.15s;
+      cursor: pointer;
+      position: relative;
+    }
+    .logo-preview:hover { border-color: var(--primary); }
+    .logo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .logo-preview .spinner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background-color: rgba(7,10,9,0.7);
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    .logo-info { flex: 1; min-width: 200px; }
+    .logo-info h4 { font-size: 0.92rem; margin-bottom: 4px; }
+    .logo-info p {
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .logo-info .file-types {
+      font-size: 0.68rem; color: var(--muted);
+      margin-top: 6px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* ─── Verification ─── */
+    .verification-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex; gap: 18px; align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .verification-card .verif-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background-color: rgba(245,185,66,0.1);
+      border: 1px solid rgba(245,185,66,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .verification-card .verif-body { flex: 1; min-width: 220px; }
+    .verification-card h3 {
+      font-size: 1.05rem; margin-bottom: 6px;
+    }
+    .verification-card p {
+      font-size: 0.85rem; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .verification-card ul {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 6px;
+      margin-bottom: 16px;
+    }
+    .verification-card ul li {
+      font-size: 0.8rem; color: var(--text);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .verification-card ul li i {
+      color: var(--primary); font-size: 0.7rem;
+      margin-top: 3px; flex-shrink: 0;
+    }
+
+    .verification-card.verified {
+      border-color: rgba(0,201,130,0.3);
+      background-color: rgba(0,201,130,0.04);
+    }
+    .verification-card.verified .verif-icon {
+      background-color: rgba(0,201,130,0.12);
+      border-color: rgba(0,201,130,0.3);
+      color: var(--primary);
+    }
+    .verification-card.pending {
+      border-color: rgba(245,185,66,0.35);
+      background-color: rgba(245,185,66,0.04);
+    }
+
+    /* ─── Sticky save bar ─── */
+    .save-bar {
+      position: fixed; left: var(--sidebar-w); right: 0; bottom: 0;
+      background-color: rgba(13,18,16,0.94);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      z-index: 38;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .save-bar.visible { transform: translateY(0); }
+    .save-bar .state {
+      font-size: 0.82rem; color: var(--accent);
+      font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .save-bar .actions { display: flex; gap: 8px; }
+
+    @media (max-width: 1023px) { .save-bar { left: 0; padding: 12px 16px; } }
+
+    /* ─── Overlay / toast ─── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated);
+      border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 380px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
+    .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; height: 64px; }
+      .topbar-heading h1 { font-size: 1rem; }
+      .topbar-heading p { display: none; }
+      .content { padding: 20px 16px 110px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h2 { font-size: 1.5rem; }
+      .panel { padding: 18px; }
+      .identity-hero { padding: 18px; }
+      .hero-name { font-size: 1.15rem; }
+      .hero-logo { width: 60px; height: 60px; font-size: 1.4rem; border-radius: 16px; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border); border-radius: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="adv-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-tag">
+          <i class="fas fa-bullhorn"></i> Advertiser Portal
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i> Overview</a>
+        <a href="./campaigns.html?status=active" class="nav-item"><i class="fas fa-play"></i> Active</a>
+        <a href="./campaigns.html" class="nav-item"><i class="fas fa-rectangle-ad"></i> My Advertisements</a>
+        <a href="./create.html" class="nav-item"><i class="fas fa-plus"></i> Create Advertisement</a>
+        <a href="./analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="./payments.html" class="nav-item"><i class="fas fa-credit-card"></i> Payments &amp; Billing</a>
+
+        <div class="nav-group-label">Account</div>
+        <a href="./profile.html" class="nav-item active"><i class="fas fa-building"></i> Business Profile</a>
+        <a href="./notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="mailto:support@campusnaija.ng" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="./settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="adv-user" id="advUserBlock">
+          <div class="adv-avatar" id="sideAvatar">AD</div>
+          <div class="adv-user-info">
+            <div class="adv-user-name" id="sideName">Loading…</div>
+            <div class="adv-user-role" id="sideRole">Business Account</div>
+          </div>
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-area">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-heading">
+          <h1>Business Profile</h1>
+          <p>Manage your business information and brand identity.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Help" title="Help &amp; support"
+                  onclick="window.open('mailto:support@campusnaija.ng','_blank')">
+            <i class="far fa-circle-question"></i>
+          </button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="adv-avatar" id="topAvatar">AD</div>
+            <div>
+              <div class="topbar-admin-name" id="topName">Loading…</div>
+              <div class="topbar-admin-role" id="topRole">Business Account</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><i class="fas fa-building"></i> Account profile</div>
+            <h2>Business Profile</h2>
+            <p>Manage your business information and brand identity.</p>
+          </div>
+        </div>
+
+        <!-- Identity hero -->
+        <section class="identity-hero" id="identityHero">
+          <div class="hero-logo" id="heroLogo">?</div>
+          <div class="hero-body">
+            <div class="hero-name" id="heroName">Loading…</div>
+            <div class="hero-meta" id="heroMeta">
+              <span>Advertiser account</span>
+              <span class="dot-sep">·</span>
+              <span class="pill-active"><i class="fas fa-circle"></i> Active</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabs -->
+        <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+          <button class="profile-tab active" data-tab="business" role="tab">
+            <i class="fas fa-briefcase"></i> Business Information
+          </button>
+          <button class="profile-tab" data-tab="contact" role="tab">
+            <i class="fas fa-address-book"></i> Contact Information
+          </button>
+          <button class="profile-tab" data-tab="brand" role="tab">
+            <i class="fas fa-palette"></i> Brand Identity
+          </button>
+          <button class="profile-tab" data-tab="online" role="tab">
+            <i class="fas fa-globe"></i> Online Presence
+          </button>
+          <button class="profile-tab" data-tab="verify" role="tab">
+            <i class="fas fa-shield-halved"></i> Verification
+          </button>
+        </nav>
+
+        <!-- Tab: Business information -->
+        <section class="tab-panel active" data-panel="business">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-briefcase"></i> Business details</div>
+            <div class="panel-sub">These details identify your business across the CampusNaija portal.</div>
+
+            <div class="field">
+              <label>Business / Organisation name <span class="req">*</span></label>
+              <input class="input" id="fBusinessName" maxlength="200" placeholder="e.g. Ada Foods Ltd">
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Business type</label>
+                <select class="input" id="fBusinessType">
+                  <option value="">Select business type</option>
+                  <option value="sole_proprietorship">Sole proprietorship</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="limited_company">Limited liability company</option>
+                  <option value="ngo">NGO / Non-profit</option>
+                  <option value="government">Government agency</option>
+                  <option value="individual">Individual</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Business registration number <span class="opt">(optional)</span></label>
+                <input class="input" id="fBusinessRegNo" maxlength="60" placeholder="RC-1234567">
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Business description</label>
+              <textarea class="textarea" id="fBusinessDesc" maxlength="2000" placeholder="A short description of what your business does…"></textarea>
+              <div class="field-hint"><span id="descCount">0</span> / 2000 characters</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab: Contact information -->
+        <section class="tab-panel" data-panel="contact">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-address-book"></i> Business contact details</div>
+            <div class="panel-sub">Used to reach you about your campaigns, invoices, and account updates.</div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Contact person's full name</label>
+                <input class="input" id="fContactName" maxlength="200" placeholder="e.g. Ada Okafor">
+              </div>
+              <div class="field">
+                <label>Business email address <span class="req">*</span></label>
+                <input class="input" id="fContactEmail" type="email" maxlength="254" placeholder="hello@adafoods.com">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Business phone number</label>
+                <input class="input" id="fContactPhone" maxlength="30" placeholder="+234 800 000 0000">
+              </div>
+              <div class="field">
+                <label>State</label>
+                <select class="input" id="fContactState">
+                  <option value="">Select state</option>
+                  <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option>
+                  <option>Anambra</option><option>Bauchi</option><option>Bayelsa</option>
+                  <option>Benue</option><option>Borno</option><option>Cross River</option>
+                  <option>Delta</option><option>Ebonyi</option><option>Edo</option>
+                  <option>Ekiti</option><option>Enugu</option><option>FCT</option>
+                  <option>Gombe</option><option>Imo</option><option>Jigawa</option>
+                  <option>Kaduna</option><option>Kano</option><option>Katsina</option>
+                  <option>Kebbi</option><option>Kogi</option><option>Kwara</option>
+                  <option>Lagos</option><option>Nasarawa</option><option>Niger</option>
+                  <option>Ogun</option><option>Ondo</option><option>Osun</option>
+                  <option>Oyo</option><option>Plateau</option><option>Rivers</option>
+                  <option>Sokoto</option><option>Taraba</option><option>Yobe</option>
+                  <option>Zamfara</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Business address</label>
+              <textarea class="textarea" id="fContactAddress" maxlength="500" placeholder="Street, city, area, landmark…" style="min-height:70px;"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab: Brand identity -->
+        <section class="tab-panel" data-panel="brand">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-palette"></i> Your business branding</div>
+            <div class="panel-sub">Used on campaign previews and advertiser-facing materials. Not shown on the public site.</div>
+
+            <div class="logo-uploader">
+              <div class="logo-preview" id="logoPreview" role="button" tabindex="0" aria-label="Upload brand logo">
+                <i class="fas fa-image" id="logoPlaceholder"></i>
+                <img id="logoImg" alt="" style="display:none;">
+                <div class="spinner" id="logoSpinner" style="display:none;">
+                  <i class="fas fa-circle-notch" style="animation: spin 1s linear infinite;"></i>
+                </div>
+              </div>
+              <div class="logo-info">
+                <h4>Business logo</h4>
+                <p>Upload your company or brand logo. It appears on campaign previews and account materials.</p>
+                <button class="btn-outline btn-sm" id="logoBrowseBtn" type="button">
+                  <i class="fas fa-cloud-arrow-up"></i> Upload logo
+                </button>
+                <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden>
+                <div class="file-types">PNG · JPG · WebP · Max 4 MB</div>
+              </div>
+            </div>
+
+            <div class="field-row" style="margin-top:20px;">
+              <div class="field">
+                <label>Brand display name</label>
+                <input class="input" id="fBrandName" maxlength="200" placeholder="e.g. Ada Foods">
+              </div>
+              <div class="field">
+                <label>Brand slogan <span class="opt">(optional)</span></label>
+                <input class="input" id="fBrandSlogan" maxlength="140" placeholder="Good food, every day.">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab: Online presence -->
+        <section class="tab-panel" data-panel="online">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-globe"></i> Where customers can find you</div>
+            <div class="panel-sub">All optional. Helps your account team understand your brand.</div>
+
+            <div class="field">
+              <label>Website URL</label>
+              <input class="input" id="fWebsite" type="url" maxlength="2048" placeholder="https://yourwebsite.com">
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Instagram</label>
+                <input class="input" id="fInstagram" maxlength="200" placeholder="@yourbrand or full URL">
+              </div>
+              <div class="field">
+                <label>Facebook</label>
+                <input class="input" id="fFacebook" maxlength="200" placeholder="facebook.com/yourbrand">
+              </div>
+            </div>
+
+            <div class="field">
+              <label>LinkedIn</label>
+              <input class="input" id="fLinkedin" maxlength="200" placeholder="linkedin.com/company/yourbrand">
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab: Verification -->
+        <section class="tab-panel" data-panel="verify">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-shield-halved"></i> Business verification</div>
+            <div class="panel-sub">Optional for most advertisers, unless a campaign category or compliance requirement makes it necessary.</div>
+
+            <div id="verificationContainer"></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Sticky save bar -->
+  <div class="save-bar" id="saveBar">
+    <div class="state">
+      <i class="fas fa-circle-exclamation"></i>
+      <span>You have unsaved changes</span>
+    </div>
+    <div class="actions">
+      <button class="btn-outline" id="discardBtn">
+        <i class="fas fa-rotate-left"></i> Discard changes
+      </button>
+      <button class="btn-primary" id="saveBtn">
+        <i class="fas fa-check"></i> Save changes
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_advertiser_token';
+      const USER_KEY  = 'campusnaija_advertiser_user';
+      const LOGIN_URL = '/advertiser/login.html';
+
+      const state = {
+        token: null,
+        user: null,
+        original: {},   // server snapshot
+        draft: {},      // local working copy
+        activeTab: 'business',
+        saving: false,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return 'AD';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || 'AD';
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }, opts.headers || {});
+        if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          const e = new Error(msg); e.status = res.status; throw e;
+        }
+        return data;
+      }
+
+      async function apiUpload(path, file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch(API_BASE + path, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + state.token },
+          body: fd,
+        });
+        if (res.status === 401) { redirectToLogin('session_expired'); throw new Error('Session expired'); }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const e = new Error(data.error || 'Upload failed');
+          e.status = res.status;
+          throw e;
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = $('toast');
+        const txt = $('toastText');
+        if (!el || !txt) return;
+        txt.textContent = msg || '';
+        el.classList.toggle('error', !!isError);
+        const icon = el.querySelector('i');
+        if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
+      }
+
+      /* ─── user chrome ─── */
+      function renderUser() {
+        if (!state.user) return;
+        const label = state.draft.brand_name || state.draft.business_name || state.user.business_name || state.user.name || 'Advertiser';
+        const ini = initials(label);
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+
+        $('heroName').textContent = label;
+        if (state.draft.logo_url) {
+          $('heroLogo').innerHTML = `<img src="${esc(state.draft.logo_url)}" alt="">`;
+        } else {
+          $('heroLogo').textContent = ini;
+        }
+      }
+
+      /* ─── hydration ─── */
+      function hydrateForm() {
+        const d = state.draft;
+        $('fBusinessName').value = d.business_name || '';
+        $('fBusinessType').value = d.business_type || '';
+        $('fBusinessRegNo').value = d.business_reg_no || '';
+        $('fBusinessDesc').value = d.business_description || '';
+        updateDescCount();
+
+        $('fContactName').value = d.contact_name || '';
+        $('fContactEmail').value = d.contact_email || '';
+        $('fContactPhone').value = d.contact_phone || '';
+        $('fContactAddress').value = d.contact_address || '';
+        $('fContactState').value = d.contact_state || '';
+
+        $('fBrandName').value = d.brand_name || '';
+        $('fBrandSlogan').value = d.brand_slogan || '';
+
+        $('fWebsite').value = d.website || '';
+        $('fInstagram').value = d.instagram || '';
+        $('fFacebook').value = d.facebook || '';
+        $('fLinkedin').value = d.linkedin || '';
+
+        renderLogoPreview(d.logo_url);
+        renderVerification();
+      }
+
+      function updateDescCount() {
+        const v = $('fBusinessDesc').value || '';
+        $('descCount').textContent = v.length;
+      }
+
+      function readForm() {
+        return {
+          business_name: $('fBusinessName').value.trim(),
+          business_type: $('fBusinessType').value,
+          business_reg_no: $('fBusinessRegNo').value.trim(),
+          business_description: $('fBusinessDesc').value.trim(),
+          contact_name: $('fContactName').value.trim(),
+          contact_email: $('fContactEmail').value.trim(),
+          contact_phone: $('fContactPhone').value.trim(),
+          contact_address: $('fContactAddress').value.trim(),
+          contact_state: $('fContactState').value,
+          brand_name: $('fBrandName').value.trim(),
+          brand_slogan: $('fBrandSlogan').value.trim(),
+          logo_url: state.draft.logo_url || '',
+          website: $('fWebsite').value.trim(),
+          instagram: $('fInstagram').value.trim(),
+          facebook: $('fFacebook').value.trim(),
+          linkedin: $('fLinkedin').value.trim(),
+        };
+      }
+
+      function snapshotEquals(a, b) {
+        const keys = Object.keys(a);
+        for (const k of keys) {
+          if ((a[k] || '') !== (b[k] || '')) return false;
+        }
+        return true;
+      }
+
+      function refreshDirtyState() {
+        const current = readForm();
+        const dirty = !snapshotEquals(current, state.original);
+        $('saveBar').classList.toggle('visible', dirty);
+        return dirty;
+      }
+
+      /* ─── logo ─── */
+      function renderLogoPreview(url) {
+        const img = $('logoImg');
+        const ph = $('logoPlaceholder');
+        if (url) {
+          img.src = url;
+          img.style.display = '';
+          ph.style.display = 'none';
+        } else {
+          img.style.display = 'none';
+          ph.style.display = '';
+          img.removeAttribute('src');
+        }
+      }
+
+      async function handleLogoUpload(file) {
+        if (!file) return;
+        if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
+          toast('Logo must be a PNG, JPG or WebP image', true);
+          return;
+        }
+        if (file.size > 4 * 1048576) {
+          toast('Logo must be under 4 MB', true);
+          return;
+        }
+
+        $('logoSpinner').style.display = '';
+        try {
+          const data = await apiUpload('/api/advertiser/profile/logo', file);
+          state.draft.logo_url = data.logo_url;
+          state.original.logo_url = data.logo_url;
+          renderLogoPreview(data.logo_url);
+          renderUser();
+          toast('Logo uploaded');
+        } catch (e) {
+          toast(e.message || 'Could not upload logo', true);
+        } finally {
+          $('logoSpinner').style.display = 'none';
+        }
+      }
+
+      /* ─── verification ─── */
+      function renderVerification() {
+        const status = state.draft.verification_status || 'unverified';
+        const submitted = state.draft.verification_submitted_at;
+        const container = $('verificationContainer');
+
+        if (status === 'verified') {
+          container.innerHTML = `
+            <div class="verification-card verified">
+              <div class="verif-icon"><i class="fas fa-circle-check"></i></div>
+              <div class="verif-body">
+                <h3>Business verified</h3>
+                <p>Your business has been verified by CampusNaija. You can continue creating campaigns without additional checks for most categories.</p>
+                <span class="pill-verified"><i class="fas fa-shield-halved"></i> Verified</span>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (status === 'pending') {
+          container.innerHTML = `
+            <div class="verification-card pending">
+              <div class="verif-icon"><i class="fas fa-clock"></i></div>
+              <div class="verif-body">
+                <h3>Verification submitted — under review</h3>
+                <p>Your verification request was submitted ${submitted ? 'on ' + new Date(submitted).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'recently'}. Our team will review it and notify you.</p>
+                <span class="pill-pending"><i class="fas fa-hourglass-half"></i> Pending review</span>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="verification-card">
+            <div class="verif-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="verif-body">
+              <h3>Verify your business</h3>
+              <p>Verification is optional and typically required for high-value or compliance-sensitive campaigns. Once verified, you'll be able to run campaigns in more categories without delay.</p>
+              <ul>
+                <li><i class="fas fa-circle-check"></i> CAC registration documents, where applicable</li>
+                <li><i class="fas fa-circle-check"></i> Proof of business identity (utility bill, bank statement)</li>
+                <li><i class="fas fa-circle-check"></i> Authorised representative information</li>
+              </ul>
+              <p style="font-size:0.76rem;margin-bottom:14px;">Documents and requirements are determined by CampusNaija's verification policy.</p>
+              <button class="btn-primary" id="startVerificationBtn">
+                <i class="fas fa-shield-halved"></i> Start Verification
+              </button>
+            </div>
+          </div>
+        `;
+
+        $('startVerificationBtn').addEventListener('click', () => {
+          if (!confirm('Submit a verification request? Our team will review your account.')) return;
+          submitVerification();
+        });
+      }
+
+      async function submitVerification() {
+        try {
+          const data = await api('/api/advertiser/profile/verify', {
+            method: 'POST',
+            body: JSON.stringify({ note: 'Verification requested by advertiser.' }),
+          });
+          state.draft.verification_status = data.verification_status || 'pending';
+          state.original.verification_status = state.draft.verification_status;
+          state.draft.verification_submitted_at = new Date().toISOString();
+          renderVerification();
+          toast('Verification request submitted');
+        } catch (e) {
+          toast(e.message || 'Could not submit verification', true);
+        }
+      }
+
+      /* ─── save ─── */
+      async function saveProfile() {
+        if (state.saving) return;
+        const payload = readForm();
+        if (!payload.business_name) {
+          toast('Business name is required', true);
+          switchTab('business');
+          $('fBusinessName').focus();
+          return;
+        }
+        if (payload.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.contact_email)) {
+          toast('Please enter a valid contact email', true);
+          switchTab('contact');
+          $('fContactEmail').focus();
+          return;
+        }
+
+        state.saving = true;
+        const btn = $('saveBtn');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch" style="animation: spin 1s linear infinite;"></i> Saving…';
+
+        try {
+          await api('/api/advertiser/profile', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+          });
+          state.original = Object.assign({}, payload);
+          $('saveBar').classList.remove('visible');
+          renderUser();
+          toast('Profile saved');
+        } catch (e) {
+          toast(e.message || 'Could not save profile', true);
+        } finally {
+          state.saving = false;
+          btn.disabled = false;
+          btn.innerHTML = original;
+        }
+      }
+
+      function discardChanges() {
+        if (!confirm('Discard unsaved changes?')) return;
+        state.draft = Object.assign({}, state.original);
+        hydrateForm();
+        renderUser();
+        refreshDirtyState();
+        toast('Changes discarded');
+      }
+
+      /* ─── tabs ─── */
+      function switchTab(tab) {
+        state.activeTab = tab;
+        document.querySelectorAll('.profile-tab').forEach(t => {
+          t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+        });
+        document.querySelectorAll('.tab-panel').forEach(p => {
+          p.classList.toggle('active', p.getAttribute('data-panel') === tab);
+        });
+      }
+
+      /* ─── wiring ─── */
+      function wireEvents() {
+        // Sidebar
+        $('menuToggle').addEventListener('click', () => {
+          const open = $('sidebar').classList.toggle('open');
+          $('sidebarOverlay').classList.toggle('active', open);
+          $('menuToggle').setAttribute('aria-expanded', String(open));
+        });
+        $('sidebarOverlay').addEventListener('click', () => {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('active');
+          }
+        });
+
+        // Logout
+        $('sideLogout').addEventListener('click', () => {
+          if (!confirm('Sign out of the advertiser portal?')) return;
+          redirectToLogin();
+        });
+
+        // Tabs
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+          tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+        });
+
+        // Form change tracking
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(inp => {
+          inp.addEventListener('input', () => {
+            state.draft = readForm();
+            updateDescCount();
+            refreshDirtyState();
+            renderUser();
+          });
+          inp.addEventListener('change', () => {
+            state.draft = readForm();
+            refreshDirtyState();
+          });
+        });
+
+        // Logo
+        $('logoBrowseBtn').addEventListener('click', () => $('logoFile').click());
+        $('logoPreview').addEventListener('click', () => $('logoFile').click());
+        $('logoPreview').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('logoFile').click(); }
+        });
+        $('logoFile').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) handleLogoUpload(file);
+          e.target.value = '';
+        });
+
+        // Save / discard
+        $('saveBtn').addEventListener('click', saveProfile);
+        $('discardBtn').addEventListener('click', discardChanges);
+
+        // Warn before leaving with unsaved changes
+        window.addEventListener('beforeunload', (e) => {
+          if (refreshDirtyState()) {
+            e.preventDefault();
+            e.returnValue = '';
+          }
+        });
+      }
+
+      /* ─── boot ─── */
+      (async function boot() {
+        try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!state.token) { redirectToLogin('not_signed_in'); return; }
+
+        try {
+          const cached = localStorage.getItem(USER_KEY);
+          if (cached) state.user = JSON.parse(cached);
+        } catch (_) {}
+
+        try {
+          const me = await api('/api/advertiser/me');
+          if (me && me.user) {
+            state.user = me.user;
+            try { localStorage.setItem(USER_KEY, JSON.stringify(state.user)); } catch (_) {}
+          }
+        } catch (e) {
+          if (e.message !== 'Session expired') console.warn('[me]', e.message);
+        }
+
+        if (!state.user) { redirectToLogin('not_signed_in'); return; }
+
+        // Load profile
+        try {
+          const data = await api('/api/advertiser/profile');
+          const p = data.profile || {};
+          state.original = {
+            business_name: p.business_name || '',
+            business_type: p.business_type || '',
+            business_reg_no: p.business_reg_no || '',
+            business_description: p.business_description || '',
+            contact_name: p.contact_name || '',
+            contact_email: p.contact_email || state.user.email || '',
+            contact_phone: p.contact_phone || '',
+            contact_address: p.contact_address || '',
+            contact_state: p.contact_state || '',
+            brand_name: p.brand_name || '',
+            brand_slogan: p.brand_slogan || '',
+            logo_url: p.logo_url || '',
+            website: p.website || '',
+            instagram: p.instagram || '',
+            facebook: p.facebook || '',
+            linkedin: p.linkedin || '',
+            verification_status: p.verification_status || 'unverified',
+            verification_submitted_at: p.verification_submitted_at || null,
+          };
+          state.draft = Object.assign({}, state.original);
+        } catch (e) {
+          if (e.message !== 'Session expired') {
+            console.warn('[profile]', e.message);
+            state.original = {
+              business_name: '', business_type: '', business_reg_no: '',
+              business_description: '', contact_name: '',
+              contact_email: state.user.email || '', contact_phone: '',
+              contact_address: '', contact_state: '',
+              brand_name: '', brand_slogan: '', logo_url: '',
+              website: '', instagram: '', facebook: '', linkedin: '',
+              verification_status: 'unverified',
+            };
+            state.draft = Object.assign({}, state.original);
+            toast('Could not load full profile — editing still works', true);
+          }
+        }
+
+        hydrateForm();
+        renderUser();
+        wireEvents();
+        refreshDirtyState();
+
+        // URL param for initial tab
+        const params = new URLSearchParams(location.search);
+        if (params.get('tab')) switchTab(params.get('tab'));
+      })();
+
+    })();
+  </script>
+</body>
+</html>

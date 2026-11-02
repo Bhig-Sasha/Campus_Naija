@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>My Advertisements — CampusNaija Advertiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Inter', sans-serif;
+      color: #F5F7F6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Inter', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --primary-dark: #00b374;
+      --accent: #F5B942;
+      --text: #F5F7F6;
+      --muted: #9AA8A0;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 11px;
+      --radius-input: 11px;
+      --sidebar-w: 264px;
+      --shadow-soft: 0 12px 32px rgba(0,0,0,0.35);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      display: block;
+      min-height: 12px;
+    }
+
+    .adv-shell { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar-brand {
+      padding: 24px 22px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
+      padding: 4px 10px; border-radius: 40px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.25);
+    }
+    .sidebar-nav {
+      flex: 1; overflow-y: auto;
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-group-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item i {
+      width: 20px; text-align: center;
+      font-size: 0.9rem; flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+    .nav-item:hover {
+      background-color: var(--elevated); color: var(--text);
+      transform: translateX(2px);
+    }
+    .nav-item:hover i { transform: scale(1.1); }
+    .nav-item.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background-color: var(--primary);
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.62rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
+    .nav-item .nav-badge.muted {
+      background-color: rgba(155,169,161,0.15);
+      color: var(--muted);
+    }
+    .sidebar-footer {
+      padding: 14px 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .adv-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .adv-user:hover { background-color: var(--elevated); }
+    .adv-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.82rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .adv-user-info { flex: 1; min-width: 0; }
+    .adv-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .adv-user-role {
+      font-size: 0.68rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.9rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ─── Main ─── */
+    .main-area {
+      flex: 1; margin-left: var(--sidebar-w);
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ─── Topbar ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 72px;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; padding: 8px; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .topbar-heading { flex: 1; min-width: 0; }
+    .topbar-heading h1 {
+      font-size: 1.25rem; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-heading p {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover {
+      background-color: var(--elevated); color: var(--primary);
+      border-color: var(--border);
+    }
+    .icon-btn .dot-indicator {
+      position: absolute; top: 6px; right: 7px;
+      width: 8px; height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: none;
+    }
+    .icon-btn .dot-indicator.show { display: block; animation: pulseDot 1.6s ease-in-out infinite; }
+    .topbar-divider {
+      width: 1px; height: 26px;
+      background-color: var(--border); margin: 0 6px;
+    }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09;
+      font-weight: 800; font-size: 0.85rem;
+      padding: 11px 18px; border-radius: var(--radius-btn);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,201,130,0.28);
+    }
+    .btn-outline {
+      background-color: transparent; color: var(--text);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      font-weight: 600; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid transparent; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); background: var(--surface); border-color: var(--border); }
+    .btn-danger {
+      background: rgba(224,112,112,0.12); color: var(--danger);
+      border: 1px solid rgba(224,112,112,0.3);
+      font-weight: 700; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-danger:hover { background: rgba(224,112,112,0.2); }
+
+    .content { padding: 28px 24px 56px; flex: 1; }
+
+    /* ─── Page heading ─── */
+    .page-heading {
+      margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+    }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.92rem; }
+
+    .heading-right {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .pill-count {
+      display: inline-flex; align-items: center; gap: 6px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.3);
+      color: var(--primary);
+      padding: 6px 12px; border-radius: 40px;
+      font-size: 0.78rem; font-weight: 700;
+    }
+
+    /* ─── Status summary cards ─── */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 640px) { .summary { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1200px) { .summary { grid-template-columns: repeat(6, 1fr); } }
+
+    .stat-card {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px 16px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card::before {
+      content: ''; position: absolute;
+      left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+    .stat-card[data-tone="published"]::before { background: var(--primary); }
+    .stat-card[data-tone="pending"]::before    { background: var(--accent); }
+    .stat-card[data-tone="draft"]::before      { background: #7A8C82; }
+    .stat-card[data-tone="changes"]::before    { background: var(--danger); }
+    .stat-card[data-tone="scheduled"]::before  { background: #6BA7F2; }
+    .stat-card[data-tone="expired"]::before    { background: #4E5B54; }
+    .stat-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
+    .stat-card.active-filter {
+      border-color: var(--primary);
+      background-color: rgba(0,201,130,0.05);
+    }
+    .stat-card-label {
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .stat-card-value {
+      font-size: 1.55rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+      line-height: 1;
+      color: var(--text);
+    }
+    .stat-card-sub { font-size: 0.7rem; color: var(--muted); }
+
+    /* ─── Filters ─── */
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 720px) {
+      .filters { grid-template-columns: 1fr auto auto auto; }
+    }
+
+    .filter-search {
+      position: relative;
+    }
+    .filter-search input {
+      width: 100%;
+      background-color: var(--elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 11px 14px 11px 38px;
+      font-size: 0.85rem; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .filter-search input::placeholder { color: var(--muted); }
+    .filter-search input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.15);
+    }
+    .filter-search i {
+      position: absolute; left: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 0.82rem;
+      pointer-events: none;
+    }
+
+    select.filter {
+      appearance: none;
+      -webkit-appearance: none;
+      background-color: var(--elevated);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239AA8A0' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 11px 34px 11px 14px;
+      font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; outline: none;
+      min-width: 155px;
+      transition: border-color 0.15s;
+    }
+    select.filter:focus { border-color: var(--primary); }
+
+    /* ─── Campaign list container ─── */
+    .campaign-list {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      animation: slideUp 0.35s ease both;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+    table.camp-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+    .camp-table thead th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background-color: var(--surface);
+    }
+    .camp-table tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .camp-table tbody tr:last-child td { border-bottom: none; }
+    .camp-table tbody tr {
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .camp-table tbody tr:hover { background-color: rgba(0,201,130,0.03); }
+
+    .camp-cell-name {
+      display: flex; align-items: center; gap: 12px;
+      min-width: 220px;
+    }
+    .camp-mini-thumb {
+      width: 52px; height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(245,185,66,0.12));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 0.95rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .camp-mini-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .camp-cell-name strong {
+      font-size: 0.88rem; font-weight: 700; color: var(--text);
+      display: block; margin-bottom: 2px;
+    }
+    .camp-cell-name small { font-size: 0.7rem; color: var(--muted); }
+
+    .camp-format-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 40px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .camp-period {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .camp-num {
+      font-feature-settings: 'tnum';
+      font-weight: 700; color: var(--text);
+    }
+    .camp-num small { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 500; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.66rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .status-pill i { font-size: 0.55rem; }
+    .st-published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .st-active    { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .st-pending   { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .st-approved  { background-color: rgba(138,181,255,0.12); color: #8ab5ff; }
+    .st-draft     { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .st-paused    { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .st-rejected  { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .st-expired   { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .st-scheduled { background-color: rgba(138,181,255,0.12); color: #8ab5ff; }
+
+    .row-actions {
+      display: flex; gap: 4px;
+      justify-content: flex-end;
+    }
+    .icon-action {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      padding: 6px 9px; border-radius: 8px; font-size: 0.72rem;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .icon-action:hover {
+      color: var(--primary); border-color: var(--primary);
+    }
+    .icon-action.danger:hover {
+      color: var(--danger); border-color: var(--danger);
+    }
+    .icon-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+      text-align: center; padding: 60px 24px;
+    }
+    .empty-state .icon-circle {
+      width: 64px; height: 64px; margin: 0 auto 16px;
+      border-radius: 18px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.6rem;
+    }
+    .empty-state h3 {
+      font-size: 1.05rem; margin-bottom: 6px;
+    }
+    .empty-state p {
+      font-size: 0.85rem; color: var(--muted);
+      max-width: 340px; margin: 0 auto 20px;
+    }
+
+    /* ─── Mobile cards ─── */
+    .mobile-cards {
+      display: none;
+      padding: 12px;
+      flex-direction: column; gap: 12px;
+    }
+    .camp-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .camp-card:active { border-color: var(--primary); }
+    .camp-card .head {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .camp-card .thumb {
+      width: 68px; height: 52px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(245,185,66,0.12));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .camp-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .camp-card .head .title {
+      font-size: 0.9rem; font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .camp-card .head .meta {
+      font-size: 0.7rem; color: var(--muted);
+    }
+    .camp-card .status-row {
+      margin-top: 10px;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .camp-card .metrics {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .camp-card .metrics .metric {
+      text-align: center;
+    }
+    .camp-card .metrics .metric .num {
+      font-size: 1rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+    }
+    .camp-card .metrics .metric .lbl {
+      font-size: 0.6rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+    .camp-card .actions {
+      display: flex; gap: 6px;
+      margin-top: 12px;
+    }
+    .camp-card .actions .icon-action { flex: 1; justify-content: center; }
+
+    /* ─── Details drawer ─── */
+    .drawer-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.7);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 90;
+    }
+    .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 480px;
+      background-color: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+    }
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-head {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .drawer-head .head-body { flex: 1; min-width: 0; }
+    .drawer-head h2 {
+      font-size: 1.05rem; margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .drawer-head .sub {
+      color: var(--muted); font-size: 0.72rem;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .close-btn {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
+
+    .drawer-body {
+      padding: 20px;
+      overflow-y: auto; flex: 1;
+    }
+    .drawer-body::-webkit-scrollbar { width: 8px; }
+    .drawer-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 4px; }
+
+    .detail-section { margin-bottom: 22px; }
+    .detail-section:last-child { margin-bottom: 0; }
+    .detail-section h4 {
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px; font-weight: 800;
+    }
+    .detail-section .creative-preview {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(0,201,130,0.15), rgba(245,185,66,0.08));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 2rem;
+      overflow: hidden;
+    }
+    .detail-section .creative-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .kv {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .kv > div {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .kv .k {
+      font-size: 0.62rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 3px; font-weight: 700;
+    }
+    .kv .v {
+      font-size: 0.82rem; font-weight: 600;
+      word-break: break-word;
+    }
+
+    .metrics-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .metrics-row .m {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 10px; text-align: center;
+    }
+    .metrics-row .m .k {
+      font-size: 0.6rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      font-weight: 700; margin-bottom: 4px;
+    }
+    .metrics-row .m .v {
+      font-size: 1.1rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+    }
+    .metrics-row .m .v.green { color: var(--primary); }
+    .metrics-row .m .v.gold { color: var(--accent); }
+
+    .feedback {
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.28);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+    .feedback strong {
+      color: var(--accent); display: block;
+      margin-bottom: 4px; font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    .drawer-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px;
+    }
+    .drawer-foot > * { flex: 1; justify-content: center; }
+
+    /* ─── Overlay ─── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated);
+      border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 380px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
+    .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; height: 64px; }
+      .topbar-heading h1 { font-size: 1rem; }
+      .topbar-heading p { display: none; }
+      .content { padding: 20px 16px 40px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .btn-primary .btn-primary-text { display: none; }
+      .btn-primary { padding: 11px 14px; }
+      .page-heading h2 { font-size: 1.5rem; }
+      .summary { gap: 10px; }
+      .stat-card { padding: 14px; }
+      .stat-card-value { font-size: 1.3rem; }
+      .camp-table { display: none; }
+      .mobile-cards { display: flex; }
+      .filters { grid-template-columns: 1fr; }
+      select.filter { min-width: 0; width: 100%; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border); border-radius: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="adv-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-tag">
+          <i class="fas fa-bullhorn"></i> Advertiser Portal
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i> Overview</a>
+        <a href="./campaigns.html?status=active" class="nav-item"><i class="fas fa-play"></i> Active</a>
+        <a href="./campaigns.html" class="nav-item active"><i class="fas fa-rectangle-ad"></i> My Advertisements</a>
+        <a href="./campaigns.html?new=1" class="nav-item"><i class="fas fa-plus"></i> Create Advertisement</a>
+        <a href="./analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="./payments.html" class="nav-item"><i class="fas fa-credit-card"></i> Payments &amp; Billing</a>
+
+        <div class="nav-group-label">Account</div>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building"></i> Business Profile</a>
+        <a href="./notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="mailto:support@campusnaija.ng" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="./settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="adv-user" id="advUserBlock">
+          <div class="adv-avatar" id="sideAvatar">AD</div>
+          <div class="adv-user-info">
+            <div class="adv-user-name" id="sideName">Loading…</div>
+            <div class="adv-user-role" id="sideRole">Business Account</div>
+          </div>
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="topbar-heading">
+          <h1>My Advertisements</h1>
+          <p>Manage and monitor all your campaigns.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Help" title="Help &amp; support"
+                  onclick="window.open('mailto:support@campusnaija.ng','_blank')">
+            <i class="far fa-circle-question"></i>
+          </button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="adv-avatar" id="topAvatar">AD</div>
+            <div>
+              <div class="topbar-admin-name" id="topName">Loading…</div>
+              <div class="topbar-admin-role" id="topRole">Business Account</div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="window.location.href='./create.html'">
+            <i class="fas fa-plus"></i>
+            <span class="btn-primary-text">Create Advertisement</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><i class="fas fa-rectangle-ad"></i> Campaign library</div>
+            <h2>My Advertisements</h2>
+            <p>Every campaign you've created, in one place.</p>
+          </div>
+          <div class="heading-right">
+            <span class="pill-count" id="countPill"><i class="fas fa-layer-group"></i> — Campaigns</span>
+          </div>
+        </div>
+
+        <!-- Summary cards (clickable to filter) -->
+        <section class="summary" id="summary" aria-label="Campaign status summary">
+          <div class="stat-card" data-tone="published" data-status="active">
+            <div class="stat-card-label">Published</div>
+            <div class="stat-card-value" data-key="published">—</div>
+            <div class="stat-card-sub">Live on site</div>
+          </div>
+          <div class="stat-card" data-tone="pending" data-status="pending">
+            <div class="stat-card-label">Pending review</div>
+            <div class="stat-card-value" data-key="pending">—</div>
+            <div class="stat-card-sub">Awaiting admin</div>
+          </div>
+          <div class="stat-card" data-tone="draft" data-status="draft">
+            <div class="stat-card-label">Drafts</div>
+            <div class="stat-card-value" data-key="draft">—</div>
+            <div class="stat-card-sub">Unfinished</div>
+          </div>
+          <div class="stat-card" data-tone="changes" data-status="rejected">
+            <div class="stat-card-label">Changes requested</div>
+            <div class="stat-card-value" data-key="rejected">—</div>
+            <div class="stat-card-sub">Needs your action</div>
+          </div>
+          <div class="stat-card" data-tone="scheduled" data-status="scheduled">
+            <div class="stat-card-label">Scheduled</div>
+            <div class="stat-card-value" data-key="scheduled">—</div>
+            <div class="stat-card-sub">Starting soon</div>
+          </div>
+          <div class="stat-card" data-tone="expired" data-status="expired">
+            <div class="stat-card-label">Expired</div>
+            <div class="stat-card-value" data-key="expired">—</div>
+            <div class="stat-card-sub">Past campaigns</div>
+          </div>
+        </section>
+
+        <!-- Filters -->
+        <div class="filters">
+          <div class="filter-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search campaign name or ID…" autocomplete="off">
+          </div>
+          <select class="filter" id="statusFilter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="active">Published</option>
+            <option value="pending">Pending review</option>
+            <option value="draft">Draft</option>
+            <option value="rejected">Changes requested</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="paused">Paused</option>
+            <option value="expired">Expired</option>
+          </select>
+          <select class="filter" id="formatFilter" aria-label="Filter by format">
+            <option value="">All formats</option>
+            <option value="image">Image advertisement</option>
+            <option value="video">Video advertisement</option>
+            <option value="carousel">Carousel</option>
+            <option value="text">Text advertisement</option>
+          </select>
+          <select class="filter" id="dateFilter" aria-label="Filter by date created">
+            <option value="">Any time</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="365">This year</option>
+          </select>
+        </div>
+
+        <!-- Campaign list -->
+        <div class="campaign-list" id="campaignList">
+          <div id="loadingState" style="padding: 28px;">
+            <div class="skeleton" style="height: 20px; width: 35%; margin-bottom: 14px;"></div>
+            <div class="skeleton" style="height: 56px; margin-bottom: 10px;"></div>
+            <div class="skeleton" style="height: 56px; margin-bottom: 10px;"></div>
+            <div class="skeleton" style="height: 56px;"></div>
+          </div>
+
+          <div class="table-wrap" id="tableWrap" style="display:none;">
+            <table class="camp-table">
+              <thead>
+                <tr>
+                  <th>Campaign</th>
+                  <th>Status</th>
+                  <th>Format</th>
+                  <th>Period</th>
+                  <th>Impr. / Clicks</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="campaignTbody"></tbody>
+            </table>
+          </div>
+
+          <div class="mobile-cards" id="mobileCards"></div>
+
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="icon-circle"><i class="fas fa-rectangle-ad"></i></div>
+            <h3>No campaigns found</h3>
+            <p id="emptyMessage">Create your first advertisement to reach thousands of students.</p>
+            <a href="./create.html" class="btn-primary" style="display:inline-flex;">
+              <i class="fas fa-plus"></i> Create Advertisement
+            </a>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Details drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="head-body">
+        <h2 id="drawerTitle">Campaign</h2>
+        <div class="sub" id="drawerSub">Loading details…</div>
+      </div>
+      <button class="close-btn" id="drawerClose" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot" id="drawerFoot"></div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_advertiser_token';
+      const USER_KEY  = 'campusnaija_advertiser_user';
+      const LOGIN_URL = '/advertiser/login.html';
+
+      const state = {
+        token: null,
+        user: null,
+        campaigns: [],
+        filters: { q: '', status: '', format: '', days: 0 },
+        drawerId: null,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      /* ─── helpers ─── */
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return 'AD';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || 'AD';
+      };
+
+      const fmtNum = (n) => {
+        const num = Number(n || 0);
+        if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return String(num);
+      };
+
+      const fmtDate = (d) => {
+        if (!d) return '—';
+        const dt = new Date(d);
+        if (isNaN(dt)) return '—';
+        return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      const ctr = (c) => {
+        const im = Number(c.impressions) || 0;
+        const cl = Number(c.clicks) || 0;
+        if (!im) return '—';
+        return ((cl / im) * 100).toFixed(1) + '%';
+      };
+
+      const formatLabel = (f) => {
+        const v = (f || 'image').toLowerCase();
+        return ({
+          image: 'Image',
+          video: 'Video',
+          carousel: 'Carousel',
+          text: 'Text',
+        })[v] || (f || 'Image');
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }, opts.headers || {});
+        if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          const e = new Error(msg);
+          e.status = res.status;
+          throw e;
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = $('toast');
+        const txt = $('toastText');
+        if (!el || !txt) return;
+        txt.textContent = msg || '';
+        el.classList.toggle('error', !!isError);
+        const icon = el.querySelector('i');
+        if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
+      }
+
+      /* ─── status pill ─── */
+      function statusPill(status) {
+        const s = (status || 'draft').toLowerCase();
+        const map = {
+          published: { label: 'Published', cls: 'st-published', icon: 'fa-circle-check' },
+          active:    { label: 'Published', cls: 'st-active',    icon: 'fa-circle-check' },
+          pending:   { label: 'Pending review', cls: 'st-pending', icon: 'fa-clock' },
+          approved:  { label: 'Approved', cls: 'st-approved', icon: 'fa-circle-check' },
+          draft:     { label: 'Draft', cls: 'st-draft', icon: 'fa-file' },
+          paused:    { label: 'Paused', cls: 'st-paused', icon: 'fa-pause' },
+          rejected:  { label: 'Changes requested', cls: 'st-rejected', icon: 'fa-circle-xmark' },
+          scheduled: { label: 'Scheduled', cls: 'st-scheduled', icon: 'fa-calendar-days' },
+          expired:   { label: 'Expired', cls: 'st-expired', icon: 'fa-hourglass-end' },
+        };
+        const m = map[s] || { label: status || 'Draft', cls: 'st-draft', icon: 'fa-circle' };
+        return `<span class="status-pill ${m.cls}"><i class="fas ${m.icon}"></i> ${esc(m.label)}</span>`;
+      }
+
+      /* ─── user chrome ─── */
+      function renderUser() {
+        if (!state.user) return;
+        const label = state.user.business_name || state.user.name || 'Advertiser';
+        const ini = initials(label);
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+      }
+
+      /* ─── summary ─── */
+      function renderSummary() {
+        const counts = { published: 0, pending: 0, draft: 0, rejected: 0, scheduled: 0, expired: 0 };
+        for (const c of state.campaigns) {
+          const s = (c.status || '').toLowerCase();
+          if (s === 'active' || s === 'published') counts.published++;
+          else if (s === 'pending') counts.pending++;
+          else if (s === 'draft') counts.draft++;
+          else if (s === 'rejected') counts.rejected++;
+          else if (s === 'scheduled') counts.scheduled++;
+          else if (s === 'expired') counts.expired++;
+        }
+        document.querySelectorAll('#summary .stat-card-value').forEach((el) => {
+          const k = el.getAttribute('data-key');
+          el.textContent = counts[k] || 0;
+        });
+        const total = state.campaigns.length;
+        $('countPill').innerHTML = `<i class="fas fa-layer-group"></i> ${total} Campaign${total === 1 ? '' : 's'}`;
+      }
+
+      /* ─── filter ─── */
+      function filteredCampaigns() {
+        const f = state.filters;
+        return state.campaigns.filter((c) => {
+          const status = (c.status || '').toLowerCase();
+
+          if (f.q) {
+            const q = f.q.toLowerCase();
+            const hay = `${c.name || ''} ${c.advertiser || ''} ${c.id || ''} ${c.placement || ''}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          if (f.status) {
+            if (f.status === 'active') {
+              if (status !== 'active' && status !== 'published') return false;
+            } else if (status !== f.status) {
+              return false;
+            }
+          }
+          if (f.format && (c.format || 'image').toLowerCase() !== f.format) return false;
+          if (f.days) {
+            const t = new Date(c.created_at).getTime();
+            if (!t || Date.now() - t > f.days * 86400000) return false;
+          }
+          return true;
+        });
+      }
+
+      /* ─── action buttons ─── */
+      function actionsFor(c, compact) {
+        const id = c.id;
+        const s = (c.status || '').toLowerCase();
+        const viewBtn = `<button class="icon-action" data-action="view" data-id="${esc(id)}" title="View"><i class="fas fa-eye"></i>${compact ? '' : ' View'}</button>`;
+        const editBtn = `<button class="icon-action" data-action="edit" data-id="${esc(id)}" title="Edit"><i class="fas fa-pen"></i>${compact ? '' : ' Edit'}</button>`;
+        const delBtn  = `<button class="icon-action danger" data-action="delete" data-id="${esc(id)}" title="Delete"><i class="fas fa-trash"></i>${compact ? '' : ' Delete'}</button>`;
+        const pauseBtn= `<button class="icon-action" data-action="pause" data-id="${esc(id)}" title="Pause"><i class="fas fa-pause"></i>${compact ? '' : ' Pause'}</button>`;
+        const resumeBtn= `<button class="icon-action" data-action="resume" data-id="${esc(id)}" title="Resume"><i class="fas fa-play"></i>${compact ? '' : ' Resume'}</button>`;
+        const dupBtn  = `<button class="icon-action" data-action="duplicate" data-id="${esc(id)}" title="Duplicate"><i class="fas fa-copy"></i>${compact ? '' : ' Duplicate'}</button>`;
+
+        switch (s) {
+          case 'draft':     return [editBtn, viewBtn, delBtn];
+          case 'pending':   return [viewBtn];
+          case 'rejected':  return [editBtn, viewBtn];
+          case 'active':
+          case 'published': return [viewBtn, pauseBtn];
+          case 'paused':    return [viewBtn, resumeBtn];
+          case 'expired':   return [viewBtn, dupBtn];
+          case 'scheduled': return [viewBtn];
+          case 'approved':  return [viewBtn];
+          default:          return [viewBtn];
+        }
+      }
+
+      /* ─── render table ─── */
+      function renderTable(rows) {
+        const tbody = $('campaignTbody');
+        const wrap = $('tableWrap');
+        const mobileCards = $('mobileCards');
+
+        tbody.innerHTML = rows.map(c => {
+          const acts = actionsFor(c, false);
+          const thumb = c.image_url
+            ? `<img src="${esc(c.image_url)}" alt="">`
+            : `<i class="fas fa-rectangle-ad"></i>`;
+          return `
+            <tr data-id="${esc(c.id)}">
+              <td data-label="Campaign">
+                <div class="camp-cell-name">
+                  <div class="camp-mini-thumb">${thumb}</div>
+                  <div>
+                    <strong>${esc(c.name || 'Untitled campaign')}</strong>
+                    <small>ID: ${esc(c.id?.slice(0, 8) || '—')}${c.placement ? ' · ' + esc(c.placement) : ''}</small>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Status">${statusPill(c.status)}</td>
+              <td data-label="Format"><span class="camp-format-pill"><i class="fas fa-crop-simple"></i> ${esc(formatLabel(c.format))}</span></td>
+              <td data-label="Period" class="camp-period">${esc(fmtDate(c.start_date))} → ${esc(fmtDate(c.end_date))}</td>
+              <td data-label="Impressions / Clicks">
+                <div class="camp-num">${fmtNum(c.impressions)} <small>${fmtNum(c.clicks)} clicks · ${ctr(c)} CTR</small></div>
+              </td>
+              <td data-label="Actions">
+                <div class="row-actions">${acts.join('')}</div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        mobileCards.innerHTML = rows.map(c => {
+          const acts = actionsFor(c, true);
+          const thumb = c.image_url
+            ? `<img src="${esc(c.image_url)}" alt="">`
+            : `<i class="fas fa-rectangle-ad"></i>`;
+          return `
+            <div class="camp-card" data-id="${esc(c.id)}">
+              <div class="head">
+                <div class="thumb">${thumb}</div>
+                <div style="flex:1;min-width:0;">
+                  <div class="title">${esc(c.name || 'Untitled campaign')}</div>
+                  <div class="meta">ID: ${esc(c.id?.slice(0, 8) || '—')}</div>
+                </div>
+              </div>
+              <div class="status-row">
+                ${statusPill(c.status)}
+                <span class="camp-format-pill"><i class="fas fa-crop-simple"></i> ${esc(formatLabel(c.format))}</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="num">${fmtNum(c.impressions)}</div><div class="lbl">Impressions</div></div>
+                <div class="metric"><div class="num">${fmtNum(c.clicks)}</div><div class="lbl">Clicks</div></div>
+                <div class="metric"><div class="num">${ctr(c)}</div><div class="lbl">CTR</div></div>
+              </div>
+              <div class="actions">${acts.join('')}</div>
+            </div>
+          `;
+        }).join('');
+
+        wrap.style.display = '';
+        mobileCards.style.display = '';
+      }
+
+      /* ─── apply filters and render ─── */
+      function render() {
+        $('loadingState').style.display = 'none';
+        const rows = filteredCampaigns();
+        const empty = $('emptyState');
+        const list = $('campaignList');
+        const tableWrap = $('tableWrap');
+        const mobileCards = $('mobileCards');
+
+        // Highlight active status card
+        document.querySelectorAll('#summary .stat-card').forEach(card => {
+          const s = card.getAttribute('data-status');
+          card.classList.toggle('active-filter', !!s && state.filters.status === s);
+        });
+
+        if (!rows.length) {
+          tableWrap.style.display = 'none';
+          mobileCards.style.display = 'none';
+          empty.style.display = '';
+          const msg = state.campaigns.length
+            ? 'Try adjusting your filters, or create a new campaign.'
+            : 'Create your first advertisement to reach thousands of students.';
+          $('emptyMessage').textContent = msg;
+          return;
+        }
+        empty.style.display = 'none';
+        renderTable(rows);
+      }
+
+      /* ─── drawer ─── */
+      function openDrawer(campaign) {
+        state.drawerId = campaign.id;
+
+        $('drawerTitle').textContent = campaign.name || 'Campaign';
+        $('drawerSub').innerHTML = `${statusPill(campaign.status)} <span>ID: ${esc(campaign.id?.slice(0, 8) || '—')}</span>`;
+
+        const s = (campaign.status || '').toLowerCase();
+        const creative = campaign.image_url
+          ? `<img src="${esc(campaign.image_url)}" alt="">`
+          : `<i class="fas fa-rectangle-ad"></i>`;
+
+        const sections = [];
+
+        // Creative
+        sections.push(`
+          <div class="detail-section">
+            <h4>Creative preview</h4>
+            <div class="creative-preview">${creative}</div>
+          </div>
+        `);
+
+        // Info
+        sections.push(`
+          <div class="detail-section">
+            <h4>Campaign information</h4>
+            <div class="kv">
+              <div><div class="k">Format</div><div class="v">${esc(formatLabel(campaign.format))}</div></div>
+              <div><div class="k">Placement</div><div class="v">${esc(campaign.placement || '—')}</div></div>
+              <div><div class="k">Starts</div><div class="v">${esc(fmtDate(campaign.start_date))}</div></div>
+              <div><div class="k">Ends</div><div class="v">${esc(fmtDate(campaign.end_date))}</div></div>
+              <div><div class="k">Created</div><div class="v">${esc(fmtDate(campaign.created_at))}</div></div>
+              <div><div class="k">Advertiser</div><div class="v">${esc(campaign.advertiser || '—')}</div></div>
+            </div>
+          </div>
+        `);
+
+        // Performance
+        if (['active', 'published', 'expired', 'paused'].includes(s)) {
+          sections.push(`
+            <div class="detail-section">
+              <h4>Performance</h4>
+              <div class="metrics-row">
+                <div class="m"><div class="k">Impressions</div><div class="v green">${fmtNum(campaign.impressions)}</div></div>
+                <div class="m"><div class="k">Clicks</div><div class="v gold">${fmtNum(campaign.clicks)}</div></div>
+                <div class="m"><div class="k">CTR</div><div class="v">${ctr(campaign)}</div></div>
+              </div>
+            </div>
+          `);
+        }
+
+        // Feedback for rejected
+        if (s === 'rejected' && (campaign.review_note || campaign.rejection_reason || campaign.admin_feedback)) {
+          const note = campaign.review_note || campaign.rejection_reason || campaign.admin_feedback;
+          sections.push(`
+            <div class="detail-section">
+              <h4>Administrator feedback</h4>
+              <div class="feedback">
+                <strong><i class="fas fa-circle-exclamation"></i> Changes requested</strong>
+                ${esc(note)}
+              </div>
+            </div>
+          `);
+        }
+
+        // Notes for pending
+        if (s === 'pending') {
+          sections.push(`
+            <div class="detail-section">
+              <div class="feedback" style="border-color:rgba(138,181,255,0.3);background-color:rgba(138,181,255,0.06);">
+                <strong style="color:#8ab5ff;"><i class="fas fa-clock"></i> Awaiting review</strong>
+                This campaign is being reviewed by an administrator. You will be notified once a decision is made.
+              </div>
+            </div>
+          `);
+        }
+
+        $('drawerBody').innerHTML = sections.join('');
+
+        // Footer actions
+        const footer = [];
+        if (s === 'draft' || s === 'rejected') {
+          footer.push(`<button class="btn-primary" data-action="edit" data-id="${esc(campaign.id)}"><i class="fas fa-pen"></i> Continue editing</button>`);
+        }
+        if (s === 'active' || s === 'published') {
+          footer.push(`<button class="btn-outline" data-action="pause" data-id="${esc(campaign.id)}"><i class="fas fa-pause"></i> Request pause</button>`);
+        }
+        if (s === 'paused') {
+          footer.push(`<button class="btn-primary" data-action="resume" data-id="${esc(campaign.id)}"><i class="fas fa-play"></i> Request resume</button>`);
+        }
+        if (s === 'expired') {
+          footer.push(`<button class="btn-outline" data-action="duplicate" data-id="${esc(campaign.id)}"><i class="fas fa-copy"></i> Duplicate</button>`);
+        }
+        if (s === 'draft' || s === 'rejected' || s === 'expired') {
+          footer.push(`<button class="btn-danger" data-action="delete" data-id="${esc(campaign.id)}"><i class="fas fa-trash"></i> Delete</button>`);
+        }
+        if (!footer.length) {
+          footer.push(`<button class="btn-outline" id="drawerCloseFooter"><i class="fas fa-xmark"></i> Close</button>`);
+        }
+        $('drawerFoot').innerHTML = footer.join('');
+
+        // Show
+        $('drawer').classList.add('open');
+        $('drawer').setAttribute('aria-hidden', 'false');
+        $('drawerBackdrop').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        $('drawer').classList.remove('open');
+        $('drawer').setAttribute('aria-hidden', 'true');
+        $('drawerBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+        state.drawerId = null;
+      }
+
+      /* ─── actions ─── */
+      async function handleAction(action, id) {
+        const c = state.campaigns.find(x => x.id === id);
+        if (!c) return;
+
+        if (action === 'view') {
+          openDrawer(c);
+          return;
+        }
+        if (action === 'edit') {
+          window.location.href = `./create.html?id=${encodeURIComponent(id)}`;
+          return;
+        }
+        if (action === 'duplicate') {
+          window.location.href = `./create.html?duplicate=${encodeURIComponent(id)}`;
+          return;
+        }
+        if (action === 'delete') {
+          if (!confirm(`Delete "${c.name}"? This cannot be undone.`)) return;
+          try {
+            await api(`/api/advertiser/campaigns/${id}`, { method: 'DELETE' });
+            state.campaigns = state.campaigns.filter(x => x.id !== id);
+            toast('Campaign deleted');
+            closeDrawer();
+            renderSummary();
+            render();
+          } catch (e) {
+            toast(e.message || 'Could not delete campaign', true);
+          }
+          return;
+        }
+        if (action === 'pause') {
+          if (!confirm(`Request to pause "${c.name}"?`)) return;
+          try {
+            await api(`/api/advertiser/campaigns/${id}/request-pause`, { method: 'POST' });
+            c.status = 'paused';
+            toast('Campaign paused');
+            closeDrawer();
+            renderSummary();
+            render();
+          } catch (e) {
+            toast(e.message || 'Could not pause campaign', true);
+          }
+          return;
+        }
+        if (action === 'resume') {
+          if (!confirm(`Resume "${c.name}"?`)) return;
+          try {
+            await api(`/api/advertiser/campaigns/${id}/request-resume`, { method: 'POST' });
+            c.status = 'active';
+            toast('Campaign resumed');
+            closeDrawer();
+            renderSummary();
+            render();
+          } catch (e) {
+            toast(e.message || 'Could not resume campaign', true);
+          }
+          return;
+        }
+      }
+
+      /* ─── data load ─── */
+      async function loadCampaigns() {
+        try {
+          const data = await api('/api/advertiser/campaigns');
+          state.campaigns = Array.isArray(data.campaigns) ? data.campaigns : (Array.isArray(data) ? data : []);
+          renderSummary();
+          render();
+        } catch (e) {
+          if (e.message !== 'Session expired') {
+            console.warn('[campaigns]', e.message);
+            toast(e.message || 'Could not load campaigns', true);
+          }
+          state.campaigns = [];
+          renderSummary();
+          render();
+        }
+      }
+
+      /* ─── wiring ─── */
+      function wireEvents() {
+        // Sidebar
+        $('menuToggle').addEventListener('click', () => {
+          const open = $('sidebar').classList.toggle('open');
+          $('sidebarOverlay').classList.toggle('active', open);
+          $('menuToggle').setAttribute('aria-expanded', String(open));
+        });
+        $('sidebarOverlay').addEventListener('click', () => {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+          $('menuToggle').setAttribute('aria-expanded', 'false');
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('active');
+            if ($('drawer').classList.contains('open')) closeDrawer();
+          }
+        });
+
+        // Logout
+        $('sideLogout').addEventListener('click', () => {
+          if (!confirm('Sign out of the advertiser portal?')) return;
+          redirectToLogin();
+        });
+
+        // Filters
+        let searchTimer;
+        $('searchInput').addEventListener('input', (e) => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            state.filters.q = e.target.value.trim();
+            render();
+          }, 180);
+        });
+        $('statusFilter').addEventListener('change', (e) => {
+          state.filters.status = e.target.value;
+          render();
+        });
+        $('formatFilter').addEventListener('change', (e) => {
+          state.filters.format = e.target.value;
+          render();
+        });
+        $('dateFilter').addEventListener('change', (e) => {
+          state.filters.days = Number(e.target.value) || 0;
+          render();
+        });
+
+        // Summary card click → sets status filter
+        document.querySelectorAll('#summary .stat-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const status = card.getAttribute('data-status') || '';
+            state.filters.status = state.filters.status === status ? '' : status;
+            $('statusFilter').value = state.filters.status;
+            render();
+          });
+        });
+
+        // Row / card click → open drawer
+        const list = $('campaignList');
+        list.addEventListener('click', (e) => {
+          const actionBtn = e.target.closest('[data-action]');
+          if (actionBtn) {
+            e.stopPropagation();
+            handleAction(actionBtn.getAttribute('data-action'), actionBtn.getAttribute('data-id'));
+            return;
+          }
+          const row = e.target.closest('tr[data-id]');
+          if (row) {
+            const c = state.campaigns.find(x => x.id === row.getAttribute('data-id'));
+            if (c) openDrawer(c);
+            return;
+          }
+          const card = e.target.closest('.camp-card[data-id]');
+          if (card) {
+            const c = state.campaigns.find(x => x.id === card.getAttribute('data-id'));
+            if (c) openDrawer(c);
+          }
+        });
+
+        // Drawer close
+        $('drawerClose').addEventListener('click', closeDrawer);
+        $('drawerBackdrop').addEventListener('click', closeDrawer);
+
+        // Drawer actions
+        $('drawerFoot').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-action]');
+          if (btn) {
+            e.stopPropagation();
+            handleAction(btn.getAttribute('data-action'), btn.getAttribute('data-id'));
+            return;
+          }
+          const close = e.target.closest('#drawerCloseFooter');
+          if (close) closeDrawer();
+        });
+      }
+
+      /* ─── boot ─── */
+      (async function boot() {
+        try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!state.token) { redirectToLogin('not_signed_in'); return; }
+
+        try {
+          const cached = localStorage.getItem(USER_KEY);
+          if (cached) state.user = JSON.parse(cached);
+        } catch (_) {}
+
+        try {
+          const me = await api('/api/advertiser/me');
+          if (me && me.user) {
+            state.user = me.user;
+            try { localStorage.setItem(USER_KEY, JSON.stringify(state.user)); } catch (_) {}
+          }
+        } catch (e) {
+          if (e.message !== 'Session expired') console.warn('[me]', e.message);
+        }
+
+        if (!state.user) { redirectToLogin('not_signed_in'); return; }
+
+        renderUser();
+        wireEvents();
+
+        // URL params: status, q, id (open drawer)
+        const params = new URLSearchParams(location.search);
+        if (params.get('status')) {
+          state.filters.status = params.get('status');
+          $('statusFilter').value = params.get('status');
+        }
+        if (params.get('q')) {
+          state.filters.q = params.get('q');
+          $('searchInput').value = params.get('q');
+        }
+
+        await loadCampaigns();
+
+        const openId = params.get('id');
+        if (openId) {
+          const c = state.campaigns.find(x => x.id === openId);
+          if (c) openDrawer(c);
+        }
+      })();
+
+    })();
+  </script>
+</body>
+</html>

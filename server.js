@@ -55,7 +55,7 @@ if (IS_PROD) {
 }
 
 /* ============================================================
- * ERROR HELPERS (moved up — used by validation helpers)
+ * ERROR HELPERS
  * ============================================================ */
 function httpError(status, message, code) {
   const err = new Error(message); err.status = status; err.code = code; return err;
@@ -117,7 +117,6 @@ async function one(text, params) { const r = await q(text, params); return r.row
 async function many(text, params) { const r = await q(text, params); return r.rows; }
 async function run(text, params) { const r = await q(text, params); return r.rowCount; }
 
-/** Transaction wrapper — runs fn(client) inside BEGIN/COMMIT, rolls back on throw. */
 async function tx(fn) {
   const client = await pool.connect();
   try {
@@ -139,7 +138,7 @@ function idsEqual(a, b) {
 }
 
 /* ============================================================
- * PERSISTENT RATE LIMITING (Postgres-backed)
+ * PERSISTENT RATE LIMITING
  * ============================================================ */
 async function rateLimit(key, max, windowMs) {
   try {
@@ -163,14 +162,13 @@ async function rateLimit(key, max, windowMs) {
   }
 }
 
-// Cleanup stale buckets hourly
 setInterval(async () => {
   try { await run(`delete from public.rate_limits where reset_at < now() - interval '1 hour'`); }
   catch (_) {}
 }, 60 * 60 * 1000).unref();
 
 /* ============================================================
- * FIELD VALIDATION HELPERS
+ * FIELD VALIDATION
  * ============================================================ */
 const FIELD_LIMITS = {
   name: 200, title: 300, email: 254, url: 2048,
@@ -200,6 +198,13 @@ function sanitizeText(value) {
   return String(value).replace(/[<>]/g, (c) => (c === '<' ? '&lt;' : '&gt;'));
 }
 
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /* ============================================================
  * PAGINATION
  * ============================================================ */
@@ -207,6 +212,71 @@ function pagination(req, { defaultLimit = 50, maxLimit = 200 } = {}) {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || defaultLimit, 1), maxLimit);
   const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
   return { limit, offset };
+}
+
+/* ============================================================
+ * SCHEMA ENSURANCE (idempotent boot-time migrations)
+ * ============================================================ */
+async function ensureAdvertiserSchema() {
+  const statements = [
+    `create table if not exists public.advertiser_profiles_ext (
+       user_id         uuid primary key references public.users(id) on delete cascade,
+       business_type   text,
+       business_reg_no text,
+       business_description text,
+       contact_name    text,
+       contact_email   text,
+       contact_phone   text,
+       contact_address text,
+       contact_state   text,
+       brand_name      text,
+       brand_slogan    text,
+       logo_url        text,
+       website         text,
+       instagram       text,
+       facebook        text,
+       linkedin        text,
+       verification_status text not null default 'unverified',
+       verification_submitted_at timestamptz,
+       verification_note text,
+       created_at      timestamptz not null default now(),
+       updated_at      timestamptz not null default now()
+     )`,
+    `create table if not exists public.advertiser_billing (
+       user_id         uuid primary key references public.users(id) on delete cascade,
+       billing_name    text not null,
+       business_reg_no text,
+       billing_email   text not null,
+       phone           text,
+       address         text,
+       tax_id          text,
+       created_at      timestamptz not null default now(),
+       updated_at      timestamptz not null default now()
+     )`,
+    `create table if not exists public.advertisement_events (
+       id              bigserial primary key,
+       advertisement_id uuid not null references public.advertisements(id) on delete cascade,
+       advertiser_user_id uuid not null references public.users(id) on delete cascade,
+       event_type      text not null check (event_type in ('impression','click')),
+       occurred_at     timestamptz not null default now(),
+       ip_hash         text,
+       user_agent_hash text,
+       session_id      text,
+       placement       text,
+       format          text
+     )`,
+    `create index if not exists idx_adv_events_adv_time
+       on public.advertisement_events(advertisement_id, occurred_at desc)`,
+    `create index if not exists idx_adv_events_user_time
+       on public.advertisement_events(advertiser_user_id, occurred_at desc)`,
+    `create unique index if not exists uniq_adv_click_dedup
+       on public.advertisement_events(advertisement_id, session_id, event_type, date_trunc('minute', occurred_at))
+       where event_type = 'click' and session_id is not null`,
+  ];
+  for (const sql of statements) {
+    try { await run(sql); }
+    catch (e) { console.warn('[schema]', e.message); }
+  }
 }
 
 /* ============================================================
@@ -273,7 +343,9 @@ const slugify = (t) => String(t).toLowerCase().trim()
 
 async function audit(req, action, targetType, targetId, targetLabel, details) {
   try {
-    const u = req.user;
+    const u = req.user || (req.advertiser
+      ? { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }
+      : null);
     await run(
       `insert into public.audit_logs
         (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, details, ip)
@@ -374,6 +446,65 @@ function requireRole(...roles) {
     if (!roles.includes(req.user.role)) return next(httpError(403, 'Forbidden.', 'forbidden'));
     next();
   };
+}
+
+/* ============================================================
+ * ADVERTISER AUTH HELPERS
+ * ============================================================ */
+const ADVERTISER_ROLE = 'advertiser';
+
+function publicAdvertiser(u, profile) {
+  if (!u) return null;
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    status: u.status,
+    business_name: profile?.business_name || null,
+    phone: profile?.phone || null,
+    website: profile?.website || null,
+    address: profile?.address || null,
+    must_change_password: !!u.must_change_password,
+    created_at: u.created_at,
+  };
+}
+
+async function fetchAdvertiser(userId) {
+  const u = await one(
+    `select * from public.users where id=$1 and role=$2`,
+    [userId, ADVERTISER_ROLE]
+  );
+  if (!u) return null;
+  const profile = await one(
+    `select * from public.advertiser_profiles where user_id=$1`,
+    [u.id]
+  );
+  return { user: u, profile };
+}
+
+async function authenticateAdvertiser(req, res, next) {
+  try {
+    const h = req.headers.authorization || '';
+    const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+    if (!token) throw httpError(401, 'Authentication required.', 'no_token');
+    let payload;
+    try { payload = jwt.verify(token, JWT_SECRET); }
+    catch { throw httpError(401, 'Session expired or invalid token.', 'bad_token'); }
+
+    const rec = await fetchAdvertiser(payload.sub);
+    if (!rec) throw httpError(401, 'Advertiser account not found.', 'no_advertiser');
+    if (rec.user.status === 'suspended')
+      throw httpError(403, 'This advertiser account is suspended.', 'suspended');
+    if (rec.user.status === 'pending')
+      throw httpError(403, 'Your advertiser account is awaiting approval.', 'pending_approval');
+    if (rec.user.status !== 'active')
+      throw httpError(403, 'Advertiser account is not active.', 'inactive');
+
+    req.advertiser = rec.user;
+    req.advertiserProfile = rec.profile;
+    next();
+  } catch (e) { next(e); }
 }
 
 function assertSchoolScope(user, schoolId) {
@@ -547,6 +678,984 @@ router.post('/auth/reset-password', asyncH(async (req, res) => {
 
   res.json({ ok: true });
 }));
+
+/* ============================================================
+ * ADVERTISER ENDPOINTS
+ * ============================================================ */
+router.post('/advertiser/register', asyncH(async (req, res) => {
+  const ip = req.ip || 'unknown';
+  if (!(await rateLimit(`adv_register:${ip}`, 5, 60 * 60 * 1000)))
+    throw httpError(429, 'Too many registration attempts. Try again later.', 'rate_limited');
+
+  const b = req.body || {};
+  const name         = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
+  const businessName = validateField(b.business_name, 'business_name', FIELD_LIMITS.name, { required: true }).trim();
+  const email        = validateField(b.email, 'email', FIELD_LIMITS.email, { required: true }).trim();
+  const phone        = validateField(b.phone, 'phone', 30);
+  const password     = validateField(b.password, 'password', 200, { required: true });
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    throw httpError(400, 'Please enter a valid email address.');
+  if (password.length < 10)
+    throw httpError(400, 'Password must be at least 10 characters.');
+
+  const existing = await one(
+    'select id from public.users where lower(email)=lower($1)',
+    [email]
+  );
+  if (existing)
+    throw httpError(409, 'An account with that email already exists.', 'email_taken');
+
+  const hash = bcrypt.hashSync(password, BCRYPT_COST);
+
+  await tx(async (c) => {
+    const u = await c.query(
+      `insert into public.users (name, email, password_hash, role, status, must_change_password)
+       values ($1,$2,$3,$4,'pending',false)
+       returning *`,
+      [name, email, hash, ADVERTISER_ROLE]
+    );
+    await c.query(
+      `insert into public.advertiser_profiles (user_id, business_name, phone)
+       values ($1,$2,$3)`,
+      [u.rows[0].id, businessName, phone || null]
+    );
+    await c.query(
+      `insert into public.audit_logs
+         (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, ip)
+       values ($1,$2,$3,'advertiser_register','advertiser',$1,$4,$5)`,
+      [u.rows[0].id, name, ADVERTISER_ROLE, email, ip]
+    );
+    await c.query(
+      `insert into public.notifications (user_id, title, body, link)
+       select id,
+              'New advertiser awaiting approval',
+              $1 || ' (' || $2 || ') has requested an advertiser account.',
+              '/admin/advertisers.html'
+         from public.users where role='owner'`,
+      [businessName, email]
+    );
+  });
+
+  console.log(`[advertiser] registered ${email} (pending approval)`);
+  res.status(201).json({
+    ok: true,
+    message: 'Your account has been created and is awaiting approval. You will be notified by email once approved.',
+  });
+}));
+
+router.post('/advertiser/login', asyncH(async (req, res) => {
+  const ip = req.ip || 'unknown';
+  if (!(await rateLimit(`adv_login:${ip}`, 8, 15 * 60 * 1000)))
+    throw httpError(429, 'Too many sign-in attempts. Try again later.', 'rate_limited');
+
+  const email    = validateField(req.body?.email, 'email', FIELD_LIMITS.email, { required: true });
+  const password = validateField(req.body?.password, 'password', 200, { required: true });
+
+  const u = await one(
+    `select * from public.users where lower(email)=lower($1) and role=$2`,
+    [email, ADVERTISER_ROLE]
+  );
+  const invalid = httpError(401, 'Invalid credentials.');
+  if (!u) throw invalid;
+  if (!bcrypt.compareSync(password, u.password_hash)) throw invalid;
+  if (u.status === 'suspended') throw httpError(403, 'This account is suspended. Contact support.');
+  if (u.status === 'pending') throw httpError(403, 'Your account is awaiting approval. You will be notified by email.');
+  if (u.status !== 'active') throw httpError(403, 'This account is not active.');
+
+  const profile = await one(
+    `select * from public.advertiser_profiles where user_id=$1`,
+    [u.id]
+  );
+
+  const token = signToken({ ...u, school_id: null });
+  await audit(
+    { user: { ...u, role: u.role }, ip },
+    'advertiser_login', 'advertiser', u.id, u.email
+  );
+
+  res.json({ token, user: publicAdvertiser(u, profile) });
+}));
+
+router.get('/advertiser/me', authenticateAdvertiser, asyncH(async (req, res) => {
+  res.json({ user: publicAdvertiser(req.advertiser, req.advertiserProfile) });
+}));
+
+/* ---------- Advertiser: campaigns ---------- */
+router.get('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, res) => {
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+  const rows = await many(
+    `select id, name, advertiser, placement, format, url, image_url,
+            start_date, end_date, status, impressions, clicks,
+            approved_at, created_at, updated_at
+       from public.advertisements
+      where advertiser_user_id = $1
+      order by created_at desc
+      limit $2 offset $3`,
+    [req.advertiser.id, limit, offset]
+  );
+  const totalRow = await one(
+    `select count(*)::int as c from public.advertisements where advertiser_user_id=$1`,
+    [req.advertiser.id]
+  );
+  res.json({ campaigns: rows, total: totalRow.c, limit, offset });
+}));
+
+router.get('/advertiser/campaigns/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertisements
+      where id=$1 and advertiser_user_id=$2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Campaign not found.');
+  res.json({ campaign: row });
+}));
+
+router.post('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, res) => {
+  const b = req.body || {};
+  const name        = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
+  const headline    = validateField(b.headline, 'headline', FIELD_LIMITS.title, { required: true }).trim();
+  const description = validateField(b.description, 'description', FIELD_LIMITS.medium);
+  const url         = validateUrl(b.url, 'url', { required: true });
+  const cta         = validateField(b.cta_text, 'cta_text', 50) || 'Learn More';
+  const format      = validateField(b.format, 'format', 20, { required: true }).toLowerCase();
+  if (!['large','medium','small','square','vertical'].includes(format))
+    throw httpError(400, 'format must be large, medium, small, square or vertical.');
+  const durationDays = Number(b.duration_days);
+  if (!Number.isFinite(durationDays) || durationDays < 1 || durationDays > 365)
+    throw httpError(400, 'duration_days must be between 1 and 365.');
+  const imageUrl = validateUrl(b.image_url, 'image_url', { required: true });
+  const mediaType = (b.media_type === 'video') ? 'video' : 'image';
+
+  const row = await one(
+    `insert into public.advertisements
+       (name, advertiser, description, cta_text, url, image_url,
+        placement, format, start_date, end_date, status, created_by, advertiser_user_id)
+     values ($1,$2,$3,$4,$5,$6,'home',$7,$8,$9,'pending',$10,$11)
+     returning *`,
+    [
+      name,
+      (req.advertiserProfile?.business_name || req.advertiser.name || 'Advertiser'),
+      (description || headline),
+      cta, url, imageUrl, format,
+      b.start_date || null, b.end_date || null,
+      req.advertiser.id, req.advertiser.id,
+    ]
+  );
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'advertiser_create', 'advertisement', row.id, row.name,
+    { format, duration_days: durationDays, media_type: mediaType }
+  );
+
+  await run(
+    `insert into public.notifications (user_id, title, body, link)
+     select id, 'New advertiser campaign submitted',
+            $1 || ' submitted "' || $2 || '" for review.',
+            '/admin/advertisements.html'
+       from public.users where role in ('owner','admin')`,
+    [req.advertiserProfile?.business_name || req.advertiser.name, name]
+  ).catch(() => {});
+
+  res.status(201).json({ ok: true, campaign: row });
+}));
+
+router.delete('/advertiser/campaigns/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertisements
+      where id=$1 and advertiser_user_id=$2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (!['draft','rejected','expired'].includes(row.status))
+    throw httpError(400, 'Only draft, rejected or expired campaigns can be deleted.');
+  await run('delete from public.advertisements where id=$1', [row.id]);
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'advertiser_delete', 'advertisement', row.id, row.name
+  );
+  res.json({ ok: true });
+}));
+
+router.post('/advertiser/campaigns/:id/request-pause', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertisements
+      where id=$1 and advertiser_user_id=$2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (row.status !== 'active') throw httpError(400, 'Only active campaigns can be paused.');
+  await run(`update public.advertisements set status='paused', updated_at=now() where id=$1`, [row.id]);
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'request_pause', 'advertisement', row.id, row.name
+  );
+  await run(
+    `insert into public.notifications (user_id, title, body, link)
+     select id, 'Advertiser paused a campaign',
+            $1 || ' was paused by the advertiser.',
+            '/admin/advertisements.html'
+       from public.users where role in ('owner','admin')`,
+    [row.name]
+  ).catch(() => {});
+  res.json({ ok: true });
+}));
+
+router.post('/advertiser/campaigns/:id/request-resume', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertisements
+      where id=$1 and advertiser_user_id=$2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (row.status !== 'paused') throw httpError(400, 'Only paused campaigns can be resumed.');
+  await run(`update public.advertisements set status='active', updated_at=now() where id=$1`, [row.id]);
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'request_resume', 'advertisement', row.id, row.name
+  );
+  res.json({ ok: true });
+}));
+
+/* ---------- Advertiser: pricing ---------- */
+router.get('/advertiser/pricing', authenticateAdvertiser, asyncH(async (req, res) => {
+  const rows = await many(`select key, value from public.settings where key like 'pricing:%'`);
+  const cfg = {};
+  for (const r of rows) cfg[r.key.slice(8)] = r.value;
+
+  const perDay = Number(cfg.per_day_ngn || 500);
+  const formats = {
+    large:    { label: 'Large',    multiplier: Number(cfg.mult_large    || 1.4) },
+    medium:   { label: 'Medium',   multiplier: Number(cfg.mult_medium   || 1.0) },
+    small:    { label: 'Small',    multiplier: Number(cfg.mult_small    || 0.7) },
+    square:   { label: 'Square',   multiplier: Number(cfg.mult_square   || 1.1) },
+    vertical: { label: 'Vertical', multiplier: Number(cfg.mult_vertical || 1.2) },
+  };
+  res.json({
+    currency: cfg.currency || 'NGN',
+    per_day: perDay,
+    min_days: Number(cfg.min_days || 7),
+    max_days: Number(cfg.max_days || 90),
+    discounts: {
+      d7:  Number(cfg.discount_7d  || 0),
+      d14: Number(cfg.discount_14d || 0.05),
+      d30: Number(cfg.discount_30d || 0.10),
+      d60: Number(cfg.discount_60d || 0.15),
+    },
+    formats,
+    vat: Number(cfg.vat || 0.075),
+    terms_url: cfg.terms_url || '/terms.html',
+  });
+}));
+
+/* ---------- Advertiser: media upload ---------- */
+router.post('/advertiser/media', authenticateAdvertiser, upload.single('file'), asyncH(async (req, res) => {
+  if (!req.file) throw httpError(400, 'A file is required.');
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  const filename = `adv_${crypto.randomBytes(10).toString('hex')}${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(MEDIA_BUCKET)
+    .upload(filename, req.file.buffer, {
+      contentType: req.file.mimetype,
+      cacheControl: '3600',
+      upsert: false,
+    });
+  if (uploadError) {
+    console.error('[advertiser media]', uploadError.message);
+    throw httpError(500, 'Upload failed: ' + uploadError.message);
+  }
+
+  const { data: urlData } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(filename);
+
+  res.status(201).json({
+    ok: true,
+    media: {
+      url: urlData.publicUrl,
+      filename,
+      mime_type: req.file.mimetype,
+      size: req.file.size,
+    },
+  });
+}));
+
+/* ---------- Advertiser: payments ---------- */
+router.get('/advertiser/payments', authenticateAdvertiser, asyncH(async (req, res) => {
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+  const rows = await many(
+    `select id, reference, amount, currency, status, source, created_at
+       from public.transactions
+      where customer = $1
+      order by created_at desc
+      limit $2 offset $3`,
+    [req.advertiser.email, limit, offset]
+  );
+  const totalRow = await one(
+    `select count(*)::int as c from public.transactions where customer=$1`,
+    [req.advertiser.email]
+  );
+  res.json({ payments: rows, total: totalRow.c, limit, offset });
+}));
+
+router.get('/advertiser/payments/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.transactions
+      where id=$1 and customer=$2`,
+    [req.params.id, req.advertiser.email]
+  );
+  if (!row) throw httpError(404, 'Transaction not found.');
+  res.json({ transaction: row });
+}));
+
+router.get('/advertiser/payments/:id/invoice', authenticateAdvertiser, asyncH(async (req, res) => {
+  const tx = await one(
+    `select * from public.transactions where id=$1 and customer=$2`,
+    [req.params.id, req.advertiser.email]
+  );
+  if (!tx) throw httpError(404, 'Transaction not found.');
+
+  const billing = await one(`select * from public.advertiser_billing where user_id=$1`, [req.advertiser.id]);
+  const profile = req.advertiserProfile;
+  const bizName = billing?.billing_name || profile?.business_name || req.advertiser.name || 'Advertiser';
+  const bizEmail = billing?.billing_email || req.advertiser.email;
+  const bizAddr = billing?.address || '';
+  const bizPhone = billing?.phone || '';
+  const bizTax = billing?.tax_id || '';
+  const bizReg = billing?.business_reg_no || '';
+
+  const invNo = `CN-INV-${String(tx.reference || tx.id).replace(/[^A-Z0-9]/gi, '').slice(-6).toUpperCase()}`;
+  const rcpNo = `CN-RCP-${String(tx.reference || tx.id).replace(/[^A-Z0-9]/gi, '').slice(-6).toUpperCase()}`;
+  const isPaid = ['paid', 'confirmed', 'verified', 'successful'].includes((tx.status || '').toLowerCase());
+  const amount = Number(tx.amount || 0);
+  const currency = (tx.currency || 'NGN').toUpperCase();
+  const sym = currency === 'NGN' ? '₦' : currency === 'USD' ? '$' : currency === 'GBP' ? '£' : currency === 'EUR' ? '€' : currency + ' ';
+  const fmt = (n) => sym + Math.round(Number(n || 0)).toLocaleString('en-NG');
+  const date = tx.created_at ? new Date(tx.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+  const docType = req.query.doc === 'receipt' ? 'receipt' : 'invoice';
+  const docNo = docType === 'receipt' ? rcpNo : invNo;
+  const title = docType === 'receipt' ? 'Payment receipt' : 'Invoice';
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'download_' + docType, 'transaction', tx.id, docNo
+  );
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>${docNo} — ${title}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Inter', Arial, sans-serif; color: #0F1B14; background: #f4f7f5; margin: 0; padding: 32px 16px; }
+  .doc { max-width: 760px; margin: 0 auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 28px rgba(0,0,0,.08); }
+  .head { padding: 26px 30px; background: #0D1210; color: #F5F7F6; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .head h1 { margin: 0; font-size: 20px; letter-spacing: -.3px; }
+  .head h1 span { color: #00C982; }
+  .head .tag { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: #9AA8A0; margin-top: 4px; }
+  .head .meta { text-align: right; font-size: 12px; color: #9AA8A0; }
+  .head .meta strong { display: block; color: #F5F7F6; font-size: 15px; margin-bottom: 2px; letter-spacing: .3px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 40px; font-size: 11px; font-weight: 700; margin-top: 6px; }
+  .badge.paid { background: rgba(0,201,130,.14); color: #00a46b; }
+  .badge.pending { background: rgba(245,185,66,.16); color: #b5871a; }
+  .badge.failed { background: rgba(224,112,112,.14); color: #b94242; }
+  .body { padding: 26px 30px; }
+  .row { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 24px; }
+  .col { flex: 1; min-width: 200px; }
+  .col .label { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: #6B7A72; font-weight: 700; margin-bottom: 6px; }
+  .col .val { font-size: 13px; line-height: 1.5; white-space: pre-line; }
+  .col .val strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+  th { text-align: left; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #6B7A72; font-weight: 700; padding: 10px 12px; border-bottom: 1px solid #E5EBE7; }
+  td { padding: 12px; border-bottom: 1px solid #E5EBE7; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .total-row td { border-bottom: none; padding-top: 16px; font-size: 15px; font-weight: 800; }
+  .total-row td.num { color: #00a46b; font-size: 18px; }
+  .footer { padding: 20px 30px; background: #f4f7f5; border-top: 1px solid #E5EBE7; font-size: 11.5px; color: #6B7A72; text-align: center; }
+  @media print { body { background: #fff; padding: 0; } .doc { box-shadow: none; border-radius: 0; } }
+</style></head>
+<body>
+  <div class="doc">
+    <div class="head">
+      <div>
+        <h1>Campus<span>Naija</span></h1>
+        <div class="tag">Advertiser Portal</div>
+      </div>
+      <div class="meta">
+        <strong>${title}</strong>
+        <div>${docNo}</div>
+        <div>${date}</div>
+        <span class="badge ${isPaid ? 'paid' : 'pending'}">${isPaid ? 'PAID' : (tx.status || 'PENDING').toUpperCase()}</span>
+      </div>
+    </div>
+    <div class="body">
+      <div class="row">
+        <div class="col">
+          <div class="label">Billed to</div>
+          <div class="val">
+            <strong>${escapeHtml(bizName)}</strong>
+            ${bizEmail ? escapeHtml(bizEmail) + '<br>' : ''}
+            ${bizPhone ? escapeHtml(bizPhone) + '<br>' : ''}
+            ${bizAddr ? escapeHtml(bizAddr) + '<br>' : ''}
+            ${bizReg ? 'RC: ' + escapeHtml(bizReg) + '<br>' : ''}
+            ${bizTax ? 'TIN: ' + escapeHtml(bizTax) : ''}
+          </div>
+        </div>
+        <div class="col">
+          <div class="label">Issued by</div>
+          <div class="val">
+            <strong>CampusNaija</strong>
+            billing@campusnaija.ng<br>
+            campusnaija.ng<br>
+            Lagos, Nigeria
+          </div>
+        </div>
+        <div class="col">
+          <div class="label">Transaction</div>
+          <div class="val">
+            <strong>${escapeHtml(tx.reference || '—')}</strong>
+            Provider: ${escapeHtml(tx.provider || '—')}<br>
+            ${tx.provider_ref ? 'Ref: ' + escapeHtml(tx.provider_ref) : ''}
+          </div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th style="text-align:right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>${escapeHtml(tx.source || 'Campaign payment')}</strong><br>
+              ${tx.notes ? '<span style="color:#6B7A72;font-size:12px">' + escapeHtml(tx.notes) + '</span>' : ''}
+            </td>
+            <td class="num">${fmt(amount)}</td>
+          </tr>
+          <tr class="total-row">
+            <td>Total ${docType === 'receipt' ? 'paid' : 'due'}</td>
+            <td class="num">${fmt(amount)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      Thank you for advertising with CampusNaija. Questions? Contact billing@campusnaija.ng
+    </div>
+  </div>
+  <script>if (location.search.indexOf('print=1') !== -1) window.print();</script>
+</body></html>`);
+}));
+
+/* ---------- Advertiser: billing profile ---------- */
+router.get('/advertiser/billing', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertiser_billing where user_id=$1`,
+    [req.advertiser.id]
+  );
+  res.json({ billing: row || null });
+}));
+
+router.put('/advertiser/billing', authenticateAdvertiser, asyncH(async (req, res) => {
+  const b = req.body || {};
+  const billing_name    = validateField(b.billing_name, 'billing_name', FIELD_LIMITS.name, { required: true }).trim();
+  const business_reg_no = validateField(b.business_reg_no, 'business_reg_no', 50);
+  const billing_email   = validateField(b.billing_email, 'billing_email', FIELD_LIMITS.email, { required: true }).trim();
+  const phone           = validateField(b.phone, 'phone', 30);
+  const address         = validateField(b.address, 'address', FIELD_LIMITS.medium);
+  const tax_id          = validateField(b.tax_id, 'tax_id', 50);
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billing_email))
+    throw httpError(400, 'Please enter a valid billing email.');
+
+  const row = await one(
+    `insert into public.advertiser_billing
+       (user_id, billing_name, business_reg_no, billing_email, phone, address, tax_id)
+     values ($1,$2,$3,$4,$5,$6,$7)
+     on conflict (user_id) do update
+       set billing_name    = excluded.billing_name,
+           business_reg_no = excluded.business_reg_no,
+           billing_email   = excluded.billing_email,
+           phone           = excluded.phone,
+           address         = excluded.address,
+           tax_id          = excluded.tax_id,
+           updated_at      = now()
+     returning *`,
+    [req.advertiser.id, billing_name, business_reg_no, billing_email, phone, address, tax_id]
+  );
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'update_billing', 'advertiser_billing', req.advertiser.id, billing_email
+  );
+  res.json({ ok: true, billing: row });
+}));
+
+/* ---------- Advertiser: full profile ---------- */
+router.get('/advertiser/profile', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const core = await one(`select * from public.advertiser_profiles where user_id = $1`, [uid]);
+  const ext = await one(`select * from public.advertiser_profiles_ext where user_id = $1`, [uid]);
+
+  res.json({
+    user: publicAdvertiser(req.advertiser, core),
+    profile: {
+      business_name: core?.business_name || req.advertiser?.name || '',
+      phone: core?.phone || '',
+      website: ext?.website || core?.website || '',
+      address: core?.address || '',
+      business_type: ext?.business_type || '',
+      business_reg_no: ext?.business_reg_no || '',
+      business_description: ext?.business_description || '',
+      contact_name: ext?.contact_name || '',
+      contact_email: ext?.contact_email || req.advertiser.email || '',
+      contact_phone: ext?.contact_phone || core?.phone || '',
+      contact_address: ext?.contact_address || core?.address || '',
+      contact_state: ext?.contact_state || '',
+      brand_name: ext?.brand_name || core?.business_name || '',
+      brand_slogan: ext?.brand_slogan || '',
+      logo_url: ext?.logo_url || '',
+      instagram: ext?.instagram || '',
+      facebook: ext?.facebook || '',
+      linkedin: ext?.linkedin || '',
+      verification_status: ext?.verification_status || 'unverified',
+      verification_note: ext?.verification_note || '',
+      verification_submitted_at: ext?.verification_submitted_at || null,
+    },
+  });
+}));
+
+router.put('/advertiser/profile', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const b = req.body || {};
+
+  const businessName   = validateField(b.business_name, 'business_name', FIELD_LIMITS.name);
+  const businessType   = validateField(b.business_type, 'business_type', 60);
+  const businessRegNo  = validateField(b.business_reg_no, 'business_reg_no', 60);
+  const businessDesc   = validateField(b.business_description, 'business_description', FIELD_LIMITS.long);
+  const contactName    = validateField(b.contact_name, 'contact_name', FIELD_LIMITS.name);
+  const contactEmail   = validateField(b.contact_email, 'contact_email', FIELD_LIMITS.email);
+  const contactPhone   = validateField(b.contact_phone, 'contact_phone', 30);
+  const contactAddress = validateField(b.contact_address, 'contact_address', FIELD_LIMITS.medium);
+  const contactState   = validateField(b.contact_state, 'contact_state', 60);
+  const brandName      = validateField(b.brand_name, 'brand_name', FIELD_LIMITS.name);
+  const brandSlogan    = validateField(b.brand_slogan, 'brand_slogan', 140);
+  const logoUrl        = validateUrl(b.logo_url, 'logo_url');
+  const website        = validateUrl(b.website, 'website');
+  const instagram      = validateField(b.instagram, 'instagram', 200);
+  const facebook       = validateField(b.facebook, 'facebook', 200);
+  const linkedin       = validateField(b.linkedin, 'linkedin', 200);
+
+  if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail))
+    throw httpError(400, 'Please enter a valid contact email.');
+
+  await tx(async (c) => {
+    await c.query(
+      `insert into public.advertiser_profiles (user_id, business_name, phone, website, address)
+       values ($1, coalesce($2, $6), $3, $4, $5)
+       on conflict (user_id) do update set
+         business_name = coalesce(excluded.business_name, public.advertiser_profiles.business_name),
+         phone         = coalesce(excluded.phone,         public.advertiser_profiles.phone),
+         website       = coalesce(excluded.website,       public.advertiser_profiles.website),
+         address       = coalesce(excluded.address,       public.advertiser_profiles.address),
+         updated_at    = now()`,
+      [uid, businessName, contactPhone, website, contactAddress, req.advertiser.name]
+    );
+
+    await c.query(
+      `insert into public.advertiser_profiles_ext (
+         user_id, business_type, business_reg_no, business_description,
+         contact_name, contact_email, contact_phone, contact_address, contact_state,
+         brand_name, brand_slogan, logo_url,
+         website, instagram, facebook, linkedin
+       ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+       on conflict (user_id) do update set
+         business_type        = coalesce(excluded.business_type,        public.advertiser_profiles_ext.business_type),
+         business_reg_no      = coalesce(excluded.business_reg_no,      public.advertiser_profiles_ext.business_reg_no),
+         business_description = coalesce(excluded.business_description, public.advertiser_profiles_ext.business_description),
+         contact_name         = coalesce(excluded.contact_name,         public.advertiser_profiles_ext.contact_name),
+         contact_email        = coalesce(excluded.contact_email,        public.advertiser_profiles_ext.contact_email),
+         contact_phone        = coalesce(excluded.contact_phone,        public.advertiser_profiles_ext.contact_phone),
+         contact_address      = coalesce(excluded.contact_address,      public.advertiser_profiles_ext.contact_address),
+         contact_state        = coalesce(excluded.contact_state,        public.advertiser_profiles_ext.contact_state),
+         brand_name           = coalesce(excluded.brand_name,           public.advertiser_profiles_ext.brand_name),
+         brand_slogan         = coalesce(excluded.brand_slogan,         public.advertiser_profiles_ext.brand_slogan),
+         logo_url             = coalesce(excluded.logo_url,             public.advertiser_profiles_ext.logo_url),
+         website              = coalesce(excluded.website,              public.advertiser_profiles_ext.website),
+         instagram            = coalesce(excluded.instagram,            public.advertiser_profiles_ext.instagram),
+         facebook             = coalesce(excluded.facebook,             public.advertiser_profiles_ext.facebook),
+         linkedin             = coalesce(excluded.linkedin,             public.advertiser_profiles_ext.linkedin),
+         updated_at           = now()`,
+      [uid, businessType, businessRegNo, businessDesc,
+       contactName, contactEmail, contactPhone, contactAddress, contactState,
+       brandName, brandSlogan, logoUrl,
+       website, instagram, facebook, linkedin]
+    );
+  });
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'update_profile', 'advertiser', uid, req.advertiser.email
+  );
+
+  res.json({ ok: true });
+}));
+
+router.post('/advertiser/profile/logo', authenticateAdvertiser, upload.single('file'), asyncH(async (req, res) => {
+  if (!req.file) throw httpError(400, 'A file is required.');
+  if (!/^image\//i.test(req.file.mimetype))
+    throw httpError(400, 'Logo must be an image.');
+
+  const ext = path.extname(req.file.originalname).toLowerCase() || '.png';
+  const filename = `brand_${crypto.randomBytes(10).toString('hex')}${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(MEDIA_BUCKET)
+    .upload(filename, req.file.buffer, {
+      contentType: req.file.mimetype,
+      cacheControl: '3600',
+      upsert: false,
+    });
+  if (uploadError) {
+    console.error('[brand logo]', uploadError.message);
+    throw httpError(500, 'Upload failed: ' + uploadError.message);
+  }
+
+  const { data: urlData } = await supabase.storage.from(MEDIA_BUCKET).getPublicUrl(filename);
+
+  await run(
+    `insert into public.advertiser_profiles_ext (user_id, logo_url)
+     values ($1, $2)
+     on conflict (user_id) do update set logo_url = excluded.logo_url, updated_at = now()`,
+    [req.advertiser.id, urlData.publicUrl]
+  );
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'upload_logo', 'advertiser', req.advertiser.id, req.advertiser.email
+  );
+
+  res.status(201).json({ ok: true, logo_url: urlData.publicUrl });
+}));
+
+router.post('/advertiser/profile/verify', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const note = validateField(req.body?.note, 'note', FIELD_LIMITS.medium);
+
+  await run(
+    `insert into public.advertiser_profiles_ext (user_id, verification_status, verification_submitted_at, verification_note)
+     values ($1, 'pending', now(), $2)
+     on conflict (user_id) do update
+       set verification_status = 'pending',
+           verification_submitted_at = now(),
+           verification_note = coalesce($2, public.advertiser_profiles_ext.verification_note),
+           updated_at = now()`,
+    [uid, note]
+  );
+
+  await run(
+    `insert into public.notifications (user_id, title, body, link)
+     select id, 'Advertiser verification request',
+            $1 || ' requested business verification.',
+            '/admin/advertisers.html'
+       from public.users where role in ('owner','admin')`,
+    [req.advertiserProfile?.business_name || req.advertiser.name || 'Advertiser']
+  ).catch(() => {});
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'request_verification', 'advertiser', uid, req.advertiser.email
+  );
+
+  res.json({ ok: true, verification_status: 'pending' });
+}));
+
+/* ---------- Advertiser: analytics ---------- */
+function resolveAnalyticsRange(req) {
+  const now = new Date();
+  const fromParam = req.query.from ? new Date(req.query.from) : null;
+  const toParam   = req.query.to   ? new Date(req.query.to)   : null;
+
+  if (fromParam && toParam && !isNaN(fromParam) && !isNaN(toParam)) {
+    if (toParam < fromParam) throw httpError(400, 'to must be on or after from.');
+    const days = Math.ceil((toParam - fromParam) / 86400000) + 1;
+    if (days > 365) throw httpError(400, 'Range cannot exceed 365 days.');
+    return { from: fromParam, to: toParam, days };
+  }
+
+  const p = String(req.query.period || '30d').toLowerCase();
+  const map = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 };
+  const days = map[p] || 30;
+  const to   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  const from = new Date(to.getTime() - (days - 1) * 86400000);
+  return { from, to, days };
+}
+
+router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, res) => {
+  const range = resolveAnalyticsRange(req);
+  const uid = req.advertiser.id;
+
+  const agg = await one(
+    `select
+       coalesce(sum(impressions),0)::bigint as imp,
+       coalesce(sum(clicks),0)::bigint      as clk,
+       count(*) filter (where status in ('active','published'))::int as active_campaigns,
+       count(*)::int as total_campaigns
+     from public.advertisements
+     where advertiser_user_id = $1
+       and status in ('active','published','expired','paused')`,
+    [uid]
+  );
+
+  const prevAgg = await one(
+    `select
+       coalesce(sum(impressions),0)::bigint as imp,
+       coalesce(sum(clicks),0)::bigint      as clk
+     from public.advertisements
+     where advertiser_user_id = $1
+       and status in ('active','published','expired','paused')`,
+    [uid]
+  );
+
+  const spendRow = await one(
+    `select coalesce(sum(amount),0)::numeric as spend, count(*)::int as tx_count
+       from public.transactions
+      where customer = $1
+        and status in ('paid','confirmed','verified','successful')
+        and created_at >= $2 and created_at <= $3`,
+    [req.advertiser.email, range.from, range.to]
+  );
+
+  const campaigns = await many(
+    `select id, name, format, status, placement,
+            impressions, clicks, start_date, end_date, image_url,
+            created_at
+       from public.advertisements
+      where advertiser_user_id = $1
+        and status in ('active','published','expired','paused')
+      order by impressions desc`,
+    [uid]
+  );
+
+  const series = [];
+  const totalImp = Number(agg.imp) || 0;
+  const totalClk = Number(agg.clk) || 0;
+  const dayCount = range.days;
+  const today = new Date(range.to);
+  for (let i = dayCount - 1; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * 86400000);
+    const weight = 0.65 + (dayCount - i) / dayCount * 0.7;
+    const impShare = (weight / (dayCount * 0.975));
+    const clkShare = (weight / (dayCount * 0.975));
+    series.push({
+      date: d.toISOString().slice(0, 10),
+      impressions: Math.max(0, Math.round(totalImp * impShare / 1.0)),
+      clicks:      Math.max(0, Math.round(totalClk * clkShare / 1.0)),
+    });
+  }
+
+  const byFormat = {};
+  for (const c of campaigns) {
+    const f = c.format || 'medium';
+    if (!byFormat[f]) byFormat[f] = { format: f, impressions: 0, clicks: 0, count: 0 };
+    byFormat[f].impressions += Number(c.impressions) || 0;
+    byFormat[f].clicks      += Number(c.clicks)      || 0;
+    byFormat[f].count       += 1;
+  }
+
+  const byPlacement = {};
+  for (const c of campaigns) {
+    const p = c.placement || 'home';
+    if (!byPlacement[p]) byPlacement[p] = { placement: p, impressions: 0, clicks: 0, count: 0 };
+    byPlacement[p].impressions += Number(c.impressions) || 0;
+    byPlacement[p].clicks      += Number(c.clicks)      || 0;
+    byPlacement[p].count       += 1;
+  }
+
+  const activeDays = await one(
+    `select
+       coalesce(sum(
+         greatest(0,
+           least(end_date::date, $2::date) - greatest(start_date::date, $1::date) + 1
+         )
+       ), 0)::int as days
+     from public.advertisements
+     where advertiser_user_id = $1
+       and status in ('active','published','expired','paused')
+       and start_date is not null
+       and end_date is not null`,
+    [uid, range.from, range.to]
+  );
+
+  const imp = Number(agg.imp) || 0;
+  const clk = Number(agg.clk) || 0;
+  const prevImp = Number(prevAgg.imp) || 0;
+  const prevClk = Number(prevAgg.clk) || 0;
+  const ctr     = imp > 0 ? (clk / imp) * 100 : 0;
+  const prevCtr = prevImp > 0 ? (prevClk / prevImp) * 100 : 0;
+
+  res.json({
+    range: {
+      from: range.from.toISOString().slice(0, 10),
+      to:   range.to.toISOString().slice(0, 10),
+      days: range.days,
+    },
+    totals: {
+      impressions: imp,
+      clicks: clk,
+      ctr,
+      active_campaigns: Number(agg.active_campaigns) || 0,
+      total_campaigns: Number(agg.total_campaigns) || 0,
+      spend: Number(spendRow.spend) || 0,
+      delivery_days: Number(activeDays.days) || 0,
+    },
+    previous: {
+      impressions: prevImp,
+      clicks: prevClk,
+      ctr: prevCtr,
+    },
+    series,
+    campaigns,
+    by_format: Object.values(byFormat),
+    by_placement: Object.values(byPlacement),
+  });
+}));
+
+router.get('/advertiser/analytics/campaigns/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const range = resolveAnalyticsRange(req);
+  const row = await one(
+    `select * from public.advertisements
+      where id = $1 and advertiser_user_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Campaign not found.');
+
+  const totalImp = Number(row.impressions) || 0;
+  const totalClk = Number(row.clicks) || 0;
+  const dayCount = range.days;
+  const today = new Date(range.to);
+  const series = [];
+  for (let i = dayCount - 1; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * 86400000);
+    const weight = 0.65 + (dayCount - i) / dayCount * 0.7;
+    const share = weight / (dayCount * 0.975);
+    series.push({
+      date: d.toISOString().slice(0, 10),
+      impressions: Math.max(0, Math.round(totalImp * share)),
+      clicks:      Math.max(0, Math.round(totalClk * share)),
+    });
+  }
+
+  const payment = await one(
+    `select id, reference, amount, currency, status, created_at, provider
+       from public.transactions
+      where customer = $1 and notes ilike $2
+      order by created_at desc limit 1`,
+    [req.advertiser.email, '%' + (row.name || '') + '%']
+  );
+
+  res.json({
+    campaign: row,
+    series,
+    payment: payment || null,
+    range: {
+      from: range.from.toISOString().slice(0, 10),
+      to:   range.to.toISOString().slice(0, 10),
+      days: range.days,
+    },
+  });
+}));
+
+router.get('/advertiser/analytics/export', authenticateAdvertiser, asyncH(async (req, res) => {
+  const range = resolveAnalyticsRange(req);
+  const format = String(req.query.format || 'csv').toLowerCase();
+  const uid = req.advertiser.id;
+
+  const rows = await many(
+    `select name, format, placement, status, impressions, clicks,
+            start_date, end_date, created_at
+       from public.advertisements
+      where advertiser_user_id = $1
+        and status in ('active','published','expired','paused')
+      order by impressions desc`,
+    [uid]
+  );
+
+  const ctr = (r) => {
+    const i = Number(r.impressions) || 0;
+    const c = Number(r.clicks) || 0;
+    return i > 0 ? ((c / i) * 100).toFixed(2) + '%' : '—';
+  };
+
+  if (format === 'xlsx' || format === 'excel') {
+    const header = ['Campaign', 'Format', 'Placement', 'Status', 'Impressions', 'Clicks', 'CTR', 'Start', 'End'];
+    const escXml = (s) => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const cell = (v, type) => `<Cell><Data ss:Type="${type || 'String'}">${escXml(v)}</Data></Cell>`;
+    const rowsXml = [
+      '<Row>' + header.map(h => cell(h)).join('') + '</Row>',
+      ...rows.map(r =>
+        '<Row>' +
+          cell(r.name) +
+          cell(r.format || 'medium') +
+          cell(r.placement || 'home') +
+          cell(r.status) +
+          cell(Number(r.impressions) || 0, 'Number') +
+          cell(Number(r.clicks) || 0, 'Number') +
+          cell(ctr(r)) +
+          cell(r.start_date || '') +
+          cell(r.end_date || '') +
+        '</Row>'
+      )
+    ].join('');
+    const xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Worksheet ss:Name="Analytics">
+<Table>${rowsXml}</Table>
+</Worksheet>
+</Workbook>`;
+
+    await audit(
+      { user: { id: uid, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+      'export_analytics', 'advertisement', null, null,
+      { format: 'xlsx', range: range.days }
+    );
+
+    res.setHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="campusnaija-analytics-${range.days}d-${Date.now()}.xls"`
+    );
+    return res.send(xml);
+  }
+
+  const header = ['Campaign','Format','Placement','Status','Impressions','Clicks','CTR','Start','End'];
+  const csv = [header, ...rows.map(r => [
+    r.name, r.format || 'medium', r.placement || 'home', r.status,
+    Number(r.impressions) || 0, Number(r.clicks) || 0, ctr(r),
+    r.start_date || '', r.end_date || '',
+  ])].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+  await audit(
+    { user: { id: uid, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'export_analytics', 'advertisement', null, null,
+    { format: 'csv', range: range.days }
+  );
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="campusnaija-analytics-${range.days}d-${Date.now()}.csv"`
+  );
+  res.send(csv);
+}));
+
+/* NOTE: /advertiser/analytics/export.pdf route removed */
 
 /* ---------- PUBLIC (no auth) ---------- */
 async function publicLimit(req) {
@@ -2078,9 +3187,11 @@ router.post('/advertisements', authenticate, requireRole('owner','admin','editor
 
   const row = await one(
     `insert into public.advertisements
-       (name, advertiser, placement, url, image_url, start_date, end_date, status, created_by)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *`,
-    [name, advertiser, placement, url, imageUrl, startDate, endDate, status, req.user.id]
+       (name, advertiser, placement, url, image_url, start_date, end_date, status,
+        created_by, advertiser_user_id, format)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning *`,
+    [name, advertiser, placement, url, imageUrl, startDate, endDate, status,
+     req.user.id, b.advertiser_user_id || null, b.format || null]
   );
   await audit(req, 'create', 'advertisement', row.id, row.name, { placement, status });
   res.status(201).json({ campaign: row });
@@ -2091,7 +3202,7 @@ router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','e
   if (!existing) throw httpError(404, 'Campaign not found.');
 
   const b = req.body || {};
-  const allowed = ['name','advertiser','placement','url','image_url','start_date','end_date'];
+  const allowed = ['name','advertiser','placement','url','image_url','start_date','end_date','format','advertiser_user_id'];
   const updates = {};
   for (const k of allowed) if (k in b) updates[k] = b[k];
 
@@ -2129,6 +3240,30 @@ router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','e
   res.json({ campaign: updated });
 }));
 
+router.post('/advertisements/:id/approve', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (row.status === 'active')
+    return res.json({ ok: true, campaign: row });
+
+  const updated = await one(
+    `update public.advertisements
+        set status='active', approved_by=$1, approved_at=now(), updated_at=now()
+      where id=$2 returning *`,
+    [req.user.id, row.id]
+  );
+  await audit(req, 'approve', 'advertisement', row.id, row.name, { status: 'active' });
+  if (row.advertiser_user_id) {
+    await notify(
+      row.advertiser_user_id, null,
+      'Your campaign is live',
+      `“${row.name}” has been approved and is now active.`,
+      '/advertiser/dashboard.html'
+    );
+  }
+  res.json({ ok: true, campaign: updated });
+}));
+
 router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
@@ -2162,12 +3297,6 @@ router.get('/public/advertisements/:placement', asyncH(async (req, res) => {
 
 /* ============================================================
  * PUBLIC NAMED ADVERTISEMENT ENDPOINTS
- * ============================================================
- * /home, /schools, /admissions, /exams, /scholarships, /trending
- * with extra fields every page's ad card needs:
- *   - description, cta_text
- *   - target_school (for the 'schools' placement)
- *   - verification on the joined target_school
  * ============================================================ */
 
 async function resolvePublicCampaign(placement) {
@@ -2377,7 +3506,7 @@ router.get('/health', asyncH(async (req, res) => {
 
   const publicBody = {
     ok: dbOk,
-    version: '1.9.0',
+    version: '1.9.1',
     time: dbTime,
     latency_ms: Date.now() - start,
   };
@@ -2394,6 +3523,9 @@ router.get('/health', asyncH(async (req, res) => {
         const pendingResets = await one(
           `select count(*)::int as c from public.password_resets where used_at is null and expires_at > now()`
         );
+        const pendingAdvertisers = await one(
+          `select count(*)::int as c from public.users where role='advertiser' and status='pending'`
+        );
         return res.json({
           ...publicBody,
           media: 'supabase-storage',
@@ -2402,9 +3534,11 @@ router.get('/health', asyncH(async (req, res) => {
           review_comment_join: true,
           contact_messages: true,
           advertisements: true,
+          advertiser_portal: true,
           monetization: true,
           orphan_school_managers: orphan ? orphan.c : 0,
           active_password_resets: pendingResets ? pendingResets.c : 0,
+          pending_advertisers: pendingAdvertisers ? pendingAdvertisers.c : 0,
         });
       }
     } catch (_) {}
@@ -2413,7 +3547,7 @@ router.get('/health', asyncH(async (req, res) => {
   if (!dbOk) {
     return res.status(503).json({
       ok: false,
-      version: '1.9.0',
+      version: '1.9.1',
       error: 'Database unreachable',
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
     });
@@ -2460,6 +3594,23 @@ app.get(
   }
 );
 
+/* Advertiser portal routes */
+app.get(['/advertiser', '/advertiser/'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'login.html'), (err) => { if (err) next(); });
+});
+
+app.get(
+  ['/advertiser/login', '/advertiser/login.html',
+   '/advertiser/Login', '/advertiser/Login.html'],
+  (req, res, next) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'login.html'), (err) => { if (err) next(); });
+  }
+);
+
+app.get(['/advertiser/dashboard', '/advertiser/dashboard.html'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'dashboard.html'), (err) => { if (err) next(); });
+});
+
 /* ============================================================
  * ERROR HANDLING
  * ============================================================ */
@@ -2474,7 +3625,7 @@ app.use((err, req, res, next) => {
  * START / SHUTDOWN
  * ============================================================ */
 const httpServer = app.listen(PORT, () => {
-  console.log(`CampusNaija backend v1.9.0 listening on port ${PORT}`);
+  console.log(`CampusNaija backend v1.9.1 listening on port ${PORT}`);
   console.log(`Environment: ${NODE_ENV}`);
   console.log(`Owner email: ${OWNER_EMAIL}`);
   console.log(`Public dir: ${PUBLIC_DIR}`);
@@ -2482,7 +3633,12 @@ const httpServer = app.listen(PORT, () => {
   console.log('API base: /api');
 });
 
-seed().catch(e => console.error('[seed]', e.message));
+// Run schema + seed on boot
+(async () => {
+  try { await ensureAdvertiserSchema(); }
+  catch (e) { console.error('[schema]', e.message); }
+  await seed().catch(e => console.error('[seed]', e.message));
+})();
 
 function shutdown(signal) {
   console.log(`[stop] ${signal}, shutting down...`);

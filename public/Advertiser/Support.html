@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Support &amp; Help Center — CampusNaija Advertiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Inter', sans-serif;
+      color: #F5F7F6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Inter', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --primary-dark: #00b374;
+      --accent: #F5B942;
+      --text: #F5F7F6;
+      --muted: #9AA8A0;
+      --border: #29352F;
+      --danger: #e07070;
+      --info: #8ab5ff;
+      --radius-card: 16px;
+      --radius-btn: 11px;
+      --radius-input: 11px;
+      --sidebar-w: 264px;
+      --shadow-soft: 0 12px 32px rgba(0,0,0,0.35);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      display: block;
+      min-height: 12px;
+    }
+
+    .adv-shell { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar (identical to other pages) ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar-brand { padding: 24px 22px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
+      padding: 4px 10px; border-radius: 40px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.25);
+    }
+    .sidebar-nav {
+      flex: 1; overflow-y: auto;
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-group-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.9rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); transform: translateX(2px); }
+    .nav-item.active { background-color: rgba(0,201,130,0.1); color: var(--primary); }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background-color: var(--primary);
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar-footer { padding: 14px 12px 18px; border-top: 1px solid var(--border); }
+    .adv-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .adv-user:hover { background-color: var(--elevated); }
+    .adv-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.82rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .adv-user-info { flex: 1; min-width: 0; }
+    .adv-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .adv-user-role {
+      font-size: 0.68rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.9rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ─── Main ─── */
+    .main-area {
+      flex: 1; margin-left: var(--sidebar-w);
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 72px;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .topbar-heading { flex: 1; min-width: 0; }
+    .topbar-heading h1 {
+      font-size: 1.25rem; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-heading p {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09;
+      font-weight: 800; font-size: 0.85rem;
+      padding: 11px 18px; border-radius: var(--radius-btn);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,201,130,0.28);
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-outline {
+      background-color: transparent; color: var(--text);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      font-weight: 600; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--primary); }
+    .btn-sm { padding: 7px 12px; font-size: 0.76rem; border-radius: 8px; }
+    .btn-danger {
+      background: rgba(224,112,112,0.12); color: var(--danger);
+      border: 1px solid rgba(224,112,112,0.3);
+      font-weight: 700; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-danger:hover { background: rgba(224,112,112,0.2); }
+
+    .content { padding: 28px 24px 56px; flex: 1; max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* ─── Page heading / hero ─── */
+    .page-heading {
+      margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+    }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.92rem; max-width: 620px; }
+
+    .heading-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .quick-links {
+      display: inline-flex; gap: 4px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .quick-link {
+      background: transparent; border: none;
+      color: var(--muted); font-size: 0.75rem; font-weight: 700;
+      padding: 7px 12px; border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .quick-link:hover { color: var(--text); background-color: var(--surface); }
+
+    /* ─── Overview cards ─── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    @media (min-width: 900px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat-card {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      position: relative; overflow: hidden;
+      animation: slideUp 0.4s ease both;
+    }
+    .stat-card .stat-icon {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .stat-card.gold .stat-icon { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .stat-card.info .stat-icon { background-color: rgba(138,181,255,0.12); color: var(--info); }
+    .stat-card.muted .stat-icon { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .stat-card .stat-label {
+      font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .stat-card .stat-value {
+      font-size: 1.5rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-card .stat-sub {
+      font-size: 0.7rem; color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ─── Panels ─── */
+    .panel {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 22px;
+      margin-bottom: 22px;
+      animation: slideUp 0.35s ease both;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .panel-title {
+      font-size: 1.05rem; font-weight: 800;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title i { color: var(--primary); font-size: 0.9rem; }
+    .panel-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 18px; }
+
+    /* ─── Filter row ─── */
+    .filter-row {
+      display: flex; align-items: center;
+      gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .filter-chip {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem; font-weight: 700;
+      padding: 6px 12px; border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover { color: var(--text); border-color: var(--primary); }
+    .filter-chip.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      border-color: rgba(0,201,130,0.35);
+    }
+    .filter-search {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+    .filter-search input {
+      width: 100%;
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px 9px 36px;
+      font-size: 0.82rem;
+      outline: none;
+    }
+    .filter-search input::placeholder { color: var(--muted); }
+    .filter-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.12); }
+    .filter-search i {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 0.75rem;
+      pointer-events: none;
+    }
+
+    /* ─── Tickets list ─── */
+    .ticket-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .ticket-row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto auto auto;
+      align-items: center; gap: 14px;
+      padding: 14px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      animation: slideUp 0.25s ease both;
+    }
+    .ticket-row:hover {
+      border-color: var(--primary);
+      transform: translateX(2px);
+    }
+    .ticket-row .t-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .ticket-row .t-icon.gold { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .ticket-row .t-icon.info { background-color: rgba(138,181,255,0.12); color: var(--info); }
+    .ticket-row .t-icon.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+
+    .ticket-row .t-main { min-width: 0; }
+    .ticket-row .t-subject {
+      font-size: 0.88rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .ticket-row .t-meta {
+      font-size: 0.72rem; color: var(--muted);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .ticket-row .t-meta .dot-sep { opacity: 0.5; }
+    .ticket-row .t-meta code {
+      font-family: 'Inter', monospace;
+      font-weight: 700; font-size: 0.7rem;
+      background: rgba(255,255,255,0.03);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .ticket-row .t-date {
+      font-size: 0.72rem; color: var(--muted);
+      white-space: nowrap;
+      min-width: 90px;
+      text-align: right;
+    }
+    .ticket-row .t-actions {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .ticket-arrow {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      transition: all 0.15s;
+    }
+    .ticket-row:hover .ticket-arrow {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* ─── Status pill ─── */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.65rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .status-pill i { font-size: 0.55rem; }
+    .st-open      { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .st-progress  { background-color: rgba(138,181,255,0.12); color: var(--info); }
+    .st-awaiting  { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .st-resolved  { background-color: rgba(0,201,130,0.1); color: var(--primary); }
+    .st-closed    { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+
+    /* ─── Empty state ─── */
+    .empty-state { text-align: center; padding: 48px 20px; }
+    .empty-state .icon-circle {
+      width: 60px; height: 60px; margin: 0 auto 14px;
+      border-radius: 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.4rem;
+    }
+    .empty-state h3 { font-size: 1rem; margin-bottom: 4px; }
+    .empty-state p { font-size: 0.82rem; color: var(--muted); max-width: 340px; margin: 0 auto 16px; }
+
+    /* ─── Form / modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 90;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px;
+      overflow-y: auto;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%; max-width: 640px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(-8px);
+      transition: transform 0.25s;
+      display: flex; flex-direction: column;
+      max-height: calc(100vh - 80px);
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-head {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+      flex-shrink: 0;
+    }
+    .modal-head .head-body { flex: 1; min-width: 0; }
+    .modal-head h3 { font-size: 1.15rem; margin-bottom: 2px; }
+    .modal-head p { font-size: 0.78rem; color: var(--muted); }
+    .modal-body {
+      padding: 22px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-foot {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px; justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
+
+    /* ─── Fields ─── */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 0.72rem;
+      font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .field label .req { color: var(--accent); }
+    .field label .opt {
+      color: var(--muted); font-weight: 500;
+      text-transform: none; letter-spacing: 0; font-size: 0.68rem;
+      margin-left: 4px;
+    }
+    .input, .textarea, select.input {
+      width: 100%;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-input);
+      padding: 11px 14px; font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input:focus, .textarea:focus, select.input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .textarea { min-height: 100px; resize: vertical; }
+    select.input {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239AA8A0' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 34px;
+      cursor: pointer;
+    }
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+
+    .priority-tabs {
+      display: inline-flex;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+    }
+    .priority-tab {
+      background: transparent; border: none;
+      color: var(--muted);
+      font-size: 0.78rem; font-weight: 700;
+      padding: 7px 16px; border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .priority-tab.active { background-color: var(--primary); color: #051410; }
+    .priority-tab.active.urgent { background-color: var(--accent); color: #051410; }
+
+    .attachment-drop {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 20px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      background-color: rgba(0,0,0,0.15);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .attachment-drop:hover, .attachment-drop.dragover {
+      border-color: var(--primary);
+      background-color: rgba(0,201,130,0.04);
+      color: var(--text);
+    }
+    .attachment-drop i {
+      color: var(--primary); font-size: 1.4rem;
+      display: block; margin-bottom: 6px;
+    }
+    .attachment-list {
+      display: flex; flex-direction: column; gap: 6px;
+      margin-top: 10px;
+    }
+    .attachment-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.78rem;
+    }
+    .attachment-item i.file-icon { color: var(--primary); }
+    .attachment-item .name {
+      flex: 1; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .attachment-item .remove {
+      background: transparent; border: none;
+      color: var(--muted); cursor: pointer;
+      padding: 4px; border-radius: 4px;
+    }
+    .attachment-item .remove:hover { color: var(--danger); }
+
+    /* ─── Ticket detail drawer ─── */
+    .drawer-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.7);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 90;
+    }
+    .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 560px;
+      background-color: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .drawer-head .head-body { flex: 1; min-width: 0; }
+    .drawer-head h2 {
+      font-size: 1.05rem; margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .drawer-head .sub {
+      color: var(--muted); font-size: 0.72rem;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .drawer-body {
+      padding: 20px;
+      overflow-y: auto; flex: 1;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .drawer-body::-webkit-scrollbar { width: 8px; }
+    .drawer-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 4px; }
+    .drawer-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px;
+      flex-shrink: 0;
+    }
+    .drawer-foot > * { flex: 1; justify-content: center; }
+
+    /* ─── Message thread ─── */
+    .msg {
+      display: flex; gap: 10px;
+      animation: slideUp 0.2s ease both;
+    }
+    .msg-avatar {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .msg.support .msg-avatar {
+      background: rgba(245,185,66,0.15);
+      color: var(--accent);
+    }
+    .msg.advertiser .msg-avatar {
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      color: #051410;
+    }
+    .msg.system .msg-avatar {
+      background: rgba(155,169,161,0.12);
+      color: var(--muted);
+    }
+    .msg-body {
+      flex: 1; min-width: 0;
+    }
+    .msg-head {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.7rem; margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .msg-name { font-weight: 700; color: var(--text); font-size: 0.78rem; }
+    .msg-time { color: var(--muted); font-size: 0.68rem; }
+    .msg.support .msg-name { color: var(--accent); }
+    .msg-text {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.82rem; line-height: 1.5;
+      white-space: pre-line;
+      word-wrap: break-word;
+      color: var(--text);
+    }
+    .msg.support .msg-text { background-color: rgba(245,185,66,0.04); border-color: rgba(245,185,66,0.2); }
+    .msg-additional {
+      margin-top: 8px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .msg-file {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem;
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      background-color: rgba(0,201,130,0.08);
+      text-decoration: none;
+    }
+    .msg-file:hover { background-color: rgba(0,201,130,0.15); }
+
+    .reply-area {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 4px;
+    }
+    .reply-area textarea {
+      width: 100%;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+    }
+    .reply-area textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.12); }
+    .reply-actions {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 8px; margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── Help center ─── */
+    .help-search {
+      position: relative;
+      margin-bottom: 18px;
+    }
+    .help-search input {
+      width: 100%;
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px 12px 42px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .help-search input::placeholder { color: var(--muted); }
+    .help-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.12); }
+    .help-search i {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .help-categories {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px) { .help-categories { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .help-categories { grid-template-columns: repeat(4, 1fr); } }
+
+    .help-category {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .help-category:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .help-category .hc-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .help-category .hc-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 2px; }
+    .help-category .hc-count { font-size: 0.7rem; color: var(--muted); }
+
+    .help-articles {
+      display: flex; flex-direction: column; gap: 6px;
+      margin-top: 18px;
+    }
+    .article-row {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .article-row:hover { border-color: var(--primary); }
+    .article-row i { color: var(--primary); font-size: 0.85rem; flex-shrink: 0; }
+    .article-row .a-title {
+      flex: 1;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .article-row .a-cat {
+      font-size: 0.65rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    /* Article modal */
+    .article-content { font-size: 0.88rem; line-height: 1.6; color: var(--text); white-space: pre-line; }
+    .article-content h4 { font-size: 1rem; margin: 18px 0 6px; color: var(--text); }
+    .article-content ul { padding-left: 20px; margin: 8px 0; }
+    .article-content li { margin-bottom: 4px; }
+
+    /* ─── Overlay / toast ─── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated);
+      border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 380px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
+    .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; height: 64px; }
+      .topbar-heading h1 { font-size: 1rem; }
+      .topbar-heading p { display: none; }
+      .content { padding: 20px 16px 40px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h2 { font-size: 1.5rem; }
+      .panel { padding: 18px; }
+      .ticket-row {
+        grid-template-columns: 40px 1fr;
+        row-gap: 6px;
+      }
+      .ticket-row .t-date,
+      .ticket-row .t-actions { grid-column: 2; text-align: left; }
+      .ticket-row .t-date { text-align: left; }
+      .btn-primary .btn-text { display: none; }
+      .btn-primary { padding: 11px 14px; }
+      .modal { border-radius: 12px; }
+      .modal-body { padding: 16px 18px; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="adv-shell">
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-tag"><i class="fas fa-bullhorn"></i> Advertiser Portal</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i> Overview</a>
+        <a href="./campaigns.html?status=active" class="nav-item"><i class="fas fa-play"></i> Active</a>
+        <a href="./campaigns.html" class="nav-item"><i class="fas fa-rectangle-ad"></i> My Advertisements</a>
+        <a href="./create.html" class="nav-item"><i class="fas fa-plus"></i> Create Advertisement</a>
+        <a href="./analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="./payments.html" class="nav-item"><i class="fas fa-credit-card"></i> Payments &amp; Billing</a>
+
+        <div class="nav-group-label">Account</div>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building"></i> Business Profile</a>
+        <a href="./notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="./support.html" class="nav-item active"><i class="fas fa-headset"></i> Support</a>
+        <a href="./settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="adv-user" id="advUserBlock">
+          <div class="adv-avatar" id="sideAvatar">AD</div>
+          <div class="adv-user-info">
+            <div class="adv-user-name" id="sideName">Loading…</div>
+            <div class="adv-user-role" id="sideRole">Business Account</div>
+          </div>
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── Main ─── -->
+    <div class="main-area">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-heading">
+          <h1>Support &amp; Help Center</h1>
+          <p>We're here to help you get the most out of your advertising campaigns.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Help" title="Help &amp; support"
+                  onclick="window.open('mailto:support@campusnaija.ng','_blank')">
+            <i class="far fa-circle-question"></i>
+          </button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="adv-avatar" id="topAvatar">AD</div>
+            <div>
+              <div class="topbar-admin-name" id="topName">Loading…</div>
+              <div class="topbar-admin-role" id="topRole">Business Account</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><i class="fas fa-headset"></i> Support</div>
+            <h2>Support &amp; Help Center</h2>
+            <p>We're here to help you get the most out of your advertising campaigns.</p>
+          </div>
+          <div class="heading-right">
+            <div class="quick-links">
+              <button class="quick-link" id="quickFaqs"><i class="fas fa-book"></i> FAQs</button>
+              <button class="quick-link" id="quickGuidelines"><i class="fas fa-file-shield"></i> Guidelines</button>
+            </div>
+            <button class="btn-primary" id="createTicketBtn">
+              <i class="fas fa-plus"></i> <span class="btn-text">Create Support Ticket</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Overview cards -->
+        <section class="summary-grid" aria-label="Support overview">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-ticket"></i></div>
+            <div class="stat-label">Open tickets</div>
+            <div class="stat-value" id="statOpen">—</div>
+            <div class="stat-sub">Issues awaiting resolution</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-icon"><i class="fas fa-reply"></i></div>
+            <div class="stat-label">Awaiting your reply</div>
+            <div class="stat-value" id="statAwaiting">—</div>
+            <div class="stat-sub">Requires your response</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="stat-label">Resolved</div>
+            <div class="stat-value" id="statResolved">—</div>
+            <div class="stat-sub">Successfully closed</div>
+          </div>
+          <div class="stat-card muted">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-label">Average response</div>
+            <div class="stat-value" id="statAvg" style="font-size:1.15rem;">—</div>
+            <div class="stat-sub">Support team's response time</div>
+          </div>
+        </section>
+
+        <!-- Tickets panel -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-inbox"></i> My support tickets</div>
+          </div>
+
+          <div class="filter-row">
+            <button class="filter-chip active" data-status="">All</button>
+            <button class="filter-chip" data-status="open">Open</button>
+            <button class="filter-chip" data-status="in_progress">In Progress</button>
+            <button class="filter-chip" data-status="awaiting_reply">Awaiting Reply</button>
+            <button class="filter-chip" data-status="resolved">Resolved</button>
+            <button class="filter-chip" data-status="closed">Closed</button>
+            <div class="filter-search">
+              <i class="fas fa-search"></i>
+              <input type="text" id="ticketSearch" placeholder="Search by ticket ID or subject…">
+            </div>
+          </div>
+
+          <div class="ticket-list" id="ticketList">
+            <div style="padding: 20px 0;">
+              <div class="skeleton" style="height: 60px; margin-bottom: 8px;"></div>
+              <div class="skeleton" style="height: 60px; margin-bottom: 8px;"></div>
+              <div class="skeleton" style="height: 60px;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Help center -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-book-open"></i> Help center</div>
+            <a href="mailto:support@campusnaija.ng" class="btn-ghost btn-sm" style="text-decoration:none;">
+              <i class="fas fa-envelope"></i> Still need help? Contact Support
+            </a>
+          </div>
+
+          <div class="help-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="helpSearch" placeholder="Search help articles…">
+          </div>
+
+          <div class="help-categories" id="helpCategories">
+            <div class="help-category" data-cat="getting_started">
+              <div class="hc-icon"><i class="fas fa-rocket"></i></div>
+              <div class="hc-title">Getting Started</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="creating_ads">
+              <div class="hc-icon"><i class="fas fa-rectangle-ad"></i></div>
+              <div class="hc-title">Creating Advertisements</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="creative">
+              <div class="hc-icon"><i class="fas fa-image"></i></div>
+              <div class="hc-title">Creative Requirements</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="payments">
+              <div class="hc-icon"><i class="fas fa-credit-card"></i></div>
+              <div class="hc-title">Payments &amp; Invoices</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="approval">
+              <div class="hc-icon"><i class="fas fa-shield-halved"></i></div>
+              <div class="hc-title">Campaign Approval</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="publication">
+              <div class="hc-icon"><i class="fas fa-play-circle"></i></div>
+              <div class="hc-title">Advertisement Publication</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="analytics">
+              <div class="hc-icon"><i class="fas fa-chart-line"></i></div>
+              <div class="hc-title">Analytics</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+            <div class="help-category" data-cat="account">
+              <div class="hc-icon"><i class="fas fa-user-shield"></i></div>
+              <div class="hc-title">Account Management</div>
+              <div class="hc-count" data-count>—</div>
+            </div>
+          </div>
+
+          <div class="help-articles" id="helpArticles"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ CREATE TICKET MODAL ============ -->
+  <div class="modal-backdrop" id="createModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Create support ticket</h3>
+          <p>Tell us what's going on — the more detail, the faster we can help.</p>
+        </div>
+        <button class="close-btn" id="createClose"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Subject <span class="req">*</span></label>
+          <input class="input" id="fSubject" maxlength="300" placeholder="e.g. Payment confirmation issue">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Issue category <span class="req">*</span></label>
+            <select class="input" id="fCategory">
+              <option value="">Select a category</option>
+              <option value="campaign_assistance">Campaign assistance</option>
+              <option value="payment_billing">Payment and billing</option>
+              <option value="advertisement_review">Advertisement review</option>
+              <option value="creative_upload">Creative upload problem</option>
+              <option value="account_login">Account and login</option>
+              <option value="analytics_reporting">Analytics and reporting</option>
+              <option value="technical">Technical problem</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Related campaign <span class="opt">(optional)</span></label>
+            <select class="input" id="fCampaign">
+              <option value="">None</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Priority</label>
+          <div class="priority-tabs">
+            <button class="priority-tab active" data-priority="normal">
+              <i class="fas fa-circle-info"></i> Normal
+            </button>
+            <button class="priority-tab urgent" data-priority="urgent">
+              <i class="fas fa-triangle-exclamation"></i> Urgent
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Detailed description <span class="req">*</span></label>
+          <textarea class="textarea" id="fDescription" maxlength="20000" placeholder="Describe the issue, steps you've taken, and what you expected to happen…"></textarea>
+          <div class="field-hint" style="font-size:0.7rem;color:var(--muted);margin-top:4px;">
+            <span id="descCount">0</span> / 20000 characters
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Attachment <span class="opt">(optional)</span></label>
+          <div class="attachment-drop" id="attachmentDrop">
+            <i class="fas fa-cloud-arrow-up"></i>
+            Drag files here, or <strong>browse</strong> (screenshots, receipts, documents)
+            <input type="file" id="attachmentInput" multiple accept="image/*,.pdf,.doc,.docx" hidden>
+          </div>
+          <div class="attachment-list" id="attachmentList"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="createCancel">Cancel</button>
+        <button class="btn-primary" id="createSubmit">
+          <i class="fas fa-paper-plane"></i> Submit ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TICKET DETAIL DRAWER ============ -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="head-body">
+        <h2 id="drawerTitle">Ticket</h2>
+        <div class="sub" id="drawerSub">Loading…</div>
+      </div>
+      <button class="close-btn" id="drawerClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot" id="drawerFoot"></div>
+  </aside>
+
+  <!-- ============ HELP ARTICLE MODAL ============ -->
+  <div class="modal-backdrop" id="articleModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3 id="articleTitle">Article</h3>
+          <p id="articleCategory">Category</p>
+        </div>
+        <button class="close-btn" id="articleClose"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="article-content" id="articleBody"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="articleCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_advertiser_token';
+      const USER_KEY  = 'campusnaija_advertiser_user';
+      const LOGIN_URL = '/advertiser/login.html';
+
+      const state = {
+        token: null,
+        user: null,
+        tickets: [],
+        stats: null,
+        filter: '',
+        search: '',
+        campaigns: [],
+        newTicket: {
+          priority: 'normal',
+          attachments: [],
+        },
+        helpArticles: [],
+        helpSearch: '',
+        helpCategory: '',
+        activeTicketId: null,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      const initials = (name) => {
+        if (!name) return 'AD';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || 'AD';
+      };
+
+      const fmtDate = (d) => {
+        if (!d) return '—';
+        const dt = new Date(d);
+        if (isNaN(dt)) return '—';
+        return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+      const fmtTime = (d) => {
+        if (!d) return '';
+        const dt = new Date(d);
+        if (isNaN(dt)) return '';
+        return dt.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      };
+      const fmtSize = (bytes) => {
+        if (!bytes) return '0 B';
+        if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+        if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return bytes + ' B';
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }, opts.headers || {});
+        if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          const e = new Error(msg); e.status = res.status; throw e;
+        }
+        return data;
+      }
+
+      async function apiUpload(path, file, extra) {
+        const fd = new FormData();
+        fd.append('file', file);
+        if (extra) for (const [k, v] of Object.entries(extra)) fd.append(k, v);
+        const res = await fetch(API_BASE + path, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + state.token },
+          body: fd,
+        });
+        if (res.status === 401) { redirectToLogin('session_expired'); throw new Error('Session expired'); }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) { const e = new Error(data.error || 'Upload failed'); e.status = res.status; throw e; }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = $('toast');
+        const txt = $('toastText');
+        if (!el || !txt) return;
+        txt.textContent = msg || '';
+        el.classList.toggle('error', !!isError);
+        const icon = el.querySelector('i');
+        if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
+      }
+
+      function renderUser() {
+        if (!state.user) return;
+        const label = state.user.business_name || state.user.name || 'Advertiser';
+        const ini = initials(label);
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+      }
+
+      /* ─── Status pill ─── */
+      function statusInfo(status) {
+        const s = String(status || 'open').toLowerCase();
+        const map = {
+          open:            { cls: 'st-open',      icon: 'fa-circle-dot',    label: 'Open' },
+          in_progress:     { cls: 'st-progress',  icon: 'fa-spinner',       label: 'In Progress' },
+          awaiting_reply:  { cls: 'st-awaiting',  icon: 'fa-reply',         label: 'Awaiting Your Reply' },
+          resolved:        { cls: 'st-resolved',  icon: 'fa-circle-check',  label: 'Resolved' },
+          closed:          { cls: 'st-closed',    icon: 'fa-lock',          label: 'Closed' },
+        };
+        return map[s] || { cls: 'st-closed', icon: 'fa-circle', label: status };
+      }
+      function statusPill(status) {
+        const i = statusInfo(status);
+        return `<span class="status-pill ${i.cls}"><i class="fas ${i.icon}"></i> ${esc(i.label)}</span>`;
+      }
+      function statusIconTone(status) {
+        const s = String(status || '').toLowerCase();
+        if (s === 'awaiting_reply') return 'gold';
+        if (s === 'resolved') return 'info';
+        if (s === 'closed') return 'muted';
+        return '';
+      }
+
+      /* ─── Stats ─── */
+      async function loadStats() {
+        try {
+          const data = await api('/api/advertiser/support/stats');
+          state.stats = data;
+          $('statOpen').textContent = data.open;
+          $('statAwaiting').textContent = data.awaiting;
+          $('statResolved').textContent = data.resolved;
+          $('statAvg').textContent = data.avg_response_label || '—';
+        } catch (e) {
+          if (e.message !== 'Session expired') {
+            $('statOpen').textContent = '0';
+            $('statAwaiting').textContent = '0';
+            $('statResolved').textContent = '0';
+            $('statAvg').textContent = '—';
+          }
+        }
+      }
+
+      /* ─── Tickets ─── */
+      async function loadTickets() {
+        try {
+          const params = new URLSearchParams();
+          if (state.filter) params.set('status', state.filter);
+          if (state.search) params.set('q', state.search);
+          const data = await api('/api/advertiser/support/tickets?' + params.toString());
+          state.tickets = data.tickets || [];
+        } catch (e) {
+          state.tickets = [];
+          if (e.message !== 'Session expired') {
+            toast(e.message || 'Could not load tickets', true);
+          }
+        }
+        renderTickets();
+      }
+
+      function renderTickets() {
+        const wrap = $('ticketList');
+        if (!state.tickets.length) {
+          wrap.innerHTML = `
+            <div class="empty-state">
+              <div class="icon-circle"><i class="fas fa-inbox"></i></div>
+              <h3>No tickets found</h3>
+              <p>${state.filter || state.search
+                ? 'Try adjusting your filters or search terms.'
+                : 'When you need help with a campaign, payment or account, create a support ticket here.'}</p>
+              ${state.filter || state.search ? '' : `<button class="btn-primary" onclick="document.getElementById('createTicketBtn').click()"><i class="fas fa-plus"></i> Create Support Ticket</button>`}
+            </div>`;
+          return;
+        }
+
+        wrap.innerHTML = state.tickets.map(t => {
+          const tone = statusIconTone(t.status);
+          return `
+            <div class="ticket-row" data-ticket-id="${t.id}">
+              <div class="t-icon ${tone}"><i class="fas fa-ticket"></i></div>
+              <div class="t-main">
+                <div class="t-subject">${esc(t.subject)}</div>
+                <div class="t-meta">
+                  <code>#${esc(t.ticket_number)}</code>
+                  <span>${esc(categoryLabel(t.category))}</span>
+                  <span class="dot-sep">·</span>
+                  <span>${fmtDate(t.created_at)}</span>
+                </div>
+              </div>
+              <div class="t-date">${fmtDate(t.updated_at)}</div>
+              <div class="t-actions">
+                ${statusPill(t.status)}
+                <button class="ticket-arrow" aria-label="View conversation"><i class="fas fa-arrow-right"></i></button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function categoryLabel(c) {
+        return ({
+          campaign_assistance: 'Campaign assistance',
+          payment_billing: 'Payment & billing',
+          advertisement_review: 'Advertisement review',
+          creative_upload: 'Creative upload',
+          account_login: 'Account & login',
+          analytics_reporting: 'Analytics & reporting',
+          technical: 'Technical problem',
+          other: 'Other',
+        })[c] || c || 'General';
+      }
+
+      /* ─── Campaign picker ─── */
+      async function loadCampaignsForSelect() {
+        try {
+          const data = await api('/api/advertiser/campaigns');
+          state.campaigns = data.campaigns || [];
+          const select = $('fCampaign');
+          select.innerHTML = '<option value="">None</option>' +
+            state.campaigns.slice(0, 30).map(c =>
+              `<option value="${esc(c.id)}">${esc(c.name || 'Untitled')} (${esc((c.status || '').toUpperCase())})</option>`
+            ).join('');
+        } catch (_) {}
+      }
+
+      /* ─── Create ticket modal ─── */
+      function openCreateModal() {
+        $('createModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        $('fSubject').value = '';
+        $('fCategory').value = '';
+        $('fCampaign').value = '';
+        $('fDescription').value = '';
+        $('descCount').textContent = '0';
+        state.newTicket.priority = 'normal';
+        state.newTicket.attachments = [];
+        document.querySelectorAll('.priority-tab').forEach(t => {
+          t.classList.toggle('active', t.getAttribute('data-priority') === 'normal');
+        });
+        $('attachmentList').innerHTML = '';
+        setTimeout(() => $('fSubject').focus(), 100);
+      }
+
+      function closeCreateModal() {
+        $('createModal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      function addAttachmentPreview(file) {
+        state.newTicket.attachments.push(file);
+        const list = $('attachmentList');
+        const idx = state.newTicket.attachments.length - 1;
+        const el = document.createElement('div');
+        el.className = 'attachment-item';
+        el.innerHTML = `
+          <i class="fas fa-file file-icon"></i>
+          <div class="name">${esc(file.name)}</div>
+          <span style="color:var(--muted);font-size:0.7rem;">${fmtSize(file.size)}</span>
+          <button class="remove" type="button" data-idx="${idx}" aria-label="Remove">
+            <i class="fas fa-xmark"></i>
+          </button>
+        `;
+        list.appendChild(el);
+      }
+
+      async function submitCreateTicket() {
+        const subject = $('fSubject').value.trim();
+        const category = $('fCategory').value;
+        const priority = state.newTicket.priority;
+        const description = $('fDescription').value.trim();
+        const campaignId = $('fCampaign').value || null;
+
+        if (!subject) { toast('Please enter a subject', true); $('fSubject').focus(); return; }
+        if (!category) { toast('Please choose a category', true); $('fCategory').focus(); return; }
+        if (!description) { toast('Please enter a detailed description', true); $('fDescription').focus(); return; }
+
+        const btn = $('createSubmit');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch" style="animation:spin 1s linear infinite;"></i> Submitting…';
+
+        try {
+          const data = await api('/api/advertiser/support/tickets', {
+            method: 'POST',
+            body: JSON.stringify({
+              subject, category, priority, description,
+              campaign_id: campaignId || null,
+            }),
+          });
+          const ticketId = data.ticket.id;
+
+          // Upload attachments
+          if (state.newTicket.attachments.length) {
+            for (const f of state.newTicket.attachments) {
+              try {
+                await apiUpload(`/api/advertiser/support/tickets/${ticketId}/attachments`, f);
+              } catch (err) {
+                console.warn('[attach]', err.message);
+              }
+            }
+          }
+
+          closeCreateModal();
+          toast(`Ticket #${data.ticket.ticket_number} created`);
+          await Promise.all([loadStats(), loadTickets()]);
+        } catch (e) {
+          toast(e.message || 'Could not submit ticket', true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = original;
+        }
+      }
+
+      /* ─── Ticket detail drawer ─── */
+      async function openTicketDrawer(id) {
+        state.activeTicketId = id;
+        $('drawerTitle').textContent = 'Ticket';
+        $('drawerSub').textContent = 'Loading…';
+        $('drawerBody').innerHTML = `
+          <div class="skeleton" style="height: 80px; margin-bottom: 12px;"></div>
+          <div class="skeleton" style="height: 120px; margin-bottom: 12px;"></div>
+          <div class="skeleton" style="height: 80px;"></div>
+        `;
+        $('drawerFoot').innerHTML = '';
+        $('drawer').classList.add('open');
+        $('drawer').setAttribute('aria-hidden', 'false');
+        $('drawerBackdrop').classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        try {
+          const data = await api(`/api/advertiser/support/tickets/${id}`);
+          renderTicketDetail(data);
+        } catch (e) {
+          $('drawerBody').innerHTML = `
+            <div class="empty-state">
+              <div class="icon-circle" style="color: var(--danger);">
+                <i class="fas fa-circle-exclamation"></i>
+              </div>
+              <h3>Could not load ticket</h3>
+              <p>${esc(e.message || 'Please try again later.')}</p>
+            </div>`;
+          $('drawerFoot').innerHTML = `<button class="btn-outline" id="drawerErrClose">Close</button>`;
+          const close = document.getElementById('drawerErrClose');
+          if (close) close.addEventListener('click', closeDrawer);
+        }
+      }
+
+      function renderTicketDetail(data) {
+        const t = data.ticket;
+        const messages = data.messages || [];
+        const attachments = data.attachments || [];
+
+        const messagesByTicket = {};
+        const attachmentsByMessage = {};
+        const ticketLevelAttachments = [];
+        for (const a of attachments) {
+          if (a.message_id) (attachmentsByMessage[a.message_id] ||= []).push(a);
+          else ticketLevelAttachments.push(a);
+        }
+        for (const m of messages) {
+          messagesByTicket[m.ticket_id] = (messagesByTicket[m.ticket_id] || 0) + 1;
+        }
+
+        $('drawerTitle').textContent = t.subject;
+        $('drawerSub').innerHTML = `${statusPill(t.status)} <code style="font-family:monospace;font-weight:700;">#${esc(t.ticket_number)}</code> · ${esc(categoryLabel(t.category))}`;
+
+        const thread = messages.map(m => {
+          const isSupport = m.sender_type === 'support';
+          const isSystem = m.sender_type === 'system';
+          const toneCls = isSupport ? 'support' : isSystem ? 'system' : 'advertiser';
+          const initialsText = isSystem ? 'SYS' : initials(isSupport ? (m.sender_name || 'Support') : (m.sender_name || 'You'));
+          const files = (attachmentsByMessage[m.id] || []).map(a => `
+            <a class="msg-file" href="${esc(a.public_url || '#')}" target="_blank" rel="noopener">
+              <i class="fas fa-paperclip"></i> ${esc(a.original_name || a.filename)}
+            </a>
+          `).join('');
+
+          return `
+            <div class="msg ${toneCls}">
+              <div class="msg-avatar">${initialsText}</div>
+              <div class="msg-body">
+                <div class="msg-head">
+                  <span class="msg-name">${esc(isSupport ? (m.sender_name || 'Support team') : isSystem ? 'System' : (m.sender_name || 'You'))}</span>
+                  <span class="msg-time">${fmtTime(m.created_at)}</span>
+                </div>
+                <div class="msg-text">${esc(m.body)}</div>
+                ${files ? `<div class="msg-additional">${files}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const ticketAttachmentsHtml = ticketLevelAttachments.length ? `
+          <div class="msg system" style="margin-top:4px;">
+            <div class="msg-avatar">SYS</div>
+            <div class="msg-body">
+              <div class="msg-head">
+                <span class="msg-name">Attachments</span>
+              </div>
+              <div class="msg-additional">
+                ${ticketLevelAttachments.map(a => `
+                  <a class="msg-file" href="${esc(a.public_url || '#')}" target="_blank" rel="noopener">
+                    <i class="fas fa-paperclip"></i> ${esc(a.original_name || a.filename)}
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        ` : '';
+
+        const canReply = !['resolved','closed'].includes(t.status);
+        const canClose = !['resolved','closed'].includes(t.status);
+
+        $('drawerBody').innerHTML = `
+          <div class="kv" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+            <div style="background-color:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:800;margin-bottom:3px;">Submitted</div>
+              <div style="font-size:0.82rem;font-weight:600;">${fmtDate(t.created_at)}</div>
+            </div>
+            <div style="background-color:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:800;margin-bottom:3px;">Priority</div>
+              <div style="font-size:0.82rem;font-weight:600;text-transform:capitalize;">${esc(t.priority || 'normal')}</div>
+            </div>
+            ${t.campaign_name ? `
+            <div style="grid-column:1/-1;background-color:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:800;margin-bottom:3px;">Related campaign</div>
+              <div style="font-size:0.82rem;font-weight:600;">${esc(t.campaign_name)}</div>
+            </div>` : ''}
+          </div>
+
+          <div style="margin-top:6px;">
+            <div style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:10px;">Conversation</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              ${thread || '<p style="color:var(--muted);font-size:0.82rem;">No messages yet.</p>'}
+            </div>
+            ${ticketAttachmentsHtml}
+          </div>
+
+          ${canReply ? `
+            <div class="reply-area">
+              <div style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:8px;">Reply</div>
+              <textarea id="replyBody" placeholder="Type your message…"></textarea>
+              <div class="reply-actions">
+                <button class="btn-ghost btn-sm" id="replyAttachBtn" type="button">
+                  <i class="fas fa-paperclip"></i> Attach file
+                </button>
+                <input type="file" id="replyAttachment" hidden accept="image/*,.pdf,.doc,.docx">
+                <button class="btn-primary btn-sm" id="replySendBtn" type="button">
+                  <i class="fas fa-paper-plane"></i> Send reply
+                </button>
+              </div>
+              <div class="attachment-list" id="replyAttachmentList"></div>
+            </div>
+          ` : `
+            <div class="reply-area">
+              <div class="feedback" style="background-color:rgba(155,169,161,0.08);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:0.82rem;color:var(--muted);">
+                <i class="fas fa-lock" style="margin-right:6px;"></i>
+                This ticket is ${t.status}. Conversation history remains available for your records.
+              </div>
+            </div>
+          `}
+        `;
+
+        // Footer
+        const footer = [`<button class="btn-outline" id="drawerCloseBtn"><i class="fas fa-xmark"></i> Close</button>`];
+        if (canClose) footer.push(`<button class="btn-danger" id="ticketCloseBtn"><i class="fas fa-lock"></i> Mark resolved</button>`);
+        $('drawerFoot').innerHTML = footer.join('');
+        document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+        const closeTicketBtn = document.getElementById('ticketCloseBtn');
+        if (closeTicketBtn) closeTicketBtn.addEventListener('click', () => closeTicket(t.id));
+
+        // Reply handlers
+        if (canReply) {
+          const replyBody = $('replyBody');
+          const replySend = $('replySendBtn');
+          const replyAttachBtn = $('replyAttachBtn');
+          const replyAttachment = $('replyAttachment');
+
+          replySend.addEventListener('click', () => sendReply(t.id, replyBody, replyAttachment));
+          replyAttachBtn.addEventListener('click', () => replyAttachment.click());
+
+          replyAttachment.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files || []);
+            e.target.value = '';
+            for (const f of files) {
+              try {
+                const r = await apiUpload(`/api/advertiser/support/tickets/${t.id}/attachments`, f);
+                const list = $('replyAttachmentList');
+                const el = document.createElement('div');
+                el.className = 'attachment-item';
+                el.innerHTML = `
+                  <i class="fas fa-file file-icon"></i>
+                  <div class="name">${esc(r.attachment.original_name || r.attachment.filename)}</div>
+                  <span style="color:var(--muted);font-size:0.7rem;">${fmtSize(r.attachment.size)}</span>
+                  <a href="${esc(r.attachment.public_url || '#')}" target="_blank" rel="noopener" style="color:var(--primary);">
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                `;
+                list.appendChild(el);
+              } catch (err) {
+                toast(err.message || 'Upload failed', true);
+              }
+            }
+          });
+        }
+      }
+
+      async function sendReply(ticketId, textarea, fileInput) {
+        const body = textarea.value.trim();
+        if (!body) { toast('Please enter a message', true); return; }
+        const btn = $('replySendBtn');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch" style="animation:spin 1s linear infinite;"></i> Sending…';
+        try {
+          await api(`/api/advertiser/support/tickets/${ticketId}/messages`, {
+            method: 'POST',
+            body: JSON.stringify({ body }),
+          });
+          textarea.value = '';
+          toast('Reply sent');
+          // Reload drawer
+          await openTicketDrawer(ticketId);
+          await Promise.all([loadStats(), loadTickets()]);
+        } catch (e) {
+          toast(e.message || 'Could not send reply', true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = original;
+        }
+      }
+
+      async function closeTicket(ticketId) {
+        if (!confirm('Mark this ticket as resolved? You can still view the conversation history.')) return;
+        try {
+          await api(`/api/advertiser/support/tickets/${ticketId}/close`, { method: 'POST' });
+          toast('Ticket marked as resolved');
+          await openTicketDrawer(ticketId);
+          await Promise.all([loadStats(), loadTickets()]);
+        } catch (e) {
+          toast(e.message || 'Could not close ticket', true);
+        }
+      }
+
+      function closeDrawer() {
+        $('drawer').classList.remove('open');
+        $('drawer').setAttribute('aria-hidden', 'true');
+        $('drawerBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+        state.activeTicketId = null;
+      }
+
+      /* ─── Help center ─── */
+      async function loadHelpArticles() {
+        try {
+          const data = await api('/api/public/help/articles');
+          state.helpArticles = data.articles || [];
+        } catch (_) {
+          state.helpArticles = [];
+        }
+        renderHelpCounts();
+        renderHelpArticles();
+      }
+
+      function renderHelpCounts() {
+        document.querySelectorAll('.help-category').forEach(cat => {
+          const key = cat.getAttribute('data-cat');
+          const count = state.helpArticles.filter(a => a.category === key).length;
+          const el = cat.querySelector('[data-count]');
+          if (el) el.textContent = count + ' article' + (count === 1 ? '' : 's');
+        });
+      }
+
+      function renderHelpArticles() {
+        const list = $('helpArticles');
+        const q = state.helpSearch.toLowerCase();
+        const filtered = state.helpArticles.filter(a => {
+          if (state.helpCategory && a.category !== state.helpCategory) return false;
+          if (!q) return true;
+          return `${a.title} ${a.body}`.toLowerCase().includes(q);
+        });
+
+        if (!filtered.length) {
+          list.innerHTML = `<div class="empty-state" style="padding:24px 0;">
+            <div class="icon-circle"><i class="fas fa-book"></i></div>
+            <h3>No articles found</h3>
+            <p>${state.helpSearch ? 'Try different keywords.' : 'Help articles will appear here once the support team publishes them.'}</p>
+          </div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map(a => `
+          <div class="article-row" data-slug="${esc(a.slug)}">
+            <i class="fas fa-file-lines"></i>
+            <div class="a-title">${esc(a.title)}</div>
+            <div class="a-cat">${esc(a.category.replace(/_/g, ' '))}</div>
+          </div>
+        `).join('');
+      }
+
+      async function openArticle(slug) {
+        try {
+          const data = await api(`/api/public/help/articles/${encodeURIComponent(slug)}`);
+          const a = data.article;
+          $('articleTitle').textContent = a.title;
+          $('articleCategory').textContent = a.category.replace(/_/g, ' ');
+          $('articleBody').textContent = a.body;
+          $('articleModal').classList.add('open');
+          document.body.style.overflow = 'hidden';
+        } catch (e) {
+          toast(e.message || 'Could not load article', true);
+        }
+      }
+
+      function closeArticle() {
+        $('articleModal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      /* ─── Wiring ─── */
+      function wireEvents() {
+        // Sidebar
+        $('menuToggle').addEventListener('click', () => {
+          const open = $('sidebar').classList.toggle('open');
+          $('sidebarOverlay').classList.toggle('active', open);
+          $('menuToggle').setAttribute('aria-expanded', String(open));
+        });
+        $('sidebarOverlay').addEventListener('click', () => {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('active');
+            if ($('drawer').classList.contains('open')) closeDrawer();
+            if ($('createModal').classList.contains('open')) closeCreateModal();
+            if ($('articleModal').classList.contains('open')) closeArticle();
+          }
+        });
+
+        // Logout
+        $('sideLogout').addEventListener('click', () => {
+          if (!confirm('Sign out of the advertiser portal?')) return;
+          redirectToLogin();
+        });
+
+        // Quick links
+        $('quickFaqs').addEventListener('click', () => {
+          $('helpSearch').focus();
+          $('helpSearch').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        $('quickGuidelines').addEventListener('click', () => {
+          window.open('mailto:support@campusnaija.ng?subject=Advertising%20guidelines', '_blank');
+        });
+
+        // Create modal
+        $('createTicketBtn').addEventListener('click', () => {
+          loadCampaignsForSelect();
+          openCreateModal();
+        });
+        $('createClose').addEventListener('click', closeCreateModal);
+        $('createCancel').addEventListener('click', closeCreateModal);
+        $('createModal').addEventListener('click', (e) => {
+          if (e.target === $('createModal')) closeCreateModal();
+        });
+        $('createSubmit').addEventListener('click', submitCreateTicket);
+
+        // Priority
+        document.querySelectorAll('.priority-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.priority-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            state.newTicket.priority = tab.getAttribute('data-priority');
+          });
+        });
+
+        // Character counter
+        $('fDescription').addEventListener('input', (e) => {
+          $('descCount').textContent = (e.target.value || '').length;
+        });
+
+        // Attachments
+        const drop = $('attachmentDrop');
+        const input = $('attachmentInput');
+        drop.addEventListener('click', () => input.click());
+        drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
+        drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+        drop.addEventListener('drop', (e) => {
+          e.preventDefault();
+          drop.classList.remove('dragover');
+          Array.from(e.dataTransfer.files || []).forEach(addAttachmentPreview);
+        });
+        input.addEventListener('change', (e) => {
+          Array.from(e.target.files || []).forEach(addAttachmentPreview);
+          e.target.value = '';
+        });
+        $('attachmentList').addEventListener('click', (e) => {
+          const btn = e.target.closest('.remove');
+          if (!btn) return;
+          const idx = parseInt(btn.getAttribute('data-idx'), 10);
+          state.newTicket.attachments.splice(idx, 1);
+          btn.closest('.attachment-item').remove();
+        });
+
+        // Filters
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            state.filter = chip.getAttribute('data-status') || '';
+            loadTickets();
+          });
+        });
+
+        let searchTimer;
+        $('ticketSearch').addEventListener('input', (e) => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(() => {
+            state.search = e.target.value.trim();
+            loadTickets();
+          }, 250);
+        });
+
+        // Tickets list click
+        $('ticketList').addEventListener('click', (e) => {
+          const row = e.target.closest('[data-ticket-id]');
+          if (!row) return;
+          openTicketDrawer(row.getAttribute('data-ticket-id'));
+        });
+
+        // Drawer
+        $('drawerClose').addEventListener('click', closeDrawer);
+        $('drawerBackdrop').addEventListener('click', closeDrawer);
+
+        // Help center
+        $('helpCategories').addEventListener('click', (e) => {
+          const cat = e.target.closest('.help-category');
+          if (!cat) return;
+          const key = cat.getAttribute('data-cat');
+          state.helpCategory = state.helpCategory === key ? '' : key;
+          renderHelpArticles();
+          // Scroll
+          $('helpArticles').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        let helpTimer;
+        $('helpSearch').addEventListener('input', (e) => {
+          clearTimeout(helpTimer);
+          helpTimer = setTimeout(() => {
+            state.helpSearch = e.target.value;
+            renderHelpArticles();
+          }, 200);
+        });
+
+        $('helpArticles').addEventListener('click', (e) => {
+          const row = e.target.closest('[data-slug]');
+          if (!row) return;
+          openArticle(row.getAttribute('data-slug'));
+        });
+
+        $('articleClose').addEventListener('click', closeArticle);
+        $('articleCloseBtn').addEventListener('click', closeArticle);
+        $('articleModal').addEventListener('click', (e) => {
+          if (e.target === $('articleModal')) closeArticle();
+        });
+      }
+
+      /* ─── Boot ─── */
+      (async function boot() {
+        try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!state.token) { redirectToLogin('not_signed_in'); return; }
+
+        try {
+          const cached = localStorage.getItem(USER_KEY);
+          if (cached) state.user = JSON.parse(cached);
+        } catch (_) {}
+
+        try {
+          const me = await api('/api/advertiser/me');
+          if (me && me.user) {
+            state.user = me.user;
+            try { localStorage.setItem(USER_KEY, JSON.stringify(state.user)); } catch (_) {}
+          }
+        } catch (e) {
+          if (e.message !== 'Session expired') console.warn('[me]', e.message);
+        }
+
+        if (!state.user) { redirectToLogin('not_signed_in'); return; }
+
+        renderUser();
+        wireEvents();
+
+        await Promise.all([
+          loadStats(),
+          loadTickets(),
+          loadHelpArticles(),
+        ]);
+      })();
+
+    })();
+  </script>
+</body>
+</html>

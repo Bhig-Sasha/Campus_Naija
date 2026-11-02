@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Payments &amp; Billing — CampusNaija Advertiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Inter', sans-serif;
+      color: #F5F7F6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Inter', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --primary-dark: #00b374;
+      --accent: #F5B942;
+      --text: #F5F7F6;
+      --muted: #9AA8A0;
+      --border: #29352F;
+      --danger: #e07070;
+      --info: #8ab5ff;
+      --radius-card: 16px;
+      --radius-btn: 11px;
+      --radius-input: 11px;
+      --sidebar-w: 264px;
+      --shadow-soft: 0 12px 32px rgba(0,0,0,0.35);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      display: block;
+      min-height: 12px;
+    }
+
+    .adv-shell { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar-brand {
+      padding: 24px 22px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
+      padding: 4px 10px; border-radius: 40px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.25);
+    }
+    .sidebar-nav {
+      flex: 1; overflow-y: auto;
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-group-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item i {
+      width: 20px; text-align: center;
+      font-size: 0.9rem; flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+    .nav-item:hover {
+      background-color: var(--elevated); color: var(--text);
+      transform: translateX(2px);
+    }
+    .nav-item:hover i { transform: scale(1.1); }
+    .nav-item.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background-color: var(--primary);
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.62rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 40px;
+      min-width: 20px; text-align: center;
+    }
+    .sidebar-footer {
+      padding: 14px 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .adv-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .adv-user:hover { background-color: var(--elevated); }
+    .adv-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.82rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .adv-user-info { flex: 1; min-width: 0; }
+    .adv-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .adv-user-role {
+      font-size: 0.68rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.9rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ─── Main ─── */
+    .main-area {
+      flex: 1; margin-left: var(--sidebar-w);
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ─── Topbar ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 72px;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; padding: 8px; border-radius: 8px;
+    }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .topbar-heading { flex: 1; min-width: 0; }
+    .topbar-heading h1 {
+      font-size: 1.25rem; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-heading p {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover {
+      background-color: var(--elevated); color: var(--primary);
+      border-color: var(--border);
+    }
+    .topbar-divider {
+      width: 1px; height: 26px;
+      background-color: var(--border); margin: 0 6px;
+    }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09;
+      font-weight: 800; font-size: 0.85rem;
+      padding: 11px 18px; border-radius: var(--radius-btn);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,201,130,0.28);
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-outline {
+      background-color: transparent; color: var(--text);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-ghost {
+      background: transparent; color: var(--muted);
+      font-weight: 600; font-size: 0.78rem;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--primary); }
+    .btn-sm { padding: 7px 12px; font-size: 0.76rem; border-radius: 8px; }
+
+    .content { padding: 28px 24px 56px; flex: 1; max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* ─── Page heading ─── */
+    .page-heading {
+      margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+    }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.92rem; }
+    .secure-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; font-weight: 700;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.3);
+      color: var(--primary);
+      padding: 6px 12px; border-radius: 40px;
+    }
+
+    /* ─── Hero card ─── */
+    .hero-card {
+      background: linear-gradient(135deg, #0D1210 0%, #111815 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 26px;
+      margin-bottom: 22px;
+      display: flex; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+      animation: slideUp 0.35s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,201,130,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-card .label {
+      font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 800;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .hero-card .big-amount {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 2.4rem; font-weight: 800;
+      line-height: 1; letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-feature-settings: 'tnum';
+    }
+    .hero-card .big-amount .sym { color: var(--primary); font-size: 1.4rem; margin-right: 4px; vertical-align: 6px; }
+    .hero-card .sub { font-size: 0.78rem; color: var(--muted); }
+    .hero-card .side-stat {
+      text-align: right;
+    }
+    .hero-card .side-stat .amount {
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--accent);
+      font-feature-settings: 'tnum';
+    }
+    .hero-card .side-stat .lbl {
+      font-size: 0.66rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    @media (max-width: 640px) {
+      .hero-card .big-amount { font-size: 1.8rem; }
+      .hero-card .side-stat { text-align: left; }
+    }
+
+    /* ─── Stats grid ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    @media (min-width: 900px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat-card {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      position: relative; overflow: hidden;
+      animation: slideUp 0.4s ease both;
+    }
+    .stat-card .stat-label {
+      font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .stat-card .stat-value {
+      font-size: 1.55rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-card .stat-value.green { color: var(--primary); }
+    .stat-card .stat-value.gold  { color: var(--accent); }
+    .stat-card .stat-sub {
+      font-size: 0.7rem; color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ─── Panels ─── */
+    .panel {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 22px;
+      margin-bottom: 22px;
+      animation: slideUp 0.35s ease both;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .panel-title {
+      font-size: 1.05rem; font-weight: 800;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title i { color: var(--primary); font-size: 0.9rem; }
+
+    /* ─── Outstanding banner ─── */
+    .outstanding-banner {
+      background-color: rgba(245,185,66,0.04);
+      border: 1px solid rgba(245,185,66,0.35);
+      border-radius: var(--radius-card);
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      display: flex; align-items: center;
+      gap: 16px; flex-wrap: wrap;
+      animation: slideUp 0.3s ease both;
+    }
+    .outstanding-banner .banner-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background-color: rgba(245,185,66,0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .outstanding-banner .banner-body { flex: 1; min-width: 180px; }
+    .outstanding-banner .banner-body .lbl {
+      font-size: 0.62rem; text-transform: uppercase;
+      letter-spacing: 0.1em; font-weight: 800;
+      color: var(--accent); margin-bottom: 2px;
+    }
+    .outstanding-banner .banner-body .amt {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--text);
+      font-feature-settings: 'tnum';
+    }
+    .outstanding-banner .banner-body .meta {
+      font-size: 0.75rem; color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ─── Filter tabs ─── */
+    .filter-row {
+      display: flex; align-items: center;
+      gap: 8px; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .filter-chip {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem; font-weight: 700;
+      padding: 6px 12px; border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover { color: var(--text); border-color: var(--primary); }
+    .filter-chip.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      border-color: rgba(0,201,130,0.35);
+    }
+    .filter-spacer { flex: 1; }
+    .filter-select {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.76rem; font-weight: 600;
+      padding: 7px 32px 7px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239AA8A0' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    /* ─── Transaction list ─── */
+    .tx-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .tx-row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto auto auto;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      animation: slideUp 0.25s ease both;
+    }
+    .tx-row:hover {
+      border-color: var(--primary);
+      transform: translateX(2px);
+    }
+    .tx-row .tx-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem;
+    }
+    .tx-row .tx-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .tx-row .tx-icon.danger { background-color: rgba(224,112,112,0.1); color: var(--danger); }
+    .tx-row .tx-icon.muted { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+
+    .tx-row .tx-main { min-width: 0; }
+    .tx-row .tx-main .tx-name {
+      font-size: 0.88rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tx-row .tx-main .tx-ref {
+      font-size: 0.72rem; color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tx-row .tx-date {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap;
+      min-width: 100px;
+      text-align: right;
+    }
+    .tx-row .tx-amount {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem; font-weight: 800;
+      font-feature-settings: 'tnum';
+      color: var(--text);
+      min-width: 110px;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .tx-row .tx-actions {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tx-arrow {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+      transition: all 0.15s;
+    }
+    .tx-row:hover .tx-arrow {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* ─── Status pill ─── */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.65rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 40px;
+      white-space: nowrap;
+    }
+    .status-pill i { font-size: 0.55rem; }
+    .st-paid       { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .st-pending    { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+    .st-processing { background-color: rgba(138,181,255,0.12); color: var(--info); }
+    .st-failed     { background-color: rgba(224,112,112,0.12); color: var(--danger); }
+    .st-cancelled  { background-color: rgba(155,169,161,0.12); color: var(--muted); }
+    .st-refund     { background-color: rgba(138,181,255,0.12); color: var(--info); }
+    .st-unpaid     { background-color: rgba(245,185,66,0.12); color: var(--accent); }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+    }
+    .empty-state .icon-circle {
+      width: 60px; height: 60px; margin: 0 auto 14px;
+      border-radius: 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.4rem;
+    }
+    .empty-state h3 { font-size: 1rem; margin-bottom: 4px; }
+    .empty-state p { font-size: 0.82rem; color: var(--muted); }
+
+    /* ─── Documents ─── */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px) { .doc-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .doc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .doc-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 8px;
+      transition: border-color 0.15s;
+    }
+    .doc-card:hover { border-color: var(--primary); }
+    .doc-card .doc-head {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .doc-card .doc-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .doc-card .doc-icon.gold { background-color: rgba(245,185,66,0.1); color: var(--accent); }
+    .doc-card .doc-info { flex: 1; min-width: 0; }
+    .doc-card .doc-no {
+      font-size: 0.82rem; font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .doc-card .doc-date {
+      font-size: 0.7rem; color: var(--muted);
+      margin-top: 1px;
+    }
+    .doc-card .doc-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .doc-card .doc-foot .btn-sm { padding: 6px 10px; font-size: 0.72rem; }
+
+    /* ─── Detail drawer ─── */
+    .drawer-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.7);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 90;
+    }
+    .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 480px;
+      background-color: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .drawer-head .head-body { flex: 1; min-width: 0; }
+    .drawer-head h2 {
+      font-size: 1.05rem; margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .drawer-head .sub {
+      color: var(--muted); font-size: 0.72rem;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .close-btn {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
+    .drawer-body {
+      padding: 20px;
+      overflow-y: auto; flex: 1;
+    }
+    .drawer-body::-webkit-scrollbar { width: 8px; }
+    .drawer-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 4px; }
+
+    .kv {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 18px;
+    }
+    .kv > div {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .kv .k {
+      font-size: 0.6rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 800; margin-bottom: 3px;
+    }
+    .kv .v {
+      font-size: 0.82rem; font-weight: 600;
+      word-break: break-word;
+    }
+
+    .drawer-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 8px;
+    }
+    .drawer-foot > * { flex: 1; justify-content: center; }
+
+    /* ─── Billing form ─── */
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.72rem;
+      font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .field label .req { color: var(--accent); }
+    .input, .textarea {
+      width: 100%;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-input);
+      padding: 11px 14px; font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input:focus, .textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .textarea { min-height: 80px; resize: vertical; }
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ─── Overlays ─── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated);
+      border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 380px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
+    .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; height: 64px; }
+      .topbar-heading h1 { font-size: 1rem; }
+      .topbar-heading p { display: none; }
+      .content { padding: 20px 16px 40px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .page-heading h2 { font-size: 1.5rem; }
+      .panel { padding: 18px; }
+      .tx-row {
+        grid-template-columns: 40px 1fr auto;
+        row-gap: 4px;
+      }
+      .tx-row .tx-date { grid-column: 2; text-align: left; }
+      .tx-row .tx-amount { grid-column: 2; text-align: left; }
+      .tx-row .tx-actions { grid-column: 3; grid-row: 1 / span 3; }
+      .kv { grid-template-columns: 1fr; }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border); border-radius: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="adv-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-tag">
+          <i class="fas fa-bullhorn"></i> Advertiser Portal
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i> Overview</a>
+        <a href="./campaigns.html?status=active" class="nav-item"><i class="fas fa-play"></i> Active</a>
+        <a href="./campaigns.html" class="nav-item"><i class="fas fa-rectangle-ad"></i> My Advertisements</a>
+        <a href="./create.html" class="nav-item"><i class="fas fa-plus"></i> Create Advertisement</a>
+        <a href="./analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="./payments.html" class="nav-item active"><i class="fas fa-credit-card"></i> Payments &amp; Billing</a>
+
+        <div class="nav-group-label">Account</div>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building"></i> Business Profile</a>
+        <a href="./notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="mailto:support@campusnaija.ng" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="./settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="adv-user" id="advUserBlock">
+          <div class="adv-avatar" id="sideAvatar">AD</div>
+          <div class="adv-user-info">
+            <div class="adv-user-name" id="sideName">Loading…</div>
+            <div class="adv-user-role" id="sideRole">Business Account</div>
+          </div>
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-area">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-heading">
+          <h1>Payments &amp; Billing</h1>
+          <p>Manage transactions, invoices and receipts.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Help" title="Help &amp; support"
+                  onclick="window.open('mailto:billing@campusnaija.ng','_blank')">
+            <i class="far fa-circle-question"></i>
+          </button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="adv-avatar" id="topAvatar">AD</div>
+            <div>
+              <div class="topbar-admin-name" id="topName">Loading…</div>
+              <div class="topbar-admin-role" id="topRole">Business Account</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><i class="fas fa-file-invoice-dollar"></i> Billing center</div>
+            <h2>Payments &amp; Billing</h2>
+            <p>Manage transactions, invoices and receipts.</p>
+          </div>
+          <span class="secure-pill">
+            <i class="fas fa-shield-halved"></i> Secure billing
+          </span>
+        </div>
+
+        <!-- Hero card -->
+        <section class="hero-card" aria-label="Total campaign payments">
+          <div>
+            <div class="label">Total campaign payments</div>
+            <div class="big-amount" id="heroTotal">
+              <span class="sym">₦</span>0
+            </div>
+            <div class="sub" id="heroSub">No payments recorded yet.</div>
+          </div>
+          <div class="side-stat">
+            <div class="amount" id="heroPending">₦0</div>
+            <div class="lbl">Awaiting verification</div>
+          </div>
+        </section>
+
+        <!-- Stats grid -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total paid</div>
+            <div class="stat-value green" id="statPaid">₦0</div>
+            <div class="stat-sub">Verified transactions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Awaiting verification</div>
+            <div class="stat-value gold" id="statPending">₦0</div>
+            <div class="stat-sub">Pending provider check</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Successful transactions</div>
+            <div class="stat-value" id="statSuccess">0</div>
+            <div class="stat-sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Outstanding invoices</div>
+            <div class="stat-value" id="statOutstanding">0</div>
+            <div class="stat-sub">Need attention</div>
+          </div>
+        </section>
+
+        <!-- Outstanding banner (rendered only if there's an unpaid invoice) -->
+        <div id="outstandingSection"></div>
+
+        <!-- Transactions panel -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fas fa-receipt"></i> Recent transactions
+            </div>
+          </div>
+
+          <div class="filter-row">
+            <button class="filter-chip active" data-filter="">All transactions</button>
+            <button class="filter-chip" data-filter="paid">Successful</button>
+            <button class="filter-chip" data-filter="pending">Pending</button>
+            <button class="filter-chip" data-filter="failed">Failed</button>
+            <div class="filter-spacer"></div>
+            <select class="filter-select" id="txPeriodFilter" aria-label="Filter by period">
+              <option value="0">All time</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+          </div>
+
+          <div class="tx-list" id="txList">
+            <div style="padding: 20px 0;">
+              <div class="skeleton" style="height: 60px; margin-bottom: 8px;"></div>
+              <div class="skeleton" style="height: 60px; margin-bottom: 8px;"></div>
+              <div class="skeleton" style="height: 60px;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Documents panel -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fas fa-file-lines"></i> Invoices &amp; receipts
+            </div>
+            <span style="font-size:0.72rem;color:var(--muted);">Auto-generated from successful transactions</span>
+          </div>
+          <div class="doc-grid" id="docGrid">
+            <div class="empty-state">
+              <div class="icon-circle"><i class="fas fa-file"></i></div>
+              <h3>No documents yet</h3>
+              <p>Invoices and receipts appear here once you have transactions.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Billing profile -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fas fa-building"></i> Billing profile
+            </div>
+            <button class="btn-ghost" id="billingToggle">
+              <i class="fas fa-pen"></i> <span id="billingToggleLabel">Edit</span>
+            </button>
+          </div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:18px;">
+            Used on your invoices and receipts. Updating this does not affect past invoices or campaign history.
+          </p>
+
+          <div id="billingView">
+            <div class="empty-state">
+              <div class="icon-circle"><i class="fas fa-building"></i></div>
+              <h3>No billing profile yet</h3>
+              <p>Add your business details so we can generate invoices.</p>
+              <button class="btn-primary" style="margin-top:16px;" id="billingCreateBtn">
+                <i class="fas fa-plus"></i> Add billing profile
+              </button>
+            </div>
+          </div>
+
+          <form id="billingForm" style="display:none;" onsubmit="return false;">
+            <div class="field">
+              <label>Billing name <span class="req">*</span></label>
+              <input class="input" id="bfName" required maxlength="200" placeholder="Business or individual name">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Business registration no.</label>
+                <input class="input" id="bfReg" maxlength="50" placeholder="RC-1234567">
+              </div>
+              <div class="field">
+                <label>Tax ID / TIN</label>
+                <input class="input" id="bfTax" maxlength="50" placeholder="TIN-12345678">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Billing email <span class="req">*</span></label>
+                <input class="input" id="bfEmail" type="email" required placeholder="billing@company.com">
+              </div>
+              <div class="field">
+                <label>Phone number</label>
+                <input class="input" id="bfPhone" maxlength="30" placeholder="+234…">
+              </div>
+            </div>
+            <div class="field">
+              <label>Billing address</label>
+              <textarea class="textarea" id="bfAddr" maxlength="500" placeholder="Street, city, state, country"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+              <button type="button" class="btn-outline" id="billingCancel">Cancel</button>
+              <button type="button" class="btn-primary" id="billingSave">
+                <i class="fas fa-check"></i> Save billing profile
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Transaction detail drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="head-body">
+        <h2 id="drawerTitle">Transaction</h2>
+        <div class="sub" id="drawerSub">Loading…</div>
+      </div>
+      <button class="close-btn" id="drawerClose" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot" id="drawerFoot"></div>
+  </aside>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_advertiser_token';
+      const USER_KEY  = 'campusnaija_advertiser_user';
+      const LOGIN_URL = '/advertiser/login.html';
+
+      const state = {
+        token: null,
+        user: null,
+        payments: [],
+        billing: null,
+        filter: '',
+        days: 0,
+        drawerTx: null,
+        editingBilling: false,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }, opts.headers || {});
+        if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          const e = new Error(msg); e.status = res.status; throw e;
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = $('toast');
+        const txt = $('toastText');
+        if (!el || !txt) return;
+        txt.textContent = msg || '';
+        el.classList.toggle('error', !!isError);
+        const icon = el.querySelector('i');
+        if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
+      }
+
+      const symFor = (currency) => {
+        const c = (currency || 'NGN').toUpperCase();
+        return c === 'NGN' ? '₦' : c === 'USD' ? '$' : c === 'GBP' ? '£' : c === 'EUR' ? '€' : c + ' ';
+      };
+
+      const fmtMoney = (n, currency) => symFor(currency) + Math.round(Number(n || 0)).toLocaleString('en-NG');
+
+      const fmtDate = (d) => {
+        if (!d) return '—';
+        const dt = new Date(d);
+        if (isNaN(dt)) return '—';
+        return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+
+      const initials = (name) => {
+        if (!name) return 'AD';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || 'AD';
+      };
+
+      /* ─── status helpers ─── */
+      function statusInfo(status) {
+        const s = String(status || 'pending').toLowerCase();
+        if (['paid', 'confirmed', 'verified', 'successful'].includes(s))
+          return { key: 'paid', label: 'Successful', cls: 'st-paid', icon: 'fa-circle-check', tone: 'default' };
+        if (['pending', 'unpaid', 'outstanding', 'awaiting'].includes(s))
+          return { key: 'pending', label: 'Pending', cls: 'st-pending', icon: 'fa-clock', tone: 'gold' };
+        if (['processing', 'in_progress'].includes(s))
+          return { key: 'processing', label: 'Processing', cls: 'st-processing', icon: 'fa-hourglass-half', tone: 'info' };
+        if (['failed', 'error', 'declined'].includes(s))
+          return { key: 'failed', label: 'Failed', cls: 'st-failed', icon: 'fa-circle-xmark', tone: 'danger' };
+        if (['cancelled', 'canceled'].includes(s))
+          return { key: 'cancelled', label: 'Cancelled', cls: 'st-cancelled', icon: 'fa-ban', tone: 'muted' };
+        if (['refund_processing', 'refund-pending'].includes(s))
+          return { key: 'refund', label: 'Refund processing', cls: 'st-refund', icon: 'fa-arrows-rotate', tone: 'info' };
+        if (['refunded'].includes(s))
+          return { key: 'refund', label: 'Refunded', cls: 'st-refund', icon: 'fa-rotate-left', tone: 'info' };
+        return { key: 'unknown', label: status || '—', cls: 'st-cancelled', icon: 'fa-circle', tone: 'muted' };
+      }
+
+      function statusPill(status) {
+        const i = statusInfo(status);
+        return `<span class="status-pill ${i.cls}"><i class="fas ${i.icon}"></i> ${esc(i.label)}</span>`;
+      }
+
+      function isPaid(status) {
+        return ['paid', 'confirmed', 'verified', 'successful'].includes(String(status || '').toLowerCase());
+      }
+      function isPending(status) {
+        return ['pending', 'unpaid', 'outstanding', 'awaiting'].includes(String(status || '').toLowerCase());
+      }
+
+      /* ─── user chrome ─── */
+      function renderUser() {
+        if (!state.user) return;
+        const label = state.user.business_name || state.user.name || 'Advertiser';
+        const ini = initials(label);
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+      }
+
+      /* ─── summary rendering ─── */
+      function computeTotals() {
+        let paid = 0, pending = 0, success = 0, outstanding = 0;
+        const currencies = new Set();
+        for (const p of state.payments) {
+          currencies.add((p.currency || 'NGN').toUpperCase());
+          const amt = Number(p.amount || 0);
+          if (isPaid(p.status)) { paid += amt; success += 1; }
+          else if (isPending(p.status)) { pending += amt; outstanding += 1; }
+        }
+        const currency = [...currencies][0] || 'NGN';
+        return { paid, pending, success, outstanding, currency };
+      }
+
+      function renderStats() {
+        const t = computeTotals();
+        $('statPaid').textContent = fmtMoney(t.paid, t.currency);
+        $('statPending').textContent = fmtMoney(t.pending, t.currency);
+        $('statSuccess').textContent = String(t.success);
+        $('statOutstanding').textContent = String(t.outstanding);
+
+        $('heroTotal').innerHTML = `<span class="sym">${symFor(t.currency).trim()}</span>${Math.round(t.paid).toLocaleString('en-NG')}`;
+        $('heroPending').textContent = fmtMoney(t.pending, t.currency);
+
+        const totalTx = state.payments.length;
+        if (!totalTx) {
+          $('heroSub').textContent = 'No payments recorded yet.';
+        } else {
+          $('heroSub').textContent = `${totalTx} transaction${totalTx === 1 ? '' : 's'} recorded · ${t.success} successful`;
+        }
+      }
+
+      /* ─── outstanding banner ─── */
+      function renderOutstanding() {
+        const pendingTxs = state.payments.filter(p => isPending(p.status));
+        const wrap = $('outstandingSection');
+        if (!pendingTxs.length) {
+          wrap.innerHTML = '';
+          return;
+        }
+        const first = pendingTxs[0];
+        const invRef = first.reference || `CN-INV-${String(first.id).slice(0, 4)}`;
+        wrap.innerHTML = `
+          <div class="outstanding-banner">
+            <div class="banner-icon"><i class="fas fa-circle-exclamation"></i></div>
+            <div class="banner-body">
+              <div class="lbl">Outstanding invoice · Awaiting payment</div>
+              <div class="amt">${fmtMoney(first.amount, first.currency)}</div>
+              <div class="meta">
+                Invoice: <strong>${esc(invRef)}</strong>
+                ${first.source ? ' · ' + esc(first.source) : ''}
+                ${first.created_at ? ' · ' + fmtDate(first.created_at) : ''}
+              </div>
+            </div>
+            <button class="btn-primary" onclick="window.location.href='mailto:billing@campusnaija.ng?subject=Pay%20invoice%20${encodeURIComponent(invRef)}'">
+              <i class="fas fa-credit-card"></i> Pay Now
+            </button>
+          </div>
+        `;
+      }
+
+      /* ─── transaction list ─── */
+      function filteredTxs() {
+        return state.payments.filter(p => {
+          if (state.filter && statusInfo(p.status).key !== state.filter) return false;
+          if (state.days) {
+            const t = new Date(p.created_at).getTime();
+            if (!t || Date.now() - t > state.days * 86400000) return false;
+          }
+          return true;
+        });
+      }
+
+      function renderTxList() {
+        const wrap = $('txList');
+        const rows = filteredTxs();
+
+        if (!rows.length) {
+          wrap.innerHTML = `
+            <div class="empty-state">
+              <div class="icon-circle"><i class="fas fa-receipt"></i></div>
+              <h3>No transactions yet</h3>
+              <p>Once you pay for a campaign, your transactions will appear here.</p>
+            </div>`;
+          return;
+        }
+
+        wrap.innerHTML = rows.map(p => {
+          const info = statusInfo(p.status);
+          const iconClass = info.tone === 'gold' ? 'gold' : info.tone === 'danger' ? 'danger' : info.tone === 'muted' ? 'muted' : '';
+          const icon = info.key === 'paid' ? 'fa-circle-check'
+                     : info.key === 'pending' ? 'fa-clock'
+                     : info.key === 'failed' ? 'fa-circle-xmark'
+                     : info.key === 'refund' ? 'fa-rotate-left'
+                     : 'fa-receipt';
+          const ref = p.reference || `#${String(p.id).slice(0, 8)}`;
+          return `
+            <div class="tx-row" data-id="${esc(p.id)}">
+              <div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+              <div class="tx-main">
+                <div class="tx-name">${esc(p.source || 'Campaign payment')}</div>
+                <div class="tx-ref">${esc(ref)}</div>
+              </div>
+              <div class="tx-date">${fmtDate(p.created_at)}</div>
+              <div class="tx-amount">${fmtMoney(p.amount, p.currency)}</div>
+              <div class="tx-actions">
+                ${statusPill(p.status)}
+                <button class="tx-arrow" aria-label="View details"><i class="fas fa-arrow-right"></i></button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      /* ─── documents ─── */
+      function renderDocuments() {
+        const grid = $('docGrid');
+        const docs = [];
+        for (const p of state.payments) {
+          const ref = String(p.reference || p.id).replace(/[^A-Z0-9]/gi, '').slice(-6).toUpperCase();
+          docs.push({
+            kind: 'invoice',
+            id: p.id,
+            label: `CN-INV-${ref}`,
+            date: p.created_at,
+            status: isPaid(p.status) ? 'paid' : isPending(p.status) ? 'unpaid' : 'cancelled',
+            docQuery: 'invoice',
+          });
+          if (isPaid(p.status)) {
+            docs.push({
+              kind: 'receipt',
+              id: p.id,
+              label: `CN-RCP-${ref}`,
+              date: p.created_at,
+              status: 'available',
+              docQuery: 'receipt',
+            });
+          }
+        }
+        // Sort newest first
+        docs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (!docs.length) {
+          grid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1;">
+              <div class="icon-circle"><i class="fas fa-file"></i></div>
+              <h3>No documents yet</h3>
+              <p>Invoices and receipts appear here once you have transactions.</p>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = docs.map(d => {
+          const isInvoice = d.kind === 'invoice';
+          const statusLabel = isInvoice
+            ? (d.status === 'paid' ? 'Paid' : d.status === 'unpaid' ? 'Unpaid' : 'Void')
+            : 'Available';
+          const statusClass = d.status === 'paid' ? 'st-paid' : d.status === 'unpaid' ? 'st-unpaid' : 'st-cancelled';
+          const iconClass = isInvoice ? '' : 'gold';
+          const icon = isInvoice ? 'fa-file-invoice' : 'fa-receipt';
+          const url = `${API_BASE}/api/advertiser/payments/${encodeURIComponent(d.id)}/invoice?doc=${d.docQuery}&token=${encodeURIComponent(state.token)}`;
+
+          return `
+            <div class="doc-card">
+              <div class="doc-head">
+                <div class="doc-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+                <div class="doc-info">
+                  <div class="doc-no">${esc(d.label)}</div>
+                  <div class="doc-date">${isInvoice ? 'Invoice' : 'Payment receipt'} · ${fmtDate(d.date)}</div>
+                </div>
+                <span class="status-pill ${statusClass}">${statusLabel}</span>
+              </div>
+              <div class="doc-foot">
+                <span style="font-size:0.68rem;color:var(--muted);">${d.id ? 'Ref: ' + esc(String(d.id).slice(0,8)) : ''}</span>
+                <button class="btn-outline btn-sm" data-doc-id="${esc(d.id)}" data-doc-type="${d.docQuery}">
+                  <i class="fas fa-download"></i> View / Download
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function openDocument(txId, docType) {
+        const url = `${API_BASE}/api/advertiser/payments/${encodeURIComponent(txId)}/invoice?doc=${docType}&token=${encodeURIComponent(state.token)}`;
+        window.open(url, '_blank');
+      }
+
+      /* ─── drawer ─── */
+      function openDrawer(tx) {
+        state.drawerTx = tx;
+        const ref = tx.reference || `#${String(tx.id).slice(0, 8)}`;
+        $('drawerTitle').textContent = tx.source || 'Transaction';
+        $('drawerSub').innerHTML = `${statusPill(tx.status)} <span>${esc(ref)}</span>`;
+
+        const verificationMap = {
+          paid: 'Verified by provider',
+          confirmed: 'Verified by provider',
+          verified: 'Verified by provider',
+          successful: 'Verified by provider',
+          pending: 'Awaiting verification',
+          processing: 'Verification in progress',
+          failed: 'Payment failed',
+          cancelled: 'Cancelled',
+        };
+        const verification = verificationMap[String(tx.status || '').toLowerCase()] || '—';
+
+        const body = `
+          <div class="detail-section">
+            <div class="kv">
+              <div><div class="k">Reference</div><div class="v">${esc(ref)}</div></div>
+              <div><div class="k">Amount</div><div class="v">${fmtMoney(tx.amount, tx.currency)}</div></div>
+              <div><div class="k">Payment date</div><div class="v">${fmtDate(tx.created_at)}</div></div>
+              <div><div class="k">Payment method</div><div class="v">${esc(tx.payment_method || tx.method || '—')}</div></div>
+              <div><div class="k">Provider</div><div class="v">${esc(tx.provider || '—')}</div></div>
+              <div><div class="k">Provider reference</div><div class="v">${esc(tx.provider_ref || '—')}</div></div>
+            </div>
+            <div class="kv" style="grid-template-columns:1fr;">
+              <div><div class="k">Verification</div><div class="v">${esc(verification)}</div></div>
+            </div>
+            ${tx.notes ? `<div class="kv" style="grid-template-columns:1fr;"><div><div class="k">Notes</div><div class="v">${esc(tx.notes)}</div></div></div>` : ''}
+          </div>
+        `;
+        $('drawerBody').innerHTML = body;
+
+        const footer = [
+          `<button class="btn-outline" data-doc-id="${esc(tx.id)}" data-doc-type="invoice">
+             <i class="fas fa-file-invoice"></i> View invoice
+           </button>`,
+        ];
+        if (isPaid(tx.status)) {
+          footer.push(`<button class="btn-primary" data-doc-id="${esc(tx.id)}" data-doc-type="receipt">
+            <i class="fas fa-download"></i> Download receipt
+          </button>`);
+        } else if (isPending(tx.status)) {
+          footer.push(`<button class="btn-primary" onclick="window.location.href='mailto:billing@campusnaija.ng?subject=Pay%20invoice%20${encodeURIComponent(ref)}'">
+            <i class="fas fa-credit-card"></i> Pay now
+          </button>`);
+        }
+        $('drawerFoot').innerHTML = footer.join('');
+
+        $('drawer').classList.add('open');
+        $('drawer').setAttribute('aria-hidden', 'false');
+        $('drawerBackdrop').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        $('drawer').classList.remove('open');
+        $('drawer').setAttribute('aria-hidden', 'true');
+        $('drawerBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+        state.drawerTx = null;
+      }
+
+      /* ─── billing profile ─── */
+      function renderBilling() {
+        const b = state.billing;
+        const view = $('billingView');
+        const form = $('billingForm');
+
+        if (state.editingBilling || !b) {
+          view.style.display = 'none';
+          form.style.display = '';
+          $('billingToggleLabel').textContent = b ? 'View' : 'Edit';
+          if (b) {
+            $('bfName').value = b.billing_name || '';
+            $('bfReg').value = b.business_reg_no || '';
+            $('bfEmail').value = b.billing_email || '';
+            $('bfPhone').value = b.phone || '';
+            $('bfAddr').value = b.address || '';
+            $('bfTax').value = b.tax_id || '';
+          } else if (state.user) {
+            $('bfName').value = state.user.business_name || state.user.name || '';
+            $('bfEmail').value = state.user.email || '';
+            $('bfPhone').value = state.user.phone || '';
+          }
+          return;
+        }
+
+        form.style.display = 'none';
+        view.style.display = '';
+        $('billingToggleLabel').textContent = 'Edit';
+        view.innerHTML = `
+          <div class="kv" style="grid-template-columns:1fr 1fr;">
+            <div><div class="k">Billing name</div><div class="v">${esc(b.billing_name || '—')}</div></div>
+            <div><div class="k">Billing email</div><div class="v">${esc(b.billing_email || '—')}</div></div>
+            <div><div class="k">Phone</div><div class="v">${esc(b.phone || '—')}</div></div>
+            <div><div class="k">Business reg. no.</div><div class="v">${esc(b.business_reg_no || '—')}</div></div>
+            <div><div class="k">Tax ID / TIN</div><div class="v">${esc(b.tax_id || '—')}</div></div>
+            <div><div class="k">Updated</div><div class="v">${fmtDate(b.updated_at || b.created_at)}</div></div>
+            <div style="grid-column:1/-1;"><div class="k">Billing address</div><div class="v" style="white-space:pre-line;">${esc(b.address || '—')}</div></div>
+          </div>
+        `;
+      }
+
+      async function saveBilling() {
+        const payload = {
+          billing_name: $('bfName').value.trim(),
+          business_reg_no: $('bfReg').value.trim() || null,
+          billing_email: $('bfEmail').value.trim(),
+          phone: $('bfPhone').value.trim() || null,
+          address: $('bfAddr').value.trim() || null,
+          tax_id: $('bfTax').value.trim() || null,
+        };
+        if (!payload.billing_name) { toast('Billing name is required', true); return; }
+        if (!payload.billing_email) { toast('Billing email is required', true); return; }
+
+        const btn = $('billingSave');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving…';
+
+        try {
+          const data = await api('/api/advertiser/billing', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+          });
+          state.billing = data.billing;
+          state.editingBilling = false;
+          renderBilling();
+          toast('Billing profile saved');
+        } catch (e) {
+          toast(e.message || 'Could not save billing profile', true);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = original;
+        }
+      }
+
+      /* ─── data load ─── */
+      async function loadPayments() {
+        try {
+          const data = await api('/api/advertiser/payments');
+          state.payments = Array.isArray(data.payments) ? data.payments : (Array.isArray(data) ? data : []);
+        } catch (e) {
+          if (e.message !== 'Session expired') {
+            console.warn('[payments]', e.message);
+            toast(e.message || 'Could not load payments', true);
+          }
+          state.payments = [];
+        }
+        renderStats();
+        renderOutstanding();
+        renderTxList();
+        renderDocuments();
+      }
+
+      async function loadBilling() {
+        try {
+          const data = await api('/api/advertiser/billing');
+          state.billing = data.billing || null;
+        } catch (e) {
+          if (e.status !== 404 && e.message !== 'Session expired') {
+            console.warn('[billing]', e.message);
+          }
+          state.billing = null;
+        }
+        renderBilling();
+      }
+
+      /* ─── wiring ─── */
+      function wireEvents() {
+        // Sidebar
+        $('menuToggle').addEventListener('click', () => {
+          const open = $('sidebar').classList.toggle('open');
+          $('sidebarOverlay').classList.toggle('active', open);
+          $('menuToggle').setAttribute('aria-expanded', String(open));
+        });
+        $('sidebarOverlay').addEventListener('click', () => {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('active');
+            if ($('drawer').classList.contains('open')) closeDrawer();
+          }
+        });
+
+        // Logout
+        $('sideLogout').addEventListener('click', () => {
+          if (!confirm('Sign out of the advertiser portal?')) return;
+          redirectToLogin();
+        });
+
+        // Filters
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            state.filter = chip.getAttribute('data-filter') || '';
+            renderTxList();
+          });
+        });
+        $('txPeriodFilter').addEventListener('change', (e) => {
+          state.days = Number(e.target.value) || 0;
+          renderTxList();
+        });
+
+        // Tx row click
+        $('txList').addEventListener('click', (e) => {
+          const row = e.target.closest('.tx-row');
+          if (!row) return;
+          const id = row.getAttribute('data-id');
+          const tx = state.payments.find(p => p.id === id);
+          if (tx) openDrawer(tx);
+        });
+
+        // Doc download
+        $('docGrid').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-doc-id]');
+          if (!btn) return;
+          openDocument(btn.getAttribute('data-doc-id'), btn.getAttribute('data-doc-type'));
+        });
+
+        // Drawer close & actions
+        $('drawerClose').addEventListener('click', closeDrawer);
+        $('drawerBackdrop').addEventListener('click', closeDrawer);
+        $('drawerFoot').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-doc-id]');
+          if (btn) {
+            openDocument(btn.getAttribute('data-doc-id'), btn.getAttribute('data-doc-type'));
+          }
+        });
+
+        // Billing toggle
+        $('billingToggle').addEventListener('click', () => {
+          state.editingBilling = !state.editingBilling;
+          renderBilling();
+        });
+        $('billingCancel').addEventListener('click', () => {
+          state.editingBilling = false;
+          renderBilling();
+        });
+        $('billingSave').addEventListener('click', saveBilling);
+
+        // Empty state create button (delegated)
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('#billingCreateBtn')) {
+            state.editingBilling = true;
+            renderBilling();
+          }
+        });
+      }
+
+      /* ─── boot ─── */
+      (async function boot() {
+        try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!state.token) { redirectToLogin('not_signed_in'); return; }
+
+        try {
+          const cached = localStorage.getItem(USER_KEY);
+          if (cached) state.user = JSON.parse(cached);
+        } catch (_) {}
+
+        try {
+          const me = await api('/api/advertiser/me');
+          if (me && me.user) {
+            state.user = me.user;
+            try { localStorage.setItem(USER_KEY, JSON.stringify(state.user)); } catch (_) {}
+          }
+        } catch (e) {
+          if (e.message !== 'Session expired') console.warn('[me]', e.message);
+        }
+
+        if (!state.user) { redirectToLogin('not_signed_in'); return; }
+
+        renderUser();
+        wireEvents();
+
+        await Promise.all([loadPayments(), loadBilling()]);
+      })();
+
+    })();
+  </script>
+</body>
+</html>

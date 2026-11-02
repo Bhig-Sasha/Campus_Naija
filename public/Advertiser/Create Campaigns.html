@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Create Advertisement — CampusNaija Advertiser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background-color: #070A09;
+      font-family: 'Inter', sans-serif;
+      color: #F5F7F6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    }
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: 'Inter', sans-serif; }
+    :root {
+      --bg: #070A09;
+      --surface: #0D1210;
+      --elevated: #111815;
+      --primary: #00C982;
+      --primary-dark: #00b374;
+      --accent: #F5B942;
+      --text: #F5F7F6;
+      --muted: #9AA8A0;
+      --border: #29352F;
+      --danger: #e07070;
+      --radius-card: 16px;
+      --radius-btn: 11px;
+      --radius-input: 11px;
+      --sidebar-w: 264px;
+      --shadow-soft: 0 12px 32px rgba(0,0,0,0.35);
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 6px;
+      display: block;
+      min-height: 12px;
+    }
+
+    .adv-shell { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 60;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar-brand {
+      padding: 24px 22px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    }
+    .sidebar-brand .logo span { color: var(--primary); }
+    .sidebar-brand .portal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--primary);
+      padding: 4px 10px; border-radius: 40px;
+      background-color: rgba(0,201,130,0.1);
+      border: 1px solid rgba(0,201,130,0.25);
+    }
+    .sidebar-nav {
+      flex: 1; overflow-y: auto;
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .nav-group-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--muted);
+      transition: background 0.15s, color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item i {
+      width: 20px; text-align: center;
+      font-size: 0.9rem; flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+    .nav-item:hover {
+      background-color: var(--elevated); color: var(--text);
+      transform: translateX(2px);
+    }
+    .nav-item:hover i { transform: scale(1.1); }
+    .nav-item.active {
+      background-color: rgba(0,201,130,0.1);
+      color: var(--primary);
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background-color: var(--primary);
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar-footer {
+      padding: 14px 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .adv-user {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .adv-user:hover { background-color: var(--elevated); }
+    .adv-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #00C982, #008f5c);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.82rem; color: #070A09;
+      flex-shrink: 0;
+    }
+    .adv-user-info { flex: 1; min-width: 0; }
+    .adv-user-name {
+      font-size: 0.85rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .adv-user-role {
+      font-size: 0.68rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .logout-btn {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 0.9rem; cursor: pointer; padding: 6px;
+      border-radius: 8px; transition: color 0.15s;
+    }
+    .logout-btn:hover { color: var(--danger); }
+
+    /* ─── Main ─── */
+    .main-area {
+      flex: 1; margin-left: var(--sidebar-w);
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ─── Topbar ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background-color: rgba(13, 18, 16, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 72px;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent; border: none;
+      color: var(--text); font-size: 1.2rem;
+      cursor: pointer; padding: 8px; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .topbar-heading { flex: 1; min-width: 0; }
+    .topbar-heading h1 {
+      font-size: 1.25rem; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-heading p {
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .icon-btn {
+      position: relative;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; padding: 9px 11px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover {
+      background-color: var(--elevated); color: var(--primary);
+      border-color: var(--border);
+    }
+    .topbar-divider {
+      width: 1px; height: 26px;
+      background-color: var(--border); margin: 0 6px;
+    }
+    .topbar-admin {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 6px 6px; border-radius: 40px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .topbar-admin:hover { background-color: var(--elevated); }
+    .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
+    .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
+    .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
+
+    .btn-primary {
+      background-color: var(--primary); color: #070A09;
+      font-weight: 800; font-size: 0.85rem;
+      padding: 11px 18px; border-radius: var(--radius-btn);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,201,130,0.28);
+    }
+    .btn-primary:disabled {
+      background-color: #33463d; color: var(--muted);
+      cursor: not-allowed; transform: none; box-shadow: none;
+    }
+    .btn-outline {
+      background-color: transparent; color: var(--text);
+      font-weight: 600; font-size: 0.82rem;
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      border: 1px solid var(--border); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .content { padding: 28px 24px 56px; flex: 1; max-width: 1180px; margin: 0 auto; width: 100%; }
+
+    /* ─── Page heading ─── */
+    .page-heading {
+      margin-bottom: 22px;
+      display: flex; flex-wrap: wrap; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+    }
+    .page-heading .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--primary); font-weight: 700;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
+    .page-heading p { color: var(--muted); font-size: 0.92rem; }
+
+    .btn-save {
+      display: inline-flex; align-items: center; gap: 6px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 14px; border-radius: 10px;
+      font-size: 0.78rem; font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-save:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-save.saved { border-color: var(--primary); color: var(--primary); }
+
+    /* ─── Progress ─── */
+    .progress-wrap {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 18px 20px;
+      margin-bottom: 22px;
+    }
+    .progress-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .progress-head .label {
+      font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .progress-head .step-of {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--primary);
+    }
+    .progress-head .step-of span { color: var(--muted); font-weight: 500; }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      position: relative;
+    }
+    @media (max-width: 720px) {
+      .stepper { grid-template-columns: repeat(5, auto); overflow-x: auto; gap: 6px; padding-bottom: 6px; }
+      .step .step-label { display: none; }
+    }
+    .step {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      position: relative; cursor: pointer;
+      user-select: none;
+      min-width: 0;
+    }
+    .step .dot {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background-color: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 800;
+      transition: all 0.2s;
+    }
+    .step .dot i { font-size: 0.72rem; }
+    .step .step-label {
+      font-size: 0.68rem; font-weight: 700;
+      color: var(--muted); text-align: center;
+      white-space: nowrap;
+    }
+    .step.active .dot {
+      border-color: var(--primary); color: var(--primary);
+      background-color: rgba(0,201,130,0.08);
+      box-shadow: 0 0 0 4px rgba(0,201,130,0.12);
+    }
+    .step.active .step-label { color: var(--primary); }
+    .step.done .dot {
+      background-color: var(--primary); border-color: var(--primary);
+      color: #051410;
+    }
+    .step.done .step-label { color: var(--text); }
+    .step.locked .dot { opacity: 0.55; }
+    .step.locked { cursor: not-allowed; }
+
+    /* ─── Panels ─── */
+    .step-panel {
+      display: none;
+      animation: slideUp 0.3s ease both;
+    }
+    .step-panel.active { display: block; }
+
+    .panel {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .panel-title {
+      font-size: 1.15rem; font-weight: 800;
+      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title i { color: var(--primary); font-size: 1rem; }
+    .panel-sub {
+      color: var(--muted); font-size: 0.86rem;
+      margin-bottom: 20px;
+    }
+
+    /* ─── Form ─── */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 0.72rem;
+      font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .field label .req { color: var(--accent); }
+    .input,
+    .textarea,
+    select.input {
+      width: 100%;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-input);
+      padding: 11px 14px; font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input:focus,
+    .textarea:focus,
+    select.input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .textarea { min-height: 88px; resize: vertical; }
+    .field-hint {
+      font-size: 0.72rem; color: var(--muted);
+      margin-top: 6px;
+    }
+    .field-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ─── Format cards ─── */
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (min-width: 720px) { .format-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .format-grid { grid-template-columns: repeat(5, 1fr); } }
+
+    .format-card {
+      background-color: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; flex-direction: column; gap: 10px;
+      position: relative;
+      user-select: none;
+    }
+    .format-card:hover {
+      border-color: rgba(0,201,130,0.4);
+      transform: translateY(-2px);
+    }
+    .format-card.selected {
+      border-color: var(--primary);
+      background-color: rgba(0,201,130,0.04);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .format-card.selected::after {
+      content: '\f058';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute; top: 10px; right: 10px;
+      color: var(--primary); font-size: 0.9rem;
+    }
+    .format-shape {
+      height: 54px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.65rem;
+      font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: border-color 0.15s, color 0.15s;
+      background-color: rgba(0,0,0,0.2);
+    }
+    .format-card.selected .format-shape {
+      border-color: var(--primary); color: var(--primary);
+    }
+    .format-card[data-format="large"]    .format-shape { height: 54px; }
+    .format-card[data-format="medium"]   .format-shape { height: 46px; }
+    .format-card[data-format="small"]    .format-shape { height: 36px; }
+    .format-card[data-format="square"]   .format-shape { height: 54px; width: 54px; margin: 0 auto; }
+    .format-card[data-format="vertical"] .format-shape { height: 62px; width: 40px; margin: 0 auto; }
+
+    .format-card .format-name {
+      font-size: 0.88rem; font-weight: 800;
+    }
+    .format-card .format-desc {
+      font-size: 0.72rem; color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ─── Upload zone ─── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 34px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      background-color: rgba(0,0,0,0.15);
+    }
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--primary);
+      background-color: rgba(0,201,130,0.04);
+    }
+    .upload-zone .icon-wrap {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--primary); font-size: 1.4rem;
+    }
+    .upload-zone h3 {
+      font-size: 0.95rem; margin-bottom: 4px;
+    }
+    .upload-zone p {
+      font-size: 0.8rem; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .upload-zone .btn-outline { margin: 0 auto; }
+
+    .upload-preview {
+      display: flex; align-items: center; gap: 14px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 14px;
+    }
+    .upload-preview .thumb {
+      width: 68px; height: 54px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0,201,130,0.2), rgba(245,185,66,0.12));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.2rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .upload-preview .thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .upload-preview .info { flex: 1; min-width: 0; }
+    .upload-preview .info .fname {
+      font-size: 0.82rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .upload-preview .info .fsize {
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .upload-preview .remove {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .upload-preview .remove:hover { color: var(--danger); border-color: var(--danger); }
+
+    .req-list {
+      margin: 20px 0 0;
+      padding: 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .req-list h4 {
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px; font-weight: 800;
+    }
+    .req-list ul {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .req-list li {
+      font-size: 0.78rem; color: var(--text);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .req-list li i {
+      color: var(--primary); font-size: 0.7rem;
+      margin-top: 3px; flex-shrink: 0;
+    }
+
+    .upload-progress {
+      height: 6px;
+      background-color: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+    .upload-progress.active { display: block; }
+    .upload-progress .bar {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.2s;
+    }
+
+    /* ─── Duration ─── */
+    .duration-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 720px) { .duration-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .duration-card {
+      background-color: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 16px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      position: relative;
+      user-select: none;
+    }
+    .duration-card:hover {
+      border-color: rgba(0,201,130,0.4);
+      transform: translateY(-2px);
+    }
+    .duration-card.selected {
+      border-color: var(--primary);
+      background-color: rgba(0,201,130,0.04);
+      box-shadow: 0 0 0 3px rgba(0,201,130,0.12);
+    }
+    .duration-card.selected::after {
+      content: '\f058';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute; top: 10px; right: 10px;
+      color: var(--primary); font-size: 0.85rem;
+    }
+    .duration-card .days {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.7rem; font-weight: 800;
+      color: var(--primary); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .duration-card .days .unit {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--muted); margin-left: 4px;
+      letter-spacing: 0.1em;
+    }
+    .duration-card .desc {
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .duration-card .price {
+      margin-top: 8px;
+      font-size: 0.78rem; font-weight: 800;
+      color: var(--text);
+      font-feature-settings: 'tnum';
+    }
+    .duration-card .price .discount {
+      display: block;
+      font-size: 0.65rem; color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .custom-duration {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .custom-duration .row {
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .custom-duration input {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem; width: 120px;
+      outline: none;
+    }
+    .custom-duration input:focus { border-color: var(--primary); }
+
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 12px;
+      background-color: rgba(245,185,66,0.06);
+      border: 1px solid rgba(245,185,66,0.28);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .info-banner i {
+      color: var(--accent); font-size: 1rem;
+      margin-top: 2px; flex-shrink: 0;
+    }
+    .info-banner strong {
+      color: var(--accent); font-size: 0.78rem;
+      display: block; margin-bottom: 2px;
+    }
+    .info-banner p {
+      font-size: 0.8rem; color: var(--text);
+    }
+
+    /* ─── Review & Payment ─── */
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 1024px) {
+      .review-grid { grid-template-columns: 1.15fr 1fr; }
+    }
+
+    .preview-tabs {
+      display: inline-flex;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 14px;
+    }
+    .preview-tab {
+      background: transparent; border: none;
+      color: var(--muted);
+      font-size: 0.75rem; font-weight: 700;
+      padding: 7px 14px; border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .preview-tab.active {
+      background-color: var(--primary); color: #051410;
+    }
+
+    .device-frame {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 320px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .device-frame.mobile {
+      max-width: 280px;
+      margin: 0 auto;
+      border-radius: 24px;
+      padding: 10px;
+      min-height: 400px;
+      position: relative;
+    }
+    .device-frame.mobile::before {
+      content: '';
+      position: absolute; top: 6px; left: 50%;
+      transform: translateX(-50%);
+      width: 42px; height: 4px; border-radius: 3px;
+      background-color: var(--border);
+    }
+
+    .ad-preview {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(0,201,130,0.15), rgba(245,185,66,0.1));
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .ad-preview .ad-media {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 2rem;
+      overflow: hidden;
+    }
+    .ad-preview .ad-media img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .ad-preview .ad-body {
+      padding: 14px;
+    }
+    .ad-preview .ad-tag {
+      display: inline-block;
+      font-size: 0.58rem; letter-spacing: 0.14em;
+      font-weight: 800; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .ad-preview .ad-headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800; font-size: 1rem;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+    .ad-preview .ad-desc {
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .ad-preview .ad-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background-color: var(--primary); color: #051410;
+      font-weight: 800; font-size: 0.72rem;
+      padding: 7px 12px; border-radius: 8px;
+    }
+    .ad-preview .sponsored {
+      position: absolute; top: 8px; right: 8px;
+      background-color: rgba(0,0,0,0.55);
+      color: var(--text);
+      font-size: 0.55rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 7px; border-radius: 40px;
+    }
+
+    .summary-list {
+      display: flex; flex-direction: column;
+      gap: 10px;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .k {
+      font-size: 0.75rem; color: var(--muted);
+      font-weight: 600;
+    }
+    .summary-row .v {
+      font-size: 0.85rem; font-weight: 700;
+      text-align: right;
+      word-break: break-word;
+      max-width: 60%;
+    }
+    .summary-row.total {
+      padding-top: 14px; margin-top: 4px;
+      border-top: 1px solid var(--border);
+      border-bottom: none;
+    }
+    .summary-row.total .k { font-size: 0.85rem; color: var(--text); font-weight: 800; }
+    .summary-row.total .v {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.3rem; color: var(--primary);
+    }
+    .summary-row.total .v small {
+      display: block; font-size: 0.62rem;
+      color: var(--muted); font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .steps-after {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 12px;
+      margin-top: 8px;
+    }
+    .steps-after li {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .steps-after .num {
+      width: 26px; height: 26px;
+      border-radius: 8px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--primary); font-size: 0.72rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .steps-after .text {
+      font-size: 0.82rem; line-height: 1.45;
+    }
+    .steps-after .text strong {
+      display: block; color: var(--text);
+      font-weight: 700; margin-bottom: 1px;
+    }
+    .steps-after .text span { color: var(--muted); }
+
+    .terms-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: 16px;
+      font-size: 0.78rem; color: var(--text);
+    }
+    .terms-check input {
+      margin-top: 3px; width: 16px; height: 16px;
+      accent-color: var(--primary);
+      flex-shrink: 0; cursor: pointer;
+    }
+    .terms-check a {
+      color: var(--primary); text-decoration: underline;
+    }
+
+    /* ─── Footer nav ─── */
+    .wizard-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    .wizard-footer .right {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wizard-footer .hint {
+      font-size: 0.72rem; color: var(--muted);
+    }
+
+    /* ─── Overlays ─── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 55; backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      background-color: var(--elevated);
+      border: 1px solid var(--primary);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      transform: translateY(120%); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      max-width: 380px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
+    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
+    .toast.error i { color: var(--danger); }
+    .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Success modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 150;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.show { display: flex; animation: fadeIn 0.2s ease; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      max-width: 440px; width: 100%;
+      text-align: center;
+      animation: slideUp 0.3s ease both;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .modal .success-icon {
+      width: 64px; height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background-color: rgba(0,201,130,0.12);
+      border: 2px solid var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary); font-size: 1.6rem;
+    }
+    .modal h3 {
+      font-size: 1.3rem; margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 0.88rem; color: var(--muted);
+      margin-bottom: 22px;
+    }
+    .modal .modal-actions {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1023px) {
+      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+      .topbar { padding: 0 16px; height: 64px; }
+      .topbar-heading h1 { font-size: 1rem; }
+      .topbar-heading p { display: none; }
+      .content { padding: 20px 16px 40px; }
+    }
+    @media (max-width: 720px) {
+      .topbar-admin-name, .topbar-admin-role { display: none; }
+      .topbar-divider { display: none; }
+      .btn-primary .btn-primary-text { display: none; }
+      .btn-primary { padding: 11px 14px; }
+      .page-heading h2 { font-size: 1.5rem; }
+      .panel { padding: 18px; }
+      .format-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .sidebar-nav::-webkit-scrollbar { width: 6px; }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border); border-radius: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <div class="adv-shell">
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
+      <div class="sidebar-brand">
+        <div class="logo">Campus<span>Naija</span></div>
+        <div class="portal-tag">
+          <i class="fas fa-bullhorn"></i> Advertiser Portal
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">Workspace</div>
+        <a href="./dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i> Overview</a>
+        <a href="./campaigns.html?status=active" class="nav-item"><i class="fas fa-play"></i> Active</a>
+        <a href="./campaigns.html" class="nav-item"><i class="fas fa-rectangle-ad"></i> My Advertisements</a>
+        <a href="./create.html" class="nav-item active"><i class="fas fa-plus"></i> Create Advertisement</a>
+        <a href="./analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="./payments.html" class="nav-item"><i class="fas fa-credit-card"></i> Payments &amp; Billing</a>
+
+        <div class="nav-group-label">Account</div>
+        <a href="./profile.html" class="nav-item"><i class="fas fa-building"></i> Business Profile</a>
+        <a href="./notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="mailto:support@campusnaija.ng" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="./settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="adv-user" id="advUserBlock">
+          <div class="adv-avatar" id="sideAvatar">AD</div>
+          <div class="adv-user-info">
+            <div class="adv-user-name" id="sideName">Loading…</div>
+            <div class="adv-user-role" id="sideRole">Business Account</div>
+          </div>
+          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── Main ─── -->
+    <div class="main-area">
+
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="topbar-heading">
+          <h1>Create Advertisement</h1>
+          <p>Build your next campaign on CampusNaija.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Help" title="Help &amp; support"
+                  onclick="window.open('mailto:support@campusnaija.ng','_blank')">
+            <i class="far fa-circle-question"></i>
+          </button>
+          <div class="topbar-divider" aria-hidden="true"></div>
+          <div class="topbar-admin">
+            <div class="adv-avatar" id="topAvatar">AD</div>
+            <div>
+              <div class="topbar-admin-name" id="topName">Loading…</div>
+              <div class="topbar-admin-role" id="topRole">Business Account</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><i class="fas fa-wand-magic-sparkles"></i> Campaign builder</div>
+            <h2>Create Advertisement</h2>
+            <p>Answer five quick steps to launch your campaign.</p>
+          </div>
+          <button class="btn-save" id="saveDraftBtn">
+            <i class="fas fa-floppy-disk"></i>
+            <span id="saveDraftLabel">Save draft</span>
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap">
+          <div class="progress-head">
+            <div>
+              <div class="label">Campaign progress</div>
+              <div class="step-of">Step <span id="stepCounter">1</span> of 5 · <span id="stepName" style="color:var(--muted);font-weight:500;">Campaign details</span></div>
+            </div>
+          </div>
+          <div class="stepper" id="stepper">
+            <div class="step active" data-step="1">
+              <div class="dot"><i class="fas fa-list-check"></i></div>
+              <div class="step-label">Details</div>
+            </div>
+            <div class="step locked" data-step="2">
+              <div class="dot"><i class="fas fa-crop-simple"></i></div>
+              <div class="step-label">Format</div>
+            </div>
+            <div class="step locked" data-step="3">
+              <div class="dot"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="step-label">Creative</div>
+            </div>
+            <div class="step locked" data-step="4">
+              <div class="dot"><i class="fas fa-calendar-days"></i></div>
+              <div class="step-label">Duration</div>
+            </div>
+            <div class="step locked" data-step="5">
+              <div class="dot"><i class="fas fa-credit-card"></i></div>
+              <div class="step-label">Review</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── STEP 1 ─── -->
+        <section class="step-panel active" data-panel="1">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-list-check"></i> Campaign details</div>
+            <div class="panel-sub">Tell us about your campaign. You can edit these later.</div>
+
+            <div class="field">
+              <label>Campaign name <span class="req">*</span></label>
+              <input class="input" id="fName" placeholder="e.g. Brand Awareness Campaign" maxlength="120" autocomplete="off">
+              <div class="field-hint">Internal name — used to identify your campaign in the dashboard.</div>
+            </div>
+
+            <div class="field">
+              <label>Advertisement headline <span class="req">*</span></label>
+              <input class="input" id="fHeadline" placeholder="Enter your advertisement headline" maxlength="90" autocomplete="off">
+              <div class="field-hint"><span id="headlineCount">0</span> / 90 characters</div>
+            </div>
+
+            <div class="field">
+              <label>Short description</label>
+              <textarea class="textarea" id="fDescription" placeholder="Describe what you're promoting…" maxlength="300"></textarea>
+              <div class="field-hint"><span id="descCount">0</span> / 300 characters</div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Destination URL <span class="req">*</span></label>
+                <input class="input" id="fUrl" type="url" placeholder="https://yourwebsite.com" autocomplete="off">
+              </div>
+              <div class="field">
+                <label>Call-to-action <span class="req">*</span></label>
+                <select class="input" id="fCta">
+                  <option value="Learn More">Learn More</option>
+                  <option value="Visit Website">Visit Website</option>
+                  <option value="Apply Now">Apply Now</option>
+                  <option value="Shop Now">Shop Now</option>
+                  <option value="Get Started">Get Started</option>
+                  <option value="Contact Us">Contact Us</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <a href="./dashboard.html" class="btn-outline">
+              <i class="fas fa-arrow-left"></i> Cancel
+            </a>
+            <div class="right">
+              <button class="btn-primary" data-next="1">
+                Continue <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── STEP 2 ─── -->
+        <section class="step-panel" data-panel="2">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-crop-simple"></i> Choose advertisement format</div>
+            <div class="panel-sub">Select the creative size. The administrator assigns the exact placement later.</div>
+
+            <div class="format-grid" id="formatGrid">
+              <div class="format-card" data-format="large">
+                <div class="format-shape">Large</div>
+                <div class="format-name">Large</div>
+                <div class="format-desc">Wide promotional banner</div>
+              </div>
+              <div class="format-card" data-format="medium">
+                <div class="format-shape">Medium</div>
+                <div class="format-name">Medium</div>
+                <div class="format-desc">Standard promotional area</div>
+              </div>
+              <div class="format-card" data-format="small">
+                <div class="format-shape">Small</div>
+                <div class="format-name">Small</div>
+                <div class="format-desc">Compact promotional banner</div>
+              </div>
+              <div class="format-card" data-format="square">
+                <div class="format-shape">Square</div>
+                <div class="format-name">Square</div>
+                <div class="format-desc">Square promotional creative</div>
+              </div>
+              <div class="format-card" data-format="vertical">
+                <div class="format-shape">Vertical</div>
+                <div class="format-name">Vertical</div>
+                <div class="format-desc">Tall promotional creative</div>
+              </div>
+            </div>
+
+            <div class="info-banner" style="margin-top:20px;">
+              <i class="fas fa-circle-info"></i>
+              <div>
+                <strong>About the placement</strong>
+                <p>Pixel dimensions and exact placement depend on available inventory. The administrator will match your creative to the best-fitting slot after review.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn-outline" data-prev="2">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="right">
+              <button class="btn-primary" data-next="2">
+                Continue <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── STEP 3 ─── -->
+        <section class="step-panel" data-panel="3">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-cloud-upload-alt"></i> Upload creative</div>
+            <div class="panel-sub">Drag and drop your creative, or browse files from your device.</div>
+
+            <div class="upload-zone" id="uploadZone">
+              <div class="icon-wrap"><i class="fas fa-cloud-arrow-up"></i></div>
+              <h3>Drop your creative here</h3>
+              <p>Or browse files from your device</p>
+              <button class="btn-outline" type="button">
+                <i class="fas fa-folder-open"></i> Browse files
+              </button>
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/svg+xml,video/mp4" hidden>
+              <div class="upload-progress" id="uploadProgress">
+                <div class="bar" id="uploadBar"></div>
+              </div>
+            </div>
+
+            <div id="uploadPreview"></div>
+
+            <div class="req-list">
+              <h4>Creative requirements</h4>
+              <ul>
+                <li><i class="fas fa-circle-check"></i> Supported images: JPG, PNG, WebP (max 8 MB).</li>
+                <li><i class="fas fa-circle-check"></i> Supported videos: MP4 (max 50 MB).</li>
+                <li><i class="fas fa-circle-check"></i> Creative must match the selected format.</li>
+                <li><i class="fas fa-circle-check"></i> You'll preview before submitting.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn-outline" data-prev="3">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="right">
+              <button class="btn-primary" data-next="3">
+                Continue <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── STEP 4 ─── -->
+        <section class="step-panel" data-panel="4">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-calendar-days"></i> Select campaign duration</div>
+            <div class="panel-sub">How long should your advertisement run?</div>
+
+            <div class="duration-grid" id="durationGrid">
+              <div class="duration-card" data-days="7">
+                <div class="days">7<span class="unit">DAYS</span></div>
+                <div class="desc">One week</div>
+                <div class="price" data-price="7">—</div>
+              </div>
+              <div class="duration-card" data-days="14">
+                <div class="days">14<span class="unit">DAYS</span></div>
+                <div class="desc">Two weeks</div>
+                <div class="price" data-price="14">—</div>
+              </div>
+              <div class="duration-card selected" data-days="30">
+                <div class="days">30<span class="unit">DAYS</span></div>
+                <div class="desc">One month</div>
+                <div class="price" data-price="30">—</div>
+              </div>
+              <div class="duration-card" data-days="60">
+                <div class="days">60<span class="unit">DAYS</span></div>
+                <div class="desc">Two months</div>
+                <div class="price" data-price="60">—</div>
+              </div>
+            </div>
+
+            <div class="custom-duration">
+              <label style="font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px;">
+                Custom duration
+              </label>
+              <div class="row">
+                <input type="number" id="customDays" min="1" max="365" placeholder="e.g. 45" style="width:120px;">
+                <span style="color:var(--muted);font-size:0.8rem;">days</span>
+                <button class="btn-outline" id="applyCustom">Apply</button>
+                <span id="customPrice" style="color:var(--muted);font-size:0.78rem;margin-left:auto;"></span>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <i class="fas fa-circle-info"></i>
+              <div>
+                <strong>Important</strong>
+                <p>Your campaign duration begins when your advertisement is actually published — not when you submit for review or make payment.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn-outline" data-prev="4">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="right">
+              <button class="btn-primary" data-next="4">
+                Continue <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── STEP 5 ─── -->
+        <section class="step-panel" data-panel="5">
+          <div class="panel">
+            <div class="panel-title"><i class="fas fa-credit-card"></i> Preview &amp; payment</div>
+            <div class="panel-sub">Review your campaign, then proceed to payment.</div>
+
+            <div class="review-grid">
+              <!-- Preview column -->
+              <div>
+                <div class="preview-tabs">
+                  <button class="preview-tab active" data-mode="desktop">
+                    <i class="fas fa-desktop"></i> Desktop
+                  </button>
+                  <button class="preview-tab" data-mode="mobile">
+                    <i class="fas fa-mobile-screen"></i> Mobile
+                  </button>
+                </div>
+                <div class="device-frame" id="deviceFrame">
+                  <div class="ad-preview" id="adPreview">
+                    <div class="sponsored">Sponsored</div>
+                    <div class="ad-media" id="adMedia">
+                      <i class="fas fa-image"></i>
+                    </div>
+                    <div class="ad-body">
+                      <div class="ad-tag">Advertisement</div>
+                      <div class="ad-headline" id="adHeadline">Your headline will appear here</div>
+                      <div class="ad-desc" id="adDesc">Your short description will appear here.</div>
+                      <span class="ad-cta" id="adCta">Learn More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Summary column -->
+              <div>
+                <div class="panel" style="background-color:var(--surface);padding:18px;margin-bottom:14px;">
+                  <h4 style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:800;">
+                    Campaign summary
+                  </h4>
+                  <div class="summary-list">
+                    <div class="summary-row">
+                      <span class="k">Campaign name</span>
+                      <span class="v" id="sumName">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">Headline</span>
+                      <span class="v" id="sumHeadline">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">Format</span>
+                      <span class="v" id="sumFormat">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">Duration</span>
+                      <span class="v" id="sumDuration">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">Destination</span>
+                      <span class="v" id="sumUrl" style="max-width:60%;word-break:break-all;">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">Subtotal</span>
+                      <span class="v" id="sumSubtotal">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="k">VAT</span>
+                      <span class="v" id="sumVat">—</span>
+                    </div>
+                    <div class="summary-row total">
+                      <span class="k">Total</span>
+                      <span class="v" id="sumTotal">₦ —<small>Payable now</small></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="terms-check">
+                  <input type="checkbox" id="termsCheck">
+                  <label for="termsCheck">
+                    I agree to CampusNaija's <a href="#" target="_blank">advertising terms</a> and <a href="#" target="_blank">content guidelines</a>, and confirm all campaign details are accurate.
+                  </label>
+                </div>
+
+                <div style="margin-top:16px;">
+                  <button class="btn-primary" id="payBtn" style="width:100%;justify-content:center;padding:14px;font-size:0.9rem;" disabled>
+                    <i class="fas fa-lock"></i> Proceed to Payment
+                  </button>
+                </div>
+
+                <div style="margin-top:14px;font-size:0.72rem;color:var(--muted);text-align:center;line-height:1.5;">
+                  <i class="fas fa-shield-halved" style="color:var(--primary);"></i>
+                  Secure payment — verified by the backend before review.
+                </div>
+              </div>
+            </div>
+
+            <!-- After payment timeline -->
+            <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
+              <h4 style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:800;">
+                What happens after payment?
+              </h4>
+              <ol class="steps-after">
+                <li>
+                  <div class="num">1</div>
+                  <div class="text"><strong>Payment verification</strong><span>Server verifies the transaction with the payment provider.</span></div>
+                </li>
+                <li>
+                  <div class="num">2</div>
+                  <div class="text"><strong>Admin review</strong><span>Administrator checks the creative and campaign details.</span></div>
+                </li>
+                <li>
+                  <div class="num">3</div>
+                  <div class="text"><strong>Placement assignment</strong><span>Administrator selects a compatible advertising slot.</span></div>
+                </li>
+                <li>
+                  <div class="num">4</div>
+                  <div class="text"><strong>Scheduling</strong><span>Administrator configures the publication date.</span></div>
+                </li>
+                <li>
+                  <div class="num">5</div>
+                  <div class="text"><strong>Publication</strong><span>The advertisement starts running — duration begins.</span></div>
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn-outline" data-prev="5">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="right">
+              <span class="hint" id="termsHint">Accept terms to continue</span>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fas fa-circle-check"></i>
+    <span id="toastText">Loaded</span>
+  </div>
+
+  <!-- Success modal -->
+  <div class="modal-backdrop" id="successModal">
+    <div class="modal">
+      <div class="success-icon"><i class="fas fa-circle-check"></i></div>
+      <h3>Campaign submitted</h3>
+      <p>Your campaign is now awaiting payment verification and administrator review. You'll be notified once it's live.</p>
+      <div class="modal-actions">
+        <a href="./campaigns.html" class="btn-primary" style="justify-content:center;">
+          <i class="fas fa-rectangle-ad"></i> View my campaigns
+        </a>
+        <button class="btn-outline" id="modalClose" style="justify-content:center;">
+          Create another
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_BASE = 'https://campus-naija.onrender.com';
+      const TOKEN_KEY = 'campusnaija_advertiser_token';
+      const USER_KEY = 'campusnaija_advertiser_user';
+      const DRAFT_KEY = 'campusnaija_advertiser_campaign_draft';
+      const LOGIN_URL = '/advertiser/login.html';
+
+      const state = {
+        token: null,
+        user: null,
+        step: 1,
+        maxUnlocked: 1,
+        pricing: null,
+        draft: {
+          name: '',
+          headline: '',
+          description: '',
+          url: '',
+          cta_text: 'Learn More',
+          format: '',
+          media: null,
+          duration_days: 30,
+        },
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      const fmtMoney = (n, currency) => {
+        const c = (currency || 'NGN').toUpperCase();
+        const sym = c === 'NGN' ? '₦' : c === 'USD' ? '$' : c === 'GBP' ? '£' : c === 'EUR' ? '€' : c + ' ';
+        return sym + Math.round(Number(n || 0)).toLocaleString('en-NG');
+      };
+
+      const fmtSize = (bytes) => {
+        if (!bytes) return '0 B';
+        if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+        if (bytes >= 1024) return (bytes / 1024).toFixed(0) + ' KB';
+        return bytes + ' B';
+      };
+
+      function redirectToLogin(reason) {
+        try {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        } catch (_) {}
+        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+      }
+
+      async function api(path, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }, opts.headers || {});
+        if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
+        const res = await fetch(API_BASE + path, opts);
+        if (res.status === 401) {
+          redirectToLogin('session_expired');
+          throw new Error('Session expired');
+        }
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+          const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+          const e = new Error(msg); e.status = res.status; throw e;
+        }
+        return data;
+      }
+
+      function toast(msg, isError) {
+        const el = $('toast');
+        const txt = $('toastText');
+        if (!el || !txt) return;
+        txt.textContent = msg || '';
+        el.classList.toggle('error', !!isError);
+        const icon = el.querySelector('i');
+        if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
+      }
+
+      /* ─── user chrome ─── */
+      function initials(name) {
+        if (!name) return 'AD';
+        return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
+          .map(w => w[0].toUpperCase()).join('') || 'AD';
+      }
+
+      function renderUser() {
+        if (!state.user) return;
+        const label = state.user.business_name || state.user.name || 'Advertiser';
+        const ini = initials(label);
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+      }
+
+      /* ─── draft persistence ─── */
+      function saveDraft() {
+        try {
+          const toSave = Object.assign({}, state.draft);
+          // media preview may be a data URL; keep it out of localStorage to avoid size limits
+          if (toSave.media && toSave.media.previewDataUrl && !toSave.media.url) {
+            // Only persist metadata (not the preview)
+            toSave.media = { filename: toSave.media.filename, size: toSave.media.size, mime_type: toSave.media.mime_type };
+          }
+          localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft: toSave, step: state.step }));
+          const btn = $('saveDraftBtn');
+          btn.classList.add('saved');
+          $('saveDraftLabel').textContent = 'Saved';
+          setTimeout(() => {
+            btn.classList.remove('saved');
+            $('saveDraftLabel').textContent = 'Save draft';
+          }, 2000);
+        } catch (_) {}
+      }
+
+      function loadDraft() {
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.draft) {
+            Object.assign(state.draft, parsed.draft);
+            if (parsed.step && parsed.step >= 1 && parsed.step <= 5) {
+              state.maxUnlocked = parsed.step;
+            }
+            hydrateForm();
+            toast('Draft restored');
+          }
+        } catch (_) {}
+      }
+
+      /* ─── hydration ─── */
+      function hydrateForm() {
+        $('fName').value = state.draft.name || '';
+        $('fHeadline').value = state.draft.headline || '';
+        $('fDescription').value = state.draft.description || '';
+        $('fUrl').value = state.draft.url || '';
+        $('fCta').value = state.draft.cta_text || 'Learn More';
+        updateCounters();
+
+        if (state.draft.format) {
+          document.querySelectorAll('.format-card').forEach(c => {
+            c.classList.toggle('selected', c.getAttribute('data-format') === state.draft.format);
+          });
+        }
+        if (state.draft.media && state.draft.media.url) {
+          renderMediaPreview({
+            url: state.draft.media.url,
+            filename: state.draft.media.filename || 'creative',
+            size: state.draft.media.size || 0,
+            mime_type: state.draft.media.mime_type || 'image/jpeg',
+          });
+        }
+        if (state.draft.duration_days) {
+          const sel = document.querySelector(`.duration-card[data-days="${state.draft.duration_days}"]`);
+          if (sel) {
+            document.querySelectorAll('.duration-card').forEach(c => c.classList.remove('selected'));
+            sel.classList.add('selected');
+          } else {
+            $('customDays').value = state.draft.duration_days;
+          }
+        }
+      }
+
+      function updateCounters() {
+        $('headlineCount').textContent = ($('fHeadline').value || '').length;
+        $('descCount').textContent = ($('fDescription').value || '').length;
+      }
+
+      /* ─── stepper ─── */
+      const STEP_NAMES = ['Campaign details', 'Format', 'Creative', 'Duration', 'Review & payment'];
+
+      function goToStep(n) {
+        if (n < 1 || n > 5) return;
+        if (n > state.maxUnlocked) return;
+        state.step = n;
+
+        document.querySelectorAll('.step-panel').forEach(p => {
+          p.classList.toggle('active', Number(p.getAttribute('data-panel')) === n);
+        });
+        document.querySelectorAll('.step').forEach(s => {
+          const sn = Number(s.getAttribute('data-step'));
+          s.classList.toggle('active', sn === n);
+          s.classList.toggle('done', sn < n || (sn <= state.maxUnlocked && sn !== n));
+          s.classList.toggle('locked', sn > state.maxUnlocked);
+        });
+
+        $('stepCounter').textContent = String(n);
+        $('stepName').textContent = STEP_NAMES[n - 1];
+
+        if (n === 5) updateReview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function unlockStep(n) {
+        if (n > state.maxUnlocked) state.maxUnlocked = n;
+      }
+
+      /* ─── validation ─── */
+      function validateStep1() {
+        const name = $('fName').value.trim();
+        const headline = $('fHeadline').value.trim();
+        const url = $('fUrl').value.trim();
+        if (!name) { toast('Campaign name is required', true); $('fName').focus(); return false; }
+        if (!headline) { toast('Advertisement headline is required', true); $('fHeadline').focus(); return false; }
+        if (!url) { toast('Destination URL is required', true); $('fUrl').focus(); return false; }
+        if (!/^https?:\/\/[^\s]+/i.test(url)) { toast('Please enter a valid http(s) URL', true); $('fUrl').focus(); return false; }
+        return true;
+      }
+      function validateStep2() {
+        if (!state.draft.format) { toast('Please select a format', true); return false; }
+        return true;
+      }
+      function validateStep3() {
+        if (!state.draft.media || !state.draft.media.url) { toast('Please upload your creative', true); return false; }
+        return true;
+      }
+      function validateStep4() {
+        const d = Number(state.draft.duration_days);
+        if (!d || d < 1) { toast('Please select a duration', true); return false; }
+        return true;
+      }
+
+      /* ─── pricing ─── */
+      function calcPrice(days) {
+        if (!state.pricing) return { subtotal: 0, vat: 0, total: 0 };
+        const p = state.pricing;
+        const mult = p.formats[state.draft.format]?.multiplier || 1;
+        const base = p.per_day * days * mult;
+        let discount = 0;
+        if (days >= 60) discount = p.discounts.d60 || 0;
+        else if (days >= 30) discount = p.discounts.d30 || 0;
+        else if (days >= 14) discount = p.discounts.d14 || 0;
+        else if (days >= 7) discount = p.discounts.d7 || 0;
+        const subtotal = base * (1 - discount);
+        const vat = subtotal * (p.vat || 0);
+        return { subtotal, vat, total: subtotal + vat, discount, base, mult, days };
+      }
+
+      function renderPricingHints() {
+        if (!state.pricing) return;
+        document.querySelectorAll('.duration-card').forEach(card => {
+          const days = Number(card.getAttribute('data-days'));
+          const priceEl = card.querySelector('.price');
+          if (!priceEl) return;
+          const old = state.draft.format;
+          state.draft.format = state.draft.format || 'medium';
+          const { subtotal, total } = calcPrice(days);
+          state.draft.format = old;
+          const discount = (subtotal < (state.pricing.per_day * days * (state.pricing.formats[state.draft.format || 'medium'].multiplier || 1)));
+          priceEl.innerHTML = `${fmtMoney(total, state.pricing.currency)}${discount ? '<span class="discount">Bundle discount applied</span>' : ''}`;
+        });
+      }
+
+      /* ─── media upload ─── */
+      async function handleFile(file) {
+        if (!file) return;
+        const allowedImg = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+        const allowedVid = ['video/mp4'];
+        if (!allowedImg.includes(file.type) && !allowedVid.includes(file.type)) {
+          toast('Unsupported file type. Use JPG, PNG, WebP or MP4.', true);
+          return;
+        }
+        const maxSize = allowedVid.includes(file.type) ? 50 * 1048576 : 8 * 1048576;
+        if (file.size > maxSize) {
+          toast(`File too large. Max ${allowedVid.includes(file.type) ? '50 MB' : '8 MB'}.`, true);
+          return;
+        }
+
+        // Show local preview immediately
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          renderMediaPreview({
+            url: e.target.result,
+            filename: file.name,
+            size: file.size,
+            mime_type: file.type,
+            local: true,
+          });
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to backend
+        $('uploadProgress').classList.add('active');
+        $('uploadBar').style.width = '10%';
+
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          const res = await fetch(API_BASE + '/api/advertiser/media', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + state.token },
+            body: fd,
+          });
+          $('uploadBar').style.width = '80%';
+          if (res.status === 401) { redirectToLogin('session_expired'); return; }
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || 'Upload failed');
+          $('uploadBar').style.width = '100%';
+          state.draft.media = {
+            url: data.media.url,
+            filename: data.media.filename,
+            size: data.media.size,
+            mime_type: data.media.mime_type,
+          };
+          setTimeout(() => {
+            $('uploadProgress').classList.remove('active');
+            $('uploadBar').style.width = '0%';
+          }, 400);
+          toast('Creative uploaded');
+          saveDraft();
+        } catch (e) {
+          $('uploadProgress').classList.remove('active');
+          $('uploadBar').style.width = '0%';
+          toast(e.message || 'Upload failed', true);
+        }
+      }
+
+      function renderMediaPreview(m) {
+        const isVideo = (m.mime_type || '').startsWith('video/');
+        const thumb = isVideo
+          ? `<i class="fas fa-film"></i>`
+          : (m.url ? `<img src="${esc(m.url)}" alt="">` : `<i class="fas fa-image"></i>`);
+
+        $('uploadPreview').innerHTML = `
+          <div class="upload-preview">
+            <div class="thumb">${thumb}</div>
+            <div class="info">
+              <div class="fname">${esc(m.filename || 'creative')}</div>
+              <div class="fsize">${fmtSize(m.size)} · ${isVideo ? 'Video' : 'Image'}</div>
+            </div>
+            <button class="remove" type="button" id="removeMedia" title="Remove">
+              <i class="fas fa-xmark"></i>
+            </button>
+          </div>
+        `;
+        document.getElementById('removeMedia').addEventListener('click', () => {
+          state.draft.media = null;
+          $('uploadPreview').innerHTML = '';
+          toast('Creative removed');
+          saveDraft();
+        });
+      }
+
+      /* ─── review & payment ─── */
+      function updateReview() {
+        const d = state.draft;
+        const media = d.media;
+
+        // Preview
+        if (media && media.url) {
+          const isVideo = (media.mime_type || '').startsWith('video/');
+          $('adMedia').innerHTML = isVideo
+            ? `<video src="${esc(media.url)}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
+            : `<img src="${esc(media.url)}" alt="">`;
+        } else {
+          $('adMedia').innerHTML = '<i class="fas fa-image"></i>';
+        }
+        $('adHeadline').textContent = d.headline || 'Your headline will appear here';
+        $('adDesc').textContent = d.description || 'Your short description will appear here.';
+        $('adCta').innerHTML = `${esc(d.cta_text || 'Learn More')} <i class="fas fa-arrow-right"></i>`;
+
+        // Summary
+        $('sumName').textContent = d.name || '—';
+        $('sumHeadline').textContent = d.headline || '—';
+        $('sumFormat').textContent = d.format
+          ? (state.pricing?.formats[d.format]?.label || d.format)
+          : '—';
+        $('sumDuration').textContent = d.duration_days ? `${d.duration_days} days` : '—';
+        $('sumUrl').textContent = d.url || '—';
+
+        const { subtotal, vat, total } = calcPrice(d.duration_days || 0);
+        const cur = state.pricing?.currency || 'NGN';
+        $('sumSubtotal').textContent = fmtMoney(subtotal, cur);
+        $('sumVat').textContent = fmtMoney(vat, cur);
+        $('sumTotal').innerHTML = `${fmtMoney(total, cur)}<small>Payable now</small>`;
+
+        // Terms
+        updatePayButton();
+      }
+
+      function updatePayButton() {
+        const checked = $('termsCheck').checked;
+        const hasPrice = state.pricing && state.draft.duration_days > 0;
+        $('payBtn').disabled = !(checked && hasPrice);
+        $('termsHint').textContent = checked ? '' : 'Accept terms to continue';
+        if (!hasPrice) $('termsHint').textContent = 'Select a duration first';
+      }
+
+      /* ─── submit ─── */
+      async function submitCampaign() {
+        const d = state.draft;
+        if (!d.media || !d.media.url) { toast('Please upload a creative first', true); return; }
+
+        $('payBtn').disabled = true;
+        const originalHTML = $('payBtn').innerHTML;
+        $('payBtn').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting…';
+
+        try {
+          const payload = {
+            name: d.name,
+            headline: d.headline,
+            description: d.description,
+            url: d.url,
+            cta_text: d.cta_text,
+            format: d.format,
+            duration_days: d.duration_days,
+            image_url: d.media.url,
+            media_type: (d.media.mime_type || '').startsWith('video/') ? 'video' : 'image',
+          };
+          await api('/api/advertiser/campaigns', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+
+          // Clear draft
+          try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
+
+          $('successModal').classList.add('show');
+        } catch (e) {
+          toast(e.message || 'Could not submit campaign', true);
+          $('payBtn').innerHTML = originalHTML;
+          $('payBtn').disabled = false;
+        }
+      }
+
+      /* ─── wire ─── */
+      function wire() {
+        // Sidebar
+        $('menuToggle').addEventListener('click', () => {
+          const open = $('sidebar').classList.toggle('open');
+          $('sidebarOverlay').classList.toggle('active', open);
+          $('menuToggle').setAttribute('aria-expanded', String(open));
+        });
+        $('sidebarOverlay').addEventListener('click', () => {
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            $('sidebar').classList.remove('open');
+            $('sidebarOverlay').classList.remove('active');
+          }
+        });
+
+        // Logout
+        $('sideLogout').addEventListener('click', () => {
+          if (!confirm('Sign out of the advertiser portal?')) return;
+          redirectToLogin();
+        });
+
+        // Field inputs
+        $('fName').addEventListener('input', (e) => { state.draft.name = e.target.value; });
+        $('fHeadline').addEventListener('input', (e) => {
+          state.draft.headline = e.target.value;
+          updateCounters();
+        });
+        $('fDescription').addEventListener('input', (e) => {
+          state.draft.description = e.target.value;
+          updateCounters();
+        });
+        $('fUrl').addEventListener('input', (e) => { state.draft.url = e.target.value; });
+        $('fCta').addEventListener('change', (e) => { state.draft.cta_text = e.target.value; });
+
+        // Save draft
+        $('saveDraftBtn').addEventListener('click', () => {
+          saveDraft();
+          toast('Draft saved');
+        });
+
+        // Stepper clicks
+        $('stepper').addEventListener('click', (e) => {
+          const s = e.target.closest('.step');
+          if (!s) return;
+          const n = Number(s.getAttribute('data-step'));
+          if (n <= state.maxUnlocked) goToStep(n);
+        });
+
+        // Next / Prev
+        document.querySelectorAll('[data-next]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const n = Number(btn.getAttribute('data-next'));
+            if (n === 1 && !validateStep1()) return;
+            if (n === 2 && !validateStep2()) return;
+            if (n === 3 && !validateStep3()) return;
+            if (n === 4 && !validateStep4()) return;
+            unlockStep(n + 1);
+            goToStep(n + 1);
+            saveDraft();
+          });
+        });
+        document.querySelectorAll('[data-prev]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const n = Number(btn.getAttribute('data-prev'));
+            goToStep(n - 1);
+          });
+        });
+
+        // Format cards
+        $('formatGrid').addEventListener('click', (e) => {
+          const card = e.target.closest('.format-card');
+          if (!card) return;
+          document.querySelectorAll('.format-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          state.draft.format = card.getAttribute('data-format');
+          renderPricingHints();
+        });
+
+        // Upload zone
+        const zone = $('uploadZone');
+        zone.addEventListener('click', (e) => {
+          if (e.target.closest('#removeMedia')) return;
+          $('fileInput').click();
+        });
+        zone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          zone.classList.add('dragover');
+        });
+        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+        zone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          zone.classList.remove('dragover');
+          const file = e.dataTransfer.files[0];
+          if (file) handleFile(file);
+        });
+        $('fileInput').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) handleFile(file);
+          e.target.value = '';
+        });
+
+        // Duration cards
+        $('durationGrid').addEventListener('click', (e) => {
+          const card = e.target.closest('.duration-card');
+          if (!card) return;
+          document.querySelectorAll('.duration-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          state.draft.duration_days = Number(card.getAttribute('data-days'));
+          $('customDays').value = '';
+          $('customPrice').textContent = '';
+        });
+        $('applyCustom').addEventListener('click', () => {
+          const d = Number($('customDays').value);
+          if (!d || d < 1) { toast('Enter a valid number of days', true); return; }
+          if (d > 365) { toast('Maximum duration is 365 days', true); return; }
+          document.querySelectorAll('.duration-card').forEach(c => c.classList.remove('selected'));
+          state.draft.duration_days = d;
+          const { total } = calcPrice(d);
+          $('customPrice').textContent = `Estimated total: ${fmtMoney(total, state.pricing?.currency || 'NGN')}`;
+        });
+
+        // Preview tabs
+        document.querySelectorAll('.preview-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const mode = tab.getAttribute('data-mode');
+            $('deviceFrame').classList.toggle('mobile', mode === 'mobile');
+          });
+        });
+
+        // Terms
+        $('termsCheck').addEventListener('change', updatePayButton);
+
+        // Pay / submit
+        $('payBtn').addEventListener('click', submitCampaign);
+
+        // Success modal
+        $('modalClose').addEventListener('click', () => {
+          $('successModal').classList.remove('show');
+          try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
+          window.location.reload();
+        });
+      }
+
+      /* ─── boot ─── */
+      (async function boot() {
+        try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!state.token) { redirectToLogin('not_signed_in'); return; }
+
+        try {
+          const cached = localStorage.getItem(USER_KEY);
+          if (cached) state.user = JSON.parse(cached);
+        } catch (_) {}
+
+        try {
+          const me = await api('/api/advertiser/me');
+          if (me && me.user) {
+            state.user = me.user;
+            try { localStorage.setItem(USER_KEY, JSON.stringify(state.user)); } catch (_) {}
+          }
+        } catch (e) {
+          if (e.message !== 'Session expired') console.warn('[me]', e.message);
+        }
+
+        if (!state.user) { redirectToLogin('not_signed_in'); return; }
+
+        renderUser();
+
+        // Load pricing
+        try {
+          state.pricing = await api('/api/advertiser/pricing');
+        } catch (e) {
+          console.warn('[pricing]', e.message);
+          // Fallback so the wizard still works
+          state.pricing = {
+            currency: 'NGN', per_day: 500,
+            discounts: { d7: 0, d14: 0.05, d30: 0.10, d60: 0.15 },
+            formats: {
+              large: { label: 'Large', multiplier: 1.4 },
+              medium: { label: 'Medium', multiplier: 1.0 },
+              small: { label: 'Small', multiplier: 0.7 },
+              square: { label: 'Square', multiplier: 1.1 },
+              vertical: { label: 'Vertical', multiplier: 1.2 },
+            },
+            vat: 0.075,
+          };
+        }
+
+        wire();
+        loadDraft();
+        renderPricingHints();
+        goToStep(state.step || 1);
+      })();
+
+    })();
+  </script>
+</body>
+</html>
