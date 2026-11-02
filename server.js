@@ -1915,9 +1915,6 @@ router.patch('/settings', authenticate, requireRole('owner'), asyncH(async (req,
 
 /* ============================================================
  * CONTACT MESSAGES
- * ============================================================
- * Public form → POST /api/public/contact
- * Admin inbox → GET  /api/contact-messages
  * ============================================================ */
 
 const CONTACT_CATEGORIES = [
@@ -1929,7 +1926,6 @@ const CONTACT_CATEGORIES = [
 ];
 const CONTACT_STATUSES = ['unread', 'read', 'pending', 'resolved'];
 
-// PUBLIC — submit a message from the contact form. Rate-limited.
 router.post('/public/contact', asyncH(async (req, res) => {
   const ip = req.ip || 'unknown';
   if (!(await rateLimit(`contact:${ip}`, 5, 10 * 60 * 1000)))
@@ -1965,7 +1961,6 @@ router.post('/public/contact', asyncH(async (req, res) => {
   res.status(201).json({ ok: true, message: 'Your message was sent. We will get back to you soon.' });
 }));
 
-// ADMIN — list messages
 router.get('/contact-messages', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
   const clauses = []; const params = [];
@@ -1986,14 +1981,12 @@ router.get('/contact-messages', authenticate, requireRole('owner','admin','edito
   res.json({ messages: rows, total: totalRow.c, limit, offset });
 }));
 
-// ADMIN — single message
 router.get('/contact-messages/:id', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Message not found.');
   res.json({ message: row });
 }));
 
-// ADMIN — update status
 router.patch('/contact-messages/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Message not found.');
@@ -2013,7 +2006,6 @@ router.patch('/contact-messages/:id', authenticate, requireRole('owner','admin')
   res.json({ message: updated });
 }));
 
-// ADMIN — delete
 router.delete('/contact-messages/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Message not found.');
@@ -2026,7 +2018,7 @@ router.delete('/contact-messages/:id', authenticate, requireRole('owner','admin'
  * ADVERTISEMENTS
  * ============================================================ */
 
-const AD_PLACEMENTS = ['home', 'schools', 'admissions', 'scholarships', 'trending'];
+const AD_PLACEMENTS = ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'];
 const AD_STATUSES   = ['draft', 'pending', 'approved', 'active', 'paused', 'rejected', 'expired'];
 
 function validateAdPlacement(value) {
@@ -2044,7 +2036,6 @@ function validateAdStatus(value, { required = false } = {}) {
   return s;
 }
 
-// ADMIN — list campaigns
 router.get('/advertisements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
   const clauses = []; const params = [];
@@ -2065,14 +2056,12 @@ router.get('/advertisements', authenticate, requireRole('owner','admin','editor'
   res.json({ campaigns: rows, total: totalRow.c, limit, offset });
 }));
 
-// ADMIN — single campaign
 router.get('/advertisements/:id', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
   res.json({ campaign: row });
 }));
 
-// ADMIN — create campaign
 router.post('/advertisements', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
   const b = req.body || {};
   const name       = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
@@ -2097,7 +2086,6 @@ router.post('/advertisements', authenticate, requireRole('owner','admin','editor
   res.status(201).json({ campaign: row });
 }));
 
-// ADMIN — update campaign
 router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
   const existing = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!existing) throw httpError(404, 'Campaign not found.');
@@ -2141,7 +2129,6 @@ router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','e
   res.json({ campaign: updated });
 }));
 
-// ADMIN — delete campaign
 router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
@@ -2150,7 +2137,6 @@ router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'),
   res.json({ ok: true });
 }));
 
-// PUBLIC — serve active ad for a given placement
 router.get('/public/advertisements/:placement', asyncH(async (req, res) => {
   await publicLimit(req);
   const placement = String(req.params.placement).toLowerCase();
@@ -2173,6 +2159,53 @@ router.get('/public/advertisements/:placement', asyncH(async (req, res) => {
 
   res.json({ campaign: row });
 }));
+
+/* ============================================================
+ * PUBLIC NAMED ADVERTISEMENT ENDPOINTS
+ * ============================================================
+ * /home, /schools, /admissions, /exams, /scholarships, /trending
+ * with extra fields every page's ad card needs:
+ *   - description, cta_text
+ *   - target_school (for the 'schools' placement)
+ *   - verification on the joined target_school
+ * ============================================================ */
+
+async function resolvePublicCampaign(placement) {
+  const row = await one(
+    `select id, name, advertiser, description, cta_text, placement, url, image_url,
+            target_school_id, start_date, end_date, status
+       from public.advertisements
+      where placement = $1
+        and status = 'active'
+        and current_date between start_date and end_date
+      order by start_date asc
+      limit 1`,
+    [placement]
+  );
+  if (!row) return null;
+
+  if (row.target_school_id) {
+    row.target_school = await one(
+      `select id, slug, name, city, state, type, verification, cover_url, logo_url
+         from public.schools
+        where id = $1 and publication = 'published'`,
+      [row.target_school_id]
+    );
+  }
+
+  run(`update public.advertisements set impressions = impressions + 1 where id=$1`, [row.id])
+    .catch(err => console.error('[ad impression]', err.message));
+
+  return row;
+}
+
+['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'].forEach((placement) => {
+  router.get(`/public/advertisements/${placement}`, asyncH(async (req, res) => {
+    await publicLimit(req);
+    const campaign = await resolvePublicCampaign(placement);
+    res.json({ campaign });
+  }));
+});
 
 /* ============================================================
  * MONETIZATION

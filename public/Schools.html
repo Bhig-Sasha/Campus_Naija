@@ -55,7 +55,7 @@
     .directory-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .directory-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
-    .search-filter-bar { margin: 24px 0 32px; animation: fadeInUp 0.5s ease 0.1s both; }
+    .search-filter-bar { margin: 24px 0 0; animation: fadeInUp 0.5s ease 0.1s both; }
     .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
     .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; transition: border-color 0.2s, box-shadow 0.2s; }
     .search-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,201,130,0.08); }
@@ -75,7 +75,61 @@
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
     .filter-tab.active:hover { transform: none; }
 
-    .schools-section { padding: 8px 0 64px; }
+    /* ─── AD 1: FEATURED SCHOOLS BANNER ─── */
+    .ad-featured-section { display: none; margin: 24px 0 8px; animation: fadeInUp 0.5s ease 0.15s both; }
+    .ad-featured-section.is-visible { display: block; }
+    .ad-featured {
+      display: flex; flex-direction: column;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .ad-featured:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .ad-featured-body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .ad-sponsored-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      align-self: flex-start;
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background-color: rgba(245,185,66,0.1);
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .ad-advertiser { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
+    .ad-featured-headline { font-size: 1.35rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .ad-featured-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+    .ad-featured-cta {
+      align-self: flex-start; margin-top: 10px;
+      background-color: var(--primary); color: #070A09;
+      font-weight: 700; font-size: 0.85rem;
+      padding: 10px 20px; border-radius: var(--radius-btn);
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .ad-featured-cta:hover { background-color: #00b374; }
+    .ad-featured-image {
+      min-height: 180px; flex-shrink: 0;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2rem;
+    }
+    @media (min-width: 700px) {
+      .ad-featured { flex-direction: row; align-items: stretch; min-height: 220px; }
+      .ad-featured-body { padding: 32px; justify-content: center; }
+      .ad-featured-image { width: 45%; min-height: 220px; }
+      .ad-featured-headline { font-size: 1.6rem; }
+    }
+
+    /* ─── AD 2: SPONSORED SCHOOL CARD ─── */
+    .school-card.is-sponsored { border-color: rgba(245,185,66,0.35); position: relative; }
+    .school-card.is-sponsored:hover { border-color: var(--accent); }
+    .school-sponsored-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
+    }
+
+    .schools-section { padding: 16px 0 64px; }
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
 
@@ -101,6 +155,37 @@
     .school-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
     .school-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; transition: gap 0.2s; }
     .school-card:hover .school-action { gap: 10px; }
+
+    /* ─── AD 3: PROFILE BANNER ─── */
+    .ad-profile-banner {
+      display: none;
+      background-color: var(--surface);
+      border: 1px solid rgba(245,185,66,0.35);
+      border-radius: var(--radius-card);
+      padding: 20px 24px; margin: 8px 0 20px;
+      position: relative; overflow: hidden;
+      animation: fadeInUp 0.4s ease both;
+    }
+    .ad-profile-banner.is-visible { display: block; }
+    .ad-profile-banner:hover { border-color: var(--accent); }
+    .ad-profile-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .ad-profile-content { flex: 1; min-width: 200px; }
+    .ad-profile-headline { font-size: 1.1rem; font-weight: 800; margin: 6px 0 4px; color: var(--text); }
+    .ad-profile-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+    .ad-profile-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+    }
+    .ad-profile-image {
+      width: 140px; height: 90px; border-radius: 10px;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1.4rem;
+    }
+    @media (max-width: 600px) {
+      .ad-profile-image { width: 100%; height: 120px; }
+    }
 
     /* PROFILE */
     .back-to-directory { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; font-weight: 500; padding: 24px 0 8px; cursor: pointer; transition: color 0.2s, gap 0.2s; }
@@ -262,6 +347,20 @@
       </div>
     </section>
 
+    <!-- AD 1: Featured schools banner -->
+    <section class="ad-featured-section" id="featuredAdSection" aria-label="Sponsored content">
+      <a class="ad-featured" id="featuredAd" href="#" rel="sponsored noopener">
+        <div class="ad-featured-body">
+          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+          <div class="ad-advertiser" id="adAdvertiser"></div>
+          <h2 class="ad-featured-headline" id="adHeadline"></h2>
+          <p class="ad-featured-desc" id="adDescription"></p>
+          <span class="ad-featured-cta" id="adCta">Explore School <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i></span>
+        </div>
+        <div class="ad-featured-image" id="adImage"></div>
+      </a>
+    </section>
+
     <section class="schools-section">
       <div class="section-header">
         <div class="section-title" id="directoryCount">Loading schools...</div>
@@ -299,6 +398,19 @@
         </div>
       </div>
     </section>
+
+    <!-- AD 3: Profile promotional banner -->
+    <div class="ad-profile-banner" id="profileAdBanner" aria-label="Sponsored content">
+      <div class="ad-profile-inner">
+        <div class="ad-profile-content">
+          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+          <h3 class="ad-profile-headline" id="profileAdHeadline"></h3>
+          <p class="ad-profile-desc" id="profileAdDesc"></p>
+          <a class="ad-profile-cta" id="profileAdCta" href="#" rel="sponsored noopener">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="ad-profile-image" id="profileAdImage"></div>
+      </div>
+    </div>
 
     <div class="profile-tabs">
       <ul class="tab-list" id="profileTabs">
@@ -490,6 +602,7 @@
 
   let schoolsCache = [];
   let schoolPlacements = [];
+  let schoolsCampaign = null;
   let currentTypeFilter = 'all';
   let currentSchool = null;
   let currentProfileRequestId = 0;
@@ -597,6 +710,127 @@
     return (coverP && coverP.public_url) || s.cover_url || (logoP && logoP.public_url) || s.logo_url || '';
   }
 
+  /* ---------- ad 1: featured schools banner ---------- */
+  async function loadFeaturedBanner() {
+    const section = document.getElementById('featuredAdSection');
+    const link = document.getElementById('featuredAd');
+    const advertiserEl = document.getElementById('adAdvertiser');
+    const headlineEl = document.getElementById('adHeadline');
+    const descriptionEl = document.getElementById('adDescription');
+    const ctaEl = document.getElementById('adCta');
+    const imageEl = document.getElementById('adImage');
+
+    try {
+      const data = await apiGet('/api/public/advertisements/schools');
+      const campaign = data && data.campaign;
+      if (!campaign || !campaign.url) {
+        section.classList.remove('is-visible');
+        return;
+      }
+
+      link.href = campaign.url;
+      advertiserEl.textContent = campaign.advertiser || '';
+      headlineEl.textContent = campaign.name || 'Featured institution';
+      descriptionEl.textContent = campaign.description || 'Discover programmes, admission requirements, campus facilities and opportunities at this institution.';
+      ctaEl.innerHTML = (campaign.cta_text || 'Explore School') + ' <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>';
+
+      if (campaign.image_url) {
+        imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        imageEl.innerHTML = '';
+      } else {
+        imageEl.style.backgroundImage = '';
+        imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+
+      section.classList.add('is-visible');
+    } catch (err) {
+      // Silent — no campaign or no network means the section stays hidden
+      section.classList.remove('is-visible');
+      console.warn('[ad featured]', err.message);
+    }
+  }
+
+  /* ---------- ad 2: sponsored school card (inside grid) ---------- */
+  function getSponsoredSchoolCard() {
+    if (!schoolsCampaign || !schoolsCampaign.target_school) return null;
+
+    const school = schoolsCampaign.target_school;
+    const cover = coverForSchool(school);
+    const location = [school.city, school.state].filter(Boolean).join(', ') || 'Nigeria';
+    const slug = school.slug || school.id;
+    const isVerified = school.verification === 'verified';
+
+    const card = document.createElement('div');
+    card.className = 'school-card is-sponsored';
+    card.setAttribute('data-type', (school.type || '').toLowerCase());
+    card.setAttribute('data-state', (school.state || '').toLowerCase());
+    card.setAttribute('data-name', (school.name || '').toLowerCase());
+    card.setAttribute('data-location', location.toLowerCase());
+    card.setAttribute('data-slug', slug);
+    card.setAttribute('onclick', `openProfile('${escapeAttr(slug)}')`);
+    card.innerHTML = `
+      <span class="school-sponsored-badge">Sponsored</span>
+      <div class="school-img" ${cover ? `style="background-image:url('${encodeURI(cover)}')"` : ''}></div>
+      <div class="school-info">
+        <div class="school-name-row">
+          <span class="school-name">${escapeHtml(school.name || 'Sponsored institution')}</span>
+          ${isVerified ? '<i class="fas fa-circle-check verified-badge" title="Verified institution" aria-label="Verified institution"></i>' : ''}
+        </div>
+        <div class="school-location"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(location)}</div>
+        <div class="school-type">${escapeHtml(school.type || 'Institution')}</div>
+        <div class="school-desc">${escapeHtml(schoolsCampaign.description || 'Explore programmes and admission information.')}</div>
+        <span class="school-action">View Institution <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      </div>`;
+    return card;
+  }
+
+  /* ---------- ad 3: profile promotional banner ---------- */
+  function renderProfileAd(school) {
+    const banner = document.getElementById('profileAdBanner');
+    if (!schoolsCampaign || !schoolsCampaign.target_school) {
+      banner.classList.remove('is-visible');
+      return;
+    }
+    const targetId = String(schoolsCampaign.target_school.id);
+    const profileId = String(school.id);
+    if (targetId !== profileId) {
+      banner.classList.remove('is-visible');
+      return;
+    }
+    if (!schoolsCampaign.url) {
+      banner.classList.remove('is-visible');
+      return;
+    }
+
+    document.getElementById('profileAdHeadline').textContent = schoolsCampaign.name || 'Build Your Future Here';
+    document.getElementById('profileAdDesc').textContent = schoolsCampaign.description || 'Discover programmes, scholarships and student opportunities.';
+
+    const cta = document.getElementById('profileAdCta');
+    cta.href = schoolsCampaign.url;
+    cta.innerHTML = (schoolsCampaign.cta_text || 'Learn More') + ' <i class="fas fa-arrow-right"></i>';
+
+    const img = document.getElementById('profileAdImage');
+    if (schoolsCampaign.image_url) {
+      img.style.backgroundImage = `url('${encodeURI(schoolsCampaign.image_url)}')`;
+      img.innerHTML = '';
+    } else {
+      img.style.backgroundImage = '';
+      img.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+    }
+
+    banner.classList.add('is-visible');
+  }
+
+  async function loadSchoolsCampaign() {
+    try {
+      const data = await apiGet('/api/public/advertisements/schools');
+      schoolsCampaign = data && data.campaign ? data.campaign : null;
+    } catch (err) {
+      console.warn('[ad schools campaign]', err.message);
+      schoolsCampaign = null;
+    }
+  }
+
   /* ---------- load list ---------- */
   async function loadSchools() {
     const grid = document.getElementById('directoryGrid');
@@ -611,6 +845,7 @@
       const [data] = await Promise.all([
         apiGet('/api/public/schools'),
         loadPlacementsForSchools(),
+        loadSchoolsCampaign(),
       ]);
       schoolsCache = Array.isArray(data.schools) ? data.schools : [];
       renderSchoolCards(schoolsCache);
@@ -679,6 +914,21 @@
           </div>
         </div>`;
     }).join('');
+
+    // Inject the sponsored school card (Ad 2) — after the first row so it sits
+    // alongside real content without dominating the top of the grid.
+    const sponsoredCard = getSponsoredSchoolCard();
+    if (sponsoredCard) {
+      const cards = grid.querySelectorAll('.school-card');
+      const insertAfter = Math.min(1, cards.length - 1);
+      if (cards.length && insertAfter >= 0) {
+        const ref = cards[insertAfter];
+        if (ref && ref.nextSibling) grid.insertBefore(sponsoredCard, ref.nextSibling);
+        else grid.appendChild(sponsoredCard);
+      } else {
+        grid.appendChild(sponsoredCard);
+      }
+    }
   }
 
   /* ---------- filters ---------- */
@@ -747,6 +997,8 @@
     document.getElementById('view-profile').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetTabs();
+    // Hide any profile ad banner in case it was left visible
+    document.getElementById('profileAdBanner').classList.remove('is-visible');
     if (pushHistory) {
       history.pushState({ view: 'directory' }, '', '/Schools');
     }
@@ -770,6 +1022,7 @@
     document.getElementById('feesTableBody').innerHTML = '<tr><td colspan="5"><div class="skeleton" style="height:48px; width:100%;"></div></td></tr>';
     document.getElementById('admissionsTableBody').innerHTML = '<tr><td colspan="5"><div class="skeleton" style="height:48px; width:100%;"></div></td></tr>';
     document.getElementById('calendarTableBody').innerHTML = '<tr><td colspan="6"><div class="skeleton" style="height:48px; width:100%;"></div></td></tr>';
+    document.getElementById('profileAdBanner').classList.remove('is-visible');
 
     resetTabs();
     document.querySelector('.tab-item[data-tab="overview"]').classList.add('active');
@@ -783,7 +1036,6 @@
       );
     }
 
-    // Guard against out-of-order responses
     const requestId = ++currentProfileRequestId;
 
     try {
@@ -798,6 +1050,7 @@
 
       currentSchool = school;
       renderProfile({ school, courses, fees, admissions, calendar });
+      renderProfileAd(school);
     } catch (err) {
       if (requestId !== currentProfileRequestId) return;
       console.error('[profile]', err);
@@ -1059,9 +1312,9 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    // Support both ?school= (canonical) and ?slug= (legacy from Home page)
     const schoolParam = params.get('school') || params.get('slug');
 
+    loadFeaturedBanner();
     loadSchools().then(() => {
       initialised = true;
       if (schoolParam) openProfile(schoolParam, false);

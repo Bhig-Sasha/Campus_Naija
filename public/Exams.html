@@ -49,6 +49,50 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* ─── AD 1: FEATURED EXAM BANNER ─── */
+    .ad-featured-section { display: none; padding: 8px 0 8px; animation: fadeInUp 0.5s ease; }
+    .ad-featured-section.is-visible { display: block; }
+    .ad-featured {
+      display: flex; flex-direction: column;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+    .ad-featured:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .ad-featured-body { padding: 28px 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .ad-sponsored-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      align-self: flex-start;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background-color: rgba(245,185,66,0.1);
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .ad-advertiser { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
+    .ad-featured-headline { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .ad-featured-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
+    .ad-featured-cta {
+      align-self: flex-start; margin-top: 12px;
+      background-color: var(--primary); color: #070A09;
+      font-weight: 700; font-size: 0.88rem;
+      padding: 12px 22px; border-radius: var(--radius-btn);
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .ad-featured-cta:hover { background-color: #00b374; }
+    .ad-featured-image {
+      min-height: 200px; flex-shrink: 0;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2rem;
+    }
+    @media (min-width: 720px) {
+      .ad-featured { flex-direction: row; align-items: stretch; min-height: 240px; }
+      .ad-featured-body { padding: 32px; justify-content: center; }
+      .ad-featured-image { width: 45%; min-height: 240px; }
+      .ad-featured-headline { font-size: 1.7rem; }
+    }
+
     /* FEATURED BANNER (from placements) */
     .featured-banner-section { padding: 32px 0 8px; display: none; animation: fadeInUp 0.5s ease; }
     .featured-banner-section.has-image { display: block; }
@@ -112,13 +156,31 @@
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
 
-    .exams-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 64px; }
-    @media (min-width: 600px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .exams-grid { grid-template-columns: repeat(4, 1fr); } }
+    /* ─── EXAMS LAYOUT WITH SIDEBAR ─── */
+    .exams-layout { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
+    @media (min-width: 1024px) {
+      .exams-layout { grid-template-columns: 1fr 340px; }
+    }
 
-    .exam-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; cursor: pointer; animation: cardIn 0.4s ease both; }
+    .exams-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 8px 0 24px; }
+    @media (min-width: 600px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .exams-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1400px) { .exams-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .exam-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; cursor: pointer; animation: cardIn 0.4s ease both; position: relative; }
     @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .exam-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+
+    /* ─── AD 2: SPONSORED PREPARATION CARD ─── */
+    .exam-card.is-sponsored { border-color: rgba(245,185,66,0.35); }
+    .exam-card.is-sponsored:hover { border-color: var(--accent); }
+    .exam-sponsored-badge {
+      position: absolute; top: 14px; right: 14px; z-index: 2;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
+    }
+
     .exam-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
     .exam-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; transition: color 0.2s; }
     .exam-card:hover .exam-name { color: var(--primary); }
@@ -126,6 +188,38 @@
     .exam-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; flex: 1; }
     .exam-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; transition: gap 0.2s; }
     .exam-card:hover .exam-action { gap: 10px; }
+
+    /* ─── AD 3: SIDEBAR ADVERT ─── */
+    .exams-sidebar { display: none; }
+    @media (min-width: 1024px) { .exams-sidebar { display: block; } }
+
+    .ad-sidebar { display: none; }
+    .ad-sidebar.is-visible { display: block; }
+    .ad-sidebar-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+      position: sticky; top: 96px;
+    }
+    .ad-sidebar-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .ad-sidebar-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+    .ad-sidebar-image {
+      min-height: 160px;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1.8rem;
+    }
+    .ad-sidebar-headline { font-size: 1.05rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .ad-sidebar-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .ad-sidebar-cta {
+      margin-top: 6px;
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+    }
+
+    .ad-sidebar-mobile { display: block; margin-bottom: 16px; }
+    @media (min-width: 1024px) { .ad-sidebar-mobile { display: none; } }
 
     .calendar-strip { padding: 40px 0 16px; border-top: 1px solid var(--border); margin-top: 8px; animation: fadeInUp 0.5s ease 0.2s both; }
     .calendar-strip-inner { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; }
@@ -299,7 +393,21 @@
       <p>Find examination dates, registration information, timetables, requirements, preparation resources and official results portals.</p>
     </section>
 
-    <!-- Featured banner (populated from /api/public/placements — exams / featured_banner) -->
+    <!-- AD 1: Featured exam banner -->
+    <section class="ad-featured-section" id="featuredAdSection" aria-label="Sponsored content">
+      <a class="ad-featured" id="featuredAd" href="#" rel="sponsored noopener">
+        <div class="ad-featured-body">
+          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+          <div class="ad-advertiser" id="adAdvertiser"></div>
+          <h2 class="ad-featured-headline" id="adHeadline"></h2>
+          <p class="ad-featured-desc" id="adDescription"></p>
+          <span class="ad-featured-cta" id="adCta">Start Preparing <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i></span>
+        </div>
+        <div class="ad-featured-image" id="adImage"></div>
+      </a>
+    </section>
+
+    <!-- Featured placement banner (existing media placements) -->
     <section class="featured-banner-section" id="featuredBannerSection">
       <div class="featured-banner" id="featuredBanner">
         <img id="featuredBannerImg" alt="" decoding="async">
@@ -323,13 +431,47 @@
       </div>
     </section>
 
+    <!-- AD 3 (mobile): sidebar advert above the grid -->
+    <div class="ad-sidebar-mobile" id="adSidebarMobile" aria-label="Sponsored content">
+      <div class="ad-sidebar" id="adSidebarMobileCard">
+        <a class="ad-sidebar-card" id="adSidebarMobileLink" href="#" rel="sponsored noopener" style="display:block;">
+          <div class="ad-sidebar-image" id="adSidebarMobileImage"></div>
+          <div class="ad-sidebar-body">
+            <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+            <div class="ad-sidebar-headline" id="adSidebarMobileHeadline"></div>
+            <div class="ad-sidebar-desc" id="adSidebarMobileDesc"></div>
+            <span class="ad-sidebar-cta" id="adSidebarMobileCta">Learn More <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
     <section>
       <div class="section-header"><div class="section-title" id="examCount">Examinations</div></div>
-      <div class="exams-grid" id="examsGrid">
-        <div class="skeleton" style="height:280px;"></div>
-        <div class="skeleton" style="height:280px;"></div>
-        <div class="skeleton" style="height:280px;"></div>
-        <div class="skeleton" style="height:280px;"></div>
+      <div class="exams-layout">
+        <div>
+          <div class="exams-grid" id="examsGrid">
+            <div class="skeleton" style="height:280px;"></div>
+            <div class="skeleton" style="height:280px;"></div>
+            <div class="skeleton" style="height:280px;"></div>
+            <div class="skeleton" style="height:280px;"></div>
+          </div>
+        </div>
+
+        <!-- AD 3 (desktop): sidebar advert -->
+        <aside class="exams-sidebar" id="adSidebarDesktop" aria-label="Sponsored content">
+          <div class="ad-sidebar" id="adSidebarCard">
+            <a class="ad-sidebar-card" id="adSidebarLink" href="#" rel="sponsored noopener" style="display:block;">
+              <div class="ad-sidebar-image" id="adSidebarImage"></div>
+              <div class="ad-sidebar-body">
+                <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+                <div class="ad-sidebar-headline" id="adSidebarHeadline"></div>
+                <div class="ad-sidebar-desc" id="adSidebarDesc"></div>
+                <span class="ad-sidebar-cta" id="adSidebarCta">Learn More <i class="fas fa-arrow-right"></i></span>
+              </div>
+            </a>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -580,6 +722,7 @@
   const CLOSING_SOON_DAYS = 14;
 
   let examsCache = [];
+  let examsCampaign = null;
   let currentExamTypeFilter = 'all';
   let currentExamRequestId = 0;
 
@@ -686,7 +829,7 @@
     return list.find(p => p.slot === slot && !p.content_ref) || null;
   }
 
-  /* ---------- Featured banner (DB-only, no fallback) ---------- */
+  /* ---------- Featured banner (media placement, DB-only) ---------- */
   async function loadFeaturedBanner() {
     const section = document.getElementById('featuredBannerSection');
     const img = document.getElementById('featuredBannerImg');
@@ -709,6 +852,100 @@
     img.referrerPolicy = 'no-referrer';
     captionEl.textContent = p.caption || '';
     section.classList.add('has-image');
+  }
+
+  /* ---------- AD 1: Featured exam campaign ---------- */
+  async function loadFeaturedAd() {
+    const section = document.getElementById('featuredAdSection');
+    const link = document.getElementById('featuredAd');
+    const advertiserEl = document.getElementById('adAdvertiser');
+    const headlineEl = document.getElementById('adHeadline');
+    const descriptionEl = document.getElementById('adDescription');
+    const ctaEl = document.getElementById('adCta');
+    const imageEl = document.getElementById('adImage');
+
+    try {
+      const data = await apiGet('/api/public/advertisements/exams');
+      const campaign = data && data.campaign;
+      if (!campaign || !campaign.url) {
+        section.classList.remove('is-visible');
+        return;
+      }
+
+      link.href = campaign.url;
+      advertiserEl.textContent = campaign.advertiser || '';
+      headlineEl.textContent = campaign.name || 'Featured exam campaign';
+      descriptionEl.textContent = campaign.description || 'Get access to learning resources, practice questions and examination preparation tools.';
+      ctaEl.innerHTML = (campaign.cta_text || 'Start Preparing') + ' <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>';
+
+      if (campaign.image_url) {
+        imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        imageEl.innerHTML = '';
+      } else {
+        imageEl.style.backgroundImage = '';
+        imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+
+      section.classList.add('is-visible');
+    } catch (err) {
+      section.classList.remove('is-visible');
+      console.warn('[ad featured]', err.message);
+    }
+  }
+
+  /* ---------- AD 3: Sidebar advert ---------- */
+  async function loadSidebarAd() {
+    try {
+      const data = await apiGet('/api/public/advertisements/exams');
+      examsCampaign = data && data.campaign ? data.campaign : null;
+    } catch (err) {
+      console.warn('[ad sidebar]', err.message);
+      examsCampaign = null;
+    }
+
+    const campaign = examsCampaign;
+    const desktopCard = document.getElementById('adSidebarCard');
+    const mobileCard = document.getElementById('adSidebarMobileCard');
+
+    if (!campaign || !campaign.url) {
+      if (desktopCard) desktopCard.classList.remove('is-visible');
+      if (mobileCard) mobileCard.classList.remove('is-visible');
+      return;
+    }
+
+    if (desktopCard) {
+      const link = document.getElementById('adSidebarLink');
+      link.href = campaign.url;
+      const img = document.getElementById('adSidebarImage');
+      if (campaign.image_url) {
+        img.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        img.innerHTML = '';
+      } else {
+        img.style.backgroundImage = '';
+        img.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+      document.getElementById('adSidebarHeadline').textContent = campaign.name || 'Improve Your Exam Performance';
+      document.getElementById('adSidebarDesc').textContent = campaign.description || 'Practise questions and build confidence before examination day.';
+      document.getElementById('adSidebarCta').innerHTML = (campaign.cta_text || 'Explore Platform') + ' <i class="fas fa-arrow-right"></i>';
+      desktopCard.classList.add('is-visible');
+    }
+
+    if (mobileCard) {
+      const link = document.getElementById('adSidebarMobileLink');
+      link.href = campaign.url;
+      const img = document.getElementById('adSidebarMobileImage');
+      if (campaign.image_url) {
+        img.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        img.innerHTML = '';
+      } else {
+        img.style.backgroundImage = '';
+        img.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+      document.getElementById('adSidebarMobileHeadline').textContent = campaign.name || 'Improve Your Exam Performance';
+      document.getElementById('adSidebarMobileDesc').textContent = campaign.description || 'Practise questions and build confidence before examination day.';
+      document.getElementById('adSidebarMobileCta').innerHTML = (campaign.cta_text || 'Explore Platform') + ' <i class="fas fa-arrow-right"></i>';
+      mobileCard.classList.add('is-visible');
+    }
   }
 
   /* ---------- load list ---------- */
@@ -790,6 +1027,52 @@
           </div>
         </div>`;
     }).join('');
+
+    // AD 2: sponsored preparation card — inserted after the first real card
+    const sponsoredCard = getSponsoredExamCard();
+    if (sponsoredCard) {
+      const cards = grid.querySelectorAll('.exam-card');
+      if (cards.length) {
+        const ref = cards[0];
+        if (ref && ref.nextSibling) grid.insertBefore(sponsoredCard, ref.nextSibling);
+        else grid.appendChild(sponsoredCard);
+      } else {
+        grid.appendChild(sponsoredCard);
+      }
+    }
+  }
+
+  /* ---------- AD 2: Sponsored preparation card builder ---------- */
+  function getSponsoredExamCard() {
+    if (!examsCampaign || !examsCampaign.url) return null;
+
+    const advertiser = examsCampaign.advertiser || 'Sponsored preparation';
+    const title = examsCampaign.name || 'JAMB CBT Practice';
+    const desc = examsCampaign.description || 'Online examination preparation, practice questions and study resources.';
+    const imageUrl = examsCampaign.image_url || '';
+    const initials = advertiser.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'SP';
+    const delay = 0.1;
+
+    const card = document.createElement('div');
+    card.className = 'exam-card is-sponsored';
+    card.setAttribute('data-type', 'sponsored');
+    card.setAttribute('data-session', '');
+    card.setAttribute('data-name', advertiser.toLowerCase());
+    card.setAttribute('data-body', title.toLowerCase());
+    card.setAttribute('role', 'link');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('onclick', `window.open('${escapeAttr(examsCampaign.url)}','_blank','noopener')`);
+    card.setAttribute('onkeydown', `if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('${escapeAttr(examsCampaign.url)}','_blank','noopener');}`);
+    card.style.animationDelay = delay + 's';
+    card.innerHTML = `
+      <span class="exam-sponsored-badge">Sponsored</span>
+      <div class="exam-info">
+        <div class="exam-body-tag" style="color:var(--accent);">${escapeHtml(advertiser)}</div>
+        <div class="exam-name">${escapeHtml(title)}</div>
+        <div class="exam-desc">${escapeHtml(desc)}</div>
+        <span class="exam-action">Start Practice <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+      </div>`;
+    return card;
   }
 
   function populateExamTypeFilters(list) {
@@ -868,6 +1151,14 @@
     let visible = 0;
 
     cards.forEach((card) => {
+      const isSponsored = card.classList.contains('is-sponsored');
+      if (isSponsored) {
+        // Sponsored cards are hidden while any filter is active
+        const filtering = query || session || currentExamTypeFilter !== 'all';
+        card.style.display = filtering ? 'none' : '';
+        if (!filtering) visible++;
+        return;
+      }
       const type = card.dataset.type || '';
       const cardSession = card.dataset.session || '';
       const name = card.dataset.name || '';
@@ -946,7 +1237,6 @@
       );
     }
 
-    // Guard against out-of-order responses
     const requestId = ++currentExamRequestId;
 
     const cached = examsCache.find((e) => String(e.id) === String(id));
@@ -1175,6 +1465,8 @@
     const examParam = params.get('exam');
 
     loadFeaturedBanner();
+    loadFeaturedAd();
+    loadSidebarAd();
     loadExams().then(() => {
       initialised = true;
       if (examParam) openExam(examParam, false);

@@ -60,6 +60,49 @@
     .hero-image img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75) saturate(0.9); }
     .hero-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #070A09 0%, transparent 70%); }
 
+    /* ─── Advertising: featured banner ─── */
+    .ad-section { display: none; padding: 8px 0 24px; }
+    .ad-section.is-visible { display: block; }
+    .ad-banner {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .ad-banner:hover { border-color: var(--primary); }
+    .ad-banner-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .ad-sponsored-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background-color: rgba(245,185,66,0.1);
+      padding: 4px 10px; border-radius: 6px;
+      align-self: flex-start;
+    }
+    .ad-sponsor-name { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    .ad-headline { font-size: 1.4rem; font-weight: 800; line-height: 1.2; color: var(--text); }
+    .ad-description { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+    .ad-cta {
+      align-self: flex-start;
+      background-color: var(--primary); color: #070A09;
+      font-weight: 700; font-size: 0.85rem;
+      padding: 10px 20px; border-radius: var(--radius-btn);
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 6px;
+      transition: background 0.15s;
+    }
+    .ad-cta:hover { background-color: #00b374; }
+    .ad-banner-image {
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      min-height: 180px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2rem;
+    }
+
     /* Discovery strip */
     .discovery-strip { padding: 48px 0 24px; }
     .discovery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
@@ -81,8 +124,16 @@
     /* Schools */
     .schools-section { padding: 40px 0; }
     .schools-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-    .school-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; }
+    .school-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; transition: border-color 0.2s; position: relative; }
     .school-card:hover { border-color: var(--primary); }
+    .school-card.is-sponsored { border-color: rgba(245,185,66,0.35); }
+    .school-card.is-sponsored:hover { border-color: var(--accent); }
+    .school-sponsored-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
+    }
     .school-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
     .school-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
     .school-info { padding: 18px; }
@@ -108,6 +159,29 @@
     .news-small-content .news-category { font-size: 0.65rem; margin-bottom: 4px; }
     .news-small-content h4 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
     .news-small-content .news-meta { margin-top: 6px; font-size: 0.75rem; }
+
+    /* Sponsored article card */
+    .news-sponsored {
+      background-color: var(--surface); border-radius: var(--radius-card);
+      border: 1px solid rgba(245,185,66,0.35); overflow: hidden; display: block;
+      position: relative; transition: border-color 0.2s;
+    }
+    .news-sponsored:hover { border-color: var(--accent); }
+    .news-sponsored .news-img { height: 200px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
+    .news-sponsored .news-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 10%, transparent 70%); }
+    .news-sponsored .news-content { padding: 20px; }
+    .news-sponsored-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
+    }
+    .news-sponsored h3 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
+    .news-sponsored .news-description { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; }
+    .news-sponsored .news-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+    }
 
     /* Tools */
     .tools-section { padding: 40px 0; }
@@ -161,6 +235,10 @@
       .tools-grid { grid-template-columns: repeat(2, 1fr); }
       .opps-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
+
+      .ad-banner { flex-direction: row; align-items: stretch; min-height: 220px; }
+      .ad-banner-body { padding: 32px; justify-content: center; }
+      .ad-banner-image { width: 45%; min-height: 220px; }
     }
     @media (min-width: 1024px) {
       .header-inner { height: 80px; }
@@ -178,6 +256,9 @@
       .tools-grid { grid-template-columns: repeat(5, 1fr); }
       .opps-grid { grid-template-columns: repeat(3, 1fr); }
       .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+
+      .ad-headline { font-size: 1.7rem; }
+      .ad-banner-image { width: 50%; }
     }
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; transition: none !important; }
@@ -230,9 +311,24 @@
           </div>
         </div>
         <div class="hero-image" id="heroImageWrap">
-          <!-- Hero image is only shown if a placement exists in the database -->
           <img id="heroImage" alt="" decoding="async" loading="eager">
         </div>
+      </div>
+    </section>
+
+    <!-- AD 1: Featured homepage banner — appears only when an active campaign exists -->
+    <section class="ad-section" id="featuredBannerSection" aria-label="Sponsored content">
+      <div class="container">
+        <a class="ad-banner" id="featuredBanner" href="#" rel="sponsored noopener">
+          <div class="ad-banner-body">
+            <span class="ad-sponsored-label"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+            <div class="ad-sponsor-name" id="adSponsorName"></div>
+            <h2 class="ad-headline" id="adHeadline"></h2>
+            <p class="ad-description" id="adDescription"></p>
+            <span class="ad-cta" id="adCta">Learn more <i class="fas fa-arrow-right"></i></span>
+          </div>
+          <div class="ad-banner-image" id="adImage"></div>
+        </a>
       </div>
     </section>
 
@@ -460,7 +556,6 @@
         }
       }
 
-      // Resolve the best placement: content-scoped first, then global slot.
       function resolvePlacement(list, slot, contentRef) {
         const refStr = contentRef != null ? String(contentRef) : null;
         if (refStr) {
@@ -490,7 +585,6 @@
         const p = resolvePlacement(list, 'hero', null);
 
         if (!p || !p.public_url) {
-          // No hero image assigned in the admin — hide the whole hero image block
           wrap.classList.remove('has-image');
           img.removeAttribute('src');
           img.alt = '';
@@ -500,6 +594,95 @@
         img.src = p.public_url;
         img.alt = p.alt_text || '';
         wrap.classList.add('has-image');
+      }
+
+      /* ======================================================
+       * AD 1 — Featured homepage banner
+       * ======================================================
+       * Reads from GET /api/public/advertisements/home
+       * The whole section stays hidden unless a campaign is active.
+       */
+      async function loadFeaturedBanner() {
+        const section = document.getElementById('featuredBannerSection');
+        const banner = document.getElementById('featuredBanner');
+        const sponsorEl = document.getElementById('adSponsorName');
+        const headlineEl = document.getElementById('adHeadline');
+        const descriptionEl = document.getElementById('adDescription');
+        const ctaEl = document.getElementById('adCta');
+        const imageEl = document.getElementById('adImage');
+
+        try {
+          const data = await apiGet('/api/public/advertisements/home');
+          const campaign = data && data.campaign;
+          if (!campaign) {
+            section.classList.remove('is-visible');
+            return;
+          }
+
+          banner.href = campaign.url || '#';
+          sponsorEl.textContent = campaign.advertiser || '';
+          headlineEl.textContent = campaign.name || 'Sponsored';
+          descriptionEl.textContent = campaign.description || 'Discover an opportunity from our partner.';
+          ctaEl.innerHTML = (campaign.cta_text || 'Learn more') + ' <i class="fas fa-arrow-right"></i>';
+
+          if (campaign.image_url) {
+            imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+            imageEl.innerHTML = '';
+          } else {
+            imageEl.style.backgroundImage = '';
+            imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+          }
+
+          section.classList.add('is-visible');
+        } catch (err) {
+          // Silent — no campaign or no network means the section stays hidden.
+          section.classList.remove('is-visible');
+          console.warn('[ad banner]', err.message);
+        }
+      }
+
+      /* ======================================================
+       * AD 2 — Sponsored school card (inside Discover Schools)
+       * ======================================================
+       * Reads from GET /api/public/advertisements/schools
+       * Only injected when the campaign points at a real school.
+       */
+      async function loadSponsoredSchool() {
+        const grid = document.getElementById('schoolsGrid');
+        try {
+          const data = await apiGet('/api/public/advertisements/schools');
+          const campaign = data && data.campaign;
+          if (!campaign || !campaign.target_school) return;
+
+          const school = campaign.target_school;
+          const schoolPlacements = await getPlacementsForPage('schools');
+          const coverP = resolvePlacement(schoolPlacements, 'school_cover', String(school.id));
+          const logoP = resolvePlacement(schoolPlacements, 'school_logo', String(school.id));
+          const cover = (coverP && coverP.public_url) || school.cover_url || (logoP && logoP.public_url) || school.logo_url || '';
+          const location = [school.city, school.state].filter(Boolean).join(', ');
+          const slug = school.slug || school.id;
+
+          const card = document.createElement('article');
+          card.className = 'school-card is-sponsored';
+          card.innerHTML = `
+            <span class="school-sponsored-badge">Sponsored</span>
+            <div class="school-img" ${bgStyle(cover)}></div>
+            <div class="school-info">
+              <div class="school-type">${escapeHtml(school.type || 'Institution')}</div>
+              <div class="school-name">${escapeHtml(school.name || 'Untitled')}</div>
+              <div class="school-location"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(location || 'Nigeria')}</div>
+              <a href="/Schools.html?slug=${encodeURIComponent(slug)}" class="school-action">View details <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            </div>`;
+
+          // Place it in the middle of the grid so it's visible but not dominant.
+          const children = Array.from(grid.children);
+          const insertAt = Math.min(Math.floor(children.length / 2), children.length);
+          if (children[insertAt]) grid.insertBefore(card, children[insertAt]);
+          else grid.appendChild(card);
+        } catch (err) {
+          // Silent — no campaign or no network means nothing is added.
+          console.warn('[ad school]', err.message);
+        }
       }
 
       /* ---------- Featured schools (DB-only) ---------- */
@@ -518,13 +701,9 @@
           grid.innerHTML = list.map((s) => {
             const slug = s.slug || s.id;
             const idStr = String(s.id);
-
             const coverP = resolvePlacement(schoolPlacements, 'school_cover', idStr);
             const logoP  = resolvePlacement(schoolPlacements, 'school_logo', idStr);
-
-            // DB-only: placement first, then the record's own cover_url / logo_url
             const cover = (coverP && coverP.public_url) || s.cover_url || (logoP && logoP.public_url) || s.logo_url || '';
-
             const location = [s.city, s.state].filter(Boolean).join(', ');
             return `
               <article class="school-card">
@@ -537,9 +716,57 @@
                 </div>
               </article>`;
           }).join('');
+
+          // Slot in the sponsored card after regular schools render.
+          loadSponsoredSchool();
         } catch (err) {
           console.error('[schools]', err);
           grid.innerHTML = `<div class="empty-state">Unable to load schools right now.</div>`;
+        }
+      }
+
+      /* ======================================================
+       * AD 3 — Sponsored article card (inside Latest News)
+       * ======================================================
+       * Reads from GET /api/public/advertisements/trending
+       * Only injected when a campaign exists.
+       */
+      async function loadSponsoredArticle() {
+        const grid = document.getElementById('newsGrid');
+        try {
+          const data = await apiGet('/api/public/advertisements/trending');
+          const campaign = data && data.campaign;
+          if (!campaign) return;
+
+          const card = document.createElement('a');
+          card.className = 'news-sponsored';
+          card.href = campaign.url || '#';
+          card.rel = 'sponsored noopener';
+          card.innerHTML = `
+            <span class="news-sponsored-badge">Sponsored</span>
+            <div class="news-img" ${bgStyle(campaign.image_url)}></div>
+            <div class="news-content">
+              <h3>${escapeHtml(truncate(campaign.name || 'Sponsored', 90))}</h3>
+              <p class="news-description">${escapeHtml(truncate(campaign.description || '', 140))}</p>
+              <span class="news-cta">${escapeHtml(campaign.cta_text || 'Read more')} <i class="fas fa-arrow-right"></i></span>
+            </div>`;
+
+          // Place it in the second column, below the small cards.
+          const existingSmall = grid.querySelector('.news-small-list');
+          if (existingSmall) {
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.gap = '16px';
+            existingSmall.replaceWith(wrapper);
+            wrapper.appendChild(existingSmall.cloneNode(true));
+            wrapper.appendChild(card);
+            existingSmall.remove();
+          } else {
+            grid.appendChild(card);
+          }
+        } catch (err) {
+          console.warn('[ad article]', err.message);
         }
       }
 
@@ -562,7 +789,6 @@
 
           const featured = list[0];
           const rest = list.slice(1, 3);
-
           const featuredCover = coverFor(featured);
 
           const featuredHtml = `
@@ -594,6 +820,9 @@
             : '';
 
           grid.innerHTML = featuredHtml + smallHtml;
+
+          // Slot in the sponsored article after the news grid renders.
+          loadSponsoredArticle();
         } catch (err) {
           console.error('[news]', err);
           grid.innerHTML = `<div class="empty-state">Unable to load updates right now.</div>`;
@@ -632,6 +861,7 @@
 
       /* ---------- Run ---------- */
       loadHeroImage();
+      loadFeaturedBanner();
       loadSchools();
       loadNews();
       loadOpps();

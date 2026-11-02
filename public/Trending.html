@@ -54,6 +54,50 @@
     .feed-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
     .feed-hero p { color: var(--muted); font-size: 1.05rem; max-width: 720px; }
 
+    /* ─── AD 1: FEATURED TRENDING BANNER ─── */
+    .ad-featured-section { display: none; padding: 8px 0 8px; animation: fadeInUp 0.5s ease; }
+    .ad-featured-section.is-visible { display: block; }
+    .ad-featured {
+      display: flex; flex-direction: column;
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+    .ad-featured:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .ad-featured-body { padding: 28px 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .ad-sponsored-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      align-self: flex-start;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background-color: rgba(245,185,66,0.1);
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .ad-advertiser { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
+    .ad-featured-headline { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .ad-featured-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
+    .ad-featured-cta {
+      align-self: flex-start; margin-top: 12px;
+      background-color: var(--primary); color: #070A09;
+      font-weight: 700; font-size: 0.88rem;
+      padding: 12px 22px; border-radius: var(--radius-btn);
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background 0.15s;
+    }
+    .ad-featured-cta:hover { background-color: #00b374; }
+    .ad-featured-image {
+      min-height: 200px; flex-shrink: 0;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 2rem;
+    }
+    @media (min-width: 720px) {
+      .ad-featured { flex-direction: row; align-items: stretch; min-height: 240px; }
+      .ad-featured-body { padding: 32px; justify-content: center; }
+      .ad-featured-image { width: 45%; min-height: 240px; }
+      .ad-featured-headline { font-size: 1.7rem; }
+    }
+
     .search-filter-bar { margin: 24px 0 32px; animation: fadeInUp 0.5s ease 0.1s both; }
     .search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
     .search-wrapper { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; transition: border-color 0.2s, box-shadow 0.2s; }
@@ -72,6 +116,12 @@
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
     .filter-tab.active:hover { transform: none; }
 
+    /* ─── FEED LAYOUT WITH SIDEBAR ─── */
+    .feed-layout { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
+    @media (min-width: 1024px) {
+      .feed-layout { grid-template-columns: 1fr 340px; }
+    }
+
     .featured-story { background-color: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; margin-bottom: 40px; display: grid; grid-template-columns: 1fr; cursor: pointer; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; animation: fadeInUp 0.5s ease 0.15s both; }
     .featured-story:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.35); }
     @media (min-width: 900px) { .featured-story { grid-template-columns: 1.2fr 0.8fr; } }
@@ -89,13 +139,25 @@
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
 
-    .news-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 64px; }
+    .news-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding-bottom: 32px; }
     @media (min-width: 600px) { .news-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .news-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .news-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1400px) { .news-grid { grid-template-columns: repeat(3, 1fr); } }
 
-    .news-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; cursor: pointer; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; animation: cardIn 0.4s ease both; }
+    .news-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; cursor: pointer; transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s; display: flex; flex-direction: column; animation: cardIn 0.4s ease both; position: relative; }
     @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .news-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+
+    /* ─── AD 2: SPONSORED TRENDING ARTICLE ─── */
+    .news-card.is-sponsored { border-color: rgba(245,185,66,0.35); }
+    .news-card.is-sponsored:hover { border-color: var(--accent); }
+    .news-sponsored-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      background-color: var(--accent); color: #070A09;
+      font-size: 0.56rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
+    }
+
     .news-card-img { height: 160px; background-size: cover; background-position: center; position: relative; background-color: var(--elevated); overflow: hidden; transition: transform 0.4s ease; }
     .news-card:hover .news-card-img { transform: scale(1.03); }
     .news-card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 5%, transparent 70%); }
@@ -107,6 +169,38 @@
     .news-card-excerpt { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; flex: 1; }
     .news-card-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
     .news-card-meta i { margin-right: 4px; }
+
+    /* ─── AD 4: SIDEBAR ADVERT ─── */
+    .feed-sidebar { display: none; }
+    @media (min-width: 1024px) { .feed-sidebar { display: block; } }
+
+    .ad-sidebar { display: none; }
+    .ad-sidebar.is-visible { display: block; }
+    .ad-sidebar-card {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-card); overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+      position: sticky; top: 96px;
+    }
+    .ad-sidebar-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .ad-sidebar-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+    .ad-sidebar-image {
+      min-height: 160px;
+      background-color: #0a0f0d; background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--border); font-size: 1.8rem;
+    }
+    .ad-sidebar-headline { font-size: 1.05rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .ad-sidebar-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .ad-sidebar-cta {
+      margin-top: 6px;
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--primary); font-weight: 700; font-size: 0.85rem;
+    }
+
+    .ad-sidebar-mobile { display: block; margin-bottom: 16px; }
+    @media (min-width: 1024px) { .ad-sidebar-mobile { display: none; } }
 
     .trending-strip { padding: 32px 0 16px; border-top: 1px solid var(--border); animation: fadeInUp 0.5s ease 0.2s both; }
     .trending-strip .section-title { font-size: 1.4rem; }
@@ -228,6 +322,20 @@
       <p>The latest education news, admission updates, examination announcements, scholarships, and stories that matter to Nigerian students.</p>
     </section>
 
+    <!-- AD 1: Featured trending banner -->
+    <section class="ad-featured-section" id="featuredAdSection" aria-label="Sponsored content">
+      <a class="ad-featured" id="featuredAd" href="#" rel="sponsored noopener">
+        <div class="ad-featured-body">
+          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+          <div class="ad-advertiser" id="adAdvertiser"></div>
+          <h2 class="ad-featured-headline" id="adHeadline"></h2>
+          <p class="ad-featured-desc" id="adDescription"></p>
+          <span class="ad-featured-cta" id="adCta">Discover More <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i></span>
+        </div>
+        <div class="ad-featured-image" id="adImage"></div>
+      </a>
+    </section>
+
     <section class="search-filter-bar">
       <div class="search-row">
         <div class="search-wrapper">
@@ -245,14 +353,48 @@
       <div class="skeleton" style="height:320px; margin-bottom:40px;"></div>
     </div>
 
+    <!-- AD 4 (mobile): sidebar advert above the grid -->
+    <div class="ad-sidebar-mobile" id="adSidebarMobile" aria-label="Sponsored content">
+      <div class="ad-sidebar" id="adSidebarMobileCard">
+        <a class="ad-sidebar-card" id="adSidebarMobileLink" href="#" rel="sponsored noopener" style="display:block;">
+          <div class="ad-sidebar-image" id="adSidebarMobileImage"></div>
+          <div class="ad-sidebar-body">
+            <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+            <div class="ad-sidebar-headline" id="adSidebarMobileHeadline"></div>
+            <div class="ad-sidebar-desc" id="adSidebarMobileDesc"></div>
+            <span class="ad-sidebar-cta" id="adSidebarMobileCta">Learn More <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
     <section>
       <div class="section-header">
         <div class="section-title">Latest stories</div>
       </div>
-      <div class="news-grid" id="newsGrid">
-        <div class="skeleton" style="height:300px;"></div>
-        <div class="skeleton" style="height:300px;"></div>
-        <div class="skeleton" style="height:300px;"></div>
+      <div class="feed-layout">
+        <div>
+          <div class="news-grid" id="newsGrid">
+            <div class="skeleton" style="height:300px;"></div>
+            <div class="skeleton" style="height:300px;"></div>
+            <div class="skeleton" style="height:300px;"></div>
+          </div>
+        </div>
+
+        <!-- AD 4 (desktop): sidebar advert -->
+        <aside class="feed-sidebar" id="adSidebarDesktop" aria-label="Sponsored content">
+          <div class="ad-sidebar" id="adSidebarCard">
+            <a class="ad-sidebar-card" id="adSidebarLink" href="#" rel="sponsored noopener" style="display:block;">
+              <div class="ad-sidebar-image" id="adSidebarImage"></div>
+              <div class="ad-sidebar-body">
+                <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+                <div class="ad-sidebar-headline" id="adSidebarHeadline"></div>
+                <div class="ad-sidebar-desc" id="adSidebarDesc"></div>
+                <span class="ad-sidebar-cta" id="adSidebarCta">Learn More <i class="fas fa-arrow-right"></i></span>
+              </div>
+            </a>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -367,6 +509,7 @@
 
   let storiesCache = [];
   let trendingPlacements = [];
+  let trendingCampaign = null;
   let currentStory = null;
   let currentCategoryFilter = 'all';
   let currentArticleRequestId = 0;
@@ -446,6 +589,100 @@
     const global = trendingPlacements.find(p => p.slot === 'article_cover' && !p.content_ref);
     if (global && global.public_url) return global.public_url;
     return story.cover_url || '';
+  }
+
+  /* ---------- AD 1: Featured trending campaign ---------- */
+  async function loadFeaturedAd() {
+    const section = document.getElementById('featuredAdSection');
+    const link = document.getElementById('featuredAd');
+    const advertiserEl = document.getElementById('adAdvertiser');
+    const headlineEl = document.getElementById('adHeadline');
+    const descriptionEl = document.getElementById('adDescription');
+    const ctaEl = document.getElementById('adCta');
+    const imageEl = document.getElementById('adImage');
+
+    try {
+      const data = await apiGet('/api/public/advertisements/trending');
+      const campaign = data && data.campaign;
+      if (!campaign || !campaign.url) {
+        section.classList.remove('is-visible');
+        return;
+      }
+
+      link.href = campaign.url;
+      advertiserEl.textContent = campaign.advertiser || '';
+      headlineEl.textContent = campaign.name || 'Featured campaign';
+      descriptionEl.textContent = campaign.description || 'Discover the latest experiences, opportunities and offers from our featured partner.';
+      ctaEl.innerHTML = (campaign.cta_text || 'Discover More') + ' <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>';
+
+      if (campaign.image_url) {
+        imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        imageEl.innerHTML = '';
+      } else {
+        imageEl.style.backgroundImage = '';
+        imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+
+      section.classList.add('is-visible');
+    } catch (err) {
+      section.classList.remove('is-visible');
+      console.warn('[ad featured]', err.message);
+    }
+  }
+
+  /* ---------- AD 4: Sidebar advert ---------- */
+  async function loadSidebarAd() {
+    try {
+      const data = await apiGet('/api/public/advertisements/trending');
+      trendingCampaign = data && data.campaign ? data.campaign : null;
+    } catch (err) {
+      console.warn('[ad sidebar]', err.message);
+      trendingCampaign = null;
+    }
+
+    const campaign = trendingCampaign;
+    const desktopCard = document.getElementById('adSidebarCard');
+    const mobileCard = document.getElementById('adSidebarMobileCard');
+
+    if (!campaign || !campaign.url) {
+      if (desktopCard) desktopCard.classList.remove('is-visible');
+      if (mobileCard) mobileCard.classList.remove('is-visible');
+      return;
+    }
+
+    if (desktopCard) {
+      const link = document.getElementById('adSidebarLink');
+      link.href = campaign.url;
+      const img = document.getElementById('adSidebarImage');
+      if (campaign.image_url) {
+        img.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        img.innerHTML = '';
+      } else {
+        img.style.backgroundImage = '';
+        img.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+      document.getElementById('adSidebarHeadline').textContent = campaign.name || 'Discover Something New';
+      document.getElementById('adSidebarDesc').textContent = campaign.description || 'Explore products and services created with students in mind.';
+      document.getElementById('adSidebarCta').innerHTML = (campaign.cta_text || 'Check It Out') + ' <i class="fas fa-arrow-right"></i>';
+      desktopCard.classList.add('is-visible');
+    }
+
+    if (mobileCard) {
+      const link = document.getElementById('adSidebarMobileLink');
+      link.href = campaign.url;
+      const img = document.getElementById('adSidebarMobileImage');
+      if (campaign.image_url) {
+        img.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
+        img.innerHTML = '';
+      } else {
+        img.style.backgroundImage = '';
+        img.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+      }
+      document.getElementById('adSidebarMobileHeadline').textContent = campaign.name || 'Discover Something New';
+      document.getElementById('adSidebarMobileDesc').textContent = campaign.description || 'Explore products and services created with students in mind.';
+      document.getElementById('adSidebarMobileCta').innerHTML = (campaign.cta_text || 'Check It Out') + ' <i class="fas fa-arrow-right"></i>';
+      mobileCard.classList.add('is-visible');
+    }
   }
 
   /* ---------- load list ---------- */
@@ -564,6 +801,51 @@
           </div>
         </div>`;
     }).join('');
+
+    // AD 2: sponsored trending article — inserted after the first real card
+    const sponsoredCard = getSponsoredArticleCard();
+    if (sponsoredCard) {
+      const cards = grid.querySelectorAll('.news-card');
+      if (cards.length) {
+        const ref = cards[0];
+        if (ref && ref.nextSibling) grid.insertBefore(sponsoredCard, ref.nextSibling);
+        else grid.appendChild(sponsoredCard);
+      } else {
+        grid.appendChild(sponsoredCard);
+      }
+    }
+  }
+
+  /* ---------- AD 2: Sponsored trending article card ---------- */
+  function getSponsoredArticleCard() {
+    if (!trendingCampaign || !trendingCampaign.url) return null;
+
+    const advertiser = trendingCampaign.advertiser || 'Partner content';
+    const title = trendingCampaign.name || 'Partner story';
+    const desc = trendingCampaign.description || 'Discover a new service designed to make campus life easier and more productive.';
+    const imageUrl = trendingCampaign.image_url || '';
+
+    const card = document.createElement('div');
+    card.className = 'news-card is-sponsored';
+    card.setAttribute('data-cat', 'sponsored');
+    card.setAttribute('data-title', title.toLowerCase());
+    card.setAttribute('role', 'link');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('onclick', `window.open('${escapeAttr(trendingCampaign.url)}','_blank','noopener')`);
+    card.setAttribute('onkeydown', `if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('${escapeAttr(trendingCampaign.url)}','_blank','noopener');}`);
+    card.style.animationDelay = '0.1s';
+    card.innerHTML = `
+      <span class="news-sponsored-badge">Sponsored</span>
+      <div class="news-card-img" ${imageUrl ? `style="background-image:url('${encodeURI(imageUrl)}')"` : ''}></div>
+      <div class="news-card-body">
+        <div class="news-card-cat gold">${escapeHtml(advertiser)}</div>
+        <div class="news-card-title">${escapeHtml(title)}</div>
+        <div class="news-card-excerpt">${escapeHtml(truncate(desc, 130))}</div>
+        <div class="news-card-meta">
+          <span><i class="fas fa-bullhorn" aria-hidden="true"></i> Sponsored content</span>
+        </div>
+      </div>`;
+    return card;
   }
 
   function renderTrendingList(list) {
@@ -622,6 +904,14 @@
     let visible = 0;
 
     cards.forEach((card) => {
+      const isSponsored = card.classList.contains('is-sponsored');
+      if (isSponsored) {
+        // Sponsored cards are hidden while any filter is active
+        const filtering = query || currentCategoryFilter !== 'all';
+        card.style.display = filtering ? 'none' : '';
+        if (!filtering) visible++;
+        return;
+      }
       const cat = card.dataset.cat || '';
       const title = card.dataset.title || '';
       const okCat = currentCategoryFilter === 'all' || cat === currentCategoryFilter;
@@ -693,7 +983,6 @@
       );
     }
 
-    // Guard against out-of-order responses
     const requestId = ++currentArticleRequestId;
 
     const cached = storiesCache.find((s) => String(s.id) === String(id));
@@ -854,6 +1143,8 @@
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const articleParam = params.get('article');
+    loadFeaturedAd();
+    loadSidebarAd();
     loadStories().then(() => {
       initialised = true;
       if (articleParam) openArticle(articleParam, false);
