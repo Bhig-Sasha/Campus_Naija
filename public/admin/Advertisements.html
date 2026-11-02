@@ -167,6 +167,12 @@
       color: var(--text); outline: none;
     }
     .toolbar .search-inline input:focus { border-color: var(--primary); }
+    .toolbar select {
+      background-color: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 14px; font-size: 0.83rem;
+      color: var(--text); outline: none;
+    }
+    .toolbar select:focus { border-color: var(--primary); }
 
     .table-wrap { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
     .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
@@ -194,8 +200,17 @@
     .badge-pending { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .badge-approved { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
     .badge-active { background-color: rgba(0,201,130,0.15); color: var(--primary); }
+    .badge-paused { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .badge-rejected { background-color: rgba(224,112,112,0.15); color: var(--danger); }
     .badge-expired { background-color: rgba(155,169,161,0.15); color: var(--muted); }
+
+    .placement-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background-color: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: 0.7rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 6px;
+    }
+    .placement-pill i { color: var(--primary); font-size: 0.65rem; }
 
     .icon-action { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; cursor: pointer; padding: 6px 9px; border-radius: 8px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
     .icon-action:hover { color: var(--primary); border-color: var(--primary); }
@@ -211,7 +226,7 @@
     .modal-overlay.active { display: flex; }
     .modal {
       background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 20px; max-width: 640px; width: 100%; margin: auto;
+      border-radius: 20px; max-width: 720px; width: 100%; margin: auto;
     }
     .modal-header { padding: 22px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .modal-header h3 { font-size: 1.15rem; }
@@ -234,7 +249,38 @@
       transition: border-color 0.15s; width: 100%;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+    .form-group textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+
+    .form-section-title {
+      grid-column: 1 / -1;
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--primary);
+      padding-top: 8px; margin-top: 4px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── confirm modal ─── */
+    .confirm-modal {
+      background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 18px; padding: 28px 26px 22px; width: 100%;
+      max-width: 440px; text-align: center; margin: auto;
+    }
+    .confirm-icon {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; background-color: rgba(224,112,112,0.12); color: var(--danger);
+    }
+    .confirm-icon.info { background-color: rgba(0,201,130,0.12); color: var(--primary); }
+    .confirm-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; }
+    .confirm-text { font-size: 0.88rem; color: var(--muted); line-height: 1.55; margin-bottom: 22px; white-space: pre-line; }
+    .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .confirm-actions button { flex: 1; min-width: 120px; justify-content: center; padding: 11px 18px; }
+
+    .btn-danger-solid { background-color: var(--danger); color: #1a0808; font-weight: 700; border: none; border-radius: var(--radius-btn); font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
+    .btn-danger-solid:hover { background-color: #f08888; }
+    .btn-primary-solid { background-color: var(--primary); color: #070A09; font-weight: 700; border: none; border-radius: var(--radius-btn); font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
+    .btn-primary-solid:hover { background-color: #00b374; }
 
     .sidebar-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px); }
     .sidebar-overlay.active { display: block; }
@@ -372,7 +418,7 @@
           <div>
             <div class="eyebrow"><i class="fas fa-rectangle-ad"></i> Business</div>
             <h1>Advertisements</h1>
-            <p>Manage advertising campaigns and placements.</p>
+            <p>Manage advertising campaigns and placements across all six public pages.</p>
           </div>
           <button class="btn-primary" onclick="openCreateModal()"><i class="fas fa-plus"></i> New Campaign</button>
         </div>
@@ -404,6 +450,8 @@
           <button class="tab active" data-filter="">All Campaigns</button>
           <button class="tab" data-filter="active">Active</button>
           <button class="tab" data-filter="pending">Pending</button>
+          <button class="tab" data-filter="approved">Approved</button>
+          <button class="tab" data-filter="paused">Paused</button>
           <button class="tab" data-filter="expired">Expired</button>
         </div>
 
@@ -412,6 +460,15 @@
             <i class="fas fa-search"></i>
             <input type="text" id="campSearch" placeholder="Search campaigns..." oninput="renderTable()">
           </div>
+          <select id="placementFilter" onchange="renderTable()">
+            <option value="">All placements</option>
+            <option value="home">Home</option>
+            <option value="schools">Schools</option>
+            <option value="admissions">Admissions</option>
+            <option value="exams">Exams</option>
+            <option value="scholarships">Scholarships</option>
+            <option value="trending">Trending</option>
+          </select>
         </div>
 
         <div class="table-wrap">
@@ -463,29 +520,62 @@
       </div>
       <div class="modal-body">
         <div class="form-grid">
+          <div class="form-section-title">Basics</div>
+
           <div class="form-group full">
             <label>Campaign name <span class="req">*</span></label>
             <input type="text" id="campName" placeholder="e.g. JAMB Prep Sponsored Banner">
+            <span class="form-hint">This becomes the headline shown on the ad card.</span>
           </div>
           <div class="form-group">
             <label>Advertiser <span class="req">*</span></label>
             <input type="text" id="campAdvertiser" placeholder="Business or org name">
           </div>
           <div class="form-group">
-            <label>Placement <span class="req">*</span></label>
-            <select id="campPlacement">
+            <label>Placement page <span class="req">*</span></label>
+            <select id="campPlacement" onchange="updatePlacementOptions()">
               <option value="">Select placement</option>
-              <option value="home">Homepage content</option>
-              <option value="schools">Schools page</option>
-              <option value="admissions">Admissions page</option>
-              <option value="scholarships">Scholarships page</option>
-              <option value="trending">Trending page</option>
+              <option value="home">Home</option>
+              <option value="schools">Schools</option>
+              <option value="admissions">Admissions</option>
+              <option value="exams">Exams</option>
+              <option value="scholarships">Scholarships</option>
+              <option value="trending">Trending</option>
             </select>
           </div>
+
+          <div class="form-section-title">Ad content</div>
+
           <div class="form-group full">
+            <label>Description <span class="optional">(shown below the headline)</span></label>
+            <textarea id="campDescription" placeholder="One or two sentences about the offer, programme or service."></textarea>
+          </div>
+          <div class="form-group">
+            <label>CTA button text</label>
+            <input type="text" id="campCta" placeholder="e.g. Explore School, Apply Now, Learn More">
+            <span class="form-hint">Defaults to "Learn more" if left blank.</span>
+          </div>
+          <div class="form-group">
             <label>Destination URL <span class="req">*</span></label>
             <input type="url" id="campUrl" placeholder="https://advertiser.example/offer">
           </div>
+          <div class="form-group full">
+            <label>Image URL <span class="optional">(optional)</span></label>
+            <input type="url" id="campImage" placeholder="https://advertiser.example/banner.jpg">
+          </div>
+
+          <div class="form-section-title" id="schoolRefSection" style="display:none;">Schools page targeting</div>
+
+          <div class="form-group full" id="schoolRefGroup" style="display:none;">
+            <label>Sponsored school <span class="optional">(required for the Schools page card &amp; profile banner)</span></label>
+            <select id="campTargetSchool">
+              <option value="">Loading schools…</option>
+            </select>
+            <span class="form-hint">Powers the Sponsored School card and the profile banner on the Schools page. Must be a published school.</span>
+          </div>
+
+          <div class="form-section-title">Schedule</div>
+
           <div class="form-group">
             <label>Start date <span class="req">*</span></label>
             <input type="date" id="campStart">
@@ -500,14 +590,33 @@
               <option value="draft">Draft</option>
               <option value="pending">Pending approval</option>
               <option value="approved">Approved</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="expired">Expired</option>
+              <option value="rejected">Rejected</option>
             </select>
-            <span class="form-hint">Campaigns do not go live until both approved and in their date window.</span>
+            <span class="form-hint">A campaign only goes live when status is <strong>active</strong> AND today is between the start and end date.</span>
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-outline" onclick="closeModal()">Cancel</button>
         <button class="btn-primary" id="campSaveBtn" onclick="saveCampaign()"><i class="fas fa-save"></i> Save campaign</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirmModal" aria-hidden="true">
+    <div class="confirm-modal">
+      <div class="confirm-icon" id="confirmIconWrap">
+        <i class="fas fa-triangle-exclamation" id="confirmIcon"></i>
+      </div>
+      <h2 class="confirm-title" id="confirmTitle">Are you sure?</h2>
+      <p class="confirm-text" id="confirmText"></p>
+      <div class="confirm-actions">
+        <button class="btn-outline" id="confirmCancel">Cancel</button>
+        <button class="btn-danger-solid" id="confirmOk">Confirm</button>
       </div>
     </div>
   </div>
@@ -526,11 +635,17 @@
       const LOGIN_URL = '/admin/login.html';
       const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
 
-      let token = null, currentUser = null, campaigns = [], editingId = null, activeFilter = '';
+      let token = null, currentUser = null, campaigns = [], schools = [], editingId = null, activeFilter = '';
 
       const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
       const initials = (name) => (!name ? '?' : name.trim().split(/\s+/).filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join('') || '?');
       const formatDate = (iso) => { if (!iso) return '—'; const d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
+      const capitalize = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+
+      const PLACEMENT_LABELS = {
+        home: 'Home', schools: 'Schools', admissions: 'Admissions',
+        exams: 'Exams', scholarships: 'Scholarships', trending: 'Trending',
+      };
 
       function redirectToLogin(reason) {
         try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
@@ -556,6 +671,48 @@
         el.classList.add('show'); clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
+
+      function openConfirm(opts) {
+        return new Promise((resolve) => {
+          const backdrop = document.getElementById('confirmModal');
+          const iconWrap = document.getElementById('confirmIconWrap');
+          const icon = document.getElementById('confirmIcon');
+          const title = document.getElementById('confirmTitle');
+          const text = document.getElementById('confirmText');
+          const okBtn = document.getElementById('confirmOk');
+          const cancelBtn = document.getElementById('confirmCancel');
+
+          title.textContent = opts.title || 'Are you sure?';
+          text.textContent = opts.text || '';
+          okBtn.textContent = opts.confirmText || 'Confirm';
+          okBtn.className = opts.danger === false ? 'btn-primary-solid' : 'btn-danger-solid';
+          iconWrap.className = 'confirm-icon' + (opts.danger === false ? ' info' : '');
+          icon.className = 'fas ' + (opts.icon || (opts.danger === false ? 'fa-circle-question' : 'fa-triangle-exclamation'));
+
+          const cleanup = () => {
+            backdrop.classList.remove('active');
+            document.removeEventListener('keydown', onKey);
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            backdrop.removeEventListener('click', onBackdrop);
+          };
+          const close = (result) => { cleanup(); resolve(result); };
+          const onOk = () => close(true);
+          const onCancel = () => close(false);
+          const onBackdrop = (e) => { if (e.target === backdrop) close(false); };
+          const onKey = (e) => {
+            if (e.key === 'Escape') close(false);
+            if (e.key === 'Enter') close(true);
+          };
+          okBtn.addEventListener('click', onOk);
+          cancelBtn.addEventListener('click', onCancel);
+          backdrop.addEventListener('click', onBackdrop);
+          document.addEventListener('keydown', onKey);
+          backdrop.classList.add('active');
+          setTimeout(() => okBtn.focus(), 50);
+        });
+      }
+
       async function verifySession() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!token) { redirectToLogin('not_signed_in'); return false; }
@@ -576,8 +733,6 @@
         const tbody = document.getElementById('campTbody');
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;"><span class="skeleton skeleton-text" style="display:inline-block;width:60%;"></span></td></tr>';
         try {
-          // Backend endpoint to build:
-          //   GET /api/advertisements  ->  { campaigns: [{ id, name, advertiser, placement, start_date, end_date, status, url, impressions }] }
           const data = await api('/api/advertisements');
           campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
           renderStats();
@@ -591,7 +746,7 @@
                 <div class="empty-state">
                   <i class="fas fa-plug-circle-xmark"></i>
                   <h3>Advertisements API not wired up yet</h3>
-                  <p>Create the <code>GET /api/advertisements</code> endpoint on the backend to load real campaigns here. This page is fully built and will start showing live data automatically once the endpoint exists.</p>
+                  <p>Create the <code>GET /api/advertisements</code> endpoint on the backend to load real campaigns here.</p>
                 </div>
               </td></tr>`;
             document.getElementById('campCount').textContent = '0 campaigns';
@@ -601,6 +756,19 @@
           document.getElementById('campCount').textContent = 'Error';
         }
       }
+
+      async function loadSchools() {
+        try {
+          const data = await api('/api/schools');
+          schools = Array.isArray(data.schools) ? data.schools : [];
+          const sel = document.getElementById('campTargetSchool');
+          sel.innerHTML = '<option value="">— None —</option>' +
+            schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+        } catch (e) {
+          console.error('[schools]', e.message);
+        }
+      }
+
       function renderStats() {
         const total = campaigns.length;
         const active = campaigns.filter(c => (c.status || '') === 'active').length;
@@ -611,22 +779,33 @@
         document.getElementById('statPending').textContent = pending;
         document.getElementById('statImpressions').textContent = impressions.toLocaleString('en-NG');
       }
+
       function statusBadge(status) {
         const s = (status || 'draft').toLowerCase();
         if (s === 'active') return '<span class="badge badge-active"><i class="fas fa-play"></i> Active</span>';
         if (s === 'pending') return '<span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>';
         if (s === 'approved') return '<span class="badge badge-approved"><i class="fas fa-circle-check"></i> Approved</span>';
+        if (s === 'paused') return '<span class="badge badge-paused"><i class="fas fa-pause"></i> Paused</span>';
         if (s === 'rejected') return '<span class="badge badge-rejected"><i class="fas fa-circle-xmark"></i> Rejected</span>';
         if (s === 'expired') return '<span class="badge badge-expired"><i class="fas fa-clock"></i> Expired</span>';
         return `<span class="badge badge-draft">${esc(status || 'Draft')}</span>`;
       }
+
+      function placementPill(placement) {
+        if (!placement) return '—';
+        const label = PLACEMENT_LABELS[placement] || capitalize(placement);
+        return `<span class="placement-pill"><i class="fas fa-location-dot"></i> ${esc(label)}</span>`;
+      }
+
       function renderTable() {
         const q = (document.getElementById('campSearch').value || '').toLowerCase().trim();
+        const placementFilter = document.getElementById('placementFilter').value;
         const filtered = campaigns.filter(c => {
           const hay = [c.name, c.advertiser, c.placement].filter(Boolean).join(' ').toLowerCase();
           const matchQ = !q || hay.includes(q);
           const matchStatus = !activeFilter || (c.status || '') === activeFilter;
-          return matchQ && matchStatus;
+          const matchPlacement = !placementFilter || c.placement === placementFilter;
+          return matchQ && matchStatus && matchPlacement;
         });
         document.getElementById('campCount').textContent = `Showing ${filtered.length} of ${campaigns.length}`;
         const tbody = document.getElementById('campTbody');
@@ -640,7 +819,7 @@
               <div class="camp-name">${esc(c.name || 'Untitled')}</div>
               <div class="camp-advertiser">${esc(c.advertiser || '—')}</div>
             </td>
-            <td data-label="Placement">${esc(c.placement || '—')}</td>
+            <td data-label="Placement">${placementPill(c.placement)}</td>
             <td data-label="Period">${formatDate(c.start_date)} → ${formatDate(c.end_date)}</td>
             <td data-label="Status">${statusBadge(c.status)}</td>
             <td data-label="Actions">
@@ -655,23 +834,41 @@
                 ${(c.status || '').toLowerCase() === 'active' ? `
                   <button class="icon-action" onclick="updateCampaignStatus('${esc(c.id)}','paused')" title="Pause"><i class="fas fa-pause"></i></button>
                 ` : ''}
+                ${(c.status || '').toLowerCase() === 'paused' ? `
+                  <button class="icon-action" onclick="updateCampaignStatus('${esc(c.id)}','active')" title="Resume"><i class="fas fa-play"></i></button>
+                ` : ''}
                 <button class="icon-action" onclick="openEditModal('${esc(c.id)}')" title="Edit"><i class="fas fa-pen"></i></button>
+                <button class="icon-action danger" onclick="deleteCampaign('${esc(c.id)}')" title="Delete"><i class="fas fa-trash"></i></button>
               </div>
             </td>
           </tr>`).join('');
       }
 
       /* MODAL */
+      function updatePlacementOptions() {
+        const placement = document.getElementById('campPlacement').value;
+        const section = document.getElementById('schoolRefSection');
+        const group = document.getElementById('schoolRefGroup');
+        const isSchools = placement === 'schools';
+        section.style.display = isSchools ? '' : 'none';
+        group.style.display = isSchools ? 'flex' : 'none';
+      }
+
       function openCreateModal() {
         editingId = null;
         document.getElementById('campModalTitle').textContent = 'Create advertisement';
         document.getElementById('campName').value = '';
         document.getElementById('campAdvertiser').value = '';
         document.getElementById('campPlacement').value = '';
+        document.getElementById('campDescription').value = '';
+        document.getElementById('campCta').value = '';
         document.getElementById('campUrl').value = '';
+        document.getElementById('campImage').value = '';
+        document.getElementById('campTargetSchool').value = '';
         document.getElementById('campStart').value = '';
         document.getElementById('campEnd').value = '';
         document.getElementById('campStatus').value = 'draft';
+        updatePlacementOptions();
         document.getElementById('campModal').classList.add('active');
       }
       function openEditModal(id) {
@@ -682,10 +879,15 @@
         document.getElementById('campName').value = c.name || '';
         document.getElementById('campAdvertiser').value = c.advertiser || '';
         document.getElementById('campPlacement').value = c.placement || '';
+        document.getElementById('campDescription').value = c.description || '';
+        document.getElementById('campCta').value = c.cta_text || '';
         document.getElementById('campUrl').value = c.url || '';
+        document.getElementById('campImage').value = c.image_url || '';
+        document.getElementById('campTargetSchool').value = c.target_school_id != null ? String(c.target_school_id) : '';
         document.getElementById('campStart').value = (c.start_date || '').slice(0, 10);
         document.getElementById('campEnd').value = (c.end_date || '').slice(0, 10);
         document.getElementById('campStatus').value = c.status || 'draft';
+        updatePlacementOptions();
         document.getElementById('campModal').classList.add('active');
       }
       function closeModal() {
@@ -693,23 +895,39 @@
         editingId = null;
       }
       async function saveCampaign() {
-        const name = document.getElementById('campName').value.trim();
-        const advertiser = document.getElementById('campAdvertiser').value.trim();
-        const placement = document.getElementById('campPlacement').value;
-        const url = document.getElementById('campUrl').value.trim();
-        const start_date = document.getElementById('campStart').value;
-        const end_date = document.getElementById('campEnd').value;
-        const status = document.getElementById('campStatus').value;
+        const name        = document.getElementById('campName').value.trim();
+        const advertiser  = document.getElementById('campAdvertiser').value.trim();
+        const placement   = document.getElementById('campPlacement').value;
+        const description = document.getElementById('campDescription').value.trim();
+        const cta_text    = document.getElementById('campCta').value.trim();
+        const url         = document.getElementById('campUrl').value.trim();
+        const image_url   = document.getElementById('campImage').value.trim();
+        const targetSchoolRaw = document.getElementById('campTargetSchool').value;
+        const start_date  = document.getElementById('campStart').value;
+        const end_date    = document.getElementById('campEnd').value;
+        const status      = document.getElementById('campStatus').value;
+
         if (!name || !advertiser || !placement || !url || !start_date || !end_date) {
           toast('Please fill in all required fields.', true); return;
         }
         try { new URL(url); } catch (_) { toast('Please enter a valid destination URL.', true); return; }
+        if (image_url) {
+          try { new URL(image_url); } catch (_) { toast('Please enter a valid image URL.', true); return; }
+        }
         if (new Date(end_date) < new Date(start_date)) { toast('End date cannot be before start date.', true); return; }
+
+        const body = {
+          name, advertiser, placement, url,
+          start_date, end_date, status,
+          description: description || null,
+          cta_text: cta_text || null,
+          image_url: image_url || null,
+          target_school_id: targetSchoolRaw ? Number(targetSchoolRaw) : null,
+        };
 
         const btn = document.getElementById('campSaveBtn');
         btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
         try {
-          const body = { name, advertiser, placement, url, start_date, end_date, status };
           if (editingId) {
             await api('/api/advertisements/' + encodeURIComponent(editingId), { method: 'PATCH', body: JSON.stringify(body) });
             toast('Campaign updated.');
@@ -725,15 +943,36 @@
           btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Save campaign';
         }
       }
+
       async function updateCampaignStatus(id, status) {
         try {
           await api('/api/advertisements/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify({ status }) });
           const c = campaigns.find(x => String(x.id) === String(id));
           if (c) c.status = status;
           renderStats(); renderTable();
-          toast('Campaign ' + status + '.');
+          toast('Campaign marked ' + status + '.');
         } catch (e) {
           toast(e.message || 'Update failed.', true);
+        }
+      }
+
+      async function deleteCampaign(id) {
+        const c = campaigns.find(x => String(x.id) === String(id));
+        if (!c) return;
+        const ok = await openConfirm({
+          title: 'Delete campaign?',
+          text: `"${c.name}" will be permanently removed. The public pages will stop showing this ad immediately.`,
+          confirmText: 'Delete campaign',
+          icon: 'fa-trash',
+          danger: true,
+        });
+        if (!ok) return;
+        try {
+          await api('/api/advertisements/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Campaign deleted.');
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Delete failed.', true);
         }
       }
 
@@ -754,12 +993,25 @@
       function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); menuToggle.setAttribute('aria-expanded', 'false'); }
       menuToggle.addEventListener('click', () => { const open = sidebar.classList.toggle('open'); overlay.classList.toggle('active', open); menuToggle.setAttribute('aria-expanded', String(open)); });
       overlay.addEventListener('click', closeSidebar);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSidebar(); closeModal(); } });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
       document.getElementById('campModal').addEventListener('click', e => { if (e.target.id === 'campModal') closeModal(); });
+      document.getElementById('confirmModal').addEventListener('click', e => {
+        if (e.target.id === 'confirmModal') {
+          const cancelBtn = document.getElementById('confirmCancel');
+          if (cancelBtn) cancelBtn.click();
+        }
+      });
 
       document.getElementById('sideLogout').addEventListener('click', async () => {
-        if (!confirm('Sign out of CampusNaija admin?')) return;
+        const ok = await openConfirm({
+          title: 'Sign out?',
+          text: 'You will need to sign in again to access the admin panel.',
+          confirmText: 'Sign out',
+          icon: 'fa-arrow-right-from-bracket',
+          danger: false,
+        });
+        if (!ok) return;
         try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
         try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
         window.location.replace(LOGIN_URL);
@@ -771,7 +1023,7 @@
         const ok = await verifySession();
         if (!ok) return;
         renderUser();
-        await loadCampaigns();
+        await Promise.all([loadCampaigns(), loadSchools()]);
       })();
 
       window.openCreateModal = openCreateModal;
@@ -779,7 +1031,9 @@
       window.closeModal = closeModal;
       window.saveCampaign = saveCampaign;
       window.updateCampaignStatus = updateCampaignStatus;
+      window.deleteCampaign = deleteCampaign;
       window.renderTable = renderTable;
+      window.updatePlacementOptions = updatePlacementOptions;
     })();
   </script>
 </body>
