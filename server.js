@@ -12,42 +12,6 @@ const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
 /* ============================================================
- * ONE-TIME MIGRATION (run these SQL statements once after deploy)
- * ------------------------------------------------------------
- * 1) Flip legacy rep content stuck in draft/pending to published,
- *    because the review queue is gone.
- *
- *   update public.courses            set status='published', updated_at=now() where status in ('draft','pending');
- *   update public.fee_records        set status='published', updated_at=now() where status in ('draft','pending');
- *   update public.admission_notices  set status='published', updated_at=now() where status in ('draft','pending');
- *   update public.academic_events    set status='published', updated_at=now() where status in ('draft','pending');
- *
- * 2) v1.8.2 additions — persistent rate limiting + real password reset.
- *
- *   create table if not exists public.rate_limits (
- *     key         text primary key,
- *     count       int  not null default 0,
- *     reset_at    timestamptz not null,
- *     created_at  timestamptz not null default now()
- *   );
- *   create index if not exists rate_limits_reset_idx on public.rate_limits (reset_at);
- *
- *   create table if not exists public.password_resets (
- *     id          uuid primary key default gen_random_uuid(),
- *     user_id     uuid not null references public.users(id) on delete cascade,
- *     token_hash  text not null unique,
- *     expires_at  timestamptz not null,
- *     used_at     timestamptz,
- *     created_at  timestamptz not null default now()
- *   );
- *   create index if not exists password_resets_user_idx on public.password_resets (user_id);
- *   create index if not exists password_resets_expiry_idx on public.password_resets (expires_at);
- *
- * The review_comments table is retained — it now holds the admin's
- * "sent back" notes for the rep to read.
- * ============================================================ */
-
-/* ============================================================
  * CONFIG
  * ============================================================ */
 const PORT = Number(process.env.PORT) || 10000;
@@ -176,11 +140,7 @@ function idsEqual(a, b) {
 
 /* ============================================================
  * PERSISTENT RATE LIMITING (Postgres-backed)
- * ============================================================
- * Sliding fixed-window counter. Survives restarts and works across
- * multiple Render instances because every request hits the shared
- * Postgres. Fails open (allows) if the limiter itself errors.
- */
+ * ============================================================ */
 async function rateLimit(key, max, windowMs) {
   try {
     const row = await one(
@@ -508,12 +468,6 @@ router.post('/auth/change-password', authenticate, asyncH(async (req, res) => {
   res.json({ ok: true });
 }));
 
-/**
- * POST /auth/forgot-password
- * Always returns 200 (no account enumeration). If the email matches
- * an active account, a single-use token is created and stored hashed.
- * In non-production the raw token is returned as `dev_token` for testing.
- */
 router.post('/auth/forgot-password', asyncH(async (req, res) => {
   const ip = req.ip || 'unknown';
   if (!(await rateLimit(`forgot:${ip}`, 4, 15 * 60 * 1000)))
@@ -539,7 +493,6 @@ router.post('/auth/forgot-password', asyncH(async (req, res) => {
         [user.id, user.email, ip]
       );
     });
-    // TODO: send email with link ${BASE_URL}/admin/reset.html?token=${rawToken}
     console.log(`[password-reset] generated for ${user.email}`);
   }
 
@@ -548,10 +501,6 @@ router.post('/auth/forgot-password', asyncH(async (req, res) => {
   res.json(body);
 }));
 
-/**
- * POST /auth/reset-password
- * Consumes a reset token and sets a new password.
- */
 router.post('/auth/reset-password', asyncH(async (req, res) => {
   const ip = req.ip || 'unknown';
   if (!(await rateLimit(`reset:${ip}`, 6, 15 * 60 * 1000)))
@@ -864,9 +813,6 @@ const CONTENT_TYPES = {
   calendar:  { table: 'academic_events',    labelCol: 'title',                                            schoolIdCol: 'school_id', routeBase: 'calendar',   friendly: 'calendar event' },
 };
 
-/**
- * sendBackContent — atomic "send back to school" with comment + notify.
- */
 async function sendBackContent(req, res, type, id) {
   const meta = CONTENT_TYPES[type];
   if (!meta) throw httpError(400, 'Unsupported content type.');
@@ -1705,7 +1651,6 @@ router.delete('/media/:id', authenticate, requireRole('owner','admin','school_ma
   if (req.user.role === 'school_manager' && !idsEqual(row.school_id, req.user.school_id))
     throw httpError(403, 'You can only delete media for your assigned institution.');
 
-  // Atomic check-and-delete: re-verify placements inside the transaction
   await tx(async (c) => {
     const placed = await c.query(
       `select id from public.media_placements
@@ -1770,7 +1715,6 @@ router.post('/media/placements', authenticate, requireRole('owner','admin','scho
   if (!placementNeedsRef(page, slot) && ref)
     throw httpError(400, `This slot is global and does not accept a content_ref.`);
 
-  // ── School-scope enforcement ─────────────────────────────────
   if (page === 'schools' && ref) {
     const school = await one('select id from public.schools where id=$1', [ref]);
     if (!school) throw httpError(400, 'content_ref does not match any school.');
@@ -1969,6 +1913,421 @@ router.patch('/settings', authenticate, requireRole('owner'), asyncH(async (req,
   res.json({ ok: true, settings: await readSettings() });
 }));
 
+/* ============================================================
+ * CONTACT MESSAGES
+ * ============================================================
+ * Public form → POST /api/public/contact
+ * Admin inbox → GET  /api/contact-messages
+ * ============================================================ */
+
+const CONTACT_CATEGORIES = [
+  'General Enquiry',
+  'School Partnership',
+  'Technical Support',
+  'Incorrect Information',
+  'Advertising',
+];
+const CONTACT_STATUSES = ['unread', 'read', 'pending', 'resolved'];
+
+// PUBLIC — submit a message from the contact form. Rate-limited.
+router.post('/public/contact', asyncH(async (req, res) => {
+  const ip = req.ip || 'unknown';
+  if (!(await rateLimit(`contact:${ip}`, 5, 10 * 60 * 1000)))
+    throw httpError(429, 'Too many messages from this address. Try again later.', 'rate_limited');
+
+  const b = req.body || {};
+  const name = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
+  const email = validateField(b.email, 'email', FIELD_LIMITS.email, { required: true }).trim();
+  const subject = validateField(b.subject, 'subject', FIELD_LIMITS.title);
+  const message = validateField(b.message, 'message', FIELD_LIMITS.long, { required: true }).trim();
+  const rawCategory = b.category ? String(b.category).trim() : 'General Enquiry';
+  const category = CONTACT_CATEGORIES.includes(rawCategory) ? rawCategory : 'General Enquiry';
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    throw httpError(400, 'Please enter a valid email address.');
+
+  const row = await one(
+    `insert into public.contact_messages
+       (name, email, subject, category, message, status, ip)
+     values ($1,$2,$3,$4,$5,'unread',$6) returning *`,
+    [name, email, subject || null, category, message, ip]
+  );
+
+  await audit(
+    { user: null, ip },
+    'submit_contact',
+    'contact_message',
+    row.id,
+    `${name} <${email}>`,
+    { category }
+  );
+
+  res.status(201).json({ ok: true, message: 'Your message was sent. We will get back to you soon.' });
+}));
+
+// ADMIN — list messages
+router.get('/contact-messages', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+  const clauses = []; const params = [];
+  if (req.query.status)   { params.push(String(req.query.status));   clauses.push(`status = $${params.length}`); }
+  if (req.query.category) { params.push(String(req.query.category)); clauses.push(`category = $${params.length}`); }
+  if (req.query.q) {
+    params.push(`%${req.query.q}%`, `%${req.query.q}%`, `%${req.query.q}%`);
+    clauses.push(`(name ilike $${params.length-2} or email ilike $${params.length-1} or subject ilike $${params.length})`);
+  }
+  const where = clauses.length ? 'where ' + clauses.join(' and ') : '';
+  const rows = await many(
+    `select * from public.contact_messages ${where}
+      order by created_at desc
+      limit $${params.length + 1} offset $${params.length + 2}`,
+    [...params, limit, offset]
+  );
+  const totalRow = await one(`select count(*)::int as c from public.contact_messages ${where}`, params);
+  res.json({ messages: rows, total: totalRow.c, limit, offset });
+}));
+
+// ADMIN — single message
+router.get('/contact-messages/:id', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
+  const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Message not found.');
+  res.json({ message: row });
+}));
+
+// ADMIN — update status
+router.patch('/contact-messages/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Message not found.');
+  const status = validateField(req.body?.status, 'status', 30, { required: true }).toLowerCase();
+  if (!CONTACT_STATUSES.includes(status))
+    throw httpError(400, `status must be one of: ${CONTACT_STATUSES.join(', ')}.`);
+
+  const resolvedAt = status === 'resolved' ? new Date() : row.resolved_at;
+  const updated = await one(
+    `update public.contact_messages
+        set status = $1, resolved_at = $2, updated_at = now()
+      where id = $3 returning *`,
+    [status, resolvedAt, row.id]
+  );
+
+  await audit(req, 'update', 'contact_message', row.id, `${row.name} <${row.email}>`, { status });
+  res.json({ message: updated });
+}));
+
+// ADMIN — delete
+router.delete('/contact-messages/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.contact_messages where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Message not found.');
+  await run('delete from public.contact_messages where id=$1', [row.id]);
+  await audit(req, 'delete', 'contact_message', row.id, `${row.name} <${row.email}>`);
+  res.json({ ok: true });
+}));
+
+/* ============================================================
+ * ADVERTISEMENTS
+ * ============================================================ */
+
+const AD_PLACEMENTS = ['home', 'schools', 'admissions', 'scholarships', 'trending'];
+const AD_STATUSES   = ['draft', 'pending', 'approved', 'active', 'paused', 'rejected', 'expired'];
+
+function validateAdPlacement(value) {
+  const v = validateField(value, 'placement', 50, { required: true }).toLowerCase();
+  if (!AD_PLACEMENTS.includes(v))
+    throw httpError(400, `placement must be one of: ${AD_PLACEMENTS.join(', ')}.`);
+  return v;
+}
+function validateAdStatus(value, { required = false } = {}) {
+  const v = validateField(value, 'status', 30, { required });
+  if (v == null) return null;
+  const s = v.toLowerCase();
+  if (!AD_STATUSES.includes(s))
+    throw httpError(400, `status must be one of: ${AD_STATUSES.join(', ')}.`);
+  return s;
+}
+
+// ADMIN — list campaigns
+router.get('/advertisements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+  const clauses = []; const params = [];
+  if (req.query.status)    { params.push(String(req.query.status).toLowerCase());    clauses.push(`status = $${params.length}`); }
+  if (req.query.placement) { params.push(String(req.query.placement).toLowerCase()); clauses.push(`placement = $${params.length}`); }
+  if (req.query.q) {
+    params.push(`%${req.query.q}%`, `%${req.query.q}%`);
+    clauses.push(`(name ilike $${params.length-1} or advertiser ilike $${params.length})`);
+  }
+  const where = clauses.length ? 'where ' + clauses.join(' and ') : '';
+  const rows = await many(
+    `select * from public.advertisements ${where}
+      order by created_at desc
+      limit $${params.length + 1} offset $${params.length + 2}`,
+    [...params, limit, offset]
+  );
+  const totalRow = await one(`select count(*)::int as c from public.advertisements ${where}`, params);
+  res.json({ campaigns: rows, total: totalRow.c, limit, offset });
+}));
+
+// ADMIN — single campaign
+router.get('/advertisements/:id', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  res.json({ campaign: row });
+}));
+
+// ADMIN — create campaign
+router.post('/advertisements', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
+  const b = req.body || {};
+  const name       = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
+  const advertiser = validateField(b.advertiser, 'advertiser', FIELD_LIMITS.name, { required: true }).trim();
+  const placement  = validateAdPlacement(b.placement);
+  const url        = validateUrl(b.url, 'url', { required: true });
+  const imageUrl   = validateUrl(b.image_url, 'image_url');
+  const startDate  = validateField(b.start_date, 'start_date', 30, { required: true });
+  const endDate    = validateField(b.end_date, 'end_date', 30, { required: true });
+  const status     = validateAdStatus(b.status) || 'draft';
+
+  if (new Date(endDate) < new Date(startDate))
+    throw httpError(400, 'end_date cannot be before start_date.');
+
+  const row = await one(
+    `insert into public.advertisements
+       (name, advertiser, placement, url, image_url, start_date, end_date, status, created_by)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *`,
+    [name, advertiser, placement, url, imageUrl, startDate, endDate, status, req.user.id]
+  );
+  await audit(req, 'create', 'advertisement', row.id, row.name, { placement, status });
+  res.status(201).json({ campaign: row });
+}));
+
+// ADMIN — update campaign
+router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
+  const existing = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!existing) throw httpError(404, 'Campaign not found.');
+
+  const b = req.body || {};
+  const allowed = ['name','advertiser','placement','url','image_url','start_date','end_date'];
+  const updates = {};
+  for (const k of allowed) if (k in b) updates[k] = b[k];
+
+  if ('placement' in updates) updates.placement = validateAdPlacement(updates.placement);
+  if ('url' in updates) updates.url = validateUrl(updates.url, 'url', { required: true });
+  if ('image_url' in updates) updates.image_url = validateUrl(updates.image_url, 'image_url');
+
+  let newStatus = null;
+  if ('status' in b) {
+    newStatus = validateAdStatus(b.status, { required: true });
+    updates.status = newStatus;
+    if (newStatus === 'approved' || newStatus === 'active') {
+      updates.approved_by = req.user.id;
+      updates.approved_at = new Date();
+    }
+  }
+
+  if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
+
+  const keys = Object.keys(updates);
+  const values = keys.map(k => updates[k]);
+  const setSql = keys.map((k, i) => `${k} = $${i+1}`).join(', ');
+  values.push(existing.id);
+  const updated = await one(
+    `update public.advertisements set ${setSql}, updated_at=now() where id=$${values.length} returning *`,
+    values
+  );
+
+  await audit(
+    req,
+    newStatus ? 'update_status' : 'update',
+    'advertisement', existing.id, existing.name,
+    newStatus ? { status: newStatus } : { fields: keys }
+  );
+  res.json({ campaign: updated });
+}));
+
+// ADMIN — delete campaign
+router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  await run('delete from public.advertisements where id=$1', [row.id]);
+  await audit(req, 'delete', 'advertisement', row.id, row.name);
+  res.json({ ok: true });
+}));
+
+// PUBLIC — serve active ad for a given placement
+router.get('/public/advertisements/:placement', asyncH(async (req, res) => {
+  await publicLimit(req);
+  const placement = String(req.params.placement).toLowerCase();
+  if (!AD_PLACEMENTS.includes(placement)) throw httpError(404, 'Unknown placement.');
+
+  const row = await one(
+    `select id, name, advertiser, placement, url, image_url, start_date, end_date, status
+       from public.advertisements
+      where placement = $1
+        and status = 'active'
+        and current_date between start_date and end_date
+      order by start_date asc
+      limit 1`,
+    [placement]
+  );
+  if (!row) return res.json({ campaign: null });
+
+  run(`update public.advertisements set impressions = impressions + 1 where id=$1`, [row.id])
+    .catch(err => console.error('[ad impression]', err.message));
+
+  res.json({ campaign: row });
+}));
+
+/* ============================================================
+ * MONETIZATION
+ * ============================================================ */
+
+function periodToInterval(period) {
+  switch (String(period || '30d').toLowerCase()) {
+    case '7d':  return '7 days';
+    case '30d': return '30 days';
+    case '90d': return '90 days';
+    case '1y':  return '1 year';
+    default:    return '30 days';
+  }
+}
+
+router.get('/monetization/summary', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const period = String(req.query.period || '30d').toLowerCase();
+  const interval = periodToInterval(period);
+
+  const totals = await many(
+    `select status, coalesce(sum(amount),0)::numeric as total, count(*)::int as count
+       from public.transactions
+      where created_at >= now() - $1::interval
+      group by status`,
+    [interval]
+  );
+  const byStatus = {};
+  for (const t of totals) byStatus[t.status] = { total: Number(t.total), count: t.count };
+
+  const confirmed   = byStatus.confirmed?.total || byStatus.paid?.total || 0;
+  const pending     = byStatus.pending?.total || 0;
+  const outstanding = byStatus.outstanding?.total || byStatus.unpaid?.total || 0;
+  const total       = Object.values(byStatus).reduce((sum, s) => sum + s.total, 0);
+
+  const series = await many(
+    `select date_trunc('day', created_at)::date as date,
+            coalesce(sum(amount),0)::numeric as amount
+       from public.transactions
+      where created_at >= now() - $1::interval
+        and status in ('confirmed','paid')
+      group by 1
+      order by 1`,
+    [interval]
+  );
+
+  const sources = await many(
+    `select source, coalesce(sum(amount),0)::numeric as amount, count(*)::int as count
+       from public.transactions
+      where created_at >= now() - $1::interval
+        and status in ('confirmed','paid')
+      group by source
+      order by amount desc`,
+    [interval]
+  );
+
+  res.json({
+    period,
+    total,
+    confirmed,
+    pending,
+    outstanding,
+    series: series.map(r => ({ date: r.date.toISOString().slice(0,10), amount: Number(r.amount) })),
+    sources: sources.map(r => ({ source: r.source, amount: Number(r.amount), count: r.count })),
+  });
+}));
+
+router.get('/monetization/transactions', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const period = String(req.query.period || '30d').toLowerCase();
+  const interval = periodToInterval(period);
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+
+  const clauses = [`created_at >= now() - $1::interval`];
+  const params = [interval];
+  if (req.query.status) { params.push(String(req.query.status).toLowerCase()); clauses.push(`status = $${params.length}`); }
+  if (req.query.source) { params.push(String(req.query.source));              clauses.push(`source = $${params.length}`); }
+  const where = 'where ' + clauses.join(' and ');
+
+  const rows = await many(
+    `select * from public.transactions ${where}
+      order by created_at desc
+      limit $${params.length + 1} offset $${params.length + 2}`,
+    [...params, limit, offset]
+  );
+  const totalRow = await one(`select count(*)::int as c from public.transactions ${where}`, params);
+  res.json({ transactions: rows, total: totalRow.c, limit, offset });
+}));
+
+router.post('/monetization/transactions', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const b = req.body || {};
+  const reference = validateField(b.reference, 'reference', 100, { required: true }).trim();
+  const customer  = validateField(b.customer, 'customer', FIELD_LIMITS.name);
+  const source    = validateField(b.source, 'source', 50, { required: true }).trim();
+  const currency  = (validateField(b.currency, 'currency', 10) || 'NGN').toUpperCase();
+  const status    = (validateField(b.status, 'status', 30) || 'pending').toLowerCase();
+  const amountNum = Number(b.amount);
+  if (!Number.isFinite(amountNum) || amountNum < 0)
+    throw httpError(400, 'amount must be a non-negative number.');
+
+  const allowedStatus = ['pending','confirmed','outstanding'];
+  if (!allowedStatus.includes(status))
+    throw httpError(400, `status must be one of: ${allowedStatus.join(', ')}.`);
+
+  if (await one('select 1 from public.transactions where reference=$1', [reference]))
+    throw httpError(409, 'A transaction with that reference already exists.');
+
+  const row = await one(
+    `insert into public.transactions
+       (reference, customer, source, amount, currency, status, provider, provider_ref, notes)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *`,
+    [reference, customer, source, amountNum, currency, status, b.provider || null, b.provider_ref || null, b.notes || null]
+  );
+  await audit(req, 'create', 'transaction', row.id, row.reference, { amount: amountNum, source, status });
+  res.status(201).json({ transaction: row });
+}));
+
+router.patch('/monetization/transactions/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.transactions where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Transaction not found.');
+  const status = validateField(req.body?.status, 'status', 30, { required: true }).toLowerCase();
+  const allowed = ['pending','confirmed','outstanding','refunded','failed'];
+  if (!allowed.includes(status))
+    throw httpError(400, `status must be one of: ${allowed.join(', ')}.`);
+
+  const updated = await one(
+    `update public.transactions set status=$1, updated_at=now() where id=$2 returning *`,
+    [status, row.id]
+  );
+  await audit(req, 'update_status', 'transaction', row.id, row.reference, { status });
+  res.json({ transaction: updated });
+}));
+
+router.get('/monetization/export', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const period = String(req.query.period || '30d').toLowerCase();
+  const interval = periodToInterval(period);
+
+  const rows = await many(
+    `select reference, customer, source, amount, currency, status, created_at
+       from public.transactions
+      where created_at >= now() - $1::interval
+      order by created_at desc`,
+    [interval]
+  );
+
+  const header = ['Reference','Customer','Source','Amount','Currency','Status','Date'];
+  const csv = [header, ...rows.map(r => [
+    r.reference, r.customer || '', r.source, r.amount, r.currency, r.status, r.created_at.toISOString()
+  ])].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+  await audit(req, 'export', 'transaction', null, null, { period, count: rows.length });
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="campusnaija-transactions-${period}-${Date.now()}.csv"`);
+  res.send(csv);
+}));
+
 /* ---------- HEALTH ---------- */
 router.get('/health', asyncH(async (req, res) => {
   const start = Date.now();
@@ -1985,12 +2344,11 @@ router.get('/health', asyncH(async (req, res) => {
 
   const publicBody = {
     ok: dbOk,
-    version: '1.8.2',
+    version: '1.9.0',
     time: dbTime,
     latency_ms: Date.now() - start,
   };
 
-  // Detailed body — only for authenticated owner
   const token = (req.headers.authorization || '').replace(/^Bearer /, '');
   if (token) {
     try {
@@ -2009,6 +2367,9 @@ router.get('/health', asyncH(async (req, res) => {
           placements: true,
           content_lifecycle: 'publish-now-send-back',
           review_comment_join: true,
+          contact_messages: true,
+          advertisements: true,
+          monetization: true,
           orphan_school_managers: orphan ? orphan.c : 0,
           active_password_resets: pendingResets ? pendingResets.c : 0,
         });
@@ -2019,7 +2380,7 @@ router.get('/health', asyncH(async (req, res) => {
   if (!dbOk) {
     return res.status(503).json({
       ok: false,
-      version: '1.8.2',
+      version: '1.9.0',
       error: 'Database unreachable',
       hint: 'Check DATABASE_URL on Render. It should use the Supabase pooler (port 6543), and the Supabase project must not be paused.',
     });
@@ -2080,7 +2441,7 @@ app.use((err, req, res, next) => {
  * START / SHUTDOWN
  * ============================================================ */
 const httpServer = app.listen(PORT, () => {
-  console.log(`CampusNaija backend v1.8.2 listening on port ${PORT}`);
+  console.log(`CampusNaija backend v1.9.0 listening on port ${PORT}`);
   console.log(`Environment: ${NODE_ENV}`);
   console.log(`Owner email: ${OWNER_EMAIL}`);
   console.log(`Public dir: ${PUBLIC_DIR}`);
