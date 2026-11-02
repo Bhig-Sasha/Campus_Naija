@@ -32,21 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    #loading-gate {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; color: var(--muted); z-index: 9999;
-    }
-    #loading-gate .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -285,6 +270,32 @@
       transition: all 0.15s;
     }
     .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
+
+    .btn-danger-solid {
+      background-color: var(--danger);
+      color: #1a0808;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-danger-solid:hover { background-color: #f08888; transform: translateY(-1px); }
+    .btn-danger-solid:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-primary-solid {
+      background-color: var(--primary);
+      color: #070A09;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary-solid:hover { background-color: #00b374; transform: translateY(-1px); }
+    .btn-primary-solid:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 220px; }
@@ -562,6 +573,7 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Picked state — collapses the picker to a single row */
     .ref-picked {
@@ -642,6 +654,78 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
+    /* ─────── In-app confirm modal ─────── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 400;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-backdrop.show { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 26px 22px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+      animation: modalIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background-color: rgba(224, 112, 112, 0.12);
+      color: var(--danger);
+    }
+    .modal-icon.info {
+      background-color: rgba(0, 201, 130, 0.12);
+      color: var(--primary);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .modal-text {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .modal-actions .btn-outline,
+    .modal-actions .btn-danger-solid,
+    .modal-actions .btn-primary-solid {
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+      padding: 11px 18px;
+    }
+
     .admin-footer {
       margin-top: 40px;
       padding: 28px 24px 24px;
@@ -701,14 +785,9 @@
 </head>
 <body>
 
-  <div id="loading-gate">
-    <div class="spinner"></div>
-    <p>Verifying your session…</p>
-  </div>
-
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
+  <div class="admin-shell" style="display:flex; min-height:100vh;" id="appShell">
 
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
@@ -887,6 +966,21 @@
     <span id="toastText">Saved</span>
   </div>
 
+  <!-- In-app confirm modal -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal">
+      <div class="modal-icon" id="confirmIconWrap">
+        <i class="fas fa-triangle-exclamation" id="confirmIcon"></i>
+      </div>
+      <h2 class="modal-title" id="confirmTitle">Are you sure?</h2>
+      <p class="modal-text" id="confirmText">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-outline" id="confirmCancel">Cancel</button>
+        <button class="btn-danger-solid" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function() {
       'use strict';
@@ -1001,14 +1095,64 @@
         return data;
       }
 
+      /* ─────── In-app confirm modal ─────── */
+      function openConfirm(opts) {
+        return new Promise((resolve) => {
+          const backdrop = document.getElementById('confirmModal');
+          const iconWrap = document.getElementById('confirmIconWrap');
+          const icon = document.getElementById('confirmIcon');
+          const title = document.getElementById('confirmTitle');
+          const text = document.getElementById('confirmText');
+          const okBtn = document.getElementById('confirmOk');
+          const cancelBtn = document.getElementById('confirmCancel');
+
+          title.textContent = opts.title || 'Are you sure?';
+          text.textContent = opts.text || '';
+          okBtn.textContent = opts.confirmText || 'Confirm';
+          okBtn.className = opts.danger === false ? 'btn-primary-solid' : 'btn-danger-solid';
+          iconWrap.className = 'modal-icon' + (opts.danger === false ? ' info' : '');
+          icon.className = 'fas ' + (opts.icon || (opts.danger === false ? 'fa-circle-question' : 'fa-triangle-exclamation'));
+
+          const close = (result) => {
+            backdrop.classList.remove('show');
+            document.removeEventListener('keydown', onKey);
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            backdrop.removeEventListener('click', onBackdrop);
+            resolve(result);
+          };
+          const onOk = () => close(true);
+          const onCancel = () => close(false);
+          const onBackdrop = (e) => { if (e.target === backdrop) close(false); };
+          const onKey = (e) => {
+            if (e.key === 'Escape') close(false);
+            if (e.key === 'Enter') close(true);
+          };
+
+          okBtn.addEventListener('click', onOk);
+          cancelBtn.addEventListener('click', onCancel);
+          backdrop.addEventListener('click', onBackdrop);
+          document.addEventListener('keydown', onKey);
+
+          backdrop.classList.add('show');
+          setTimeout(() => okBtn.focus(), 50);
+        });
+      }
+
       function toast(msg, isError) {
         const el = document.getElementById('toast');
         const txt = document.getElementById('toastText');
-        txt.textContent = msg;
+        const icon = el ? el.querySelector('i') : null;
+        if (!el || !txt) { console.warn('[toast]', msg); return; }
+
+        txt.textContent = msg || '';
         el.classList.toggle('error', !!isError);
+        if (icon) {
+          icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        }
         el.classList.add('show');
         clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
 
       async function verifySession() {
@@ -1024,12 +1168,7 @@
           return true;
         } catch (e) {
           if (e.message === 'Session expired') return false;
-          document.getElementById('loading-gate').innerHTML =
-            '<div style="text-align:center;max-width:400px;padding:24px">' +
-            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
-            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
-            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
-            '</div>';
+          console.error('[auth]', e.message);
           return false;
         }
       }
@@ -1269,7 +1408,6 @@
         }
       }
 
-      // Renders the picker in "open" state — search box + full list.
       function renderRefPicker(source, preselectedId) {
         const wrap = document.getElementById('refPickerWrap');
         if (!wrap) return;
@@ -1309,23 +1447,19 @@
             </div>
           `).join('');
 
-          // If a ref is already chosen (re-opening an existing placement),
-          // immediately collapse to the "picked" state.
           if (selectedRef) {
             collapsePickerToPicked(source);
           }
         });
       }
 
-      // Collapses the picker to a single row showing only the chosen record,
-      // with a Change button that reopens the searchable list.
       function collapsePickerToPicked(source) {
         const wrap = document.getElementById('refPickerWrap');
         if (!wrap || !selectedRef) return;
 
         const list = recordsCache[source] || [];
         const picked = list.find(r => String(r.id) === String(selectedRef));
-        if (!picked) return; // still loading, leave the spinner alone
+        if (!picked) return;
 
         wrap.innerHTML = `
           <div class="ref-picked">
@@ -1341,7 +1475,6 @@
         `;
       }
 
-      // Re-opens the searchable list so the user can pick a different record.
       function reopenRefPicker(source) {
         renderRefPicker(source, selectedRef);
       }
@@ -1360,7 +1493,6 @@
         document.querySelectorAll('#refList .ref-picker-option').forEach(o => {
           o.classList.toggle('selected', o.dataset.id === id);
         });
-        // Collapse to picked state
         const page = document.getElementById('placePage')?.value;
         const slot = document.getElementById('placeSlot')?.value;
         const def = ((PLACEMENTS[page] || []).find(s => s.v === slot)) || {};
@@ -1559,7 +1691,14 @@
       }
 
       async function clearPlacement(placementId) {
-        if (!confirm('Remove this placement? The image will stop appearing in that slot.')) return;
+        const ok = await openConfirm({
+          title: 'Remove this placement?',
+          text: 'The image will stop appearing in that slot on the website. You can re-place it later.',
+          confirmText: 'Remove',
+          icon: 'fa-thumbtack',
+          danger: true,
+        });
+        if (!ok) return;
         try {
           await api('/api/media/placements/' + encodeURIComponent(placementId), { method: 'DELETE' });
           toast('Placement removed.');
@@ -1626,7 +1765,15 @@
       async function deleteMedia(id) {
         const m = mediaFiles.find(x => x.id === id);
         if (!m) return;
-        if (!confirm('Delete this file? It will be removed from Supabase Storage and cannot be recovered.')) return;
+
+        const ok = await openConfirm({
+          title: 'Delete this file?',
+          text: 'It will be removed from Supabase Storage and cannot be recovered.',
+          confirmText: 'Delete file',
+          icon: 'fa-trash',
+          danger: true,
+        });
+        if (!ok) return;
 
         const btn = document.querySelector('#detailActions .btn-danger');
         btn.disabled = true;
@@ -1680,7 +1827,14 @@
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
       document.getElementById('sideLogout').addEventListener('click', async () => {
-        if (!confirm('Sign out of CampusNaija admin?')) return;
+        const ok = await openConfirm({
+          title: 'Sign out?',
+          text: 'You will need to sign in again to access the admin panel.',
+          confirmText: 'Sign out',
+          icon: 'fa-arrow-right-from-bracket',
+          danger: false,
+        });
+        if (!ok) return;
         try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
         try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
         window.location.replace(LOGIN_URL);
@@ -1714,11 +1868,15 @@
 
       document.getElementById('detailOverlay').addEventListener('click', closeDetail);
 
+      /* BOOT — no spinner, shell visible immediately, skeletons shown while data loads */
       (async function boot() {
+        let hasToken = false;
+        try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!hasToken) { redirectToLogin('not_signed_in'); return; }
+
         const ok = await verifySession();
         if (!ok) return;
-        document.getElementById('loading-gate').style.display = 'none';
-        document.getElementById('appShell').style.display = 'flex';
+
         renderUser();
         await loadMedia();
       })();

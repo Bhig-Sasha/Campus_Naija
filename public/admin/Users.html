@@ -32,21 +32,6 @@
       --sidebar-w: 260px;
     }
 
-    #loading-gate {
-      position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px; color: var(--muted); z-index: 9999;
-    }
-    #loading-gate .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     @keyframes shimmer {
       0%   { background-position: -400px 0; }
       100% { background-position: 400px 0; }
@@ -292,6 +277,32 @@
     }
     .btn-danger:hover { background-color: rgba(224, 112, 112, 0.1); }
 
+    .btn-danger-solid {
+      background-color: var(--danger);
+      color: #1a0808;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-danger-solid:hover { background-color: #f08888; transform: translateY(-1px); }
+    .btn-danger-solid:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-primary-solid {
+      background-color: var(--primary);
+      color: #070A09;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary-solid:hover { background-color: #00b374; transform: translateY(-1px); }
+    .btn-primary-solid:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
     .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
     .filter-row .search-inline { position: relative; display: flex; align-items: center; min-width: 240px; }
     .filter-row .search-inline i {
@@ -513,6 +524,102 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
 
+    /* ─────── In-app confirm modal ─────── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 400;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-backdrop.show { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .confirm-modal {
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 26px 22px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+      animation: modalIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background-color: rgba(224, 112, 112, 0.12);
+      color: var(--danger);
+    }
+    .modal-icon.info {
+      background-color: rgba(0, 201, 130, 0.12);
+      color: var(--primary);
+    }
+    .modal-icon.warn {
+      background-color: rgba(245, 185, 66, 0.12);
+      color: var(--accent);
+    }
+
+    .confirm-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .confirm-text {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+      white-space: pre-line;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .confirm-actions .btn-outline,
+    .confirm-actions .btn-danger-solid,
+    .confirm-actions .btn-primary-solid {
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+      padding: 11px 18px;
+    }
+
+    /* Temp password reveal box (inside confirm modal) */
+    .pwd-reveal {
+      display: flex; gap: 8px; align-items: stretch; margin-bottom: 18px;
+    }
+    .pwd-reveal input {
+      flex: 1; background-color: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-input);
+      padding: 12px 14px; font-size: 0.95rem; color: var(--text);
+      font-family: 'SFMono-Regular', Menlo, monospace;
+      letter-spacing: 0.02em; outline: none;
+    }
+    .pwd-reveal button {
+      background-color: transparent; border: 1px solid var(--border);
+      color: var(--primary); font-size: 0.82rem; font-weight: 700;
+      padding: 0 14px; border-radius: var(--radius-input); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pwd-reveal button:hover { border-color: var(--primary); background-color: rgba(0,201,130,0.08); }
+
     /* Footer */
     .admin-footer {
       margin-top: 40px;
@@ -578,14 +685,9 @@
 </head>
 <body>
 
-  <div id="loading-gate">
-    <div class="spinner"></div>
-    <p>Verifying your session…</p>
-  </div>
-
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:none; min-height:100vh;" id="appShell">
+  <div class="admin-shell" style="display:flex; min-height:100vh;" id="appShell">
 
     <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
       <div class="sidebar-brand">
@@ -839,6 +941,21 @@
     <span id="toastText">Saved</span>
   </div>
 
+  <!-- In-app confirm modal -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-modal">
+      <div class="modal-icon" id="confirmIconWrap">
+        <i class="fas fa-triangle-exclamation" id="confirmIcon"></i>
+      </div>
+      <h2 class="confirm-title" id="confirmTitle">Are you sure?</h2>
+      <div class="confirm-text" id="confirmText">This action cannot be undone.</div>
+      <div class="confirm-actions">
+        <button class="btn-outline" id="confirmCancel">Cancel</button>
+        <button class="btn-danger-solid" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function() {
       'use strict';
@@ -953,14 +1070,164 @@
         return data;
       }
 
+      /* ─────── In-app confirm modal ─────── */
+      function openConfirm(opts) {
+        return new Promise((resolve) => {
+          const backdrop = document.getElementById('confirmModal');
+          const iconWrap = document.getElementById('confirmIconWrap');
+          const icon = document.getElementById('confirmIcon');
+          const title = document.getElementById('confirmTitle');
+          const text = document.getElementById('confirmText');
+          const okBtn = document.getElementById('confirmOk');
+          const cancelBtn = document.getElementById('confirmCancel');
+          const actions = okBtn.parentElement;
+
+          title.textContent = opts.title || 'Are you sure?';
+          text.textContent = opts.text || '';
+          text.style.whiteSpace = 'pre-line';
+
+          // Reset actions container (in case a previous call injected something)
+          actions.innerHTML = '';
+
+          // Cancel button (hide if opts.showCancel === false)
+          if (opts.showCancel !== false) {
+            actions.appendChild(cancelBtn);
+          }
+          cancelBtn.textContent = opts.cancelText || 'Cancel';
+
+          // OK button
+          okBtn.textContent = opts.confirmText || 'Confirm';
+          okBtn.className = opts.danger === false ? 'btn-primary-solid' : 'btn-danger-solid';
+          if (opts.showConfirm !== false) {
+            actions.appendChild(okBtn);
+          }
+
+          // Icon styling
+          iconWrap.className = 'modal-icon'
+            + (opts.tone === 'warn' ? ' warn' : '')
+            + (opts.danger === false ? ' info' : '');
+          icon.className = 'fas ' + (opts.icon || (opts.danger === false ? 'fa-circle-question' : 'fa-triangle-exclamation'));
+
+          const cleanup = () => {
+            backdrop.classList.remove('show');
+            document.removeEventListener('keydown', onKey);
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            backdrop.removeEventListener('click', onBackdrop);
+          };
+          const close = (result) => { cleanup(); resolve(result); };
+          const onOk = () => close(true);
+          const onCancel = () => close(false);
+          const onBackdrop = (e) => { if (e.target === backdrop) close(false); };
+          const onKey = (e) => {
+            if (e.key === 'Escape') close(false);
+            if (e.key === 'Enter' && opts.showConfirm !== false) close(true);
+          };
+
+          okBtn.addEventListener('click', onOk);
+          cancelBtn.addEventListener('click', onCancel);
+          backdrop.addEventListener('click', onBackdrop);
+          document.addEventListener('keydown', onKey);
+
+          backdrop.classList.add('show');
+          setTimeout(() => (opts.showConfirm === false ? cancelBtn : okBtn).focus(), 50);
+        });
+      }
+
+      /* Show the generated temporary password in a modal-like dialog */
+      function showTempPassword(name, email, password) {
+        return new Promise((resolve) => {
+          const backdrop = document.getElementById('confirmModal');
+          const iconWrap = document.getElementById('confirmIconWrap');
+          const icon = document.getElementById('confirmIcon');
+          const title = document.getElementById('confirmTitle');
+          const text = document.getElementById('confirmText');
+          const okBtn = document.getElementById('confirmOk');
+          const cancelBtn = document.getElementById('confirmCancel');
+          const actions = okBtn.parentElement;
+
+          title.textContent = 'Account created';
+          iconWrap.className = 'modal-icon info';
+          icon.className = 'fas fa-check';
+
+          text.innerHTML = `
+            <div style="text-align:left;">
+              <p style="margin:0 0 12px; color:var(--muted); font-size:0.85rem; line-height:1.5;">
+                Share this password with <strong style="color:var(--text);">${esc(name)}</strong>
+                (${esc(email)}) through a secure channel. They will be required to change it on first sign-in.
+              </p>
+              <div class="pwd-reveal">
+                <input type="text" id="tempPwdInput" readonly value="${esc(password)}">
+                <button type="button" id="copyPwdBtn"><i class="fas fa-copy"></i> Copy</button>
+              </div>
+            </div>
+          `;
+
+          actions.innerHTML = '';
+          const doneBtn = document.createElement('button');
+          doneBtn.className = 'btn-primary-solid';
+          doneBtn.style.flex = '1';
+          doneBtn.style.minWidth = '120px';
+          doneBtn.style.padding = '11px 18px';
+          doneBtn.textContent = 'Done';
+          actions.appendChild(doneBtn);
+
+          const cleanup = () => {
+            backdrop.classList.remove('show');
+            document.removeEventListener('keydown', onKey);
+            backdrop.removeEventListener('click', onBackdrop);
+            doneBtn.removeEventListener('click', onDone);
+          };
+          const close = () => { cleanup(); resolve(); };
+          const onDone = () => close();
+          const onBackdrop = (e) => { if (e.target === backdrop) close(); };
+          const onKey = (e) => {
+            if (e.key === 'Escape' || e.key === 'Enter') close();
+          };
+
+          doneBtn.addEventListener('click', onDone);
+          backdrop.addEventListener('click', onBackdrop);
+          document.addEventListener('keydown', onKey);
+
+          // Copy button
+          setTimeout(() => {
+            const copyBtn = document.getElementById('copyPwdBtn');
+            const pwdInput = document.getElementById('tempPwdInput');
+            if (copyBtn && pwdInput) {
+              copyBtn.addEventListener('click', () => {
+                pwdInput.select();
+                try {
+                  document.execCommand('copy');
+                  copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied';
+                  setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1600);
+                } catch (_) {
+                  copyBtn.innerHTML = '<i class="fas fa-xmark"></i> Failed';
+                  setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1600);
+                }
+              });
+            }
+            const inp = document.getElementById('tempPwdInput');
+            if (inp) inp.focus();
+          }, 60);
+
+          backdrop.classList.add('show');
+        });
+      }
+
       function toast(msg, isError) {
         const el = document.getElementById('toast');
         const txt = document.getElementById('toastText');
-        txt.textContent = msg;
+        const icon = el ? el.querySelector('i') : null;
+        if (!el || !txt) { console.warn('[toast]', msg); return; }
+
+        txt.textContent = msg || '';
         el.classList.toggle('error', !!isError);
+        if (icon) {
+          icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
+        }
         el.classList.add('show');
         clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2800);
+        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
 
       /* AUTH */
@@ -977,12 +1244,7 @@
           return true;
         } catch (e) {
           if (e.message === 'Session expired') return false;
-          document.getElementById('loading-gate').innerHTML =
-            '<div style="text-align:center;max-width:400px;padding:24px">' +
-            '<p style="color:#f0a0a0;margin-bottom:8px">Could not reach the server.</p>' +
-            '<p style="font-size:0.85rem;margin-bottom:16px">The API may be waking up. Retry in a moment.</p>' +
-            '<button onclick="location.reload()" style="padding:10px 20px;border-radius:10px;background:#00C982;color:#070A09;font-weight:700;border:none;cursor:pointer">Retry</button>' +
-            '</div>';
+          console.error('[auth]', e.message);
           return false;
         }
       }
@@ -1152,7 +1414,15 @@
       async function approveUser(id) {
         const u = users.find(x => x.id === id);
         if (!u) return;
-        if (!confirm(`Approve ${u.name} as ${roleLabel(u.role)}?\n\nThey will be able to sign in immediately.`)) return;
+
+        const ok = await openConfirm({
+          title: 'Approve this account?',
+          text: `${u.name} will be approved as ${roleLabel(u.role)} and can sign in immediately.`,
+          confirmText: 'Approve',
+          icon: 'fa-check',
+          danger: false,
+        });
+        if (!ok) return;
 
         try {
           await api('/api/users/' + encodeURIComponent(id) + '/approve', { method: 'POST' });
@@ -1166,7 +1436,15 @@
       async function suspendUser(id) {
         const u = users.find(x => x.id === id);
         if (!u) return;
-        if (!confirm(`Suspend ${u.name}? They will be signed out and cannot sign in until reactivated.`)) return;
+
+        const ok = await openConfirm({
+          title: 'Suspend this account?',
+          text: `${u.name} will be signed out and cannot sign in until reactivated.`,
+          confirmText: 'Suspend',
+          icon: 'fa-ban',
+          danger: true,
+        });
+        if (!ok) return;
 
         try {
           await api('/api/users/' + encodeURIComponent(id) + '/suspend', { method: 'POST' });
@@ -1180,7 +1458,15 @@
       async function reactivateUser(id) {
         const u = users.find(x => x.id === id);
         if (!u) return;
-        if (!confirm(`Reactivate ${u.name}?`)) return;
+
+        const ok = await openConfirm({
+          title: 'Reactivate this account?',
+          text: `${u.name} will regain access to the admin panel.`,
+          confirmText: 'Reactivate',
+          icon: 'fa-rotate-right',
+          danger: false,
+        });
+        if (!ok) return;
 
         try {
           await api('/api/users/' + encodeURIComponent(id) + '/reactivate', { method: 'POST' });
@@ -1346,16 +1632,7 @@
           await loadUsers();
 
           if (tempPwd) {
-            toast(`Account created. Share the initial password securely: ${tempPwd}`, false);
-            // Also show in a more durable way
-            setTimeout(() => {
-              alert(
-                `Account created for ${name} (${email}).\n\n` +
-                `Initial password:\n${tempPwd}\n\n` +
-                `Share this password with ${name} through a secure channel. ` +
-                `They will be required to change it after first sign-in.`
-              );
-            }, 400);
+            await showTempPassword(name, email, tempPwd);
           } else {
             toast('Account created.', false);
           }
@@ -1393,7 +1670,14 @@
       });
 
       document.getElementById('sideLogout').addEventListener('click', async () => {
-        if (!confirm('Sign out of CampusNaija admin?')) return;
+        const ok = await openConfirm({
+          title: 'Sign out?',
+          text: 'You will need to sign in again to access the admin panel.',
+          confirmText: 'Sign out',
+          icon: 'fa-arrow-right-from-bracket',
+          danger: false,
+        });
+        if (!ok) return;
         try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
         try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
         window.location.replace(LOGIN_URL);
@@ -1401,12 +1685,15 @@
 
       document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
 
-      /* BOOT */
+      /* BOOT — no spinner, shell visible immediately, skeletons shown while data loads */
       (async function boot() {
+        let hasToken = false;
+        try { hasToken = !!localStorage.getItem(TOKEN_KEY); } catch (_) {}
+        if (!hasToken) { redirectToLogin('not_signed_in'); return; }
+
         const ok = await verifySession();
         if (!ok) return;
-        document.getElementById('loading-gate').style.display = 'none';
-        document.getElementById('appShell').style.display = 'flex';
+
         renderUser();
         await Promise.all([loadUsers(), loadSchoolsForCreate()]);
         renderPending();
