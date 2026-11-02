@@ -101,6 +101,19 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 });
 
 /* ============================================================
+ * UPLOAD (multer) — declared before any route that uses it
+ * ============================================================ */
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf'];
+    if (!allowed.includes(file.mimetype)) return cb(new Error('File type not allowed.'));
+    cb(null, true);
+  },
+});
+
+/* ============================================================
  * DATABASE
  * ============================================================ */
 const pool = new Pool({
@@ -2645,16 +2658,6 @@ router.post('/trending/:id/schedule', authenticate, requireRole('owner','admin')
 }));
 
 /* ---------- MEDIA (Supabase Storage) ---------- */
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = ['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf'];
-    if (!allowed.includes(file.mimetype)) return cb(new Error('File type not allowed.'));
-    cb(null, true);
-  },
-});
-
 router.post('/media', authenticate, requireRole('owner','admin','editor','school_manager'), upload.single('file'), asyncH(async (req, res) => {
   if (!req.file) throw httpError(400, 'A file is required.');
 
