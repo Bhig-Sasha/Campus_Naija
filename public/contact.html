@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact · CampusNaija</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #070A09; font-family: 'Manrope', sans-serif; color: #F5F7F5; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    a { text-decoration: none; color: inherit; }
+
+    :root {
+      --bg: #070A09; --surface: #0D1210; --elevated: #111815;
+      --primary: #00C982; --accent: #F5B942;
+      --text: #F5F7F5; --muted: #9BA9A1; --border: #29352F;
+      --radius-card: 16px; --radius-btn: 12px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header — identical to Home */
+    .site-header { position: sticky; top: 0; z-index: 50; background-color: rgba(7,10,9,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
+    .logo span { color: var(--primary); }
+    .nav-links { display: none; gap: 32px; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); transition: color 0.2s; }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .hamburger { background: transparent; border: none; color: var(--text); font-size: 1.6rem; cursor: pointer; padding: 6px; }
+    .mobile-nav { display: none; background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; flex-direction: column; gap: 16px; font-weight: 500; color: var(--muted); }
+    .mobile-nav a:hover { color: var(--primary); }
+    .mobile-nav.active { display: flex; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 28px; border-radius: 40px; font-weight: 600; text-decoration: none; font-size: 0.95rem; transition: all 0.2s; border: 1px solid transparent; cursor: pointer; font-family: inherit; }
+    .btn-primary { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
+    .btn-primary:hover { background-color: #00b374; border-color: #00b374; transform: translateY(-2px); }
+    .btn-outline { background: transparent; border: 1px solid rgba(0, 201, 130, 0.4); color: var(--primary); }
+    .btn-outline:hover { background: rgba(0, 201, 130, 0.1); border-color: var(--primary); transform: translateY(-2px); }
+
+    .badge { display: inline-block; padding: 6px 18px; border-radius: 40px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(0, 201, 130, 0.1); color: var(--primary); border: 1px solid rgba(0, 201, 130, 0.2); margin-bottom: 20px; }
+
+    /* Contact hero */
+    .contact-hero { text-align: center; padding: 48px 0 32px; }
+    .contact-hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 16px; }
+    .contact-hero p { color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    /* Layout */
+    .contact-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; margin: 40px 0 60px; align-items: start; }
+
+    .contact-form-wrapper { background: var(--surface); border-radius: var(--radius-card); padding: 40px; border: 1px solid var(--border); }
+    .contact-form-wrapper h2 { font-size: 1.6rem; margin-bottom: 8px; }
+    .contact-form-wrapper > p { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+    .form-group label .required { color: var(--accent); margin-left: 2px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 14px 18px; background: var(--elevated);
+      border: 1px solid var(--border); border-radius: 14px; color: var(--text);
+      font-size: 1rem; transition: all 0.2s; outline: none; font-family: inherit;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: #6b7c74; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 201, 130, 0.1); }
+    .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239BA9A1' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; padding-right: 44px; }
+    .form-group select option { background: var(--elevated); color: var(--text); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+
+    .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 20px 0; }
+    .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+    .checkbox-group label { font-weight: 400; font-size: 0.85rem; color: var(--muted); margin-bottom: 0; line-height: 1.5; cursor: pointer; }
+    .checkbox-group label a { color: var(--primary); }
+    .checkbox-group label a:hover { text-decoration: underline; }
+
+    .form-message { padding: 14px 18px; border-radius: 12px; margin: 16px 0; font-size: 0.9rem; display: none; align-items: center; gap: 10px; }
+    .form-message.success { display: flex; background: rgba(0, 201, 130, 0.12); border: 1px solid rgba(0, 201, 130, 0.3); color: var(--primary); }
+    .form-message.error { display: flex; background: rgba(255, 80, 80, 0.08); border: 1px solid rgba(255, 80, 80, 0.3); color: #ff7b7b; }
+
+    .submit-btn { width: 100%; padding: 16px; font-size: 1rem; position: relative; }
+    .submit-btn .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(7, 10, 9, 0.3); border-top-color: #070A09; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .submit-btn.loading .spinner { display: inline-block; }
+    .submit-btn.loading .btn-text, .submit-btn.loading .btn-arrow { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Info cards */
+    .contact-info { display: flex; flex-direction: column; gap: 20px; }
+    .contact-info h2 { font-size: 1.4rem; margin-bottom: 4px; }
+    .info-card { background: var(--surface); border-radius: 20px; padding: 24px; border: 1px solid var(--border); transition: all 0.2s; display: flex; gap: 16px; align-items: flex-start; }
+    .info-card:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(0, 201, 130, 0.08); }
+    .info-card .icon-box { width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 201, 130, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-card .icon-box i { font-size: 1.2rem; color: var(--primary); }
+    .info-card .icon-box.gold { background: rgba(245, 185, 66, 0.1); }
+    .info-card .icon-box.gold i { color: var(--accent); }
+    .info-card h4 { font-size: 1rem; margin-bottom: 4px; }
+    .info-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .info-card a { color: var(--primary); text-decoration: none; font-size: 0.88rem; word-break: break-all; }
+    .info-card a:hover { text-decoration: underline; }
+
+    .response-note { background: rgba(245, 185, 66, 0.06); border: 1px solid rgba(245, 185, 66, 0.2); border-radius: 16px; padding: 18px 24px; display: flex; align-items: flex-start; gap: 12px; }
+    .response-note i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
+    .response-note p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .response-note strong { color: var(--accent); }
+
+    /* Quick links */
+    .quick-links { margin: 20px 0 40px; padding: 40px; background: var(--elevated); border-radius: var(--radius-card); border: 1px solid var(--border); text-align: center; }
+    .quick-links h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .quick-links p { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
+    .quick-links-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer — identical to Home */
+    .site-footer { background-color: #0A0F0D; border-top: 1px solid var(--border); padding: 48px 0 32px; margin-top: 80px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
+    .footer-brand p { color: var(--muted); font-size: 0.9rem; margin: 16px 0 20px; max-width: 280px; }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a { color: var(--muted); font-size: 1.2rem; }
+    .social-links a:hover { color: var(--primary); }
+    .footer-links h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--muted); font-size: 0.9rem; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a:hover { color: var(--primary); }
+
+    /* Responsive */
+    @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) {
+      .header-inner { height: 80px; }
+      .nav-links { display: flex; }
+      .hamburger { display: none; }
+      .mobile-nav { display: none !important; }
+      .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+    }
+    @media (max-width: 1024px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 768px) {
+      .contact-form-wrapper { padding: 28px 24px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .contact-hero h1 { font-size: 2rem; }
+      .quick-links { padding: 28px 20px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .quick-links-row { flex-direction: column; align-items: stretch; }
+      .btn { width: 100%; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .info-card { flex-direction: column; text-align: center; align-items: center; }
+      .response-note { flex-direction: column; text-align: center; align-items: center; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/Home" class="logo">Campus<span>Naija</span></a>
+      <nav class="nav-links">
+        <a href="/Home">Home</a>
+        <a href="/Schools">Schools</a>
+        <a href="/Admissions">Admissions</a>
+        <a href="/Exams">Exams</a>
+        <a href="/Scholarships">Scholarships</a>
+        <a href="/Trending">Trending</a>
+      </nav>
+      <div class="header-actions">
+        <button class="hamburger" id="hamburgerBtn" type="button" aria-label="Toggle menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/Home">Home</a>
+      <a href="/Schools">Schools</a>
+      <a href="/Admissions">Admissions</a>
+      <a href="/Exams">Exams</a>
+      <a href="/Scholarships">Scholarships</a>
+      <a href="/Trending">Trending</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="container contact-hero">
+      <div class="badge">Get in Touch</div>
+      <h1>How Can We Help You?</h1>
+      <p>Have a question, spotted an issue, or want to work with CampusNaija? Send us a message and we'll get back to you.</p>
+    </section>
+
+    <section class="container contact-layout">
+      <div class="contact-form-wrapper">
+        <h2>Send Us a Message</h2>
+        <p>Fill in the form below and we'll route your message to the right team.</p>
+
+        <div id="formMessage" class="form-message" role="alert"></div>
+
+        <form id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name <span class="required">*</span></label>
+              <input type="text" id="fullName" name="fullName" placeholder="e.g. Ada Okafor" required autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address <span class="required">*</span></label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Enquiry Category <span class="required">*</span></label>
+              <select id="category" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="General Enquiry">General Enquiry</option>
+                <option value="School Partnership">School Partnership</option>
+                <option value="Incorrect Information">Incorrect Information</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Advertising and Sponsorship">Advertising and Sponsorship</option>
+                <option value="Feedback or Suggestions">Feedback or Suggestions</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject <span class="required">*</span></label>
+              <input type="text" id="subject" name="subject" placeholder="Brief summary of your message" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea id="message" name="message" placeholder="Tell us how we can help. Include any relevant links or screenshots where possible." required></textarea>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="privacy" name="privacy" required>
+            <label for="privacy">I understand that CampusNaija will use my details to respond to this enquiry, in line with the <a href="/Privacy">Privacy Policy</a>. <span class="required">*</span></label>
+          </div>
+          <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+            <span class="spinner"></span>
+            <span class="btn-text">Send Message</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+      </div>
+
+      <aside class="contact-info">
+        <h2>Contact Information</h2>
+
+        <div class="info-card">
+          <div class="icon-box"><i class="fas fa-envelope"></i></div>
+          <div>
+            <h4>General Enquiries</h4>
+            <p>Questions about CampusNaija and its services.</p>
+            <a href="mailto:hello@campusnaija.com">hello@campusnaija.com</a>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon-box gold"><i class="fas fa-school"></i></div>
+          <div>
+            <h4>School Partnerships</h4>
+            <p>For institutions interested in maintaining a profile or working with us.</p>
+            <a href="mailto:partners@campusnaija.com">partners@campusnaija.com</a>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon-box"><i class="fas fa-bullhorn"></i></div>
+          <div>
+            <h4>Advertising &amp; Sponsorship</h4>
+            <p>For organisations interested in relevant promotional opportunities.</p>
+            <a href="mailto:ads@campusnaija.com">ads@campusnaija.com</a>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon-box gold"><i class="fas fa-headset"></i></div>
+          <div>
+            <h4>Technical Support</h4>
+            <p>For login or website issues, please include your account email.</p>
+            <a href="mailto:support@campusnaija.com">support@campusnaija.com</a>
+          </div>
+        </div>
+
+        <div class="response-note">
+          <i class="fas fa-clock"></i>
+          <p><strong>Response Time:</strong> We aim to respond within 2–3 business days. Messages are reviewed during Nigerian business hours (Mon–Fri, 9am–5pm WAT).</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="container">
+      <div class="quick-links">
+        <h3>Looking for Quick Answers?</h3>
+        <p>Skip the wait and find immediate solutions in our help centre or explore other parts of CampusNaija.</p>
+        <div class="quick-links-row">
+          <a href="/FAQ" class="btn btn-outline"><i class="fas fa-circle-question"></i> Visit the FAQ</a>
+          <a href="/Schools" class="btn btn-outline"><i class="fas fa-building"></i> Explore Schools</a>
+          <a href="/Admissions" class="btn btn-outline"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">Campus<span>Naija</span></div>
+          <p>Your education. Your next move. Discover Nigerian institutions and opportunities.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="/Schools">Schools</a></li>
+            <li><a href="/Admissions">Admissions</a></li>
+            <li><a href="/Exams">Exams</a></li>
+            <li><a href="/Scholarships">Scholarships</a></li>
+            <li><a href="/Trending">Trending</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/About">About</a></li>
+            <li><a href="/Contact">Contact</a></li>
+            <li><a href="/FAQ">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/Privacy">Privacy Policy</a></li>
+            <li><a href="/Terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> CampusNaija. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="/Privacy">Privacy</a>
+          <a href="/Terms">Terms</a>
+          <a href="/Cookies">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      const hamburger = document.getElementById('hamburgerBtn');
+      const mobileNav = document.getElementById('mobileNav');
+      if (hamburger && mobileNav) {
+        hamburger.addEventListener('click', (e) => { e.stopPropagation(); mobileNav.classList.toggle('active'); });
+        document.addEventListener('click', (e) => {
+          if (mobileNav.classList.contains('active') && !e.target.closest('.site-header')) mobileNav.classList.remove('active');
+        });
+      }
+
+      // Contact form logic
+      const form = document.getElementById('contactForm');
+      const formMessage = document.getElementById('formMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      if (!form) return;
+
+      function showMessage(type, text) {
+        formMessage.className = 'form-message ' + type;
+        formMessage.innerHTML = (type === 'success' ? '<i class="fas fa-check-circle"></i> ' : '<i class="fas fa-exclamation-circle"></i> ') + text;
+      }
+      function hideMessage() { formMessage.className = 'form-message'; formMessage.innerHTML = ''; }
+      function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
+      form.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', () => {
+          field.style.borderColor = ''; field.style.boxShadow = ''; hideMessage();
+        });
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideMessage();
+        const fullName = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const category = document.getElementById('category');
+        const subject = document.getElementById('subject');
+        const message = document.getElementById('message');
+        const privacy = document.getElementById('privacy');
+        let isValid = true; let firstInvalid = null;
+
+        if (!fullName.value.trim()) { fullName.style.borderColor = '#ff7b7b'; isValid = false; if (!firstInvalid) firstInvalid = fullName; }
+        if (!email.value.trim() || !validateEmail(email.value.trim())) { email.style.borderColor = '#ff7b7b'; isValid = false; if (!firstInvalid) firstInvalid = email; }
+        if (!category.value) { category.style.borderColor = '#ff7b7b'; isValid = false; if (!firstInvalid) firstInvalid = category; }
+        if (!subject.value.trim()) { subject.style.borderColor = '#ff7b7b'; isValid = false; if (!firstInvalid) firstInvalid = subject; }
+        if (!message.value.trim()) { message.style.borderColor = '#ff7b7b'; isValid = false; if (!firstInvalid) firstInvalid = message; }
+        if (!privacy.checked) { isValid = false; if (!firstInvalid) firstInvalid = privacy; }
+
+        if (!isValid) {
+          showMessage('error', 'Please correct the highlighted fields and try again.');
+          if (firstInvalid) { firstInvalid.focus(); firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+          return;
+        }
+
+        submitBtn.classList.add('loading'); submitBtn.disabled = true;
+        setTimeout(function() {
+          submitBtn.classList.remove('loading'); submitBtn.disabled = false;
+          showMessage('success', 'Thank you! Your message has been received. We\'ll get back to you within 2–3 business days.');
+          form.reset();
+          formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => { if (formMessage.classList.contains('success')) hideMessage(); }, 8000);
+        }, 1400);
+      });
+    })();
+  </script>
+</body>
+</html>
