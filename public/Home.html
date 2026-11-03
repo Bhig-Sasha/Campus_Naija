@@ -60,47 +60,238 @@
     .hero-image img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75) saturate(0.9); }
     .hero-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #070A09 0%, transparent 70%); }
 
-    /* ─── Advertising: featured banner ─── */
-    .ad-section { display: none; padding: 8px 0 24px; }
-    .ad-section.is-visible { display: block; }
-    .ad-banner {
+    /* ─── AD SLIDESHOW SYSTEM ───
+     * All five formats share the same structural classes:
+     *   .ad-slider          — the outer container (hides when empty)
+     *   .ad-slider-track    — flex row of .ad-slide elements
+     *   .ad-slide           — individual slide (aspect-ratio set per format)
+     *   .ad-slide-link      — wraps the entire slide content
+     *   .ad-slider-dots     — dot indicators
+     * Aspect ratio, layout chrome, and slide body styling all differ per format.
+     */
+    .ad-slider {
+      display: none;
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .ad-slider.is-visible { display: block; }
+
+    /* Universal "sponsored" label used across all formats */
+    .ad-sponsor-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background-color: rgba(0,0,0,0.55);
+      color: var(--accent);
+      padding: 3px 9px; border-radius: 5px;
+      backdrop-filter: blur(4px);
+    }
+    .ad-sponsor-tag::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background-color: var(--accent);
+    }
+
+    /* Shared slider viewport + track */
+    .ad-slider-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .ad-slider-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    .ad-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      position: relative;
+    }
+    .ad-slide-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      color: inherit;
+    }
+
+    /* Arrows */
+    .ad-slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background-color: rgba(7,10,9,0.7);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ad-slider:hover .ad-slider-arrow { opacity: 1; pointer-events: auto; }
+    .ad-slider-arrow:hover { background-color: rgba(7,10,9,0.9); border-color: var(--primary); color: var(--primary); }
+    .ad-slider-arrow.prev { left: 14px; }
+    .ad-slider-arrow.next { right: 14px; }
+    .ad-slider-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    /* Dots */
+    .ad-slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0 0;
+    }
+    .ad-slider-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background-color: var(--border);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .ad-slider-dot.active { background-color: var(--primary); width: 22px; border-radius: 4px; }
+
+    /* Shared slide body (overlaid text) — used by Large, Medium, Small */
+    .ad-slide-body {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
+      justify-content: flex-end;
+      padding: 20px 24px;
+      gap: 6px;
+      background: linear-gradient(to top, rgba(7,10,9,0.92) 0%, rgba(7,10,9,0.3) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .ad-slide-body > * { pointer-events: auto; }
+    .ad-slide-headline {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      max-width: 520px;
+    }
+    .ad-slide-sponsor {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ad-slide-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--primary);
+      color: #070A09;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .ad-slide-media {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .ad-slide-media-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a221e, #29352F);
+      color: var(--border);
+      font-size: 2.5rem;
+      z-index: 0;
+    }
+
+    /* ── 1. LARGE (Home only) — 16:5 ── */
+    .ad-slider--large .ad-slide { aspect-ratio: 16 / 5; min-height: 180px; }
+    .ad-slider--large .ad-slide-headline { font-size: 1.5rem; }
+    @media (min-width: 768px) {
+      .ad-slider--large .ad-slide-headline { font-size: 2rem; max-width: 600px; }
+      .ad-slider--large .ad-slide-body { padding: 32px 40px; }
+    }
+
+    /* ── 2. MEDIUM — 16:7 ── */
+    .ad-slider--medium .ad-slide { aspect-ratio: 16 / 7; min-height: 150px; }
+    @media (min-width: 768px) {
+      .ad-slider--medium .ad-slide-headline { font-size: 1.4rem; }
+    }
+
+    /* ── 3. SMALL — 3:1 ── */
+    .ad-slider--small .ad-slide { aspect-ratio: 3 / 1; min-height: 90px; }
+    .ad-slider--small .ad-slide-body { padding: 14px 18px; }
+    .ad-slider--small .ad-slide-headline { font-size: 0.95rem; max-width: 400px; }
+    .ad-slider--small .ad-slide-sponsor { font-size: 0.68rem; }
+    .ad-slider--small .ad-slide-cta { font-size: 0.75rem; padding: 6px 12px; }
+
+    /* ── 4. SQUARE — 1:1 (grid of slides, not a single-slide carousel) ── */
+    .ad-slider--square .ad-slider-viewport { border-radius: var(--radius-card); }
+    .ad-slider--square .ad-slider-track {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      transform: none !important;
+    }
+    .ad-slider--square .ad-slide {
+      flex: none;
+      width: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
       overflow: hidden;
-      position: relative;
-      transition: border-color 0.2s;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
     }
-    .ad-banner:hover { border-color: var(--primary); }
-    .ad-banner-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-    .ad-sponsored-label {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent);
-      background-color: rgba(245,185,66,0.1);
-      padding: 4px 10px; border-radius: 6px;
-      align-self: flex-start;
+    .ad-slider--square .ad-slide-body {
+      padding: 14px;
+      gap: 4px;
     }
-    .ad-sponsor-name { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
-    .ad-headline { font-size: 1.4rem; font-weight: 800; line-height: 1.2; color: var(--text); }
-    .ad-description { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
-    .ad-cta {
-      align-self: flex-start;
-      background-color: var(--primary); color: #070A09;
-      font-weight: 700; font-size: 0.85rem;
-      padding: 10px 20px; border-radius: var(--radius-btn);
-      display: inline-flex; align-items: center; gap: 8px;
-      margin-top: 6px;
-      transition: background 0.15s;
+    .ad-slider--square .ad-slide-headline { font-size: 1rem; }
+    .ad-slider--square .ad-slider-arrow,
+    .ad-slider--square .ad-slider-dots { display: none; }
+
+    /* ── 5. VERTICAL — 3:4 (mobile-only promotional panels) ── */
+    .ad-slider--vertical .ad-slider-track {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      transform: none !important;
     }
-    .ad-cta:hover { background-color: #00b374; }
-    .ad-banner-image {
-      background-color: #0a0f0d; background-size: cover; background-position: center;
-      min-height: 180px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--border); font-size: 2rem;
+    .ad-slider--vertical .ad-slide {
+      flex: none;
+      width: auto;
+      aspect-ratio: 3 / 4;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .ad-slider--vertical .ad-slide-body {
+      padding: 14px;
+      gap: 4px;
+    }
+    .ad-slider--vertical .ad-slide-headline { font-size: 0.95rem; }
+    .ad-slider--vertical .ad-slider-arrow,
+    .ad-slider--vertical .ad-slider-dots { display: none; }
+
+    /* Mobile-only: show vertical panels, hide desktop-only formats on very small screens */
+    @media (max-width: 599px) {
+      .ad-slider--medium .ad-slide,
+      .ad-slider--small .ad-slide { aspect-ratio: auto; min-height: 130px; }
     }
 
     /* Discovery strip */
@@ -160,29 +351,6 @@
     .news-small-content h4 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
     .news-small-content .news-meta { margin-top: 6px; font-size: 0.75rem; }
 
-    /* Sponsored article card */
-    .news-sponsored {
-      background-color: var(--surface); border-radius: var(--radius-card);
-      border: 1px solid rgba(245,185,66,0.35); overflow: hidden; display: block;
-      position: relative; transition: border-color 0.2s;
-    }
-    .news-sponsored:hover { border-color: var(--accent); }
-    .news-sponsored .news-img { height: 200px; background-size: cover; background-position: center; position: relative; background-color: #1a221e; }
-    .news-sponsored .news-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #0D1210 10%, transparent 70%); }
-    .news-sponsored .news-content { padding: 20px; }
-    .news-sponsored-badge {
-      position: absolute; top: 12px; right: 12px; z-index: 2;
-      background-color: var(--accent); color: #070A09;
-      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; padding: 4px 10px; border-radius: 40px;
-    }
-    .news-sponsored h3 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
-    .news-sponsored .news-description { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; }
-    .news-sponsored .news-cta {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: var(--primary); font-weight: 700; font-size: 0.85rem;
-    }
-
     /* Tools */
     .tools-section { padding: 40px 0; }
     .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
@@ -235,10 +403,6 @@
       .tools-grid { grid-template-columns: repeat(2, 1fr); }
       .opps-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
-
-      .ad-banner { flex-direction: row; align-items: stretch; min-height: 220px; }
-      .ad-banner-body { padding: 32px; justify-content: center; }
-      .ad-banner-image { width: 45%; min-height: 220px; }
     }
     @media (min-width: 1024px) {
       .header-inner { height: 80px; }
@@ -256,12 +420,10 @@
       .tools-grid { grid-template-columns: repeat(5, 1fr); }
       .opps-grid { grid-template-columns: repeat(3, 1fr); }
       .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
-
-      .ad-headline { font-size: 1.7rem; }
-      .ad-banner-image { width: 50%; }
     }
     @media (prefers-reduced-motion: reduce) {
-      * { animation: none !important; transition: none !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .ad-slider-track { transition: none !important; }
     }
   </style>
 </head>
@@ -316,19 +478,17 @@
       </div>
     </section>
 
-    <!-- AD 1: Featured homepage banner — appears only when an active campaign exists -->
-    <section class="ad-section" id="featuredBannerSection" aria-label="Sponsored content">
-      <div class="container">
-        <a class="ad-banner" id="featuredBanner" href="#" rel="sponsored noopener">
-          <div class="ad-banner-body">
-            <span class="ad-sponsored-label"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
-            <div class="ad-sponsor-name" id="adSponsorName"></div>
-            <h2 class="ad-headline" id="adHeadline"></h2>
-            <p class="ad-description" id="adDescription"></p>
-            <span class="ad-cta" id="adCta">Learn more <i class="fas fa-arrow-right"></i></span>
-          </div>
-          <div class="ad-banner-image" id="adImage"></div>
-        </a>
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 1 — HOME / LARGE  (16:5, top below header)
+         ═══════════════════════════════════════════════════════ -->
+    <section class="container" aria-label="Sponsored content">
+      <div class="ad-slider ad-slider--large" id="adSliderHomeLarge" data-placement="home" data-format="large" data-slot="large_home_top">
+        <div class="ad-slider-viewport">
+          <div class="ad-slider-track" id="adSliderHomeLargeTrack"></div>
+          <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+          <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="ad-slider-dots" id="adSliderHomeLargeDots"></div>
       </div>
     </section>
 
@@ -372,6 +532,19 @@
           </div>
           <a href="/Schools.html" class="view-all">View all schools <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
+
+        <!-- ═══════════════════════════════════════════════════════
+             AD SLOT 2 — HOME / MEDIUM  (16:7, between content sections)
+             ═══════════════════════════════════════════════════════ -->
+        <div class="ad-slider ad-slider--medium" id="adSliderHomeMedium1" data-placement="home" data-format="medium" data-slot="medium_home_1">
+          <div class="ad-slider-viewport">
+            <div class="ad-slider-track" id="adSliderHomeMedium1Track"></div>
+            <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+            <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="ad-slider-dots" id="adSliderHomeMedium1Dots"></div>
+        </div>
+
         <div class="schools-grid" id="schoolsGrid">
           <div class="skeleton" style="height:280px;"></div>
           <div class="skeleton" style="height:280px;"></div>
@@ -395,6 +568,18 @@
             <div class="skeleton" style="height:112px;"></div>
             <div class="skeleton" style="height:112px;"></div>
           </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════
+             AD SLOT 3 — HOME / SMALL  (3:1, between news/discovery content)
+             ═══════════════════════════════════════════════════════ -->
+        <div class="ad-slider ad-slider--small" id="adSliderHomeSmall1" data-placement="home" data-format="small" data-slot="small_home_1" style="margin-top:24px;">
+          <div class="ad-slider-viewport">
+            <div class="ad-slider-track" id="adSliderHomeSmall1Track"></div>
+            <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+            <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="ad-slider-dots" id="adSliderHomeSmall1Dots"></div>
         </div>
       </div>
     </section>
@@ -426,6 +611,18 @@
             <div class="skeleton" style="height:120px;"></div>
             <div class="skeleton" style="height:120px;"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 4 — MOBILE ONLY / VERTICAL  (3:4, promotional sections)
+         Hidden on desktop via media query inside the CSS.
+         ═══════════════════════════════════════════════════════ -->
+    <section class="container" aria-label="Sponsored content" style="margin-bottom: 40px;">
+      <div class="ad-slider ad-slider--vertical" id="adSliderHomeVertical1" data-placement="home" data-format="vertical" data-slot="vertical_home_1">
+        <div class="ad-slider-viewport" style="border: none; background: transparent;">
+          <div class="ad-slider-track" id="adSliderHomeVertical1Track"></div>
         </div>
       </div>
     </section>
@@ -596,57 +793,206 @@
         wrap.classList.add('has-image');
       }
 
-      /* ======================================================
-       * AD 1 — Featured homepage banner
-       * ======================================================
-       * Reads from GET /api/public/advertisements/home
-       * The whole section stays hidden unless a campaign is active.
+      /* ══════════════════════════════════════════════════════
+         AD SLIDESHOW ENGINE
+         ══════════════════════════════════════════════════════
+         - Fetches campaigns for a placement + format
+         - Renders slides (image or fallback) + text overlay
+         - Rotates automatically every ROTATION_MS
+         - Pauses on hover, respects prefers-reduced-motion
+         - Hides the whole section when zero campaigns exist
+         - Supports single-slide (arrows/dots hidden)
+         - Square + Vertical formats render as static grids, no rotation
+         ══════════════════════════════════════════════════════ */
+
+      const ROTATION_MS = 6000;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /**
+       * Build one slide's HTML.
+       * @param {object} campaign - campaign record from API
+       * @param {string} format   - 'large' | 'medium' | 'small' | 'square' | 'vertical'
        */
-      async function loadFeaturedBanner() {
-        const section = document.getElementById('featuredBannerSection');
-        const banner = document.getElementById('featuredBanner');
-        const sponsorEl = document.getElementById('adSponsorName');
-        const headlineEl = document.getElementById('adHeadline');
-        const descriptionEl = document.getElementById('adDescription');
-        const ctaEl = document.getElementById('adCta');
-        const imageEl = document.getElementById('adImage');
+      function buildSlideHtml(campaign, format) {
+        const url = escapeHtml(campaign.url || '#');
+        const name = escapeHtml(campaign.name || '');
+        const advertiser = escapeHtml(campaign.advertiser || '');
+        const description = escapeHtml(truncate(campaign.description || '', format === 'small' ? 80 : 160));
+        const cta = escapeHtml(campaign.cta_text || 'Learn more');
+        const imageUrl = campaign.image_url || '';
+        const safeImage = /^https?:\/\//i.test(imageUrl) ? imageUrl : '';
+
+        const media = safeImage
+          ? `<img class="ad-slide-media" src="${escapeHtml(safeImage)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');">
+             <div class="ad-slide-media-fallback" style="display:none;"><i class="fas fa-image"></i></div>`
+          : `<div class="ad-slide-media-fallback"><i class="fas fa-image"></i></div>`;
+
+        // Small format shows sponsor inline above headline for tightness
+        const sponsorLine = format === 'small'
+          ? `<div class="ad-slide-sponsor">${advertiser}</div>`
+          : `<div class="ad-slide-sponsor">${advertiser}</div>`;
+
+        const showDescription = format !== 'small' && format !== 'square' && format !== 'vertical';
+        const descriptionHtml = showDescription && description
+          ? `<p class="ad-slide-desc" style="font-size:0.85rem;color:var(--muted);max-width:520px;">${description}</p>`
+          : '';
+
+        return `
+          <div class="ad-slide" role="group" aria-roledescription="slide">
+            <a class="ad-slide-link" href="${url}" rel="sponsored noopener" target="_blank">
+              ${media}
+              <div class="ad-slide-body">
+                <span class="ad-sponsor-tag">Sponsored</span>
+                ${sponsorLine}
+                <h3 class="ad-slide-headline">${name}</h3>
+                ${descriptionHtml}
+                <span class="ad-slide-cta">${cta} <i class="fas fa-arrow-right"></i></span>
+              </div>
+            </a>
+          </div>`;
+      }
+
+      /**
+       * Initialize a carousel-style slideshow (large / medium / small).
+       * Handles arrows, dots, autoplay, pause-on-hover, focus events.
+       */
+      function initCarousel(sliderEl, campaigns, format) {
+        const track = sliderEl.querySelector('.ad-slider-track');
+        const dotsWrap = sliderEl.querySelector('.ad-slider-dots');
+        const prevBtn = sliderEl.querySelector('.ad-slider-arrow.prev');
+        const nextBtn = sliderEl.querySelector('.ad-slider-arrow.next');
+
+        track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+
+        const count = campaigns.length;
+        let index = 0;
+        let timer = null;
+        let paused = false;
+
+        // Single slide: hide arrows + dots
+        if (count <= 1) {
+          if (prevBtn) prevBtn.style.display = 'none';
+          if (nextBtn) nextBtn.style.display = 'none';
+          if (dotsWrap) dotsWrap.style.display = 'none';
+          return;
+        }
+
+        // Build dots
+        if (dotsWrap) {
+          dotsWrap.innerHTML = campaigns.map((_, i) =>
+            `<button class="ad-slider-dot ${i === 0 ? 'active' : ''}" type="button" aria-label="Slide ${i + 1}" data-idx="${i}"></button>`
+          ).join('');
+          dotsWrap.addEventListener('click', (e) => {
+            const dot = e.target.closest('.ad-slider-dot');
+            if (!dot) return;
+            goTo(parseInt(dot.dataset.idx, 10));
+            restartAutoplay();
+          });
+        }
+
+        function update() {
+          track.style.transform = `translateX(-${index * 100}%)`;
+          if (dotsWrap) {
+            dotsWrap.querySelectorAll('.ad-slider-dot').forEach((d, i) => {
+              d.classList.toggle('active', i === index);
+            });
+          }
+        }
+
+        function goTo(i) {
+          index = (i + count) % count;
+          update();
+        }
+
+        function next() { goTo(index + 1); }
+        function prev() { goTo(index - 1); }
+
+        function startAutoplay() {
+          if (prefersReducedMotion) return;
+          stopAutoplay();
+          timer = setInterval(() => {
+            if (!paused) next();
+          }, ROTATION_MS);
+        }
+        function stopAutoplay() {
+          if (timer) { clearInterval(timer); timer = null; }
+        }
+        function restartAutoplay() { startAutoplay(); }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartAutoplay(); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartAutoplay(); });
+
+        // Pause on hover / focus
+        sliderEl.addEventListener('mouseenter', () => { paused = true; });
+        sliderEl.addEventListener('mouseleave', () => { paused = false; });
+        sliderEl.addEventListener('focusin', () => { paused = true; });
+        sliderEl.addEventListener('focusout', () => { paused = false; });
+
+        // Pause when tab is hidden (browser throttles, but this is explicit)
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) stopAutoplay();
+          else startAutoplay();
+        });
+
+        // Touch swipe (basic)
+        let touchX = 0;
+        track.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend', (e) => {
+          const dx = e.changedTouches[0].clientX - touchX;
+          if (Math.abs(dx) > 40) {
+            if (dx < 0) next(); else prev();
+            restartAutoplay();
+          }
+        }, { passive: true });
+
+        update();
+        startAutoplay();
+      }
+
+      /**
+       * Initialize a grid-style slideshow (square / vertical).
+       * No rotation, no arrows, no dots — just a responsive grid of slides.
+       */
+      function initGrid(sliderEl, campaigns, format) {
+        const track = sliderEl.querySelector('.ad-slider-track');
+        track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+      }
+
+      /**
+       * Fetches campaigns for a given placement + format and renders into the slider.
+       * Silently hides the slider if no campaigns are available or if the request fails.
+       * @param {HTMLElement} sliderEl  - the .ad-slider container
+       */
+      async function loadAdSlider(sliderEl) {
+        if (!sliderEl) return;
+        const placement = sliderEl.dataset.placement;
+        const format = sliderEl.dataset.format;
 
         try {
-          const data = await apiGet('/api/public/advertisements/home');
-          const campaign = data && data.campaign;
-          if (!campaign) {
-            section.classList.remove('is-visible');
+          const data = await apiGet(`/api/public/advertisements/${placement}?format=${encodeURIComponent(format)}`);
+          const list = Array.isArray(data.campaigns)
+            ? data.campaigns
+            : (data.campaign ? [data.campaign] : []);
+
+          if (!list.length) {
+            sliderEl.classList.remove('is-visible');
             return;
           }
 
-          banner.href = campaign.url || '#';
-          sponsorEl.textContent = campaign.advertiser || '';
-          headlineEl.textContent = campaign.name || 'Sponsored';
-          descriptionEl.textContent = campaign.description || 'Discover an opportunity from our partner.';
-          ctaEl.innerHTML = (campaign.cta_text || 'Learn more') + ' <i class="fas fa-arrow-right"></i>';
-
-          if (campaign.image_url) {
-            imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
-            imageEl.innerHTML = '';
+          if (format === 'square' || format === 'vertical') {
+            initGrid(sliderEl, list, format);
           } else {
-            imageEl.style.backgroundImage = '';
-            imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+            initCarousel(sliderEl, list, format);
           }
 
-          section.classList.add('is-visible');
+          sliderEl.classList.add('is-visible');
         } catch (err) {
-          // Silent — no campaign or no network means the section stays hidden.
-          section.classList.remove('is-visible');
-          console.warn('[ad banner]', err.message);
+          console.warn('[ad slider]', placement, format, err.message);
+          sliderEl.classList.remove('is-visible');
         }
       }
 
-      /* ======================================================
-       * AD 2 — Sponsored school card (inside Discover Schools)
-       * ======================================================
-       * Reads from GET /api/public/advertisements/schools
-       * Only injected when the campaign points at a real school.
-       */
+      /* ---------- Sponsored school card (still uses the schools endpoint) ---------- */
       async function loadSponsoredSchool() {
         const grid = document.getElementById('schoolsGrid');
         try {
@@ -674,13 +1020,11 @@
               <a href="/Schools.html?slug=${encodeURIComponent(slug)}" class="school-action">View details <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
             </div>`;
 
-          // Place it in the middle of the grid so it's visible but not dominant.
           const children = Array.from(grid.children);
           const insertAt = Math.min(Math.floor(children.length / 2), children.length);
           if (children[insertAt]) grid.insertBefore(card, children[insertAt]);
           else grid.appendChild(card);
         } catch (err) {
-          // Silent — no campaign or no network means nothing is added.
           console.warn('[ad school]', err.message);
         }
       }
@@ -717,56 +1061,10 @@
               </article>`;
           }).join('');
 
-          // Slot in the sponsored card after regular schools render.
           loadSponsoredSchool();
         } catch (err) {
           console.error('[schools]', err);
           grid.innerHTML = `<div class="empty-state">Unable to load schools right now.</div>`;
-        }
-      }
-
-      /* ======================================================
-       * AD 3 — Sponsored article card (inside Latest News)
-       * ======================================================
-       * Reads from GET /api/public/advertisements/trending
-       * Only injected when a campaign exists.
-       */
-      async function loadSponsoredArticle() {
-        const grid = document.getElementById('newsGrid');
-        try {
-          const data = await apiGet('/api/public/advertisements/trending');
-          const campaign = data && data.campaign;
-          if (!campaign) return;
-
-          const card = document.createElement('a');
-          card.className = 'news-sponsored';
-          card.href = campaign.url || '#';
-          card.rel = 'sponsored noopener';
-          card.innerHTML = `
-            <span class="news-sponsored-badge">Sponsored</span>
-            <div class="news-img" ${bgStyle(campaign.image_url)}></div>
-            <div class="news-content">
-              <h3>${escapeHtml(truncate(campaign.name || 'Sponsored', 90))}</h3>
-              <p class="news-description">${escapeHtml(truncate(campaign.description || '', 140))}</p>
-              <span class="news-cta">${escapeHtml(campaign.cta_text || 'Read more')} <i class="fas fa-arrow-right"></i></span>
-            </div>`;
-
-          // Place it in the second column, below the small cards.
-          const existingSmall = grid.querySelector('.news-small-list');
-          if (existingSmall) {
-            const wrapper = document.createElement('div');
-            wrapper.style.display = 'flex';
-            wrapper.style.flexDirection = 'column';
-            wrapper.style.gap = '16px';
-            existingSmall.replaceWith(wrapper);
-            wrapper.appendChild(existingSmall.cloneNode(true));
-            wrapper.appendChild(card);
-            existingSmall.remove();
-          } else {
-            grid.appendChild(card);
-          }
-        } catch (err) {
-          console.warn('[ad article]', err.message);
         }
       }
 
@@ -820,9 +1118,6 @@
             : '';
 
           grid.innerHTML = featuredHtml + smallHtml;
-
-          // Slot in the sponsored article after the news grid renders.
-          loadSponsoredArticle();
         } catch (err) {
           console.error('[news]', err);
           grid.innerHTML = `<div class="empty-state">Unable to load updates right now.</div>`;
@@ -861,10 +1156,13 @@
 
       /* ---------- Run ---------- */
       loadHeroImage();
-      loadFeaturedBanner();
       loadSchools();
       loadNews();
       loadOpps();
+
+      // Initialize all ad sliders on the page. Each one self-manages
+      // visibility — hiding completely when its campaign pool is empty.
+      document.querySelectorAll('.ad-slider').forEach(loadAdSlider);
     })();
   </script>
 </body>

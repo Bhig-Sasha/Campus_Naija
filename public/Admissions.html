@@ -50,51 +50,170 @@
     .view.active { display: block; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ─── AD 1: FEATURED ADMISSIONS BANNER ─── */
-    .ad-featured-section { display: none; padding: 8px 0 8px; animation: fadeInUp 0.5s ease; }
-    .ad-featured-section.is-visible { display: block; }
-    .ad-featured {
-      display: flex; flex-direction: column;
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 24px; overflow: hidden;
-      transition: border-color 0.25s, transform 0.2s;
+    /* ═══════════════════════════════════════════════════════════
+       AD SLIDESHOW SYSTEM (shared across all six public pages)
+       Formats used on Admissions per placement map:
+         - Medium (16:7) — below page introduction
+         - Small (3:1)   — between admission listings
+       ═══════════════════════════════════════════════════════════ */
+    .ad-slider {
+      display: none;
+      position: relative;
+      margin: 24px 0 8px;
     }
-    .ad-featured:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .ad-featured-body { padding: 28px 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
-    .ad-sponsored-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      align-self: flex-start;
-      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent);
-      background-color: rgba(245,185,66,0.1);
-      padding: 4px 10px; border-radius: 6px;
+    .ad-slider.is-visible { display: block; }
+
+    .ad-sponsor-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background-color: rgba(0,0,0,0.55);
+      color: var(--accent);
+      padding: 3px 9px; border-radius: 5px;
+      backdrop-filter: blur(4px);
     }
-    .ad-advertiser { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
-    .ad-featured-headline { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.2; }
-    .ad-featured-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
-    .ad-featured-cta {
-      align-self: flex-start; margin-top: 12px;
-      background-color: var(--primary); color: #070A09;
-      font-weight: 700; font-size: 0.88rem;
-      padding: 12px 22px; border-radius: var(--radius-btn);
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: background 0.15s;
-    }
-    .ad-featured-cta:hover { background-color: #00b374; }
-    .ad-featured-image {
-      min-height: 200px; flex-shrink: 0;
-      background-color: #0a0f0d; background-size: cover; background-position: center;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--border); font-size: 2rem;
-    }
-    @media (min-width: 720px) {
-      .ad-featured { flex-direction: row; align-items: stretch; min-height: 260px; }
-      .ad-featured-body { padding: 36px; justify-content: center; }
-      .ad-featured-image { width: 45%; min-height: 260px; }
-      .ad-featured-headline { font-size: 1.8rem; }
+    .ad-sponsor-tag::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background-color: var(--accent);
     }
 
-    /* FEATURED PLACEMENT BANNER (from media placements) */
+    .ad-slider-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .ad-slider-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    .ad-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      position: relative;
+    }
+    .ad-slide-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      color: inherit;
+    }
+
+    .ad-slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background-color: rgba(7,10,9,0.7);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ad-slider:hover .ad-slider-arrow { opacity: 1; pointer-events: auto; }
+    .ad-slider-arrow:hover { background-color: rgba(7,10,9,0.9); border-color: var(--primary); color: var(--primary); }
+    .ad-slider-arrow.prev { left: 14px; }
+    .ad-slider-arrow.next { right: 14px; }
+    .ad-slider-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    .ad-slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0 0;
+    }
+    .ad-slider-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background-color: var(--border);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .ad-slider-dot.active { background-color: var(--primary); width: 22px; border-radius: 4px; }
+
+    .ad-slide-body {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 24px;
+      gap: 6px;
+      background: linear-gradient(to top, rgba(7,10,9,0.92) 0%, rgba(7,10,9,0.3) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .ad-slide-body > * { pointer-events: auto; }
+    .ad-slide-headline {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      max-width: 520px;
+    }
+    .ad-slide-sponsor {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ad-slide-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--primary);
+      color: #070A09;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .ad-slide-media {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .ad-slide-media-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a221e, #29352F);
+      color: var(--border);
+      font-size: 2.5rem;
+      z-index: 0;
+    }
+
+    /* ── MEDIUM — 16:7 ── */
+    .ad-slider--medium .ad-slide { aspect-ratio: 16 / 7; min-height: 150px; }
+    @media (min-width: 768px) {
+      .ad-slider--medium .ad-slide-headline { font-size: 1.4rem; }
+    }
+
+    /* ── SMALL — 3:1 ── */
+    .ad-slider--small .ad-slide { aspect-ratio: 3 / 1; min-height: 90px; }
+    .ad-slider--small .ad-slide-body { padding: 14px 18px; }
+    .ad-slider--small .ad-slide-headline { font-size: 0.95rem; max-width: 400px; }
+    .ad-slider--small .ad-slide-sponsor { font-size: 0.68rem; }
+    .ad-slider--small .ad-slide-cta { font-size: 0.75rem; padding: 6px 12px; }
+
+    /* FEATURED PLACEMENT BANNER (kept — this is different from slideshow) */
     .featured-banner-section { padding: 32px 0 8px; display: none; animation: fadeInUp 0.5s ease; }
     .featured-banner-section.has-image { display: block; }
     .featured-banner {
@@ -168,7 +287,6 @@
     .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .section-title { font-size: 1.8rem; transition: opacity 0.3s; }
 
-    /* ─── ADMISSIONS LAYOUT WITH SIDEBAR ─── */
     .admissions-layout { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start; }
     @media (min-width: 1024px) {
       .admissions-layout { grid-template-columns: 1fr 340px; }
@@ -183,7 +301,7 @@
     @keyframes cardIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .admission-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
 
-    /* ─── AD 2: SPONSORED ADMISSION CARD ─── */
+    /* AD 2: SPONSORED ADMISSION CARD */
     .admission-card.is-sponsored { border-color: rgba(245,185,66,0.35); }
     .admission-card.is-sponsored:hover { border-color: var(--accent); }
     .ad-sponsored-badge {
@@ -215,7 +333,7 @@
     .admission-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; transition: gap 0.2s; }
     .admission-card:hover .admission-action { gap: 10px; }
 
-    /* ─── AD 3: SIDEBAR ADVERT ─── */
+    /* AD 3: SIDEBAR ADVERT (kept, unchanged) */
     .admissions-sidebar { display: none; }
     @media (min-width: 1024px) { .admissions-sidebar { display: block; } }
 
@@ -244,7 +362,6 @@
       color: var(--primary); font-weight: 700; font-size: 0.85rem;
     }
 
-    /* Mobile: place the ad inside the main column, above the grid */
     .ad-sidebar-mobile { display: block; }
     @media (min-width: 1024px) { .ad-sidebar-mobile { display: none; } }
 
@@ -385,6 +502,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
+      .ad-slider-track { transition: none !important; }
     }
   </style>
 </head>
@@ -424,21 +542,19 @@
       <p>Discover admission opportunities, check requirements, track deadlines and find official application links for Nigerian institutions.</p>
     </section>
 
-    <!-- AD 1: Featured admissions banner (Sponsored) -->
-    <section class="ad-featured-section" id="featuredAdSection" aria-label="Sponsored content">
-      <a class="ad-featured" id="featuredAd" href="#" rel="sponsored noopener">
-        <div class="ad-featured-body">
-          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
-          <div class="ad-advertiser" id="adAdvertiser"></div>
-          <h2 class="ad-featured-headline" id="adHeadline"></h2>
-          <p class="ad-featured-desc" id="adDescription"></p>
-          <span class="ad-featured-cta" id="adCta">Apply Now <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i></span>
-        </div>
-        <div class="ad-featured-image" id="adImage"></div>
-      </a>
-    </section>
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 1 — ADMISSIONS / MEDIUM  (16:7, below introduction)
+         ═══════════════════════════════════════════════════════ -->
+    <div class="ad-slider ad-slider--medium" id="adSliderAdmissionsMedium1" data-placement="admissions" data-format="medium" data-slot="medium_admissions_1">
+      <div class="ad-slider-viewport">
+        <div class="ad-slider-track" id="adSliderAdmissionsMedium1Track"></div>
+        <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+        <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="ad-slider-dots" id="adSliderAdmissionsMedium1Dots"></div>
+    </div>
 
-    <!-- Featured placement banner from media placements (keep existing) -->
+    <!-- Featured placement banner (kept — media placement, not slideshow) -->
     <section class="featured-banner-section" id="featuredBannerSection">
       <div class="featured-banner" id="featuredBanner">
         <img id="featuredBannerImg" alt="" decoding="async">
@@ -497,13 +613,13 @@
       </div>
     </section>
 
-    <!-- AD 3 (mobile): sidebar advert appears here on small screens -->
+    <!-- AD 3 (mobile): sidebar advert kept as-is -->
     <div class="ad-sidebar-mobile" id="adSidebarMobile" aria-label="Sponsored content">
       <div class="ad-sidebar" id="adSidebarMobileCard">
         <a class="ad-sidebar-card" id="adSidebarMobileLink" href="#" rel="sponsored noopener" style="display:block;margin-bottom:16px;">
           <div class="ad-sidebar-image" id="adSidebarMobileImage"></div>
           <div class="ad-sidebar-body">
-            <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+            <span class="ad-sponsor-tag">Sponsored</span>
             <div class="ad-sidebar-headline" id="adSidebarMobileHeadline"></div>
             <div class="ad-sidebar-desc" id="adSidebarMobileDesc"></div>
             <span class="ad-sidebar-cta" id="adSidebarMobileCta">Learn More <i class="fas fa-arrow-right"></i></span>
@@ -524,13 +640,13 @@
           </div>
         </div>
 
-        <!-- AD 3 (desktop): sidebar advert -->
+        <!-- AD 3 (desktop): sidebar advert kept as-is -->
         <aside class="admissions-sidebar" id="adSidebarDesktop" aria-label="Sponsored content">
           <div class="ad-sidebar" id="adSidebarCard">
             <a class="ad-sidebar-card" id="adSidebarLink" href="#" rel="sponsored noopener" style="display:block;">
               <div class="ad-sidebar-image" id="adSidebarImage"></div>
               <div class="ad-sidebar-body">
-                <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
+                <span class="ad-sponsor-tag">Sponsored</span>
                 <div class="ad-sidebar-headline" id="adSidebarHeadline"></div>
                 <div class="ad-sidebar-desc" id="adSidebarDesc"></div>
                 <span class="ad-sidebar-cta" id="adSidebarCta">Learn More <i class="fas fa-arrow-right"></i></span>
@@ -538,6 +654,19 @@
             </a>
           </div>
         </aside>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════
+           AD SLOT 2 — ADMISSIONS / SMALL  (3:1, between listings)
+           Placed directly below the admission grid per the placement map.
+           ═══════════════════════════════════════════════════════ -->
+      <div class="ad-slider ad-slider--small" id="adSliderAdmissionsSmall1" data-placement="admissions" data-format="small" data-slot="small_admissions_1" style="margin-top: 32px;">
+        <div class="ad-slider-viewport">
+          <div class="ad-slider-track" id="adSliderAdmissionsSmall1Track"></div>
+          <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+          <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="ad-slider-dots" id="adSliderAdmissionsSmall1Dots"></div>
       </div>
     </section>
 
@@ -874,6 +1003,158 @@
     return dt.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  /* ══════════════════════════════════════════════════════════
+     AD SLIDESHOW ENGINE (identical to Home / Schools)
+     ══════════════════════════════════════════════════════════ */
+  const ROTATION_MS = 6000;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function buildSlideHtml(campaign, format) {
+    const url = escapeHtml(campaign.url || '#');
+    const name = escapeHtml(campaign.name || '');
+    const advertiser = escapeHtml(campaign.advertiser || '');
+    const description = escapeHtml(String(campaign.description || '').slice(0, format === 'small' ? 80 : 160));
+    const cta = escapeHtml(campaign.cta_text || 'Learn more');
+    const imageUrl = campaign.image_url || '';
+    const safeImage = /^https?:\/\//i.test(imageUrl) ? imageUrl : '';
+
+    const media = safeImage
+      ? `<img class="ad-slide-media" src="${escapeHtml(safeImage)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');">
+         <div class="ad-slide-media-fallback" style="display:none;"><i class="fas fa-image"></i></div>`
+      : `<div class="ad-slide-media-fallback"><i class="fas fa-image"></i></div>`;
+
+    const showDescription = format !== 'small';
+    const descriptionHtml = showDescription && description
+      ? `<p style="font-size:0.85rem;color:var(--muted);max-width:520px;">${description}</p>`
+      : '';
+
+    return `
+      <div class="ad-slide" role="group" aria-roledescription="slide">
+        <a class="ad-slide-link" href="${url}" rel="sponsored noopener" target="_blank">
+          ${media}
+          <div class="ad-slide-body">
+            <span class="ad-sponsor-tag">Sponsored</span>
+            <div class="ad-slide-sponsor">${advertiser}</div>
+            <h3 class="ad-slide-headline">${name}</h3>
+            ${descriptionHtml}
+            <span class="ad-slide-cta">${cta} <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>`;
+  }
+
+  function initCarousel(sliderEl, campaigns, format) {
+    const track = sliderEl.querySelector('.ad-slider-track');
+    const dotsWrap = sliderEl.querySelector('.ad-slider-dots');
+    const prevBtn = sliderEl.querySelector('.ad-slider-arrow.prev');
+    const nextBtn = sliderEl.querySelector('.ad-slider-arrow.next');
+
+    track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+    const count = campaigns.length;
+    let index = 0;
+    let timer = null;
+    let paused = false;
+
+    if (count <= 1) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      if (dotsWrap) dotsWrap.style.display = 'none';
+      return;
+    }
+
+    if (dotsWrap) {
+      dotsWrap.innerHTML = campaigns.map((_, i) =>
+        `<button class="ad-slider-dot ${i === 0 ? 'active' : ''}" type="button" aria-label="Slide ${i + 1}" data-idx="${i}"></button>`
+      ).join('');
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('.ad-slider-dot');
+        if (!dot) return;
+        goTo(parseInt(dot.dataset.idx, 10));
+        restartAutoplay();
+      });
+    }
+
+    function update() {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      if (dotsWrap) {
+        dotsWrap.querySelectorAll('.ad-slider-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === index);
+        });
+      }
+    }
+    function goTo(i) { index = (i + count) % count; update(); }
+    function next() { goTo(index + 1); }
+    function prev() { goTo(index - 1); }
+
+    function startAutoplay() {
+      if (prefersReducedMotion) return;
+      stopAutoplay();
+      timer = setInterval(() => { if (!paused) next(); }, ROTATION_MS);
+    }
+    function stopAutoplay() { if (timer) { clearInterval(timer); timer = null; } }
+    function restartAutoplay() { startAutoplay(); }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartAutoplay(); });
+
+    sliderEl.addEventListener('mouseenter', () => { paused = true; });
+    sliderEl.addEventListener('mouseleave', () => { paused = false; });
+    sliderEl.addEventListener('focusin', () => { paused = true; });
+    sliderEl.addEventListener('focusout', () => { paused = false; });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAutoplay();
+      else startAutoplay();
+    });
+
+    let touchX = 0;
+    track.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) {
+        if (dx < 0) next(); else prev();
+        restartAutoplay();
+      }
+    }, { passive: true });
+
+    update();
+    startAutoplay();
+  }
+
+  function initGrid(sliderEl, campaigns, format) {
+    const track = sliderEl.querySelector('.ad-slider-track');
+    track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+  }
+
+  async function loadAdSlider(sliderEl) {
+    if (!sliderEl) return;
+    const placement = sliderEl.dataset.placement;
+    const format = sliderEl.dataset.format;
+
+    try {
+      const data = await apiGet(`/api/public/advertisements/${placement}?format=${encodeURIComponent(format)}`);
+      const list = Array.isArray(data.campaigns)
+        ? data.campaigns
+        : (data.campaign ? [data.campaign] : []);
+
+      if (!list.length) {
+        sliderEl.classList.remove('is-visible');
+        return;
+      }
+
+      if (format === 'square' || format === 'vertical') {
+        initGrid(sliderEl, list, format);
+      } else {
+        initCarousel(sliderEl, list, format);
+      }
+
+      sliderEl.classList.add('is-visible');
+    } catch (err) {
+      console.warn('[ad slider]', placement, format, err.message);
+      sliderEl.classList.remove('is-visible');
+    }
+  }
+
   /* ---------- Featured banner (media placement, DB-only) ---------- */
   async function loadFeaturedBanner() {
     const section = document.getElementById('featuredBannerSection');
@@ -899,46 +1180,7 @@
     section.classList.add('has-image');
   }
 
-  /* ---------- AD 1: Featured admissions campaign ---------- */
-  async function loadFeaturedAd() {
-    const section = document.getElementById('featuredAdSection');
-    const link = document.getElementById('featuredAd');
-    const advertiserEl = document.getElementById('adAdvertiser');
-    const headlineEl = document.getElementById('adHeadline');
-    const descriptionEl = document.getElementById('adDescription');
-    const ctaEl = document.getElementById('adCta');
-    const imageEl = document.getElementById('adImage');
-
-    try {
-      const data = await apiGet('/api/public/advertisements/admissions');
-      const campaign = data && data.campaign;
-      if (!campaign || !campaign.url) {
-        section.classList.remove('is-visible');
-        return;
-      }
-
-      link.href = campaign.url;
-      advertiserEl.textContent = campaign.advertiser || '';
-      headlineEl.textContent = campaign.name || 'Featured admission campaign';
-      descriptionEl.textContent = campaign.description || 'Explore available admission opportunities, programmes and application information.';
-      ctaEl.innerHTML = (campaign.cta_text || 'Apply Now') + ' <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>';
-
-      if (campaign.image_url) {
-        imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
-        imageEl.innerHTML = '';
-      } else {
-        imageEl.style.backgroundImage = '';
-        imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
-      }
-
-      section.classList.add('is-visible');
-    } catch (err) {
-      section.classList.remove('is-visible');
-      console.warn('[ad featured]', err.message);
-    }
-  }
-
-  /* ---------- AD 3: Sidebar advert ---------- */
+  /* ---------- AD 3: Sidebar advert (kept, unchanged) ---------- */
   async function loadSidebarAd() {
     try {
       const data = await apiGet('/api/public/advertisements/admissions');
@@ -958,7 +1200,6 @@
       return;
     }
 
-    // Desktop copy
     if (desktopCard) {
       const link = document.getElementById('adSidebarLink');
       link.href = campaign.url;
@@ -976,7 +1217,6 @@
       desktopCard.classList.add('is-visible');
     }
 
-    // Mobile copy
     if (mobileCard) {
       const link = document.getElementById('adSidebarMobileLink');
       link.href = campaign.url;
@@ -993,6 +1233,48 @@
       document.getElementById('adSidebarMobileCta').innerHTML = (campaign.cta_text || 'Learn More') + ' <i class="fas fa-arrow-right"></i>';
       mobileCard.classList.add('is-visible');
     }
+  }
+
+  /* ---------- AD 2: Sponsored admission card (in grid) ---------- */
+  function getSponsoredAdmissionCard() {
+    if (!admissionsCampaign || !admissionsCampaign.url) return null;
+
+    const school = admissionsCampaign.advertiser || 'Sponsored Institution';
+    const title = admissionsCampaign.name || '2026/2027 Admission';
+    const desc = admissionsCampaign.description || 'Undergraduate programmes available.';
+    const initials = school.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'SP';
+    const imageUrl = admissionsCampaign.image_url || '';
+    const delay = 0.15;
+
+    const card = document.createElement('div');
+    card.className = 'admission-card is-sponsored';
+    card.setAttribute('data-status', 'sponsored');
+    card.setAttribute('data-route', 'sponsored');
+    card.setAttribute('data-state', '');
+    card.setAttribute('data-name', school.toLowerCase());
+    card.setAttribute('data-title', title.toLowerCase());
+    card.setAttribute('role', 'link');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('onclick', `window.open('${escapeAttr(admissionsCampaign.url)}','_blank','noopener')`);
+    card.setAttribute('onkeydown', `if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('${escapeAttr(admissionsCampaign.url)}','_blank','noopener');}`);
+    card.style.animationDelay = delay + 's';
+    card.innerHTML = `
+      <span class="ad-sponsored-badge">Sponsored</span>
+      <div class="admission-card-top">
+        <div class="admission-logo" ${imageUrl ? `style="background-image:url('${encodeURI(imageUrl)}');background-size:cover;background-position:center;color:transparent;"` : ''}>${imageUrl ? '' : escapeHtml(initials)}</div>
+        <div class="ac-text">
+          <div class="admission-inst">${escapeHtml(school)}</div>
+          <div class="admission-programme">${escapeHtml(title)}</div>
+        </div>
+      </div>
+      <div class="admission-level">Sponsored admission campaign</div>
+      <div class="admission-meta">
+        <div class="meta-line"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="meta-value">${escapeHtml(desc)}</span></div>
+      </div>
+      <span class="admission-status status-open" style="background-color:rgba(245,185,66,0.12);color:var(--accent);"><i class="fas fa-bullhorn" aria-hidden="true"></i> Sponsored</span>
+      <span class="admission-action">View Opportunity <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+    `;
+    return card;
   }
 
   /* ---------- data loading ---------- */
@@ -1093,7 +1375,6 @@
         </div>`;
     }).join('');
 
-    // AD 2: sponsored admission card — inserted after the first real card
     const sponsoredCard = getSponsoredAdmissionCard();
     if (sponsoredCard) {
       const cards = grid.querySelectorAll('.admission-card');
@@ -1105,48 +1386,6 @@
         grid.appendChild(sponsoredCard);
       }
     }
-  }
-
-  /* ---------- AD 2: Sponsored admission card builder ---------- */
-  function getSponsoredAdmissionCard() {
-    if (!admissionsCampaign || !admissionsCampaign.url) return null;
-
-    const school = admissionsCampaign.advertiser || 'Sponsored Institution';
-    const title = admissionsCampaign.name || '2026/2027 Admission';
-    const desc = admissionsCampaign.description || 'Undergraduate programmes available.';
-    const initials = school.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'SP';
-    const imageUrl = admissionsCampaign.image_url || '';
-    const delay = 0.15;
-
-    const card = document.createElement('div');
-    card.className = 'admission-card is-sponsored';
-    card.setAttribute('data-status', 'sponsored');
-    card.setAttribute('data-route', 'sponsored');
-    card.setAttribute('data-state', '');
-    card.setAttribute('data-name', school.toLowerCase());
-    card.setAttribute('data-title', title.toLowerCase());
-    card.setAttribute('role', 'link');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('onclick', `window.open('${escapeAttr(admissionsCampaign.url)}','_blank','noopener')`);
-    card.setAttribute('onkeydown', `if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('${escapeAttr(admissionsCampaign.url)}','_blank','noopener');}`);
-    card.style.animationDelay = delay + 's';
-    card.innerHTML = `
-      <span class="ad-sponsored-badge">Sponsored</span>
-      <div class="admission-card-top">
-        <div class="admission-logo" ${imageUrl ? `style="background-image:url('${encodeURI(imageUrl)}');background-size:cover;background-position:center;color:transparent;"` : ''}>${imageUrl ? '' : escapeHtml(initials)}</div>
-        <div class="ac-text">
-          <div class="admission-inst">${escapeHtml(school)}</div>
-          <div class="admission-programme">${escapeHtml(title)}</div>
-        </div>
-      </div>
-      <div class="admission-level">Sponsored admission campaign</div>
-      <div class="admission-meta">
-        <div class="meta-line"><i class="fas fa-circle-info" aria-hidden="true"></i><span class="meta-value">${escapeHtml(desc)}</span></div>
-      </div>
-      <span class="admission-status status-open" style="background-color:rgba(245,185,66,0.12);color:var(--accent);"><i class="fas fa-bullhorn" aria-hidden="true"></i> Sponsored</span>
-      <span class="admission-action">View Opportunity <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
-    `;
-    return card;
   }
 
   function renderClosingSoon(list) {
@@ -1437,7 +1676,6 @@
     cards.forEach((card) => {
       const isSponsored = card.classList.contains('is-sponsored');
       if (isSponsored) {
-        // Sponsored cards are hidden while any filter is active
         const filtering = query || state || route || currentStatusFilter !== 'all';
         card.style.display = filtering ? 'none' : '';
         if (!filtering) visible++;
@@ -1499,8 +1737,11 @@
     const idParam = params.get('admission');
 
     loadFeaturedBanner();
-    loadFeaturedAd();
     loadSidebarAd();
+
+    // Initialize all ad sliders on the page. They self-hide when empty.
+    document.querySelectorAll('.ad-slider').forEach(loadAdSlider);
+
     loadAdmissions().then(() => {
       initialised = true;
       if (idParam) openAdmission(idParam, false);

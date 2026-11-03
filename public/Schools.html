@@ -75,51 +75,189 @@
     .filter-tab.active { background-color: var(--primary); color: #070A09; border-color: var(--primary); }
     .filter-tab.active:hover { transform: none; }
 
-    /* ─── AD 1: FEATURED SCHOOLS BANNER ─── */
-    .ad-featured-section { display: none; margin: 24px 0 8px; animation: fadeInUp 0.5s ease 0.15s both; }
-    .ad-featured-section.is-visible { display: block; }
-    .ad-featured {
-      display: flex; flex-direction: column;
-      background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
+    /* ═══════════════════════════════════════════════════════════
+       AD SLIDESHOW SYSTEM (identical structure to Home page)
+       Formats used on Schools page per placement map:
+         - Medium (16:7)  — below page introduction
+         - Square (1:1)   — between school cards
+       School-targeted slides use target_school_id filtering.
+       ═══════════════════════════════════════════════════════════ */
+    .ad-slider {
+      display: none;
+      position: relative;
+      margin: 24px 0 8px;
     }
-    .ad-featured:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .ad-featured-body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
-    .ad-sponsored-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      align-self: flex-start;
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent);
-      background-color: rgba(245,185,66,0.1);
-      padding: 4px 10px; border-radius: 6px;
+    .ad-slider.is-visible { display: block; }
+
+    .ad-sponsor-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background-color: rgba(0,0,0,0.55);
+      color: var(--accent);
+      padding: 3px 9px; border-radius: 5px;
+      backdrop-filter: blur(4px);
     }
-    .ad-advertiser { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
-    .ad-featured-headline { font-size: 1.35rem; font-weight: 800; color: var(--text); line-height: 1.2; }
-    .ad-featured-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
-    .ad-featured-cta {
-      align-self: flex-start; margin-top: 10px;
-      background-color: var(--primary); color: #070A09;
-      font-weight: 700; font-size: 0.85rem;
-      padding: 10px 20px; border-radius: var(--radius-btn);
-      display: inline-flex; align-items: center; gap: 8px;
-      transition: background 0.15s;
-    }
-    .ad-featured-cta:hover { background-color: #00b374; }
-    .ad-featured-image {
-      min-height: 180px; flex-shrink: 0;
-      background-color: #0a0f0d; background-size: cover; background-position: center;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--border); font-size: 2rem;
-    }
-    @media (min-width: 700px) {
-      .ad-featured { flex-direction: row; align-items: stretch; min-height: 220px; }
-      .ad-featured-body { padding: 32px; justify-content: center; }
-      .ad-featured-image { width: 45%; min-height: 220px; }
-      .ad-featured-headline { font-size: 1.6rem; }
+    .ad-sponsor-tag::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background-color: var(--accent);
     }
 
-    /* ─── AD 2: SPONSORED SCHOOL CARD ─── */
+    .ad-slider-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .ad-slider-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    .ad-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      position: relative;
+    }
+    .ad-slide-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      color: inherit;
+    }
+
+    .ad-slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background-color: rgba(7,10,9,0.7);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ad-slider:hover .ad-slider-arrow { opacity: 1; pointer-events: auto; }
+    .ad-slider-arrow:hover { background-color: rgba(7,10,9,0.9); border-color: var(--primary); color: var(--primary); }
+    .ad-slider-arrow.prev { left: 14px; }
+    .ad-slider-arrow.next { right: 14px; }
+    .ad-slider-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    .ad-slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0 0;
+    }
+    .ad-slider-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background-color: var(--border);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .ad-slider-dot.active { background-color: var(--primary); width: 22px; border-radius: 4px; }
+
+    .ad-slide-body {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 24px;
+      gap: 6px;
+      background: linear-gradient(to top, rgba(7,10,9,0.92) 0%, rgba(7,10,9,0.3) 60%, transparent 100%);
+      pointer-events: none;
+    }
+    .ad-slide-body > * { pointer-events: auto; }
+    .ad-slide-headline {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      max-width: 520px;
+    }
+    .ad-slide-sponsor {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ad-slide-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--primary);
+      color: #070A09;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .ad-slide-media {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .ad-slide-media-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a221e, #29352F);
+      color: var(--border);
+      font-size: 2.5rem;
+      z-index: 0;
+    }
+
+    /* ── MEDIUM — 16:7 ── */
+    .ad-slider--medium .ad-slide { aspect-ratio: 16 / 7; min-height: 150px; }
+    @media (min-width: 768px) {
+      .ad-slider--medium .ad-slide-headline { font-size: 1.4rem; }
+    }
+
+    /* ── SQUARE — 1:1 grid ── */
+    .ad-slider--square .ad-slider-viewport { border-radius: var(--radius-card); }
+    .ad-slider--square .ad-slider-track {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      transform: none !important;
+    }
+    .ad-slider--square .ad-slide {
+      flex: none;
+      width: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .ad-slider--square .ad-slide-body {
+      padding: 14px;
+      gap: 4px;
+    }
+    .ad-slider--square .ad-slide-headline { font-size: 1rem; }
+    .ad-slider--square .ad-slider-arrow,
+    .ad-slider--square .ad-slider-dots { display: none; }
+
+    /* AD 2: SPONSORED SCHOOL CARD */
     .school-card.is-sponsored { border-color: rgba(245,185,66,0.35); position: relative; }
     .school-card.is-sponsored:hover { border-color: var(--accent); }
     .school-sponsored-badge {
@@ -156,7 +294,7 @@
     .school-action { font-weight: 600; font-size: 0.85rem; color: var(--primary); display: inline-flex; align-items: center; gap: 6px; margin-top: auto; transition: gap 0.2s; }
     .school-card:hover .school-action { gap: 10px; }
 
-    /* ─── AD 3: PROFILE BANNER ─── */
+    /* AD 3: PROFILE BANNER */
     .ad-profile-banner {
       display: none;
       background-color: var(--surface);
@@ -293,6 +431,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
+      .ad-slider-track { transition: none !important; }
     }
   </style>
 </head>
@@ -347,19 +486,17 @@
       </div>
     </section>
 
-    <!-- AD 1: Featured schools banner -->
-    <section class="ad-featured-section" id="featuredAdSection" aria-label="Sponsored content">
-      <a class="ad-featured" id="featuredAd" href="#" rel="sponsored noopener">
-        <div class="ad-featured-body">
-          <span class="ad-sponsored-tag"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Sponsored</span>
-          <div class="ad-advertiser" id="adAdvertiser"></div>
-          <h2 class="ad-featured-headline" id="adHeadline"></h2>
-          <p class="ad-featured-desc" id="adDescription"></p>
-          <span class="ad-featured-cta" id="adCta">Explore School <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i></span>
-        </div>
-        <div class="ad-featured-image" id="adImage"></div>
-      </a>
-    </section>
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 1 — SCHOOLS / MEDIUM  (16:7, below introduction)
+         ═══════════════════════════════════════════════════════ -->
+    <div class="ad-slider ad-slider--medium" id="adSliderSchoolsMedium1" data-placement="schools" data-format="medium" data-slot="medium_schools_1">
+      <div class="ad-slider-viewport">
+        <div class="ad-slider-track" id="adSliderSchoolsMedium1Track"></div>
+        <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+        <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="ad-slider-dots" id="adSliderSchoolsMedium1Dots"></div>
+    </div>
 
     <section class="schools-section">
       <div class="section-header">
@@ -372,6 +509,16 @@
         <div class="skeleton" style="height:300px;"></div>
       </div>
     </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 2 — SCHOOLS / SQUARE  (1:1 grid, between school cards)
+         Sits below the school grid so it never interrupts the primary browse flow.
+         ═══════════════════════════════════════════════════════ -->
+    <div class="ad-slider ad-slider--square" id="adSliderSchoolsSquare1" data-placement="schools" data-format="square" data-slot="square_schools_1" style="margin-top: 40px; margin-bottom: 0;">
+      <div class="ad-slider-viewport" style="border: none; background: transparent;">
+        <div class="ad-slider-track" id="adSliderSchoolsSquare1Track"></div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -399,7 +546,7 @@
       </div>
     </section>
 
-    <!-- AD 3: Profile promotional banner -->
+    <!-- AD 3: Profile promotional banner (school-targeted) -->
     <div class="ad-profile-banner" id="profileAdBanner" aria-label="Sponsored content">
       <div class="ad-profile-inner">
         <div class="ad-profile-content">
@@ -710,43 +857,157 @@
     return (coverP && coverP.public_url) || s.cover_url || (logoP && logoP.public_url) || s.logo_url || '';
   }
 
-  /* ---------- ad 1: featured schools banner ---------- */
-  async function loadFeaturedBanner() {
-    const section = document.getElementById('featuredAdSection');
-    const link = document.getElementById('featuredAd');
-    const advertiserEl = document.getElementById('adAdvertiser');
-    const headlineEl = document.getElementById('adHeadline');
-    const descriptionEl = document.getElementById('adDescription');
-    const ctaEl = document.getElementById('adCta');
-    const imageEl = document.getElementById('adImage');
+  /* ══════════════════════════════════════════════════════════
+     AD SLIDESHOW ENGINE
+     Mirrors the Home page implementation exactly so the backend
+     endpoint contract stays identical across all six public pages.
+     ══════════════════════════════════════════════════════════ */
+  const ROTATION_MS = 6000;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function buildSlideHtml(campaign, format) {
+    const url = escapeHtml(campaign.url || '#');
+    const name = escapeHtml(campaign.name || '');
+    const advertiser = escapeHtml(campaign.advertiser || '');
+    const description = escapeHtml(truncate(campaign.description || '', 160));
+    const cta = escapeHtml(campaign.cta_text || 'Learn more');
+    const imageUrl = campaign.image_url || '';
+    const safeImage = /^https?:\/\//i.test(imageUrl) ? imageUrl : '';
+
+    const media = safeImage
+      ? `<img class="ad-slide-media" src="${escapeHtml(safeImage)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');">
+         <div class="ad-slide-media-fallback" style="display:none;"><i class="fas fa-image"></i></div>`
+      : `<div class="ad-slide-media-fallback"><i class="fas fa-image"></i></div>`;
+
+    const showDescription = format !== 'square';
+    const descriptionHtml = showDescription && description
+      ? `<p class="ad-slide-desc" style="font-size:0.85rem;color:var(--muted);max-width:520px;">${description}</p>`
+      : '';
+
+    return `
+      <div class="ad-slide" role="group" aria-roledescription="slide">
+        <a class="ad-slide-link" href="${url}" rel="sponsored noopener" target="_blank">
+          ${media}
+          <div class="ad-slide-body">
+            <span class="ad-sponsor-tag">Sponsored</span>
+            <div class="ad-slide-sponsor">${advertiser}</div>
+            <h3 class="ad-slide-headline">${name}</h3>
+            ${descriptionHtml}
+            <span class="ad-slide-cta">${cta} <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>`;
+  }
+
+  function initCarousel(sliderEl, campaigns, format) {
+    const track = sliderEl.querySelector('.ad-slider-track');
+    const dotsWrap = sliderEl.querySelector('.ad-slider-dots');
+    const prevBtn = sliderEl.querySelector('.ad-slider-arrow.prev');
+    const nextBtn = sliderEl.querySelector('.ad-slider-arrow.next');
+
+    track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+    const count = campaigns.length;
+    let index = 0;
+    let timer = null;
+    let paused = false;
+
+    if (count <= 1) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      if (dotsWrap) dotsWrap.style.display = 'none';
+      return;
+    }
+
+    if (dotsWrap) {
+      dotsWrap.innerHTML = campaigns.map((_, i) =>
+        `<button class="ad-slider-dot ${i === 0 ? 'active' : ''}" type="button" aria-label="Slide ${i + 1}" data-idx="${i}"></button>`
+      ).join('');
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('.ad-slider-dot');
+        if (!dot) return;
+        goTo(parseInt(dot.dataset.idx, 10));
+        restartAutoplay();
+      });
+    }
+
+    function update() {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      if (dotsWrap) {
+        dotsWrap.querySelectorAll('.ad-slider-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === index);
+        });
+      }
+    }
+    function goTo(i) { index = (i + count) % count; update(); }
+    function next() { goTo(index + 1); }
+    function prev() { goTo(index - 1); }
+
+    function startAutoplay() {
+      if (prefersReducedMotion) return;
+      stopAutoplay();
+      timer = setInterval(() => { if (!paused) next(); }, ROTATION_MS);
+    }
+    function stopAutoplay() { if (timer) { clearInterval(timer); timer = null; } }
+    function restartAutoplay() { startAutoplay(); }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartAutoplay(); });
+
+    sliderEl.addEventListener('mouseenter', () => { paused = true; });
+    sliderEl.addEventListener('mouseleave', () => { paused = false; });
+    sliderEl.addEventListener('focusin', () => { paused = true; });
+    sliderEl.addEventListener('focusout', () => { paused = false; });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAutoplay();
+      else startAutoplay();
+    });
+
+    let touchX = 0;
+    track.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) {
+        if (dx < 0) next(); else prev();
+        restartAutoplay();
+      }
+    }, { passive: true });
+
+    update();
+    startAutoplay();
+  }
+
+  function initGrid(sliderEl, campaigns, format) {
+    const track = sliderEl.querySelector('.ad-slider-track');
+    track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
+  }
+
+  async function loadAdSlider(sliderEl) {
+    if (!sliderEl) return;
+    const placement = sliderEl.dataset.placement;
+    const format = sliderEl.dataset.format;
 
     try {
-      const data = await apiGet('/api/public/advertisements/schools');
-      const campaign = data && data.campaign;
-      if (!campaign || !campaign.url) {
-        section.classList.remove('is-visible');
+      const data = await apiGet(`/api/public/advertisements/${placement}?format=${encodeURIComponent(format)}`);
+      const list = Array.isArray(data.campaigns)
+        ? data.campaigns
+        : (data.campaign ? [data.campaign] : []);
+
+      if (!list.length) {
+        sliderEl.classList.remove('is-visible');
         return;
       }
 
-      link.href = campaign.url;
-      advertiserEl.textContent = campaign.advertiser || '';
-      headlineEl.textContent = campaign.name || 'Featured institution';
-      descriptionEl.textContent = campaign.description || 'Discover programmes, admission requirements, campus facilities and opportunities at this institution.';
-      ctaEl.innerHTML = (campaign.cta_text || 'Explore School') + ' <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>';
-
-      if (campaign.image_url) {
-        imageEl.style.backgroundImage = `url('${encodeURI(campaign.image_url)}')`;
-        imageEl.innerHTML = '';
+      if (format === 'square' || format === 'vertical') {
+        initGrid(sliderEl, list, format);
       } else {
-        imageEl.style.backgroundImage = '';
-        imageEl.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i>';
+        initCarousel(sliderEl, list, format);
       }
 
-      section.classList.add('is-visible');
+      sliderEl.classList.add('is-visible');
     } catch (err) {
-      // Silent — no campaign or no network means the section stays hidden
-      section.classList.remove('is-visible');
-      console.warn('[ad featured]', err.message);
+      console.warn('[ad slider]', placement, format, err.message);
+      sliderEl.classList.remove('is-visible');
     }
   }
 
@@ -915,8 +1176,6 @@
         </div>`;
     }).join('');
 
-    // Inject the sponsored school card (Ad 2) — after the first row so it sits
-    // alongside real content without dominating the top of the grid.
     const sponsoredCard = getSponsoredSchoolCard();
     if (sponsoredCard) {
       const cards = grid.querySelectorAll('.school-card');
@@ -997,7 +1256,6 @@
     document.getElementById('view-profile').classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetTabs();
-    // Hide any profile ad banner in case it was left visible
     document.getElementById('profileAdBanner').classList.remove('is-visible');
     if (pushHistory) {
       history.pushState({ view: 'directory' }, '', '/Schools');
@@ -1314,11 +1572,13 @@
     const params = new URLSearchParams(window.location.search);
     const schoolParam = params.get('school') || params.get('slug');
 
-    loadFeaturedBanner();
     loadSchools().then(() => {
       initialised = true;
       if (schoolParam) openProfile(schoolParam, false);
     });
+
+    // Initialize ad sliders — they self-hide when no campaigns exist.
+    document.querySelectorAll('.ad-slider').forEach(loadAdSlider);
   });
 
   window.showDirectory = showDirectory;
