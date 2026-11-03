@@ -388,8 +388,36 @@
       transition: border-color 0.15s;
     }
     .placement-field select:focus { border-color: var(--primary); }
+    .placement-field select:disabled {
+      opacity: 0.7; cursor: not-allowed; background: var(--surface);
+    }
     .placement-field .format-hint {
       font-size: 0.72rem; color: var(--muted); margin-top: 6px;
+    }
+    .placement-field .format-hint strong {
+      color: var(--accent);
+    }
+
+    /* Locked format strip */
+    .format-lock {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(245,185,66,0.08);
+      border: 1px solid rgba(245,185,66,0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .format-lock i {
+      color: var(--accent); font-size: 0.9rem; flex-shrink: 0;
+    }
+    .format-lock .fl-text {
+      flex: 1; font-size: 0.78rem; color: var(--text); line-height: 1.4;
+    }
+    .format-lock .fl-text strong {
+      color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .format-lock .fl-sub {
+      font-size: 0.68rem; color: var(--muted); margin-top: 2px;
     }
 
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
@@ -764,27 +792,29 @@
                 <div class="kv"><span class="k">Campaign name</span><span class="v" id="rvName">—</span></div>
                 <div class="kv"><span class="k">Advertiser</span><span class="v" id="rvAdvertiser">—</span></div>
                 <div class="kv"><span class="k">Contact</span><span class="v" id="rvContact">—</span></div>
-                <div class="kv"><span class="k">Format</span><span class="v" id="rvFormat">—</span></div>
-                <div class="kv"><span class="k">Placement</span><span class="v" id="rvPlacement">—</span></div>
+                <div class="kv"><span class="k">Format paid for</span><span class="v" id="rvFormat">—</span></div>
+                <div class="kv"><span class="k">Current placement</span><span class="v" id="rvPlacement">—</span></div>
                 <div class="kv"><span class="k">Requested duration</span><span class="v" id="rvDuration">—</span></div>
+              </div>
+            </div>
+
+            <div class="format-lock" id="reviewFormatLock">
+              <i class="fas fa-lock"></i>
+              <div class="fl-text">
+                <div>Placement options are limited to <strong id="reviewFormatLockName">—</strong> format.</div>
+                <div class="fl-sub">The advertiser paid for this format — you can only place the ad where it fits.</div>
               </div>
             </div>
 
             <div class="placement-field" style="margin-top:16px;">
               <label for="reviewPlacement">
-                Set placement <span class="req">*</span>
-                <span class="opt">(where this ad will appear)</span>
+                Assign placement <span class="req">*</span>
+                <span class="opt">(only compatible slots shown)</span>
               </label>
               <select id="reviewPlacement">
                 <option value="">— Choose placement —</option>
-                <option value="home">Home</option>
-                <option value="schools">Schools</option>
-                <option value="admissions">Admissions</option>
-                <option value="exams">Exams</option>
-                <option value="scholarships">Scholarships</option>
-                <option value="trending">Trending</option>
               </select>
-              <div class="format-hint">Advertiser chose format: <strong id="reviewFormatLabel">—</strong></div>
+              <div class="format-hint" id="reviewFormatHint"></div>
             </div>
 
             <div class="review-section">
@@ -843,25 +873,28 @@
               <div class="kv-list">
                 <div class="kv"><span class="k">Campaign</span><span class="v" id="mgName">—</span></div>
                 <div class="kv"><span class="k">Advertiser</span><span class="v" id="mgAdvertiser">—</span></div>
-                <div class="kv"><span class="k">Format</span><span class="v" id="mgFormat">—</span></div>
+                <div class="kv"><span class="k">Format paid for</span><span class="v" id="mgFormat">—</span></div>
                 <div class="kv"><span class="k">Status</span><span class="v" id="mgStatus">—</span></div>
+              </div>
+            </div>
+
+            <div class="format-lock" id="manageFormatLock">
+              <i class="fas fa-lock"></i>
+              <div class="fl-text">
+                <div>Placement options are limited to <strong id="manageFormatLockName">—</strong> format.</div>
+                <div class="fl-sub">The advertiser paid for this format — you can only place the ad where it fits.</div>
               </div>
             </div>
 
             <div class="placement-field" style="margin-top:16px;">
               <label for="managePlacement">
                 Placement <span class="req">*</span>
-                <span class="opt">(where this ad appears)</span>
+                <span class="opt">(only compatible slots shown)</span>
               </label>
               <select id="managePlacement">
                 <option value="">— Choose placement —</option>
-                <option value="home">Home</option>
-                <option value="schools">Schools</option>
-                <option value="admissions">Admissions</option>
-                <option value="exams">Exams</option>
-                <option value="scholarships">Scholarships</option>
-                <option value="trending">Trending</option>
               </select>
+              <div class="format-hint" id="manageFormatHint"></div>
             </div>
 
             <div class="review-section">
@@ -904,8 +937,8 @@
             <input type="text" id="campAdvertiser" placeholder="Business or org name">
           </div>
           <div class="form-group">
-            <label>Format</label>
-            <select id="campFormat">
+            <label>Format <span class="req">*</span></label>
+            <select id="campFormat" onchange="handleFormatChange()">
               <option value="large">Large banner</option>
               <option value="medium" selected>Medium banner</option>
               <option value="small">Small banner</option>
@@ -939,13 +972,8 @@
             <label>Placement page <span class="req">*</span></label>
             <select id="campPlacement" onchange="updatePlacementOptions()">
               <option value="">Select placement</option>
-              <option value="home">Home</option>
-              <option value="schools">Schools</option>
-              <option value="admissions">Admissions</option>
-              <option value="exams">Exams</option>
-              <option value="scholarships">Scholarships</option>
-              <option value="trending">Trending</option>
             </select>
+            <div class="form-hint" id="campPlacementHint"></div>
           </div>
           <div class="form-group">
             <label>Status</label>
@@ -1033,6 +1061,29 @@
         large: 'Large', medium: 'Medium', small: 'Small',
         square: 'Square', vertical: 'Vertical',
       };
+
+      /* ═══════════════════════════════════════════════════════════
+         FORMAT → COMPATIBLE PLACEMENTS MAP
+         Mirrors the backend's assertFormatPlacementCompatibility
+         + the placement map for the six public pages.
+
+         Large    → home only (premium, top-of-page)
+         Medium   → home, schools, admissions, exams, scholarships, trending
+         Small    → home, admissions, exams
+         Square   → schools, scholarships, trending
+         Vertical → home (mobile-only promotional slot)
+         ═══════════════════════════════════════════════════════════ */
+      const FORMAT_PLACEMENTS = {
+        large:    ['home'],
+        medium:   ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'],
+        small:    ['home', 'admissions', 'exams'],
+        square:   ['schools', 'scholarships', 'trending'],
+        vertical: ['home'],
+      };
+
+      function compatiblePlacementsFor(format) {
+        return FORMAT_PLACEMENTS[format] || FORMAT_PLACEMENTS.medium;
+      }
 
       const TABS = [
         { key: '',         label: 'All' },
@@ -1301,6 +1352,37 @@
         renderTable();
       }
 
+      /* ═══════════════════════════════════════════════════════════
+         PLACEMENT FILTERING BY PAID FORMAT
+         Populates a <select> with only the placements compatible
+         with the campaign's paid format. Preserves the current
+         selection if it's still valid.
+         ═══════════════════════════════════════════════════════════ */
+      function populateCompatiblePlacements(selectEl, format, currentValue) {
+        if (!selectEl) return;
+        const allowed = compatiblePlacementsFor(format);
+        const keep = currentValue && allowed.includes(currentValue) ? currentValue : '';
+
+        const opts = ['<option value="">— Choose placement —</option>'];
+        for (const p of allowed) {
+          const label = PLACEMENT_LABELS[p] || capitalize(p);
+          const selected = p === keep ? ' selected' : '';
+          opts.push(`<option value="${p}"${selected}>${label}</option>`);
+        }
+        selectEl.innerHTML = opts.join('');
+      }
+
+      function renderFormatLock(lockEl, nameEl, hintEl, format) {
+        const label = formatLabel(format);
+        if (nameEl) nameEl.textContent = label;
+        if (hintEl) {
+          const allowed = compatiblePlacementsFor(format);
+          const names = allowed.map(p => PLACEMENT_LABELS[p] || capitalize(p)).join(', ');
+          hintEl.innerHTML = `Compatible with <strong>${label.toUpperCase()}</strong>: ${esc(names)}.`;
+        }
+        if (lockEl) lockEl.style.display = '';
+      }
+
       /* ═══════════════ REVIEW MODAL ═══════════════ */
       function setPreviewMode(mode) {
         document.querySelectorAll('.preview-tab').forEach(t => {
@@ -1323,10 +1405,12 @@
         $('adPreviewCta').textContent = c.cta_text || 'Learn more';
         $('adPreviewUrl').textContent = c.url || '—';
 
+        const paidFormat = c.format || 'medium';
+
         $('rvName').textContent = c.name || '—';
         $('rvAdvertiser').textContent = c.advertiser || '—';
         $('rvContact').textContent = c.contact || c.contact_email || c.contact_phone || '—';
-        $('rvFormat').textContent = formatLabel(c.format);
+        $('rvFormat').textContent = formatLabel(paidFormat);
         $('rvPlacement').textContent = c.placement ? (PLACEMENT_LABELS[c.placement] || capitalize(c.placement)) : 'Unassigned';
         $('rvDuration').textContent = durationLabel(c);
         $('rvSubmitted').textContent = formatDate(c.created_at || c.submitted_at);
@@ -1335,11 +1419,17 @@
         $('rvNotes').textContent = c.advertiser_notes || c.notes || 'No notes provided.';
         $('rvNotes').classList.toggle('muted', !(c.advertiser_notes || c.notes));
 
-        // Sync placement select + format label
+        // Populate placement select with only compatible options for the paid format
         const placementSel = $('reviewPlacement');
-        if (placementSel) placementSel.value = c.placement || '';
-        const fmtLabel = $('reviewFormatLabel');
-        if (fmtLabel) fmtLabel.textContent = (c.format || 'medium').toUpperCase();
+        populateCompatiblePlacements(placementSel, paidFormat, c.placement || '');
+
+        // Format lock info strip
+        renderFormatLock(
+          $('reviewFormatLock'),
+          $('reviewFormatLockName'),
+          $('reviewFormatHint'),
+          paidFormat
+        );
 
         const footer = $('reviewFooter');
         const s = (c.status || '').toLowerCase();
@@ -1385,17 +1475,27 @@
         $('mClicks').textContent = clicks.toLocaleString('en-NG');
         $('mCtr').textContent = ctr;
 
+        const paidFormat = c.format || 'medium';
+
         $('mgName').textContent = c.name || '—';
         $('mgAdvertiser').textContent = c.advertiser || '—';
-        $('mgFormat').textContent = formatLabel(c.format);
+        $('mgFormat').textContent = formatLabel(paidFormat);
         $('mgStatus').innerHTML = statusBadge(c.status);
         $('mgStart').textContent = formatDate(c.start_date);
         $('mgEnd').textContent = formatDate(c.end_date);
         $('mgPublished').textContent = c.published_at ? formatDate(c.published_at) : 'Not published';
 
-        // Sync placement select
+        // Populate placement select with only compatible options for the paid format
         const placementSel = $('managePlacement');
-        if (placementSel) placementSel.value = c.placement || '';
+        populateCompatiblePlacements(placementSel, paidFormat, c.placement || '');
+
+        // Format lock info strip
+        renderFormatLock(
+          $('manageFormatLock'),
+          $('manageFormatLockName'),
+          $('manageFormatHint'),
+          paidFormat
+        );
 
         const rejSection = $('mgRejectionSection');
         if ((c.status || '').toLowerCase() === 'rejected' && (c.rejection_reason || c.reject_reason)) {
@@ -1463,14 +1563,23 @@
         }
 
         const c = campaigns.find(x => String(x.id) === String(id));
-        if (c && c.placement === placement) return true;
+        if (!c) return false;
+
+        // Client-side guard: placement must be compatible with paid format
+        const allowed = compatiblePlacementsFor(c.format || 'medium');
+        if (!allowed.includes(placement)) {
+          toast(`Placement "${placement}" is not compatible with ${formatLabel(c.format)} format.`, true);
+          return false;
+        }
+
+        if (c.placement === placement) return true;
 
         try {
           await api('/api/advertisements/' + encodeURIComponent(id), {
             method: 'PATCH',
             body: JSON.stringify({ placement }),
           });
-          if (c) c.placement = placement;
+          c.placement = placement;
           return true;
         } catch (e) {
           toast(e.message || 'Could not save placement.', true);
@@ -1702,6 +1811,33 @@
       }
 
       /* ═══════════════ CREATE / EDIT ═══════════════ */
+
+      // Repopulate #campPlacement whenever the format changes so the
+      // admin can only pick placements compatible with the paid format.
+      function handleFormatChange() {
+        const format = $('campFormat').value || 'medium';
+        const sel = $('campPlacement');
+        const current = sel.value;
+        populateCompatiblePlacements(sel, format, current);
+
+        // If the previously selected placement is no longer compatible,
+        // reset and inform the admin
+        if (current && !compatiblePlacementsFor(format).includes(current)) {
+          sel.value = '';
+          toast(`Format changed to ${formatLabel(format)} — placement reset. Pick a compatible slot.`, false);
+        }
+
+        // Update the small hint under the select
+        const hint = $('campPlacementHint');
+        if (hint) {
+          const names = compatiblePlacementsFor(format)
+            .map(p => PLACEMENT_LABELS[p] || capitalize(p)).join(', ');
+          hint.innerHTML = `Available for <strong>${formatLabel(format).toUpperCase()}</strong>: ${esc(names)}.`;
+        }
+
+        updatePlacementOptions();
+      }
+
       function updatePlacementOptions() {
         const placement = $('campPlacement').value;
         const section = $('schoolRefSection');
@@ -1718,7 +1854,10 @@
         $('campFormat').value = 'medium';
         $('campTargetSchool').value = '';
         $('campStatus').value = 'draft';
-        updatePlacementOptions();
+
+        // Populate placement dropdown based on the default format
+        handleFormatChange();
+
         $('campModal').classList.add('active');
         $('campModal').setAttribute('aria-hidden', 'false');
       }
@@ -1730,8 +1869,12 @@
         $('campModalTitle').textContent = 'Edit advertisement';
         $('campName').value = c.name || '';
         $('campAdvertiser').value = c.advertiser || '';
-        $('campPlacement').value = c.placement || '';
         $('campFormat').value = c.format || 'medium';
+
+        // Populate placement with only compatible options for the existing format
+        const fmt = c.format || 'medium';
+        populateCompatiblePlacements($('campPlacement'), fmt, c.placement || '');
+
         $('campDescription').value = c.description || '';
         $('campCta').value = c.cta_text || '';
         $('campUrl').value = c.url || '';
@@ -1740,6 +1883,15 @@
         $('campStart').value = (c.start_date || '').slice(0, 10);
         $('campEnd').value = (c.end_date || '').slice(0, 10);
         $('campStatus').value = c.status || 'draft';
+
+        // Update hint under the placement dropdown
+        const hint = $('campPlacementHint');
+        if (hint) {
+          const names = compatiblePlacementsFor(fmt)
+            .map(p => PLACEMENT_LABELS[p] || capitalize(p)).join(', ');
+          hint.innerHTML = `Available for <strong>${formatLabel(fmt).toUpperCase()}</strong>: ${esc(names)}.`;
+        }
+
         updatePlacementOptions();
         $('campModal').classList.add('active');
         $('campModal').setAttribute('aria-hidden', 'false');
@@ -1765,6 +1917,11 @@
 
         if (!name || !advertiser || !placement || !url || !start_date || !end_date) {
           toast('Please fill in all required fields.', true); return;
+        }
+        // Guard: placement must be compatible with the format
+        if (!compatiblePlacementsFor(format).includes(placement)) {
+          toast(`Placement "${placement}" is not compatible with ${formatLabel(format)} format.`, true);
+          return;
         }
         try { new URL(url); } catch (_) { toast('Please enter a valid destination URL.', true); return; }
         if (image_url) { try { new URL(image_url); } catch (_) { toast('Please enter a valid image URL.', true); return; } }
@@ -1871,7 +2028,7 @@
 
       Object.assign(window, {
         openCreateModal, openEditModal, closeModal, saveCampaign, updatePlacementOptions,
-        renderTable, syncTopSearch, setFilter, refreshPage, exportCampaigns,
+        handleFormatChange, renderTable, syncTopSearch, setFilter, refreshPage, exportCampaigns,
         openReviewModal, closeReviewModal, setPreviewMode,
         openManageModal, closeManageModal,
         approveCampaign, rejectCampaign, requestChanges,
