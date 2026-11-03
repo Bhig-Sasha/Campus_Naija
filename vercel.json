@@ -36,19 +36,19 @@
     { "source": "/SchoolAd/submissions", "destination": "/SchoolAd/submissions.html" },
     { "source": "/SchoolAd/profile", "destination": "/SchoolAd/profile.html" },
 
-    { "source": "/advertiser", "destination": "/Advertiser/login.html" },
-    { "source": "/advertiser/login", "destination": "/Advertiser/login.html" },
-    { "source": "/advertiser/dashboard", "destination": "/Advertiser/Index.html" },
-    { "source": "/advertiser/campaigns", "destination": "/Advertiser/campaigns.html" },
-    { "source": "/advertiser/create", "destination": "/Advertiser/Create Campaigns.html" },
-    { "source": "/advertiser/create-campaigns", "destination": "/Advertiser/Create Campaigns.html" },
-    { "source": "/advertiser/analytics", "destination": "/Advertiser/Analytics.html" },
-    { "source": "/advertiser/billing", "destination": "/Advertiser/Billing.html" },
-    { "source": "/advertiser/payments", "destination": "/Advertiser/Billing.html" },
-    { "source": "/advertiser/profile", "destination": "/Advertiser/Profile.html" },
-    { "source": "/advertiser/notifications", "destination": "/Advertiser/Notifications.html" },
-    { "source": "/advertiser/support", "destination": "/Advertiser/Support.html" },
-    { "source": "/advertiser/settings", "destination": "/Advertiser/Settings.html" }
+    { "source": "/Advertiser", "destination": "/Advertiser/login.html" },
+    { "source": "/Advertiser/login", "destination": "/Advertiser/login.html" },
+    { "source": "/Advertiser/dashboard", "destination": "/Advertiser/Index.html" },
+    { "source": "/Advertiser/campaigns", "destination": "/Advertiser/campaigns.html" },
+    { "source": "/Advertiser/create", "destination": "/Advertiser/Create Campaigns.html" },
+    { "source": "/Advertiser/create-campaigns", "destination": "/Advertiser/Create Campaigns.html" },
+    { "source": "/Advertiser/analytics", "destination": "/Advertiser/Analytics.html" },
+    { "source": "/Advertiser/billing", "destination": "/Advertiser/Billing.html" },
+    { "source": "/Advertiser/payments", "destination": "/Advertiser/Billing.html" },
+    { "source": "/Advertiser/profile", "destination": "/Advertiser/Profile.html" },
+    { "source": "/Advertiser/notifications", "destination": "/Advertiser/Notifications.html" },
+    { "source": "/Advertiser/support", "destination": "/Advertiser/Support.html" },
+    { "source": "/Advertiser/settings", "destination": "/Advertiser/Settings.html" }
   ],
   "headers": [
     {
@@ -68,7 +68,7 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
-      "source": "/advertiser/(.*)",
+      "source": "/Advertiser/(.*)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     }
   ]
