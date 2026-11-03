@@ -920,7 +920,7 @@
               try {
                 localStorage.setItem(ADVERTISER_USER_KEY, JSON.stringify(data.user));
               } catch (_) {}
-              window.location.replace('/advertiser/Index');
+              window.location.replace('/Advertiser/Index');
               return true;
             }
           }
@@ -963,7 +963,7 @@
             localStorage.setItem(ADVERTISER_USER_KEY, JSON.stringify(data.user));
           } catch (_) {}
 
-          window.location.replace('/advertiser/Index');
+          window.location.replace('/Advertiser/Index');
         } catch (err) {
           const msg = err.message || 'Sign in failed. Please try again.';
           if (err.status === 403 || /pending|approv|suspended/i.test(msg)) {
@@ -1019,7 +1019,7 @@
               localStorage.setItem(ADVERTISER_TOKEN_KEY, data.token);
               localStorage.setItem(ADVERTISER_USER_KEY, JSON.stringify(data.user));
             } catch (_) {}
-            window.location.replace('/advertiser/Index');
+            window.location.replace('/Advertiser/Index');
             return;
           }
 
