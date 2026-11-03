@@ -677,9 +677,16 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
     );
     await c.query(
       `insert into public.audit_logs
-         (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, ip)
-       values ($1,$2,$3,'advertiser_register','advertiser',$1,$4,$5)`,
-      [u.rows[0].id, name, ADVERTISER_ROLE, email, ip]
+        (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, ip)
+      values ($1,$2,$3,'advertiser_register','advertiser',$4,$5,$6)`,
+      [
+        u.rows[0].id,          // $1 – actor_id (uuid)
+        name,                  // $2
+        ADVERTISER_ROLE,       // $3
+        String(u.rows[0].id),  // $4 – target_id (text)
+        email,                 // $5 – target_label
+        ip                     // $6
+      ]
     );
 
     // Notify owners — explicit per-row inserts, no || on params
