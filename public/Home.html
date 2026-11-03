@@ -37,6 +37,21 @@
     .mobile-nav a:hover { color: var(--primary); }
     .mobile-nav.active { display: flex; }
 
+    /* ═══════════════════════════════════════════════════════
+       PREMIUM AD WRAPPER — Large only
+       Sits directly below the sticky header, above the hero,
+       on a slightly elevated background so it reads as a
+       "premium placement band" separate from the page.
+       ═══════════════════════════════════════════════════════ */
+    .premium-ad-band {
+      background: linear-gradient(180deg, var(--elevated) 0%, var(--surface) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0 20px;
+    }
+    @media (min-width: 768px) {
+      .premium-ad-band { padding: 22px 0 26px; }
+    }
+
     /* Hero */
     .hero { padding: 40px 0 48px; position: relative; }
     .hero-grid { display: flex; flex-direction: column; gap: 32px; }
@@ -64,15 +79,14 @@
      * All five formats share the same structural classes:
      *   .ad-slider          — the outer container (hides when empty)
      *   .ad-slider-track    — flex row of .ad-slide elements
-     *   .ad-slide           — individual slide (aspect-ratio set per format)
+     *   .ad-slide           — individual slide (height set per format)
      *   .ad-slide-link      — wraps the entire slide content
      *   .ad-slider-dots     — dot indicators
-     * Aspect ratio, layout chrome, and slide body styling all differ per format.
      */
     .ad-slider {
       display: none;
       position: relative;
-      margin-bottom: 32px;
+      margin-bottom: 0;
     }
     .ad-slider.is-visible { display: block; }
 
@@ -218,28 +232,52 @@
       z-index: 0;
     }
 
-    /* ── 1. LARGE (Home only) — 16:5 ── */
-    .ad-slider--large .ad-slide { aspect-ratio: 16 / 5; min-height: 180px; }
-    .ad-slider--large .ad-slide-headline { font-size: 1.5rem; }
-    @media (min-width: 768px) {
-      .ad-slider--large .ad-slide-headline { font-size: 2rem; max-width: 600px; }
-      .ad-slider--large .ad-slide-body { padding: 32px 40px; }
+    /* ── 1. LARGE (Home only) — PREMIUM HERO ──
+       Controlled desktop height ~400px (not aspect-ratio driven),
+       so it always reads as the dominant banner regardless of
+       viewport width. Mobile falls to 260px min but keeps the
+       dominant feel relative to every other format. */
+    .ad-slider--large .ad-slide {
+      height: 260px;
+    }
+    .ad-slider--large .ad-slider-viewport {
+      border-color: rgba(245,185,66,0.25);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.35), 0 0 0 1px rgba(245,185,66,0.08);
+    }
+    .ad-slider--large .ad-slide-headline { font-size: 1.35rem; }
+
+    @media (min-width: 600px) {
+      .ad-slider--large .ad-slide { height: 320px; }
+      .ad-slider--large .ad-slide-headline { font-size: 1.6rem; }
+    }
+    @media (min-width: 1024px) {
+      .ad-slider--large .ad-slide { height: 400px; }
+      .ad-slider--large .ad-slide-headline { font-size: 2.1rem; max-width: 620px; }
+      .ad-slider--large .ad-slide-body { padding: 36px 44px; }
     }
 
-    /* ── 2. MEDIUM — 16:7 ── */
-    .ad-slider--medium .ad-slide { aspect-ratio: 16 / 7; min-height: 150px; }
-    @media (min-width: 768px) {
+    /* ── 2. MEDIUM — IN-CONTENT BANNER ──
+       Controlled desktop height ~200px. Compact, stays inside
+       the content flow, never competes with the Large hero. */
+    .ad-slider--medium .ad-slide { height: 170px; }
+    @media (min-width: 600px) {
+      .ad-slider--medium .ad-slide { height: 190px; }
+      .ad-slider--medium .ad-slide-headline { font-size: 1.25rem; }
+    }
+    @media (min-width: 1024px) {
+      .ad-slider--medium .ad-slide { height: 200px; }
       .ad-slider--medium .ad-slide-headline { font-size: 1.4rem; }
+      .ad-slider--medium .ad-slide-body { padding: 22px 28px; }
     }
 
-    /* ── 3. SMALL — 3:1 ── */
-    .ad-slider--small .ad-slide { aspect-ratio: 3 / 1; min-height: 90px; }
+    /* ── 3. SMALL — 3:1 compact strip ── */
+    .ad-slider--small .ad-slide { aspect-ratio: 3 / 1; min-height: 100px; }
     .ad-slider--small .ad-slide-body { padding: 14px 18px; }
     .ad-slider--small .ad-slide-headline { font-size: 0.95rem; max-width: 400px; }
     .ad-slider--small .ad-slide-sponsor { font-size: 0.68rem; }
     .ad-slider--small .ad-slide-cta { font-size: 0.75rem; padding: 6px 12px; }
 
-    /* ── 4. SQUARE — 1:1 (grid of slides, not a single-slide carousel) ── */
+    /* ── 4. SQUARE — 1:1 grid ── */
     .ad-slider--square .ad-slider-viewport { border-radius: var(--radius-card); }
     .ad-slider--square .ad-slider-track {
       display: grid;
@@ -264,7 +302,7 @@
     .ad-slider--square .ad-slider-arrow,
     .ad-slider--square .ad-slider-dots { display: none; }
 
-    /* ── 5. VERTICAL — 3:4 (mobile-only promotional panels) ── */
+    /* ── 5. VERTICAL — 3:4 grid (mobile-only promotional panels) ── */
     .ad-slider--vertical .ad-slider-track {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -288,10 +326,11 @@
     .ad-slider--vertical .ad-slider-arrow,
     .ad-slider--vertical .ad-slider-dots { display: none; }
 
-    /* Mobile-only: show vertical panels, hide desktop-only formats on very small screens */
+    /* Mobile-only: SMALL gets a slightly taller floor, but Medium
+       now uses a fixed height (not aspect-ratio) so the visual
+       hierarchy stays: Large >> Medium > Small. */
     @media (max-width: 599px) {
-      .ad-slider--medium .ad-slide,
-      .ad-slider--small .ad-slide { aspect-ratio: auto; min-height: 130px; }
+      .ad-slider--small .ad-slide { min-height: 120px; }
     }
 
     /* Discovery strip */
@@ -454,6 +493,25 @@
   </header>
 
   <main>
+    <!-- ═══════════════════════════════════════════════════════
+         AD SLOT 1 — HOME / LARGE  (Premium hero, directly below header)
+         Moved above the page hero so it reads as the dominant
+         placement band. Wrapped in its own elevated band so the
+         visual separation from the page content is intentional.
+         ═══════════════════════════════════════════════════════ -->
+    <section class="premium-ad-band" aria-label="Sponsored content">
+      <div class="container">
+        <div class="ad-slider ad-slider--large" id="adSliderHomeLarge" data-placement="home" data-format="large" data-slot="large_home_top">
+          <div class="ad-slider-viewport">
+            <div class="ad-slider-track" id="adSliderHomeLargeTrack"></div>
+            <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
+            <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="ad-slider-dots" id="adSliderHomeLargeDots"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-content">
@@ -475,20 +533,6 @@
         <div class="hero-image" id="heroImageWrap">
           <img id="heroImage" alt="" decoding="async" loading="eager">
         </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════
-         AD SLOT 1 — HOME / LARGE  (16:5, top below header)
-         ═══════════════════════════════════════════════════════ -->
-    <section class="container" aria-label="Sponsored content">
-      <div class="ad-slider ad-slider--large" id="adSliderHomeLarge" data-placement="home" data-format="large" data-slot="large_home_top">
-        <div class="ad-slider-viewport">
-          <div class="ad-slider-track" id="adSliderHomeLargeTrack"></div>
-          <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
-          <button class="ad-slider-arrow next" aria-label="Next slide" type="button"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="ad-slider-dots" id="adSliderHomeLargeDots"></div>
       </div>
     </section>
 
@@ -534,9 +578,11 @@
         </div>
 
         <!-- ═══════════════════════════════════════════════════════
-             AD SLOT 2 — HOME / MEDIUM  (16:7, between content sections)
+             AD SLOT 2 — HOME / MEDIUM  (16:7 equivalent, compact in-content banner)
+             Now controlled-height (~200px desktop) so it stays
+             visually subordinate to the Large hero above.
              ═══════════════════════════════════════════════════════ -->
-        <div class="ad-slider ad-slider--medium" id="adSliderHomeMedium1" data-placement="home" data-format="medium" data-slot="medium_home_1">
+        <div class="ad-slider ad-slider--medium" id="adSliderHomeMedium1" data-placement="home" data-format="medium" data-slot="medium_home_1" style="margin-bottom: 28px;">
           <div class="ad-slider-viewport">
             <div class="ad-slider-track" id="adSliderHomeMedium1Track"></div>
             <button class="ad-slider-arrow prev" aria-label="Previous slide" type="button"><i class="fas fa-chevron-left"></i></button>
@@ -571,7 +617,7 @@
         </div>
 
         <!-- ═══════════════════════════════════════════════════════
-             AD SLOT 3 — HOME / SMALL  (3:1, between news/discovery content)
+             AD SLOT 3 — HOME / SMALL  (3:1, between news content)
              ═══════════════════════════════════════════════════════ -->
         <div class="ad-slider ad-slider--small" id="adSliderHomeSmall1" data-placement="home" data-format="small" data-slot="small_home_1" style="margin-top:24px;">
           <div class="ad-slider-viewport">
@@ -808,11 +854,6 @@
       const ROTATION_MS = 6000;
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      /**
-       * Build one slide's HTML.
-       * @param {object} campaign - campaign record from API
-       * @param {string} format   - 'large' | 'medium' | 'small' | 'square' | 'vertical'
-       */
       function buildSlideHtml(campaign, format) {
         const url = escapeHtml(campaign.url || '#');
         const name = escapeHtml(campaign.name || '');
@@ -827,10 +868,7 @@
              <div class="ad-slide-media-fallback" style="display:none;"><i class="fas fa-image"></i></div>`
           : `<div class="ad-slide-media-fallback"><i class="fas fa-image"></i></div>`;
 
-        // Small format shows sponsor inline above headline for tightness
-        const sponsorLine = format === 'small'
-          ? `<div class="ad-slide-sponsor">${advertiser}</div>`
-          : `<div class="ad-slide-sponsor">${advertiser}</div>`;
+        const sponsorLine = `<div class="ad-slide-sponsor">${advertiser}</div>`;
 
         const showDescription = format !== 'small' && format !== 'square' && format !== 'vertical';
         const descriptionHtml = showDescription && description
@@ -852,10 +890,6 @@
           </div>`;
       }
 
-      /**
-       * Initialize a carousel-style slideshow (large / medium / small).
-       * Handles arrows, dots, autoplay, pause-on-hover, focus events.
-       */
       function initCarousel(sliderEl, campaigns, format) {
         const track = sliderEl.querySelector('.ad-slider-track');
         const dotsWrap = sliderEl.querySelector('.ad-slider-dots');
@@ -869,7 +903,6 @@
         let timer = null;
         let paused = false;
 
-        // Single slide: hide arrows + dots
         if (count <= 1) {
           if (prevBtn) prevBtn.style.display = 'none';
           if (nextBtn) nextBtn.style.display = 'none';
@@ -877,7 +910,6 @@
           return;
         }
 
-        // Build dots
         if (dotsWrap) {
           dotsWrap.innerHTML = campaigns.map((_, i) =>
             `<button class="ad-slider-dot ${i === 0 ? 'active' : ''}" type="button" aria-label="Slide ${i + 1}" data-idx="${i}"></button>`
@@ -922,19 +954,16 @@
         if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartAutoplay(); });
         if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartAutoplay(); });
 
-        // Pause on hover / focus
         sliderEl.addEventListener('mouseenter', () => { paused = true; });
         sliderEl.addEventListener('mouseleave', () => { paused = false; });
         sliderEl.addEventListener('focusin', () => { paused = true; });
         sliderEl.addEventListener('focusout', () => { paused = false; });
 
-        // Pause when tab is hidden (browser throttles, but this is explicit)
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) stopAutoplay();
           else startAutoplay();
         });
 
-        // Touch swipe (basic)
         let touchX = 0;
         track.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
         track.addEventListener('touchend', (e) => {
@@ -949,20 +978,11 @@
         startAutoplay();
       }
 
-      /**
-       * Initialize a grid-style slideshow (square / vertical).
-       * No rotation, no arrows, no dots — just a responsive grid of slides.
-       */
       function initGrid(sliderEl, campaigns, format) {
         const track = sliderEl.querySelector('.ad-slider-track');
         track.innerHTML = campaigns.map(c => buildSlideHtml(c, format)).join('');
       }
 
-      /**
-       * Fetches campaigns for a given placement + format and renders into the slider.
-       * Silently hides the slider if no campaigns are available or if the request fails.
-       * @param {HTMLElement} sliderEl  - the .ad-slider container
-       */
       async function loadAdSlider(sliderEl) {
         if (!sliderEl) return;
         const placement = sliderEl.dataset.placement;
@@ -1160,8 +1180,6 @@
       loadNews();
       loadOpps();
 
-      // Initialize all ad sliders on the page. Each one self-manages
-      // visibility — hiding completely when its campaign pool is empty.
       document.querySelectorAll('.ad-slider').forEach(loadAdSlider);
     })();
   </script>
