@@ -3894,6 +3894,21 @@ async function attachDerivedFields(campaigns) {
   return campaigns;
 }
 
+/* ============================================================
+ * ADVERTISEMENTS (admin workflow)
+ * ============================================================ */
+
+/* ── Format ↔ placement compatibility rules ──
+ * Large is exclusive to the Home page. Every admin mutation that could
+ * result in a mismatched pair goes through this check. */
+function assertFormatPlacementCompatibility(format, placement) {
+  if (!format || !placement) return;
+  if (format === 'large' && placement !== 'home') {
+    throw httpError(400,
+      'Large format is only available on the Home page. Choose a different format or set placement to home.');
+  }
+}
+
 /* ─── LIST ─── */
 router.get('/advertisements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
@@ -3937,6 +3952,9 @@ router.post('/advertisements', authenticate, requireRole('owner','admin','editor
   const endDate    = validateField(b.end_date, 'end_date', 30, { required: true });
   const status     = validateAdStatus(b.status) || 'draft';
   const format     = validateAdFormat(b.format);
+
+  // Enforce the Large → Home rule before anything else
+  assertFormatPlacementCompatibility(format, placement);
 
   let advertiserUserId = null;
   if (b.advertiser_user_id) {
@@ -3986,6 +4004,11 @@ router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','e
   if ('image_url' in updates) updates.image_url = validateUrl(updates.image_url, 'image_url');
   if ('format' in updates) updates.format = validateAdFormat(updates.format, { required: true });
 
+  // Enforce format/placement on the *resulting* row, not the diff
+  const effectiveFormat    = updates.format    != null ? updates.format    : existing.format    || 'medium';
+  const effectivePlacement = updates.placement != null ? updates.placement : existing.placement;
+  assertFormatPlacementCompatibility(effectiveFormat, effectivePlacement);
+
   if ('status' in b) {
     const newStatus = validateAdStatus(b.status, { required: true });
     // Only allow content-safe statuses here. Workflow transitions have dedicated endpoints.
@@ -4019,6 +4042,9 @@ router.post('/advertisements/:id/approve', authenticate, requireRole('owner','ad
   if (!row) throw httpError(404, 'Campaign not found.');
   if (!['pending', 'draft'].includes((row.status || '').toLowerCase()))
     throw httpError(400, `Only pending or draft campaigns can be approved. Current status: ${row.status}.`);
+
+  // Guard against rows that predate the rule or slipped through legacy paths
+  assertFormatPlacementCompatibility(row.format || 'medium', row.placement);
 
   const updated = await one(
     `update public.advertisements
@@ -4125,7 +4151,7 @@ router.post('/advertisements/:id/request-changes', authenticate, requireRole('ow
   res.json({ ok: true, campaign: updated });
 }));
 
-/* ─── SCHEDULE (status: approved → scheduled) ─── */
+/* ─── SCHEDULE (status: approved → scheduled; scheduled_at must be future) ─── */
 router.post('/advertisements/:id/schedule', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
@@ -4134,9 +4160,20 @@ router.post('/advertisements/:id/schedule', authenticate, requireRole('owner','a
   if (!row.placement)
     throw httpError(400, 'Assign a placement before scheduling.');
 
+  assertFormatPlacementCompatibility(row.format || 'medium', row.placement);
+
   const scheduledAt = validateField(req.body?.scheduled_at, 'scheduled_at', 40, { required: true });
   const when = new Date(scheduledAt);
   if (isNaN(when)) throw httpError(400, 'scheduled_at must be a valid ISO datetime.');
+
+  // scheduled_at must be in the future (60s grace period for clock skew)
+  if (when.getTime() < Date.now() - 60_000) {
+    throw httpError(400, 'scheduled_at must be in the future.');
+  }
+  // And it must not land after the campaign's own end_date, or it would never serve
+  if (row.end_date && new Date(row.end_date) < when) {
+    throw httpError(400, 'scheduled_at is after the campaign end_date; the campaign would never serve.');
+  }
 
   const updated = await one(
     `update public.advertisements
@@ -4158,6 +4195,8 @@ router.post('/advertisements/:id/publish', authenticate, requireRole('owner','ad
     throw httpError(400, `Cannot publish from status "${row.status}".`);
   if (!row.placement)
     throw httpError(400, 'Assign a placement before publishing.');
+
+  assertFormatPlacementCompatibility(row.format || 'medium', row.placement);
 
   const now = new Date();
   const updated = await one(
@@ -4254,6 +4293,7 @@ router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'),
  * PUBLIC NAMED ADVERTISEMENT ENDPOINTS
  * ============================================================ */
 
+/* ── Legacy: single-campaign resolver (unchanged shape) ── */
 async function resolvePublicCampaign(placement) {
   const row = await one(
     `select id, name, advertiser, description, cta_text, placement, url, image_url,
@@ -4283,9 +4323,102 @@ async function resolvePublicCampaign(placement) {
   return row;
 }
 
+/* ── Slideshow: multi-campaign resolver for a format ── */
+async function resolvePublicCampaigns(placement, format) {
+  // Includes:
+  //   - Active campaigns currently in their serving window
+  //   - Scheduled campaigns whose scheduled_at has been reached
+  //     (lazily promoted to 'active' after the impression bump — see below)
+  const rows = await many(
+    `select id, name, advertiser, description, cta_text, placement, format,
+            url, image_url, target_school_id, start_date, end_date, status,
+            published_at, scheduled_at
+       from public.advertisements
+      where placement = $1
+        and format = $2
+        and (
+          (status = 'active'
+            and current_date between start_date and end_date)
+          or (status = 'scheduled'
+            and scheduled_at is not null
+            and scheduled_at <= now()
+            and current_date between start_date and end_date)
+        )
+      order by coalesce(published_at, scheduled_at) asc nulls last
+      limit 8`,
+    [placement, format]
+  );
+
+  if (!rows.length) return [];
+
+  // Single round-trip: bump impressions AND promote any scheduled row that
+  // just matured. Both effects are safe to fire in parallel with the response.
+  const ids = rows.map(r => r.id);
+  run(
+    `update public.advertisements
+        set impressions  = impressions + 1,
+            status       = case
+                             when status = 'scheduled'
+                               and scheduled_at is not null
+                               and scheduled_at <= now()
+                             then 'active' else status
+                           end,
+            published_at = case
+                             when status = 'scheduled'
+                               and scheduled_at is not null
+                               and scheduled_at <= now()
+                             then coalesce(published_at, scheduled_at)
+                             else published_at
+                           end,
+            updated_at   = case
+                             when status = 'scheduled'
+                               and scheduled_at is not null
+                               and scheduled_at <= now()
+                             then now() else updated_at
+                           end
+      where id = ANY($1::uuid[])`,
+    [ids]
+  ).catch(err => console.error('[ad impression/auto-publish]', err.message));
+
+  // Attach target school metadata in one batched query
+  const schoolIds = [...new Set(rows.map(r => r.target_school_id).filter(Boolean))];
+  if (schoolIds.length) {
+    const schools = await many(
+      `select id, slug, name, city, state, type, verification, cover_url, logo_url
+         from public.schools
+        where id = ANY($1::uuid[]) and publication = 'published'`,
+      [schoolIds]
+    );
+    const byId = {};
+    for (const s of schools) byId[s.id] = s;
+    for (const r of rows) {
+      if (r.target_school_id && byId[r.target_school_id]) {
+        r.target_school = byId[r.target_school_id];
+      }
+    }
+  }
+
+  return rows;
+}
+
+/* ── Single registration per placement, branches on ?format= ── */
 ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'].forEach((placement) => {
   router.get(`/public/advertisements/${placement}`, asyncH(async (req, res) => {
     await publicLimit(req);
+
+    const formatParam = req.query.format;
+    const format = formatParam ? String(formatParam).toLowerCase() : null;
+
+    if (format) {
+      if (!AD_FORMATS.includes(format)) {
+        throw httpError(400, `format must be one of: ${AD_FORMATS.join(', ')}.`);
+      }
+      const campaigns = await resolvePublicCampaigns(placement, format);
+      return res.json({ campaigns });
+    }
+
+    // Legacy single-campaign mode for the sponsored school card,
+    // profile banner, and sidebar advert.
     const campaign = await resolvePublicCampaign(placement);
     res.json({ campaign });
   }));
