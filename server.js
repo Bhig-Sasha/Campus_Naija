@@ -4734,20 +4734,20 @@ app.get(
 );
 
 /* Advertiser portal routes */
-app.get(['/advertiser', '/advertiser/'], (req, res, next) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'login.html'), (err) => { if (err) next(); });
+app.get(['/Advertiser', '/Advertiser/'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'login.html'), (err) => { if (err) next(); });
 });
 
 app.get(
-  ['/advertiser/login', '/advertiser/login.html',
-   '/advertiser/Login', '/advertiser/Login.html'],
+  ['/Advertiser/login', '/Advertiser/login.html',
+   '/Advertiser/Login', '/Advertiser/Login.html'],
   (req, res, next) => {
-    res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'login.html'), (err) => { if (err) next(); });
+    res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'login.html'), (err) => { if (err) next(); });
   }
 );
 
-app.get(['/advertiser/dashboard', '/advertiser/dashboard.html'], (req, res, next) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'advertiser', 'dashboard.html'), (err) => { if (err) next(); });
+app.get(['/Advertiser/dashboard', '/Advertiser/Index.html'], (req, res, next) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'Index.html'), (err) => { if (err) next(); });
 });
 
 /* ============================================================
