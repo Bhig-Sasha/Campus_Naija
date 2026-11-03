@@ -132,7 +132,6 @@
     .btn-gold:hover { background-color: rgba(245,185,66,0.1); }
     .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 
-    /* ─── Summary cards ─── */
     .overview-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
     @media (min-width: 600px) { .overview-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1100px) { .overview-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -146,7 +145,6 @@
     .stat-card-value { font-size: 1.9rem; font-weight: 800; line-height: 1; margin-bottom: 4px; color: var(--text); font-feature-settings: 'tnum'; }
     .stat-card-sub { font-size: 0.72rem; color: var(--muted); }
 
-    /* ─── Tabs ─── */
     .tabs-wrap { margin-bottom: 16px; }
     .tabs {
       display: flex; gap: 4px; overflow-x: auto;
@@ -177,7 +175,6 @@
       border-color: rgba(0,201,130,0.3);
     }
 
-    /* ─── Toolbar ─── */
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 14px 16px; margin-bottom: 16px; }
     .toolbar .search-inline { position: relative; display: flex; align-items: center; flex: 1; min-width: 220px; }
     .toolbar .search-inline i { position: absolute; left: 12px; color: var(--muted); font-size: 0.8rem; pointer-events: none; }
@@ -194,7 +191,6 @@
     }
     .toolbar select:focus, .toolbar input[type="date"]:focus { border-color: var(--primary); }
 
-    /* ─── Table ─── */
     .table-wrap { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
     .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
     .table-header h3 { font-size: 1rem; display: flex; align-items: center; gap: 10px; }
@@ -242,10 +238,6 @@
     }
     .format-tag i { color: var(--muted); font-size: 0.68rem; }
 
-    .icon-action { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; cursor: pointer; padding: 6px 9px; border-radius: 8px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
-    .icon-action:hover { color: var(--primary); border-color: var(--primary); }
-    .icon-action.danger:hover { color: var(--danger); border-color: var(--danger); }
-
     .action-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
     .row-action-primary {
@@ -268,7 +260,6 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* ─── Modal base ─── */
     .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); z-index: 150; backdrop-filter: blur(4px); padding: 24px; overflow-y: auto; align-items: flex-start; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal {
@@ -283,7 +274,6 @@
     .modal-footer { padding: 16px 24px 22px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; border-top: 1px solid var(--border); }
     .modal-footer .grow { flex: 1; }
 
-    /* ─── Review modal (two-column) ─── */
     .review-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     @media (min-width: 820px) { .review-grid { grid-template-columns: 1.15fr 1fr; } }
 
@@ -370,7 +360,38 @@
     }
     .advertiser-notes.muted { color: var(--muted); font-style: italic; }
 
-    /* ─── Form ─── */
+    /* Placement field styling for modal */
+    .placement-field {
+      margin-bottom: 16px;
+    }
+    .placement-field label {
+      display: block;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .placement-field label .req { color: var(--accent); }
+    .placement-field label .opt {
+      font-weight: 500; text-transform: none; letter-spacing: 0;
+      color: var(--muted); margin-left: 6px; font-size: 0.68rem;
+    }
+    .placement-field select {
+      width: 100%;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 0.88rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .placement-field select:focus { border-color: var(--primary); }
+    .placement-field .format-hint {
+      font-size: 0.72rem; color: var(--muted); margin-top: 6px;
+    }
+
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
     @media (min-width: 560px) { .form-grid { grid-template-columns: 1fr 1fr; } .form-group.full { grid-column: 1 / -1; } }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -400,7 +421,6 @@
     .form-section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
     .form-section-title i { font-size: 0.75rem; }
 
-    /* ─── Manage modal metrics ─── */
     .metrics-grid {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
       margin-bottom: 16px;
@@ -422,7 +442,6 @@
     .metric-value.primary { color: var(--primary); }
     .metric-value.info { color: var(--info); }
 
-    /* ─── Confirm modal ─── */
     .confirm-modal {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: 18px; padding: 28px 26px 22px; width: 100%;
@@ -609,7 +628,6 @@
           </div>
         </div>
 
-        <!-- 4 Summary cards -->
         <section class="overview-grid">
           <div class="stat-card">
             <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-rectangle-ad"></i></div><span class="stat-card-label">Total</span></div>
@@ -633,12 +651,10 @@
           </div>
         </section>
 
-        <!-- Tabs -->
         <div class="tabs-wrap">
           <div class="tabs" id="tabsBar"></div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
           <div class="search-inline">
             <i class="fas fa-search"></i>
@@ -671,7 +687,6 @@
           </select>
         </div>
 
-        <!-- Table -->
         <div class="table-wrap">
           <div class="table-header">
             <h3><i class="fas fa-list"></i> Advertisements</h3>
@@ -722,7 +737,6 @@
       </div>
       <div class="modal-body">
         <div class="review-grid">
-          <!-- LEFT: Preview -->
           <div class="review-left">
             <div class="preview-tabs" role="tablist">
               <button class="preview-tab active" data-preview="desktop" onclick="setPreviewMode('desktop')"><i class="fas fa-desktop"></i> Desktop</button>
@@ -743,7 +757,6 @@
             </div>
           </div>
 
-          <!-- RIGHT: Info -->
           <div class="review-right">
             <div class="review-section">
               <div class="review-section-title"><i class="fas fa-circle-info"></i> Campaign</div>
@@ -755,6 +768,23 @@
                 <div class="kv"><span class="k">Placement</span><span class="v" id="rvPlacement">—</span></div>
                 <div class="kv"><span class="k">Requested duration</span><span class="v" id="rvDuration">—</span></div>
               </div>
+            </div>
+
+            <div class="placement-field" style="margin-top:16px;">
+              <label for="reviewPlacement">
+                Set placement <span class="req">*</span>
+                <span class="opt">(where this ad will appear)</span>
+              </label>
+              <select id="reviewPlacement">
+                <option value="">— Choose placement —</option>
+                <option value="home">Home</option>
+                <option value="schools">Schools</option>
+                <option value="admissions">Admissions</option>
+                <option value="exams">Exams</option>
+                <option value="scholarships">Scholarships</option>
+                <option value="trending">Trending</option>
+              </select>
+              <div class="format-hint">Advertiser chose format: <strong id="reviewFormatLabel">—</strong></div>
             </div>
 
             <div class="review-section">
@@ -773,9 +803,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer" id="reviewFooter">
-        <!-- Populated dynamically based on status -->
-      </div>
+      <div class="modal-footer" id="reviewFooter"></div>
     </div>
   </div>
 
@@ -787,7 +815,6 @@
         <button class="modal-close" onclick="closeManageModal()" aria-label="Close"><i class="fas fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Metrics -->
         <div class="metrics-grid" id="manageMetrics">
           <div class="metric-box"><div class="metric-label">Impressions</div><div class="metric-value" id="mImpressions">—</div></div>
           <div class="metric-box"><div class="metric-label">Clicks</div><div class="metric-value" id="mClicks">—</div></div>
@@ -795,7 +822,6 @@
         </div>
 
         <div class="review-grid">
-          <!-- LEFT: preview (compact) -->
           <div class="review-left">
             <div class="ad-preview" id="managePreviewBox">
               <div class="ad-image" id="managePreviewImage">
@@ -811,7 +837,6 @@
             </div>
           </div>
 
-          <!-- RIGHT: details -->
           <div class="review-right">
             <div class="review-section">
               <div class="review-section-title"><i class="fas fa-circle-info"></i> Campaign</div>
@@ -819,9 +844,24 @@
                 <div class="kv"><span class="k">Campaign</span><span class="v" id="mgName">—</span></div>
                 <div class="kv"><span class="k">Advertiser</span><span class="v" id="mgAdvertiser">—</span></div>
                 <div class="kv"><span class="k">Format</span><span class="v" id="mgFormat">—</span></div>
-                <div class="kv"><span class="k">Placement</span><span class="v" id="mgPlacement">—</span></div>
                 <div class="kv"><span class="k">Status</span><span class="v" id="mgStatus">—</span></div>
               </div>
+            </div>
+
+            <div class="placement-field" style="margin-top:16px;">
+              <label for="managePlacement">
+                Placement <span class="req">*</span>
+                <span class="opt">(where this ad appears)</span>
+              </label>
+              <select id="managePlacement">
+                <option value="">— Choose placement —</option>
+                <option value="home">Home</option>
+                <option value="schools">Schools</option>
+                <option value="admissions">Admissions</option>
+                <option value="exams">Exams</option>
+                <option value="scholarships">Scholarships</option>
+                <option value="trending">Trending</option>
+              </select>
             </div>
 
             <div class="review-section">
@@ -840,9 +880,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer" id="manageFooter">
-        <!-- Populated dynamically -->
-      </div>
+      <div class="modal-footer" id="manageFooter"></div>
     </div>
   </div>
 
@@ -860,7 +898,6 @@
           <div class="form-group full">
             <label>Campaign name <span class="req">*</span></label>
             <input type="text" id="campName" placeholder="e.g. JAMB Prep Sponsored Banner">
-            <span class="form-hint">This becomes the headline shown on the ad card.</span>
           </div>
           <div class="form-group">
             <label>Advertiser <span class="req">*</span></label>
@@ -915,8 +952,6 @@
             <select id="campStatus">
               <option value="draft">Draft</option>
               <option value="pending">Pending approval</option>
-              <option value="approved">Approved</option>
-              <option value="active">Published</option>
               <option value="paused">Paused</option>
               <option value="rejected">Rejected</option>
               <option value="expired">Expired</option>
@@ -948,7 +983,7 @@
     </div>
   </div>
 
-  <!-- ═══════════════ CONFIRM MODAL (with optional reason) ═══════════════ -->
+  <!-- ═══════════════ CONFIRM MODAL ═══════════════ -->
   <div class="modal-overlay" id="confirmModal" aria-hidden="true">
     <div class="confirm-modal">
       <div class="confirm-icon" id="confirmIconWrap">
@@ -999,7 +1034,6 @@
         square: 'Square', vertical: 'Vertical',
       };
 
-      // Tabs — one per status
       const TABS = [
         { key: '',         label: 'All' },
         { key: 'pending',  label: 'Pending' },
@@ -1034,7 +1068,6 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
 
-      /* ─── Confirm (with optional required reason) ─── */
       function openConfirm(opts) {
         return new Promise((resolve) => {
           const backdrop = $('confirmModal');
@@ -1109,7 +1142,6 @@
         ['sideRole', 'topRole'].forEach(id => { const el = $(id); if (el) el.textContent = role; });
       }
 
-      /* ─── Data ─── */
       async function loadCampaigns() {
         const tbody = $('campTbody');
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;"><span class="skeleton skeleton-text" style="display:inline-block;width:60%;"></span></td></tr>';
@@ -1133,12 +1165,11 @@
           const data = await api('/api/schools');
           schools = Array.isArray(data.schools) ? data.schools : [];
           const sel = $('campTargetSchool');
-          sel.innerHTML = '<option value="">— None —</option>' +
+          if (sel) sel.innerHTML = '<option value="">— None —</option>' +
             schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
         } catch (e) { console.error('[schools]', e.message); }
       }
 
-      /* ─── Stats ─── */
       function renderStats() {
         const countBy = (s) => campaigns.filter(c => (c.status || '').toLowerCase() === s).length;
         $('statTotal').textContent = campaigns.length;
@@ -1147,7 +1178,6 @@
         $('statPublished').textContent = countBy('active');
       }
 
-      /* ─── Tabs ─── */
       function renderTabs() {
         const bar = $('tabsBar');
         const counts = { '': campaigns.length };
@@ -1167,7 +1197,6 @@
         renderTabs(); renderTable();
       }
 
-      /* ─── Status badge ─── */
       function statusBadge(status) {
         const s = (status || 'draft').toLowerCase();
         const map = {
@@ -1197,7 +1226,6 @@
         return `${days} day${days === 1 ? '' : 's'}`;
       }
 
-      /* ─── Row action button ─── */
       function rowActionBtn(c) {
         const s = (c.status || '').toLowerCase();
         if (s === 'pending') {
@@ -1206,7 +1234,6 @@
         return `<button class="row-action-primary" onclick="openManageModal('${esc(c.id)}')"><i class="fas fa-sliders"></i> Manage</button>`;
       }
 
-      /* ─── Sort helper ─── */
       function applySort(list) {
         const sort = $('sortFilter')?.value || 'newest';
         const copy = list.slice();
@@ -1217,7 +1244,6 @@
         return copy;
       }
 
-      /* ─── Table render ─── */
       function renderTable() {
         const q = ($('campSearch').value || '').toLowerCase().trim();
         const placementFilter = $('placementFilter').value;
@@ -1288,7 +1314,6 @@
         if (!c) return;
         activeReviewId = id;
 
-        // Preview
         const imgBox = $('adPreviewImage');
         const imgUrl = c.image_url || c.image || '';
         imgBox.innerHTML = `<span class="ad-sponsor">Sponsored</span>` +
@@ -1298,7 +1323,6 @@
         $('adPreviewCta').textContent = c.cta_text || 'Learn more';
         $('adPreviewUrl').textContent = c.url || '—';
 
-        // Info
         $('rvName').textContent = c.name || '—';
         $('rvAdvertiser').textContent = c.advertiser || '—';
         $('rvContact').textContent = c.contact || c.contact_email || c.contact_phone || '—';
@@ -1311,7 +1335,12 @@
         $('rvNotes').textContent = c.advertiser_notes || c.notes || 'No notes provided.';
         $('rvNotes').classList.toggle('muted', !(c.advertiser_notes || c.notes));
 
-        // Footer actions depend on status
+        // Sync placement select + format label
+        const placementSel = $('reviewPlacement');
+        if (placementSel) placementSel.value = c.placement || '';
+        const fmtLabel = $('reviewFormatLabel');
+        if (fmtLabel) fmtLabel.textContent = (c.format || 'medium').toUpperCase();
+
         const footer = $('reviewFooter');
         const s = (c.status || '').toLowerCase();
         let html = `<button class="btn-outline" onclick="closeReviewModal()">Close</button>`;
@@ -1340,7 +1369,6 @@
         if (!c) return;
         activeManageId = id;
 
-        // Preview
         const imgBox = $('managePreviewImage');
         const imgUrl = c.image_url || c.image || '';
         imgBox.innerHTML = `<span class="ad-sponsor">Sponsored</span>` +
@@ -1350,7 +1378,6 @@
         $('managePreviewCta').textContent = c.cta_text || 'Learn more';
         $('managePreviewUrl').textContent = c.url || '—';
 
-        // Metrics
         const impressions = Number(c.impressions) || 0;
         const clicks = Number(c.clicks) || 0;
         const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '—';
@@ -1358,17 +1385,18 @@
         $('mClicks').textContent = clicks.toLocaleString('en-NG');
         $('mCtr').textContent = ctr;
 
-        // Info
         $('mgName').textContent = c.name || '—';
         $('mgAdvertiser').textContent = c.advertiser || '—';
         $('mgFormat').textContent = formatLabel(c.format);
-        $('mgPlacement').innerHTML = placementPill(c.placement);
         $('mgStatus').innerHTML = statusBadge(c.status);
         $('mgStart').textContent = formatDate(c.start_date);
         $('mgEnd').textContent = formatDate(c.end_date);
         $('mgPublished').textContent = c.published_at ? formatDate(c.published_at) : 'Not published';
 
-        // Rejection reason (if any)
+        // Sync placement select
+        const placementSel = $('managePlacement');
+        if (placementSel) placementSel.value = c.placement || '';
+
         const rejSection = $('mgRejectionSection');
         if ((c.status || '').toLowerCase() === 'rejected' && (c.rejection_reason || c.reject_reason)) {
           $('mgRejectionReason').textContent = c.rejection_reason || c.reject_reason;
@@ -1377,7 +1405,6 @@
           rejSection.style.display = 'none';
         }
 
-        // Footer actions per status
         const footer = $('manageFooter');
         const s = (c.status || '').toLowerCase();
         let actions = `<button class="btn-outline grow" onclick="closeManageModal()">Close</button>`;
@@ -1424,16 +1451,39 @@
       }
 
       /* ═══════════════ CAMPAIGN ACTIONS ═══════════════ */
-      async function patchCampaign(id, patch) {
-        await api('/api/advertisements/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(patch) });
+
+      async function savePlacementIfNeeded(id) {
+        const sel = document.getElementById('reviewPlacement') || document.getElementById('managePlacement');
+        if (!sel) return true;
+
+        const placement = (sel.value || '').trim();
+        if (!placement) {
+          toast('Please choose a placement first.', true);
+          return false;
+        }
+
         const c = campaigns.find(x => String(x.id) === String(id));
-        if (c) Object.assign(c, patch);
-        renderStats(); renderTabs(); renderTable();
+        if (c && c.placement === placement) return true;
+
+        try {
+          await api('/api/advertisements/' + encodeURIComponent(id), {
+            method: 'PATCH',
+            body: JSON.stringify({ placement }),
+          });
+          if (c) c.placement = placement;
+          return true;
+        } catch (e) {
+          toast(e.message || 'Could not save placement.', true);
+          return false;
+        }
       }
 
       async function approveCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
+        if (!(await savePlacementIfNeeded(id))) return;
+
         const res = await openConfirm({
           title: 'Approve campaign?',
           text: `"${c.name}" will be marked Approved. This does not publish it — you'll publish it manually when ready.`,
@@ -1443,16 +1493,21 @@
           danger: false,
         });
         if (!res.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'approved' });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/approve', { method: 'POST' });
           closeReviewModal();
           toast('Campaign approved.');
-        } catch (e) { toast(e.message || 'Approve failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Approve failed.', true);
+        }
       }
 
       async function rejectCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
         const res = await openConfirm({
           title: 'Reject campaign?',
           text: `"${c.name}" will be rejected and the advertiser notified. Please provide a reason.`,
@@ -1463,16 +1518,24 @@
           reasonPlaceholder: 'Explain why this advertisement is being rejected…',
         });
         if (!res.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'rejected', rejection_reason: res.reason });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/reject', {
+            method: 'POST',
+            body: JSON.stringify({ reason: res.reason }),
+          });
           closeReviewModal();
           toast('Campaign rejected.');
-        } catch (e) { toast(e.message || 'Reject failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Reject failed.', true);
+        }
       }
 
       async function requestChanges(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
         const res = await openConfirm({
           title: 'Request changes?',
           text: `The advertiser will be notified about "${c.name}". Describe what needs to change.`,
@@ -1484,17 +1547,26 @@
           reasonPlaceholder: 'Describe the changes needed…',
         });
         if (!res.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'pending', changes_requested_reason: res.reason });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/request-changes', {
+            method: 'POST',
+            body: JSON.stringify({ reason: res.reason }),
+          });
           closeReviewModal();
           toast('Changes requested.');
-        } catch (e) { toast(e.message || 'Request failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Request failed.', true);
+        }
       }
 
       async function scheduleCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
-        if (!c.placement) { toast('Assign a placement before scheduling.', true); return; }
+
+        if (!(await savePlacementIfNeeded(id))) return;
+
         const ok = await openConfirm({
           title: 'Schedule campaign?',
           text: `"${c.name}" will become eligible for publication on ${formatDate(c.start_date)}.`,
@@ -1504,36 +1576,51 @@
           danger: false,
         });
         if (!ok.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'scheduled' });
+          const scheduledAt = new Date().toISOString();
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/schedule', {
+            method: 'POST',
+            body: JSON.stringify({ scheduled_at: scheduledAt }),
+          });
           closeManageModal();
           toast('Campaign scheduled.');
-        } catch (e) { toast(e.message || 'Schedule failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Schedule failed.', true);
+        }
       }
 
       async function publishCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
-        if (!c.placement) { toast('Assign a placement before publishing.', true); return; }
+
+        if (!(await savePlacementIfNeeded(id))) return;
+
         const ok = await openConfirm({
           title: 'Publish campaign now?',
-          text: `"${c.name}" will start serving on the ${PLACEMENT_LABELS[c.placement] || c.placement} page immediately.`,
+          text: `"${c.name}" will start serving on the ${PLACEMENT_LABELS[c.placement] || c.placement || 'selected'} page immediately.`,
           confirmText: 'Publish',
           tone: 'info',
           icon: 'fa-rocket',
           danger: false,
         });
         if (!ok.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'active', published_at: new Date().toISOString() });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/publish', { method: 'POST' });
           closeManageModal();
           toast('Campaign published.');
-        } catch (e) { toast(e.message || 'Publish failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Publish failed.', true);
+        }
       }
 
       async function pauseCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
         const ok = await openConfirm({
           title: 'Pause campaign?',
           text: `"${c.name}" will stop serving immediately but remain in the campaign list.`,
@@ -1543,24 +1630,32 @@
           danger: false,
         });
         if (!ok.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'paused' });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/pause', { method: 'POST' });
           closeManageModal();
           toast('Campaign paused.');
-        } catch (e) { toast(e.message || 'Pause failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Pause failed.', true);
+        }
       }
 
       async function resumeCampaign(id) {
         try {
-          await patchCampaign(id, { status: 'active' });
+          await api('/api/advertisements/' + encodeURIComponent(id) + '/resume', { method: 'POST' });
           closeManageModal();
           toast('Campaign resumed.');
-        } catch (e) { toast(e.message || 'Resume failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'Resume failed.', true);
+        }
       }
 
       async function endCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
         const ok = await openConfirm({
           title: 'End campaign?',
           text: `"${c.name}" will be permanently marked as expired and cannot be resumed.`,
@@ -1569,16 +1664,24 @@
           danger: true,
         });
         if (!ok.ok) return;
+
         try {
-          await patchCampaign(id, { status: 'expired' });
+          await api('/api/advertisements/' + encodeURIComponent(id), {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'expired' }),
+          });
           closeManageModal();
           toast('Campaign ended.');
-        } catch (e) { toast(e.message || 'End failed.', true); }
+          await loadCampaigns();
+        } catch (e) {
+          toast(e.message || 'End failed.', true);
+        }
       }
 
       async function deleteCampaign(id) {
         const c = campaigns.find(x => String(x.id) === String(id));
         if (!c) return;
+
         const ok = await openConfirm({
           title: 'Delete campaign?',
           text: `"${c.name}" will be permanently removed from the system.`,
@@ -1587,12 +1690,15 @@
           danger: true,
         });
         if (!ok.ok) return;
+
         try {
           await api('/api/advertisements/' + encodeURIComponent(id), { method: 'DELETE' });
           toast('Campaign deleted.');
           closeManageModal();
           await loadCampaigns();
-        } catch (e) { toast(e.message || 'Delete failed.', true); }
+        } catch (e) {
+          toast(e.message || 'Delete failed.', true);
+        }
       }
 
       /* ═══════════════ CREATE / EDIT ═══════════════ */
@@ -1763,7 +1869,6 @@
         await Promise.all([loadCampaigns(), loadSchools()]);
       })();
 
-      // Expose to inline handlers
       Object.assign(window, {
         openCreateModal, openEditModal, closeModal, saveCampaign, updatePlacementOptions,
         renderTable, syncTopSearch, setFilter, refreshPage, exportCampaigns,
@@ -1771,7 +1876,7 @@
         openManageModal, closeManageModal,
         approveCampaign, rejectCampaign, requestChanges,
         scheduleCampaign, publishCampaign, pauseCampaign, resumeCampaign,
-        endCampaign, deleteCampaign,
+        endCampaign, deleteCampaign, savePlacementIfNeeded,
       });
     })();
   </script>

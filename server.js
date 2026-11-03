@@ -101,7 +101,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 });
 
 /* ============================================================
- * UPLOAD (multer) — declared before any route that uses it
+ * UPLOAD (multer)
  * ============================================================ */
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -635,8 +635,6 @@ router.post('/auth/reset-password', asyncH(async (req, res) => {
 /* ============================================================
  * ADVERTISER ENDPOINTS
  * ============================================================ */
-
-/* Helper: notify all owners + admins without type ambiguity */
 async function notifyStaff(title, body, link) {
   const staff = await many(
     `select id from public.users where role in ('owner','admin')`
@@ -4254,8 +4252,6 @@ router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'),
 
 /* ============================================================
  * PUBLIC NAMED ADVERTISEMENT ENDPOINTS
- * (single registration per placement — the earlier duplicate inside
- *  the ADVERTISEMENTS block was removed; this is the only one.)
  * ============================================================ */
 
 async function resolvePublicCampaign(placement) {
