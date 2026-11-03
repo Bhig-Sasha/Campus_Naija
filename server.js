@@ -107,7 +107,11 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = ['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf'];
+    const allowed = [
+      'image/jpeg','image/png','image/webp','image/svg+xml','application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
     if (!allowed.includes(file.mimetype)) return cb(new Error('File type not allowed.'));
     cb(null, true);
   },
@@ -225,71 +229,6 @@ function pagination(req, { defaultLimit = 50, maxLimit = 200 } = {}) {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || defaultLimit, 1), maxLimit);
   const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
   return { limit, offset };
-}
-
-/* ============================================================
- * SCHEMA ENSURANCE (idempotent boot-time migrations)
- * ============================================================ */
-async function ensureAdvertiserSchema() {
-  const statements = [
-    `create table if not exists public.advertiser_profiles_ext (
-       user_id         uuid primary key references public.users(id) on delete cascade,
-       business_type   text,
-       business_reg_no text,
-       business_description text,
-       contact_name    text,
-       contact_email   text,
-       contact_phone   text,
-       contact_address text,
-       contact_state   text,
-       brand_name      text,
-       brand_slogan    text,
-       logo_url        text,
-       website         text,
-       instagram       text,
-       facebook        text,
-       linkedin        text,
-       verification_status text not null default 'unverified',
-       verification_submitted_at timestamptz,
-       verification_note text,
-       created_at      timestamptz not null default now(),
-       updated_at      timestamptz not null default now()
-     )`,
-    `create table if not exists public.advertiser_billing (
-       user_id         uuid primary key references public.users(id) on delete cascade,
-       billing_name    text not null,
-       business_reg_no text,
-       billing_email   text not null,
-       phone           text,
-       address         text,
-       tax_id          text,
-       created_at      timestamptz not null default now(),
-       updated_at      timestamptz not null default now()
-     )`,
-    `create table if not exists public.advertisement_events (
-       id              bigserial primary key,
-       advertisement_id uuid not null references public.advertisements(id) on delete cascade,
-       advertiser_user_id uuid not null references public.users(id) on delete cascade,
-       event_type      text not null check (event_type in ('impression','click')),
-       occurred_at     timestamptz not null default now(),
-       ip_hash         text,
-       user_agent_hash text,
-       session_id      text,
-       placement       text,
-       format          text
-     )`,
-    `create index if not exists idx_adv_events_adv_time
-       on public.advertisement_events(advertisement_id, occurred_at desc)`,
-    `create index if not exists idx_adv_events_user_time
-       on public.advertisement_events(advertiser_user_id, occurred_at desc)`,
-    `create unique index if not exists uniq_adv_click_dedup
-       on public.advertisement_events(advertisement_id, session_id, event_type, date_trunc('minute', occurred_at))
-       where event_type = 'click' and session_id is not null`,
-  ];
-  for (const sql of statements) {
-    try { await run(sql); }
-    catch (e) { console.warn('[schema]', e.message); }
-  }
 }
 
 /* ============================================================
@@ -516,6 +455,7 @@ async function authenticateAdvertiser(req, res, next) {
 
     req.advertiser = rec.user;
     req.advertiserProfile = rec.profile;
+    req._bearerToken = token;
     next();
   } catch (e) { next(e); }
 }
@@ -1668,7 +1608,664 @@ router.get('/advertiser/analytics/export', authenticateAdvertiser, asyncH(async 
   res.send(csv);
 }));
 
-/* NOTE: /advertiser/analytics/export.pdf route removed */
+/* ============================================================
+ * ADVERTISER SETTINGS
+ * ============================================================ */
+
+const LANGUAGES = ['en','ha','ig','yo','fr','ar','es','pt','zh'];
+const TIMEZONES = [
+  'Africa/Lagos','Africa/Abuja','Africa/Accra','Africa/Nairobi','Africa/Johannesburg',
+  'Europe/London','Europe/Paris','America/New_York','America/Los_Angeles',
+  'Asia/Dubai','Asia/Tokyo','Asia/Shanghai','Australia/Sydney','UTC',
+];
+const DATE_FORMATS = ['DD MMM YYYY','DD/MM/YYYY','MM/DD/YYYY','YYYY-MM-DD'];
+const APPEARANCE = ['dark','light','system'];
+
+const NOTIF_KEYS = [
+  'campaign_updates','payment_updates','review_decisions',
+  'publication_updates','expiry_reminders','support_replies',
+];
+const PRIVACY_KEYS = ['marketing_emails','product_announcements','analytics_usage'];
+
+const DEFAULT_NOTIF_PREFS = {
+  campaign_updates:    { in_app: true,  email: true  },
+  payment_updates:     { in_app: true,  email: true  },
+  review_decisions:    { in_app: true,  email: true  },
+  publication_updates: { in_app: true,  email: true  },
+  expiry_reminders:    { in_app: true,  email: true  },
+  support_replies:     { in_app: true,  email: true  },
+};
+const DEFAULT_PRIVACY_PREFS = {
+  marketing_emails: true,
+  product_announcements: true,
+  analytics_usage: true,
+};
+
+async function ensureSettingsRow(userId) {
+  const existing = await one(`select * from public.advertiser_settings where user_id=$1`, [userId]);
+  if (existing) return existing;
+  const user = await one(`select * from public.users where id=$1`, [userId]);
+  return await one(
+    `insert into public.advertiser_settings
+       (user_id, display_name, contact_email, phone, notif_prefs, privacy_prefs)
+     values ($1,$2,$3,$4,$5,$6)
+     on conflict (user_id) do update set updated_at = now()
+     returning *`,
+    [
+      userId,
+      user?.name || null,
+      user?.email || null,
+      null,
+      JSON.stringify(DEFAULT_NOTIF_PREFS),
+      JSON.stringify(DEFAULT_PRIVACY_PREFS),
+    ]
+  );
+}
+
+router.get('/advertiser/settings', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await ensureSettingsRow(req.advertiser.id);
+  const user = req.advertiser;
+  res.json({
+    general: {
+      display_name: row.display_name || user.name || '',
+      contact_email: row.contact_email || user.email || '',
+      phone: row.phone || '',
+      preferred_language: row.preferred_language || 'en',
+      timezone: row.timezone || 'Africa/Lagos',
+      date_format: row.date_format || 'DD MMM YYYY',
+      appearance: row.appearance || 'dark',
+    },
+    security: {
+      two_factor_enabled: !!row.two_factor_enabled,
+      last_password_change: row.last_password_change || null,
+    },
+    notifications: { ...DEFAULT_NOTIF_PREFS, ...(row.notif_prefs || {}) },
+    privacy: { ...DEFAULT_PRIVACY_PREFS, ...(row.privacy_prefs || {}) },
+    options: {
+      languages: LANGUAGES,
+      timezones: TIMEZONES,
+      date_formats: DATE_FORMATS,
+      appearance: APPEARANCE,
+    },
+  });
+}));
+
+router.patch('/advertiser/settings', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  await ensureSettingsRow(uid);
+  const b = req.body || {};
+  const updates = {};
+
+  const checks = [
+    ['display_name', validateField(b.display_name, 'display_name', FIELD_LIMITS.name)],
+    ['contact_email', validateField(b.contact_email, 'contact_email', FIELD_LIMITS.email)],
+    ['phone', validateField(b.phone, 'phone', 30)],
+    ['preferred_language', validateField(b.preferred_language, 'preferred_language', 8)],
+    ['timezone', validateField(b.timezone, 'timezone', 60)],
+    ['date_format', validateField(b.date_format, 'date_format', 20)],
+    ['appearance', validateField(b.appearance, 'appearance', 20)],
+  ];
+  for (const [k, v] of checks) if (v != null) updates[k] = v;
+
+  if (updates.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updates.contact_email))
+    throw httpError(400, 'Please enter a valid contact email.');
+  if (updates.preferred_language && !LANGUAGES.includes(updates.preferred_language))
+    throw httpError(400, 'Unsupported language.');
+  if (updates.timezone && !TIMEZONES.includes(updates.timezone))
+    throw httpError(400, 'Unsupported timezone.');
+  if (updates.date_format && !DATE_FORMATS.includes(updates.date_format))
+    throw httpError(400, 'Unsupported date format.');
+  if (updates.appearance && !APPEARANCE.includes(updates.appearance))
+    throw httpError(400, 'Unsupported appearance.');
+
+  if (b.notifications && typeof b.notifications === 'object') {
+    const clean = {};
+    for (const k of NOTIF_KEYS) {
+      if (b.notifications[k]) {
+        clean[k] = { in_app: !!b.notifications[k].in_app, email: !!b.notifications[k].email };
+      }
+    }
+    if (Object.keys(clean).length) updates.notif_prefs = JSON.stringify(clean);
+  }
+  if (b.privacy && typeof b.privacy === 'object') {
+    const clean = {};
+    for (const k of PRIVACY_KEYS) if (k in b.privacy) clean[k] = !!b.privacy[k];
+    if (Object.keys(clean).length) updates.privacy_prefs = JSON.stringify(clean);
+  }
+
+  if (!Object.keys(updates).length) throw httpError(400, 'No settings to update.');
+
+  const keys = Object.keys(updates);
+  const vals = keys.map(k => updates[k]);
+  const setSql = keys.map((k, i) => `${k} = $${i + 2}`).join(', ');
+  await run(
+    `update public.advertiser_settings set ${setSql}, updated_at=now() where user_id=$1`,
+    [uid, ...vals]
+  );
+
+  if (updates.display_name) {
+    await run(`update public.users set name=$1, updated_at=now() where id=$2`, [updates.display_name, uid]);
+  }
+
+  await audit(
+    { user: { id: uid, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'update_settings', 'advertiser_settings', uid, req.advertiser.email,
+    { fields: keys }
+  );
+  res.json({ ok: true });
+}));
+
+router.post('/advertiser/settings/password', authenticateAdvertiser, asyncH(async (req, res) => {
+  const ip = req.ip || 'unknown';
+  if (!(await rateLimit(`adv_pw_change:${ip}`, 5, 15 * 60 * 1000)))
+    throw httpError(429, 'Too many password change attempts. Try again later.', 'rate_limited');
+
+  const current = validateField(req.body?.current_password, 'current_password', 200, { required: true });
+  const next    = validateField(req.body?.new_password, 'new_password', 200, { required: true });
+  const confirm = validateField(req.body?.confirm_password, 'confirm_password', 200, { required: true });
+
+  if (next.length < 10) throw httpError(400, 'New password must be at least 10 characters.');
+  if (next !== confirm) throw httpError(400, 'New passwords do not match.');
+  if (next === current) throw httpError(400, 'New password must differ from the current one.');
+
+  const user = await one('select * from public.users where id=$1', [req.advertiser.id]);
+  if (!bcrypt.compareSync(current, user.password_hash))
+    throw httpError(400, 'Current password is incorrect.');
+
+  const hash = bcrypt.hashSync(next, BCRYPT_COST);
+  await tx(async (c) => {
+    await c.query(
+      `update public.users set password_hash=$1, updated_at=now() where id=$2`,
+      [hash, req.advertiser.id]
+    );
+    await c.query(
+      `update public.advertiser_settings set last_password_change=now(), updated_at=now() where user_id=$1`,
+      [req.advertiser.id]
+    );
+    await c.query(
+      `update public.advertiser_sessions set revoked_at=now() where user_id=$1 and revoked_at is null`,
+      [req.advertiser.id]
+    );
+  });
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip },
+    'change_password', 'advertiser', req.advertiser.id, req.advertiser.email
+  );
+
+  res.json({ ok: true, message: 'Password changed. All other sessions have been signed out.' });
+}));
+
+router.post('/advertiser/settings/2fa', authenticateAdvertiser, asyncH(async (req, res) => {
+  const enable = !!req.body?.enabled;
+  await ensureSettingsRow(req.advertiser.id);
+  await run(
+    `update public.advertiser_settings set two_factor_enabled=$1, updated_at=now() where user_id=$2`,
+    [enable, req.advertiser.id]
+  );
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    enable ? 'enable_2fa' : 'disable_2fa', 'advertiser', req.advertiser.id, req.advertiser.email
+  );
+  res.json({ ok: true, two_factor_enabled: enable });
+}));
+
+router.get('/advertiser/settings/sessions', authenticateAdvertiser, asyncH(async (req, res) => {
+  const currentToken = req._bearerToken || '';
+  const rows = await many(
+    `select id, session_token, device, browser, location, ip, created_at, last_active_at, revoked_at
+       from public.advertiser_sessions
+      where user_id = $1
+      order by last_active_at desc limit 100`,
+    [req.advertiser.id]
+  );
+  const cleaned = rows.map(r => ({
+    ...r,
+    session_token: r.session_token === currentToken ? 'current' : 'other',
+  }));
+  res.json({ sessions: cleaned });
+}));
+
+router.post('/advertiser/settings/sessions/:id/revoke', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select * from public.advertiser_sessions where id=$1 and user_id=$2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Session not found.');
+  if (row.revoked_at) return res.json({ ok: true });
+  await run(`update public.advertiser_sessions set revoked_at=now() where id=$1`, [row.id]);
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'revoke_session', 'advertiser_session', row.id, row.device || 'device'
+  );
+  res.json({ ok: true });
+}));
+
+router.post('/advertiser/settings/sessions/revoke-others', authenticateAdvertiser, asyncH(async (req, res) => {
+  const currentToken = req._bearerToken || '';
+  await run(
+    `update public.advertiser_sessions
+        set revoked_at=now()
+      where user_id=$1 and revoked_at is null and session_token <> $2`,
+    [req.advertiser.id, currentToken]
+  );
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'revoke_other_sessions', 'advertiser', req.advertiser.id, req.advertiser.email
+  );
+  res.json({ ok: true });
+}));
+
+router.get('/advertiser/settings/export', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const user = await one('select id, name, email, role, status, created_at from public.users where id=$1', [uid]);
+  const profile = await one('select * from public.advertiser_profiles where user_id=$1', [uid]);
+  const ext = await one('select * from public.advertiser_profiles_ext where user_id=$1', [uid]);
+  const billing = await one('select * from public.advertiser_billing where user_id=$1', [uid]);
+  const settings = await one(
+    `select display_name, contact_email, phone, preferred_language, timezone, date_format, appearance,
+            notif_prefs, privacy_prefs
+       from public.advertiser_settings where user_id=$1`,
+    [uid]
+  );
+  const campaigns = await many(
+    `select id, name, format, status, placement, url, image_url, start_date, end_date,
+            impressions, clicks, created_at
+       from public.advertisements where advertiser_user_id=$1`,
+    [uid]
+  );
+  const transactions = await many(
+    `select id, reference, amount, currency, status, source, created_at
+       from public.transactions where customer=$1`,
+    [req.advertiser.email]
+  );
+  const tickets = await many(
+    `select id, ticket_number, subject, category, status, created_at, updated_at
+       from public.support_tickets where advertiser_id=$1`,
+    [uid]
+  );
+
+  const payload = {
+    exported_at: new Date().toISOString(),
+    account: user, profile, profile_ext: ext, billing, settings,
+    campaigns, transactions, support_tickets: tickets,
+  };
+  await audit(
+    { user: { id: uid, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'export_data', 'advertiser', uid, req.advertiser.email
+  );
+
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="campusnaija-data-${uid}-${Date.now()}.json"`);
+  res.send(JSON.stringify(payload, null, 2));
+}));
+
+router.post('/advertiser/settings/deactivate', authenticateAdvertiser, asyncH(async (req, res) => {
+  const password = validateField(req.body?.password, 'password', 200, { required: true });
+  const user = await one('select * from public.users where id=$1', [req.advertiser.id]);
+  if (!bcrypt.compareSync(password, user.password_hash))
+    throw httpError(400, 'Password is incorrect.');
+
+  await run(`update public.users set status='suspended', updated_at=now() where id=$1`, [req.advertiser.id]);
+  await run(`update public.advertiser_sessions set revoked_at=now() where user_id=$1 and revoked_at is null`, [req.advertiser.id]);
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'deactivate_account', 'advertiser', req.advertiser.id, req.advertiser.email
+  );
+  res.json({ ok: true, message: 'Your account has been temporarily deactivated. Contact support to reactivate.' });
+}));
+
+router.post('/advertiser/settings/request-deletion', authenticateAdvertiser, asyncH(async (req, res) => {
+  const password = validateField(req.body?.password, 'password', 200, { required: true });
+  const reason   = validateField(req.body?.reason, 'reason', FIELD_LIMITS.medium);
+  const user = await one('select * from public.users where id=$1', [req.advertiser.id]);
+  if (!bcrypt.compareSync(password, user.password_hash))
+    throw httpError(400, 'Password is incorrect.');
+
+  let ticketNumber = null;
+  try {
+    const nRow = await one(`select nextval(pg_get_serial_sequence('public.support_tickets','id')) as n`);
+    ticketNumber = `CN-${String(nRow.n).padStart(6, '0')}`;
+    await run(
+      `insert into public.support_tickets
+         (ticket_number, advertiser_id, subject, category, priority, description, status)
+       values ($1,$2,$3,'other','urgent',$4,'open')`,
+      [
+        ticketNumber,
+        req.advertiser.id,
+        'Account deletion request',
+        `Advertiser requested account deletion. Reason: ${reason || 'Not specified'}. Please review payment, invoice, and legal retention obligations before proceeding.`,
+      ]
+    );
+    await run(
+      `insert into public.notifications (user_id, title, body, link)
+       select id, 'Account deletion request',
+              $1 || ' requested account deletion (#' || $2 || ')',
+              '/admin/support.html'
+         from public.users where role in ('owner','admin')`,
+      [req.advertiser.email, ticketNumber]
+    );
+  } catch (e) {
+    console.warn('[deletion request]', e.message);
+  }
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'request_account_deletion', 'advertiser', req.advertiser.id, req.advertiser.email,
+    { reason }
+  );
+
+  res.json({
+    ok: true,
+    message: ticketNumber
+      ? `Deletion request received. Your request has been logged as ticket #${ticketNumber}. Our team will review outstanding payments and legal obligations before completing the deletion.`
+      : 'Deletion request received. Our team will review outstanding payments and legal obligations before completing the deletion.',
+    ticket_number: ticketNumber,
+  });
+}));
+
+/* ============================================================
+ * ADVERTISER SUPPORT
+ * ============================================================ */
+
+async function nextTicketNumber() {
+  const row = await one(`select nextval(pg_get_serial_sequence('public.support_tickets','id')) as n`);
+  return `CN-${String(row.n).padStart(6, '0')}`;
+}
+
+const SUPPORT_CATEGORIES = [
+  'campaign_assistance','payment_billing','advertisement_review','creative_upload',
+  'account_login','analytics_reporting','technical','other',
+];
+const SUPPORT_PRIORITIES = ['normal', 'urgent'];
+const SUPPORT_STATUSES   = ['open', 'in_progress', 'awaiting_reply', 'resolved', 'closed'];
+
+router.get('/advertiser/support/stats', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const row = await one(
+    `select
+       count(*) filter (where status in ('open','in_progress'))::int as open_count,
+       count(*) filter (where status = 'awaiting_reply')::int as awaiting_count,
+       count(*) filter (where status in ('resolved','closed'))::int as resolved_count,
+       coalesce(avg(extract(epoch from (first_support_reply - created_at)) / 3600)::numeric, 0) as avg_response_hours
+     from (
+       select t.*, (
+         select min(m.created_at)
+           from public.support_ticket_messages m
+          where m.ticket_id = t.id and m.sender_type = 'support'
+       ) as first_support_reply
+       from public.support_tickets t
+       where t.advertiser_id = $1
+     ) sub`,
+    [uid]
+  );
+  const avgHours = Number(row.avg_response_hours) || 0;
+  const avgLabel = avgHours < 1
+    ? Math.max(1, Math.round(avgHours * 60)) + ' min'
+    : (avgHours < 24 ? avgHours.toFixed(1) + ' hrs' : (avgHours / 24).toFixed(1) + ' days');
+
+  res.json({
+    open: Number(row.open_count) || 0,
+    awaiting: Number(row.awaiting_count) || 0,
+    resolved: Number(row.resolved_count) || 0,
+    avg_response_label: avgLabel,
+    avg_response_hours: avgHours,
+  });
+}));
+
+router.get('/advertiser/support/tickets', authenticateAdvertiser, asyncH(async (req, res) => {
+  const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
+  const clauses = [`t.advertiser_id = $1`];
+  const params = [req.advertiser.id];
+  if (req.query.status && SUPPORT_STATUSES.includes(String(req.query.status))) {
+    params.push(String(req.query.status));
+    clauses.push(`t.status = $${params.length}`);
+  }
+  if (req.query.q) {
+    params.push(`%${req.query.q}%`, `%${req.query.q}%`);
+    clauses.push(`(t.subject ilike $${params.length-1} or t.ticket_number ilike $${params.length})`);
+  }
+  const where = clauses.join(' and ');
+  const rows = await many(
+    `select t.*, c.name as campaign_name,
+            (select count(*)::int from public.support_ticket_messages m where m.ticket_id = t.id) as message_count
+       from public.support_tickets t
+       left join public.advertisements c on c.id = t.campaign_id
+      where ${where}
+      order by t.updated_at desc
+      limit $${params.length + 1} offset $${params.length + 2}`,
+    [...params, limit, offset]
+  );
+  const totalRow = await one(`select count(*)::int as c from public.support_tickets t where ${where}`, params);
+  res.json({ tickets: rows, total: totalRow.c, limit, offset });
+}));
+
+router.get('/advertiser/support/tickets/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const ticket = await one(
+    `select t.*, c.name as campaign_name
+       from public.support_tickets t
+       left join public.advertisements c on c.id = t.campaign_id
+      where t.id = $1 and t.advertiser_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!ticket) throw httpError(404, 'Ticket not found.');
+
+  const messages = await many(
+    `select * from public.support_ticket_messages where ticket_id = $1 order by created_at asc`,
+    [ticket.id]
+  );
+  const attachments = await many(
+    `select * from public.support_attachments where ticket_id = $1 order by created_at asc`,
+    [ticket.id]
+  );
+  res.json({ ticket, messages, attachments });
+}));
+
+router.post('/advertiser/support/tickets', authenticateAdvertiser, asyncH(async (req, res) => {
+  const ip = req.ip || 'unknown';
+  if (!(await rateLimit(`adv_support_new:${ip}`, 10, 60 * 60 * 1000)))
+    throw httpError(429, 'Too many tickets created. Try again later.', 'rate_limited');
+
+  const b = req.body || {};
+  const subject     = validateField(b.subject, 'subject', FIELD_LIMITS.title, { required: true }).trim();
+  const description = validateField(b.description, 'description', FIELD_LIMITS.long, { required: true }).trim();
+  const category    = validateField(b.category, 'category', 50, { required: true });
+  const priority    = (validateField(b.priority, 'priority', 10) || 'normal').toLowerCase();
+  const campaignId  = b.campaign_id ? String(b.campaign_id) : null;
+
+  if (!SUPPORT_CATEGORIES.includes(category)) throw httpError(400, 'Invalid support category.');
+  if (!SUPPORT_PRIORITIES.includes(priority)) throw httpError(400, 'Invalid priority.');
+  if (campaignId) {
+    const camp = await one(
+      `select id from public.advertisements where id=$1 and advertiser_user_id=$2`,
+      [campaignId, req.advertiser.id]
+    );
+    if (!camp) throw httpError(400, 'Related campaign does not belong to you.');
+  }
+
+  const ticketNumber = await nextTicketNumber();
+  const ticket = await tx(async (c) => {
+    const ins = await c.query(
+      `insert into public.support_tickets
+         (ticket_number, advertiser_id, campaign_id, subject, category, priority, description, status)
+       values ($1,$2,$3,$4,$5,$6,$7,'open') returning *`,
+      [ticketNumber, req.advertiser.id, campaignId, subject, category, priority, description]
+    );
+    await c.query(
+      `insert into public.support_ticket_messages (ticket_id, sender_type, sender_id, sender_name, body)
+       values ($1,'advertiser',$2,$3,$4)`,
+      [ins.rows[0].id, req.advertiser.id, req.advertiser.name, description]
+    );
+    return ins.rows[0];
+  });
+
+  await run(
+    `insert into public.notifications (user_id, title, body, link)
+     select id, 'New advertiser support ticket',
+            $1 || ' submitted: "' || $2 || '" (#' || $3 || ')',
+            '/admin/support.html'
+       from public.users where role in ('owner','admin')`,
+    [req.advertiserProfile?.business_name || req.advertiser.name, subject, ticketNumber]
+  ).catch(() => {});
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'create_ticket', 'support_ticket', ticket.id, ticketNumber, { category, priority }
+  );
+
+  res.status(201).json({ ok: true, ticket });
+}));
+
+router.post('/advertiser/support/tickets/:id/messages', authenticateAdvertiser, asyncH(async (req, res) => {
+  const ticket = await one(
+    `select * from public.support_tickets where id = $1 and advertiser_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!ticket) throw httpError(404, 'Ticket not found.');
+  if (['resolved','closed'].includes(ticket.status))
+    throw httpError(400, 'This ticket is closed. Please open a new ticket for further help.');
+
+  const body = validateField(req.body?.body, 'message', FIELD_LIMITS.long, { required: true }).trim();
+  if (!body) throw httpError(400, 'Message is required.');
+
+  const msg = await tx(async (c) => {
+    const ins = await c.query(
+      `insert into public.support_ticket_messages
+         (ticket_id, sender_type, sender_id, sender_name, body)
+       values ($1,'advertiser',$2,$3,$4) returning *`,
+      [ticket.id, req.advertiser.id, req.advertiser.name, body]
+    );
+    await c.query(
+      `update public.support_tickets
+          set status = 'in_progress',
+              last_reply_by = 'advertiser',
+              updated_at = now()
+        where id = $1`,
+      [ticket.id]
+    );
+    return ins.rows[0];
+  });
+
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'ticket_reply', 'support_ticket', ticket.id, ticket.ticket_number
+  );
+
+  res.status(201).json({ ok: true, message: msg });
+}));
+
+router.post('/advertiser/support/tickets/:id/close', authenticateAdvertiser, asyncH(async (req, res) => {
+  const ticket = await one(
+    `select * from public.support_tickets where id = $1 and advertiser_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!ticket) throw httpError(404, 'Ticket not found.');
+  if (['closed','resolved'].includes(ticket.status))
+    return res.json({ ok: true, ticket });
+
+  const updated = await one(
+    `update public.support_tickets
+        set status = 'closed', closed_at = now(), updated_at = now()
+      where id = $1 returning *`,
+    [ticket.id]
+  );
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'close_ticket', 'support_ticket', ticket.id, ticket.ticket_number
+  );
+  res.json({ ok: true, ticket: updated });
+}));
+
+router.post('/advertiser/support/tickets/:id/attachments',
+  authenticateAdvertiser,
+  upload.single('file'),
+  asyncH(async (req, res) => {
+    const ticket = await one(
+      `select * from public.support_tickets where id = $1 and advertiser_id = $2`,
+      [req.params.id, req.advertiser.id]
+    );
+    if (!ticket) throw httpError(404, 'Ticket not found.');
+    if (!req.file) throw httpError(400, 'A file is required.');
+
+    const messageId = req.body.message_id ? String(req.body.message_id) : null;
+    if (messageId) {
+      const m = await one(
+        `select 1 from public.support_ticket_messages where id = $1 and ticket_id = $2`,
+        [messageId, ticket.id]
+      );
+      if (!m) throw httpError(400, 'Message does not belong to this ticket.');
+    }
+
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const filename = `support_${crypto.randomBytes(10).toString('hex')}${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(MEDIA_BUCKET)
+      .upload(filename, req.file.buffer, {
+        contentType: req.file.mimetype,
+        cacheControl: '3600',
+        upsert: false,
+      });
+    if (uploadError) {
+      console.error('[support upload]', uploadError.message);
+      throw httpError(500, 'Upload failed: ' + uploadError.message);
+    }
+
+    const { data: urlData } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(filename);
+
+    const row = await one(
+      `insert into public.support_attachments
+         (ticket_id, message_id, uploader_id, uploader_type,
+          filename, original_name, mime_type, size, storage_path, public_url)
+       values ($1,$2,$3,'advertiser',$4,$5,$6,$7,$8,$9) returning *`,
+      [
+        ticket.id, messageId || null, req.advertiser.id,
+        filename, req.file.originalname, req.file.mimetype, req.file.size,
+        filename, urlData.publicUrl,
+      ]
+    );
+
+    await audit(
+      { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+      'ticket_upload', 'support_attachment', row.id, row.original_name
+    );
+
+    res.status(201).json({ ok: true, attachment: row });
+  })
+);
+
+router.get('/public/help/articles', asyncH(async (req, res) => {
+  await publicLimit(req);
+  const { q: query, category } = req.query;
+  const clauses = ['is_published = true'];
+  const params = [];
+  if (query) {
+    params.push(`%${query}%`, `%${query}%`);
+    clauses.push(`(title ilike $${params.length-1} or body ilike $${params.length})`);
+  }
+  if (category) {
+    params.push(String(category));
+    clauses.push(`category = $${params.length}`);
+  }
+  const rows = await many(
+    `select id, slug, category, title, body, updated_at
+       from public.help_articles
+      where ${clauses.join(' and ')}
+      order by category, title`,
+    params
+  );
+  res.json({ articles: rows });
+}));
+
+router.get('/public/help/articles/:slug', asyncH(async (req, res) => {
+  await publicLimit(req);
+  const row = await one(
+    `select * from public.help_articles where slug = $1 and is_published = true`,
+    [req.params.slug]
+  );
+  if (!row) throw httpError(404, 'Article not found.');
+  res.json({ article: row });
+}));
 
 /* ---------- PUBLIC (no auth) ---------- */
 async function publicLimit(req) {
@@ -3636,10 +4233,8 @@ const httpServer = app.listen(PORT, () => {
   console.log('API base: /api');
 });
 
-// Run schema + seed on boot
+// Seed only — schemas are managed in Supabase SQL editor
 (async () => {
-  try { await ensureAdvertiserSchema(); }
-  catch (e) { console.error('[schema]', e.message); }
   await seed().catch(e => console.error('[seed]', e.message));
 })();
 
