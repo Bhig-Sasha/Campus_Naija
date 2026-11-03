@@ -4734,21 +4734,20 @@ app.get(
 );
 
 /* Advertiser portal routes */
-app.get(['/Advertiser', '/Advertiser/'], (req, res, next) => {
+app.get(['/Advertiser', '/Advertiser/', '/advertiser', '/advertiser/'], (req, res, next) => {
   res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'login.html'), (err) => { if (err) next(); });
 });
 
 app.get(
-  ['/Advertiser/login', '/Advertiser/login.html',
-   '/Advertiser/Login', '/Advertiser/Login.html'],
+  [
+    '/Advertiser/login', '/Advertiser/login.html',
+    '/Advertiser/Login', '/Advertiser/Login.html',
+    '/advertiser/login', '/advertiser/login.html',
+  ],
   (req, res, next) => {
     res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'login.html'), (err) => { if (err) next(); });
   }
 );
-
-app.get(['/Advertiser/dashboard', '/Advertiser/Index.html'], (req, res, next) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'Advertiser', 'Index.html'), (err) => { if (err) next(); });
-});
 
 /* ============================================================
  * ERROR HANDLING
