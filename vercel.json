@@ -2,12 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/",              "destination": "/Home" },
-    { "source": "/schools",       "destination": "/Schools" },
-    { "source": "/admissions",    "destination": "/Admissions" },
-    { "source": "/exams",         "destination": "/Exams" },
-    { "source": "/scholarships",  "destination": "/Scholarships" },
-    { "source": "/trending",      "destination": "/Trending" },
+    { "source": "/",              "destination": "/Home.html" },
+    { "source": "/schools",       "destination": "/Schools.html" },
+    { "source": "/admissions",    "destination": "/Admissions.html" },
+    { "source": "/exams",         "destination": "/Exams.html" },
+    { "source": "/scholarships",  "destination": "/Scholarships.html" },
+    { "source": "/trending",      "destination": "/Trending.html" },
 
     { "source": "/admin",         "destination": "/admin/login.html" },
     { "source": "/admin/",        "destination": "/admin/login.html" },
