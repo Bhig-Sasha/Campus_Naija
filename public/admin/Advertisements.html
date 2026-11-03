@@ -37,7 +37,6 @@
       background-size: 800px 100%; animation: shimmer 1.4s linear infinite;
       border-radius: 6px; min-height: 12px; display: block;
     }
-    .skeleton-text { height: 12px; }
 
     .admin-shell { display: flex; min-height: 100vh; }
     .sidebar {
@@ -132,7 +131,6 @@
     .btn-gold:hover { background-color: rgba(245,185,66,0.1); }
     .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
 
-    /* ─── Summary cards ─── */
     .overview-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
     @media (min-width: 600px) { .overview-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1100px) { .overview-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -146,13 +144,8 @@
     .stat-card-value { font-size: 1.9rem; font-weight: 800; line-height: 1; margin-bottom: 4px; color: var(--text); font-feature-settings: 'tnum'; }
     .stat-card-sub { font-size: 0.72rem; color: var(--muted); }
 
-    /* ─── Tabs ─── */
     .tabs-wrap { margin-bottom: 16px; }
-    .tabs {
-      display: flex; gap: 4px; overflow-x: auto;
-      border-bottom: 1px solid var(--border);
-      scrollbar-width: none;
-    }
+    .tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab {
       background: transparent; border: none; color: var(--muted);
@@ -162,39 +155,28 @@
     }
     .tab:hover { color: var(--text); }
     .tab.active { color: var(--primary); }
-    .tab.active::after {
-      content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
-      height: 2px; background-color: var(--primary);
-    }
+    .tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background-color: var(--primary); }
     .tab .tab-count {
       display: inline-block; font-size: 0.65rem; font-weight: 800;
       background-color: var(--surface); color: var(--muted);
-      padding: 1px 7px; border-radius: 40px; margin-left: 5px;
-      border: 1px solid var(--border);
+      padding: 1px 7px; border-radius: 40px; margin-left: 5px; border: 1px solid var(--border);
     }
-    .tab.active .tab-count {
-      background-color: rgba(0,201,130,0.12); color: var(--primary);
-      border-color: rgba(0,201,130,0.3);
-    }
+    .tab.active .tab-count { background-color: rgba(0,201,130,0.12); color: var(--primary); border-color: rgba(0,201,130,0.3); }
 
-    /* ─── Toolbar ─── */
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 14px 16px; margin-bottom: 16px; }
     .toolbar .search-inline { position: relative; display: flex; align-items: center; flex: 1; min-width: 220px; }
     .toolbar .search-inline i { position: absolute; left: 12px; color: var(--muted); font-size: 0.8rem; pointer-events: none; }
     .toolbar .search-inline input {
       width: 100%; background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 9px 14px 9px 34px; font-size: 0.83rem;
-      color: var(--text); outline: none;
+      border-radius: 10px; padding: 9px 14px 9px 34px; font-size: 0.83rem; color: var(--text); outline: none;
     }
     .toolbar .search-inline input:focus { border-color: var(--primary); }
-    .toolbar select, .toolbar input[type="date"] {
+    .toolbar select {
       background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 9px 14px; font-size: 0.83rem;
-      color: var(--text); outline: none; cursor: pointer;
+      border-radius: 10px; padding: 9px 14px; font-size: 0.83rem; color: var(--text); outline: none; cursor: pointer;
     }
-    .toolbar select:focus, .toolbar input[type="date"]:focus { border-color: var(--primary); }
+    .toolbar select:focus { border-color: var(--primary); }
 
-    /* ─── Table ─── */
     .table-wrap { background-color: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
     .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
     .table-header h3 { font-size: 1rem; display: flex; align-items: center; gap: 10px; }
@@ -205,8 +187,7 @@
     .camp-table th {
       text-align: left; padding: 12px 16px; font-size: 0.66rem;
       text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
-      font-weight: 700; border-bottom: 1px solid var(--border);
-      background-color: var(--surface); white-space: nowrap;
+      font-weight: 700; border-bottom: 1px solid var(--border); background-color: var(--surface); white-space: nowrap;
     }
     .camp-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .camp-table tr:last-child td { border-bottom: none; }
@@ -220,46 +201,34 @@
     .badge-draft { background-color: rgba(155,169,161,0.15); color: var(--muted); }
     .badge-pending { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .badge-approved { background-color: rgba(138,181,255,0.15); color: #8ab5ff; }
-    .badge-published { background-color: rgba(0,201,130,0.15); color: var(--primary); }
     .badge-active { background-color: rgba(0,201,130,0.15); color: var(--primary); }
     .badge-paused { background-color: rgba(245,185,66,0.12); color: var(--accent); }
     .badge-rejected { background-color: rgba(224,112,112,0.15); color: var(--danger); }
     .badge-expired { background-color: rgba(155,169,161,0.15); color: var(--muted); }
+    .badge-scheduled { background-color: rgba(138,181,255,0.12); color: #8ab5ff; }
 
     .placement-pill {
       display: inline-flex; align-items: center; gap: 4px;
       background-color: var(--surface); border: 1px solid var(--border);
-      color: var(--text); font-size: 0.7rem; font-weight: 600;
-      padding: 3px 9px; border-radius: 6px;
+      color: var(--text); font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 6px;
     }
     .placement-pill i { color: var(--primary); font-size: 0.65rem; }
     .placement-pill.unassigned { color: var(--muted); border-style: dashed; }
     .placement-pill.unassigned i { color: var(--muted); }
 
-    .format-tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 0.72rem; font-weight: 600; color: var(--text);
-    }
+    .format-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 600; color: var(--text); }
     .format-tag i { color: var(--muted); font-size: 0.68rem; }
 
-    .icon-action { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; cursor: pointer; padding: 6px 9px; border-radius: 8px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
-    .icon-action:hover { color: var(--primary); border-color: var(--primary); }
-    .icon-action.danger:hover { color: var(--danger); border-color: var(--danger); }
-
     .action-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-
     .row-action-primary {
       background-color: rgba(0,201,130,0.1); color: var(--primary);
-      border: 1px solid rgba(0,201,130,0.3);
-      font-weight: 700; font-size: 0.75rem;
+      border: 1px solid rgba(0,201,130,0.3); font-weight: 700; font-size: 0.75rem;
       padding: 6px 12px; border-radius: 8px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px;
-      transition: background 0.15s;
+      display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s;
     }
     .row-action-primary:hover { background-color: rgba(0,201,130,0.18); }
     .row-action-primary.review {
-      background-color: rgba(245,185,66,0.1); color: var(--accent);
-      border-color: rgba(245,185,66,0.3);
+      background-color: rgba(245,185,66,0.1); color: var(--accent); border-color: rgba(245,185,66,0.3);
     }
     .row-action-primary.review:hover { background-color: rgba(245,185,66,0.18); }
 
@@ -268,259 +237,69 @@
     .empty-state h3 { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 0.85rem; }
 
-    /* ─── Modal base ─── */
-    .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); z-index: 150; backdrop-filter: blur(4px); padding: 24px; overflow-y: auto; align-items: flex-start; justify-content: center; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7);
+      z-index: 150; backdrop-filter: blur(4px); padding: 24px; overflow-y: auto;
+      align-items: flex-start; justify-content: center;
+    }
     .modal-overlay.active { display: flex; }
     .modal {
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: 20px; max-width: 760px; width: 100%; margin: auto;
     }
-    .modal-header { padding: 22px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .modal-header {
+      padding: 22px 24px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
     .modal-header h3 { font-size: 1.15rem; }
-    .modal-close { background: transparent; border: 1px solid var(--border); color: var(--muted); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+    .modal-close {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+    }
     .modal-close:hover { color: var(--danger); border-color: var(--danger); }
     .modal-body { padding: 20px 24px; }
-    .modal-footer { padding: 16px 24px 22px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; border-top: 1px solid var(--border); }
+    .modal-footer {
+      padding: 16px 24px 22px; display: flex; gap: 10px; justify-content: flex-end;
+      flex-wrap: wrap; border-top: 1px solid var(--border);
+    }
     .modal-footer .grow { flex: 1; }
 
-    /* ─── Review modal (two-column) ─── */
-    .review-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-    @media (min-width: 820px) { .review-grid { grid-template-columns: 1.15fr 1fr; } }
-
-    .review-left { min-width: 0; }
-    .review-right { min-width: 0; }
-
-    .preview-tabs {
-      display: inline-flex; gap: 2px;
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 8px; padding: 3px; margin-bottom: 12px;
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
     }
-    .preview-tab {
-      background: transparent; border: none; color: var(--muted);
-      font-size: 0.72rem; font-weight: 700; padding: 5px 12px;
-      border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    .field label .req { color: var(--accent); }
+    .input, select.input, textarea.input {
+      width: 100%; background-color: var(--elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.88rem; color: var(--text); outline: none;
     }
-    .preview-tab.active { background-color: var(--primary); color: #070A09; }
-
-    .ad-preview {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden; margin-bottom: 14px;
-      transition: max-width 0.2s;
+    .input:focus, select.input:focus, textarea.input:focus {
+      border-color: var(--primary); box-shadow: var(--shadow-glow);
     }
-    .ad-preview.mobile { max-width: 340px; margin-left: auto; margin-right: auto; }
-    .ad-preview .ad-image {
-      width: 100%; aspect-ratio: 16/9;
-      background: linear-gradient(135deg, #1a221e, #29352F);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 2rem;
-      position: relative; overflow: hidden;
-    }
-    .ad-preview .ad-image img {
-      width: 100%; height: 100%; object-fit: cover;
-      position: absolute; inset: 0;
-    }
-    .ad-preview.mobile .ad-image { aspect-ratio: 4/3; }
-    .ad-preview .ad-sponsor {
-      position: absolute; top: 8px; left: 8px;
-      background-color: rgba(0,0,0,0.65);
-      color: var(--accent); font-size: 0.58rem; font-weight: 800;
-      padding: 2px 7px; border-radius: 4px;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      z-index: 2;
-    }
-    .ad-preview .ad-body { padding: 14px 16px; }
-    .ad-preview .ad-headline {
-      font-size: 0.95rem; font-weight: 800;
-      color: var(--text); margin-bottom: 4px;
-    }
-    .ad-preview .ad-desc {
-      font-size: 0.78rem; color: var(--muted);
-      line-height: 1.45; margin-bottom: 10px;
-    }
-    .ad-preview .ad-cta {
-      display: inline-flex; align-items: center; gap: 6px;
-      background-color: var(--primary); color: #070A09;
-      font-weight: 800; font-size: 0.72rem;
-      padding: 6px 14px; border-radius: 8px;
-    }
-    .ad-preview .ad-url {
-      display: block; font-size: 0.68rem; color: var(--muted);
-      margin-top: 8px; word-break: break-all;
-    }
-
-    .review-section { margin-bottom: 16px; }
-    .review-section:last-child { margin-bottom: 0; }
-    .review-section-title {
-      font-size: 0.62rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--primary); margin-bottom: 8px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .review-section-title i { font-size: 0.7rem; }
-    .kv-list { display: flex; flex-direction: column; gap: 8px; }
-    .kv { display: flex; justify-content: space-between; gap: 12px; font-size: 0.82rem; }
-    .kv .k { color: var(--muted); font-weight: 500; flex-shrink: 0; }
-    .kv .v { color: var(--text); font-weight: 600; text-align: right; word-break: break-word; }
-
-    .advertiser-notes {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px; margin-top: 6px;
-      font-size: 0.8rem; color: var(--text); line-height: 1.5;
-      white-space: pre-line;
-    }
-    .advertiser-notes.muted { color: var(--muted); font-style: italic; }
-
-    /* ─── Form ─── */
-    .form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    @media (min-width: 560px) { .form-grid { grid-template-columns: 1fr 1fr; } .form-group.full { grid-column: 1 / -1; } }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--text); }
-    .form-group label .req { color: var(--danger); font-size: 0.75rem; }
-    .form-group label .optional { color: var(--muted); font-weight: 500; font-size: 0.72rem; }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: var(--radius-input); padding: 10px 14px;
-      font-size: 0.88rem; color: var(--text); outline: none;
-      transition: border-color 0.15s; width: 100%;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
-    .form-group textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
-    .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
-
-    .form-section-title {
-      grid-column: 1 / -1;
-      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--primary);
-      padding-top: 12px; margin-top: 4px;
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .form-section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
-    .form-section-title i { font-size: 0.75rem; }
-
-    /* ─── Manage modal metrics ─── */
-    .metrics-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-      margin-bottom: 16px;
-    }
-    @media (min-width: 600px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
-    .metric-box {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px;
-    }
-    .metric-label {
-      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
-    }
-    .metric-value {
-      font-size: 1.15rem; font-weight: 800; color: var(--text);
-      font-feature-settings: 'tnum'; line-height: 1.1;
-    }
-    .metric-value.gold { color: var(--accent); }
-    .metric-value.primary { color: var(--primary); }
-    .metric-value.info { color: var(--info); }
-
-    /* ─── Confirm modal ─── */
-    .confirm-modal {
-      background-color: var(--elevated); border: 1px solid var(--border);
-      border-radius: 18px; padding: 28px 26px 22px; width: 100%;
-      max-width: 440px; text-align: center; margin: auto;
-    }
-    .confirm-icon {
-      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; background-color: rgba(224,112,112,0.12); color: var(--danger);
-    }
-    .confirm-icon.info { background-color: rgba(0,201,130,0.12); color: var(--primary); }
-    .confirm-icon.warn { background-color: rgba(245,185,66,0.12); color: var(--accent); }
-    .confirm-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; }
-    .confirm-text { font-size: 0.88rem; color: var(--muted); line-height: 1.55; margin-bottom: 14px; white-space: pre-line; text-align: left; }
-    .confirm-textarea {
-      width: 100%; background-color: var(--surface);
-      border: 1px solid var(--border); border-radius: 10px;
-      padding: 10px 12px; font-size: 0.85rem; color: var(--text);
-      outline: none; resize: vertical; min-height: 80px;
-      margin-bottom: 20px; font-family: inherit;
-    }
-    .confirm-textarea:focus { border-color: var(--primary); }
-    .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .confirm-actions button { flex: 1; min-width: 120px; justify-content: center; padding: 11px 18px; }
-    .confirm-actions .btn-danger-solid:disabled,
-    .confirm-actions .btn-primary-solid:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-danger-solid { background-color: var(--danger); color: #1a0808; font-weight: 700; border: none; border-radius: var(--radius-btn); font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
-    .btn-danger-solid:hover { background-color: #f08888; }
-    .btn-primary-solid { background-color: var(--primary); color: #070A09; font-weight: 700; border: none; border-radius: var(--radius-btn); font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
-    .btn-primary-solid:hover { background-color: #00b374; }
-    .btn-gold-solid { background-color: var(--accent); color: #1a1408; font-weight: 700; border: none; border-radius: var(--radius-btn); font-size: 0.88rem; cursor: pointer; transition: background 0.15s; }
-    .btn-gold-solid:hover { background-color: #e0a92e; }
-
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px); }
-    .sidebar-overlay.active { display: block; }
-
-    .admin-footer {
-      margin-top: 40px; padding: 28px 24px 24px;
-      border-top: 1px solid var(--border);
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 16px; font-size: 0.75rem; color: var(--muted);
-    }
-    .footer-left { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
-    .footer-left i { color: var(--primary); font-size: 0.85rem; }
-    .footer-left .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary); }
-    .footer-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-    .footer-right a { color: var(--muted); transition: color 0.15s ease; }
-    .footer-right a:hover { color: var(--primary); }
+    .field-hint { font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
 
     .toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 200;
-      background-color: var(--elevated); border: 1px solid var(--primary);
-      border-left: 4px solid var(--primary); border-radius: 12px;
-      padding: 14px 18px; display: flex; align-items: center; gap: 12px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-      transform: translateY(120%); opacity: 0;
-      transition: transform 0.25s, opacity 0.25s; max-width: 380px;
+      position: fixed; bottom: 24px; right: 24px; z-index: 300;
+      background: var(--elevated); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 18px; font-size: 0.85rem; font-weight: 600;
+      box-shadow: var(--shadow-soft); display: none; max-width: 360px;
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.error { border-color: var(--danger); border-left-color: var(--danger); }
-    .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
-    .toast.error i { color: var(--danger); }
-    .toast span { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+    .toast.show { display: block; animation: fadeIn 0.2s ease; }
+    .toast.error { border-color: rgba(224,112,112,0.4); color: #f0c0c0; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55;
+    }
+    .sidebar-overlay.active { display: block; }
     @media (max-width: 1023px) {
-      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
       .main-area { margin-left: 0; }
-      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
-      .topbar { padding: 0 16px; }
-      .content { padding: 24px 16px 40px; }
-      .admin-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .menu-toggle { display: inline-flex; }
     }
-    @media (max-width: 720px) {
-      .topbar-search { display: none; }
-      .topbar-admin-name, .topbar-admin-role { display: none; }
-      .topbar-divider { display: none; }
-      .page-heading h1 { font-size: 1.6rem; }
-      .heading-actions { width: 100%; }
-      .heading-actions > * { flex: 1; justify-content: center; }
-      .camp-table thead { display: none; }
-      .camp-table tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; }
-      .camp-table td { display: flex; justify-content: space-between; padding: 6px 16px; border: none; align-items: flex-start; gap: 12px; }
-      .camp-table td::before {
-        content: attr(data-label); font-size: 0.65rem; text-transform: uppercase;
-        letter-spacing: 0.06em; color: var(--muted); font-weight: 700;
-        flex-shrink: 0; padding-top: 2px;
-      }
-      .camp-table td > div,
-      .camp-table td > span,
-      .camp-table td > .badge { text-align: right; }
-      .footer-right { width: 100%; justify-content: space-between; }
-      .modal-footer > * { flex: 1 1 100%; justify-content: center; }
-    }
-
-    .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -528,68 +307,50 @@
   </style>
 </head>
 <body>
-
-  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
-
-  <div class="admin-shell" style="display: flex;" id="appShell">
-    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="admin-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
-        <div class="portal-label"><i class="fas fa-shield-halved"></i> Administration</div>
+        <div class="portal-label"><i class="fas fa-shield-halved"></i> Admin</div>
       </div>
       <nav class="sidebar-nav">
-        <div class="nav-group-label">Overview</div>
-        <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
-        <div class="nav-group-label">Content management</div>
-        <a href="./Schools.html" class="nav-item"><i class="fas fa-building-columns"></i> Schools</a>
-        <a href="./Admissions.html" class="nav-item"><i class="fas fa-clipboard-list"></i> Admissions</a>
-        <a href="./Exams.html" class="nav-item"><i class="fas fa-pen-to-square"></i> Exams</a>
-        <a href="./Scholarships.html" class="nav-item"><i class="fas fa-award"></i> Scholarships</a>
-        <a href="./Trending.html" class="nav-item"><i class="fas fa-fire"></i> Trending</a>
-        <a href="./Media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media</a>
-        <div class="nav-group-label">User management</div>
-        <a href="./Users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-        <div class="nav-group-label">Communication</div>
-        <a href="./Contact.html" class="nav-item"><i class="fas fa-envelope"></i> Contact Messages</a>
-        <div class="nav-group-label">Business</div>
-        <a href="./Advertisements.html" class="nav-item active"><i class="fas fa-rectangle-ad"></i> Advertisements</a>
-        <a href="./Monetization.html" class="nav-item"><i class="fas fa-sack-dollar"></i> Monetization</a>
+        <div class="nav-group-label">Content</div>
+        <a class="nav-item" href="/admin/dashboard.html"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a class="nav-item" href="/admin/schools.html"><i class="fas fa-building-columns"></i> Schools</a>
+        <a class="nav-item active" href="/admin/advertisements.html"><i class="fas fa-bullhorn"></i> Advertisements</a>
         <div class="nav-group-label">System</div>
-        <a href="./Audit.html" class="nav-item"><i class="fas fa-list-check"></i> Audit Logs</a>
-        <a href="./Settings.html" class="nav-item"><i class="fas fa-gear"></i> Settings</a>
+        <a class="nav-item" href="/admin/users.html"><i class="fas fa-users"></i> Users</a>
+        <a class="nav-item" href="/admin/settings.html"><i class="fas fa-gear"></i> Settings</a>
       </nav>
       <div class="sidebar-footer">
-        <div class="admin-user">
-          <div class="admin-avatar" id="sideAvatar">AD</div>
+        <div class="admin-user" id="sideUser">
+          <div class="admin-avatar" id="sideAvatar">A</div>
           <div class="admin-user-info">
-            <div class="admin-user-name" id="sideName">—</div>
-            <div class="admin-user-role" id="sideRole">—</div>
+            <div class="admin-user-name" id="sideName">Admin</div>
+            <div class="admin-user-role" id="sideRole">owner</div>
           </div>
-          <button class="logout-btn" id="sideLogout" aria-label="Sign out" title="Sign out">
-            <i class="fas fa-arrow-right-from-bracket"></i>
-          </button>
+          <button class="logout-btn" id="sideLogout" title="Sign out"><i class="fas fa-arrow-right-from-bracket"></i></button>
         </div>
       </div>
     </aside>
 
     <div class="main-area">
       <header class="topbar">
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
-          <i class="fas fa-bars"></i>
-        </button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
         <div class="topbar-search">
           <i class="fas fa-search"></i>
-          <input type="text" id="topSearch" placeholder="Search campaigns..." aria-label="Search" oninput="syncTopSearch()">
+          <input type="search" id="topSearch" placeholder="Search campaigns…" autocomplete="off">
         </div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
-          <button class="icon-btn" aria-label="Help" onclick="window.open('https://campusnaija.vercel.app/FAQ.html','_blank')"><i class="far fa-circle-question"></i></button>
-          <div class="topbar-divider" aria-hidden="true"></div>
+          <button class="icon-btn" onclick="refreshPage()" title="Refresh"><i class="fas fa-rotate"></i></button>
+          <div class="topbar-divider"></div>
           <div class="topbar-admin">
-            <div class="admin-avatar" id="topAvatar">AD</div>
+            <div class="admin-avatar" id="topAvatar">A</div>
             <div>
-              <div class="topbar-admin-name" id="topName">—</div>
-              <div class="topbar-admin-role" id="topRole">—</div>
+              <div class="topbar-admin-name" id="topName">Admin</div>
+              <div class="topbar-admin-role" id="topRole">owner</div>
             </div>
           </div>
         </div>
@@ -598,61 +359,40 @@
       <main class="content">
         <div class="page-heading">
           <div>
-            <div class="eyebrow"><i class="fas fa-rectangle-ad"></i> Business</div>
+            <div class="eyebrow"><i class="fas fa-bullhorn"></i> Monetisation</div>
             <h1>Advertisements</h1>
-            <p>Manage all advertisements submitted by businesses on CampusNaija.</p>
+            <p>Review advertiser submissions, assign placements, and control what goes live on the site.</p>
           </div>
           <div class="heading-actions">
-            <button class="btn-outline" onclick="refreshPage()"><i class="fas fa-rotate-right"></i> Refresh</button>
             <button class="btn-outline" onclick="exportCampaigns()"><i class="fas fa-download"></i> Export</button>
-            <button class="btn-primary" onclick="openCreateModal()"><i class="fas fa-plus"></i> Create Advertisement</button>
+            <button class="btn-primary" onclick="openCreateModal()"><i class="fas fa-plus"></i> Create ad</button>
           </div>
         </div>
 
-        <!-- 4 Summary cards -->
-        <section class="overview-grid">
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-rectangle-ad"></i></div><span class="stat-card-label">Total</span></div>
-            <div class="stat-card-value" id="statTotal"><span class="skeleton" style="width:60px;height:24px;"></span></div>
-            <div class="stat-card-sub">All advertisements received</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon gold"><i class="fas fa-clock"></i></div><span class="stat-card-label">Pending approval</span></div>
-            <div class="stat-card-value" id="statPending"><span class="skeleton" style="width:60px;height:24px;"></span></div>
-            <div class="stat-card-sub">Waiting for your review</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon info"><i class="fas fa-circle-check"></i></div><span class="stat-card-label">Approved</span></div>
-            <div class="stat-card-value" id="statApproved"><span class="skeleton" style="width:60px;height:24px;"></span></div>
-            <div class="stat-card-sub">Ready to publish</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon"><i class="fas fa-play"></i></div><span class="stat-card-label">Published</span></div>
-            <div class="stat-card-value" id="statPublished"><span class="skeleton" style="width:60px;height:24px;"></span></div>
-            <div class="stat-card-sub">Currently live</div>
-          </div>
-        </section>
+        <div class="overview-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon"><i class="fas fa-inbox"></i></div></div><div class="stat-card-label">Pending</div><div class="stat-card-value" id="statPending">—</div><div class="stat-card-sub">Awaiting review</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon gold"><i class="fas fa-circle-check"></i></div></div><div class="stat-card-label">Approved</div><div class="stat-card-value" id="statApproved">—</div><div class="stat-card-sub">Ready to publish</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon info"><i class="fas fa-play"></i></div></div><div class="stat-card-label">Active</div><div class="stat-card-value" id="statActive">—</div><div class="stat-card-sub">Currently live</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon"><i class="fas fa-layer-group"></i></div></div><div class="stat-card-label">Total</div><div class="stat-card-value" id="statTotal">—</div><div class="stat-card-sub">All campaigns</div></div>
+        </div>
 
-        <!-- Tabs -->
         <div class="tabs-wrap">
-          <div class="tabs" id="tabsBar"></div>
+          <div class="tabs" id="statusTabs">
+            <button class="tab active" data-status="all" onclick="setFilter('all')">All <span class="tab-count" id="countAll">0</span></button>
+            <button class="tab" data-status="pending" onclick="setFilter('pending')">Pending <span class="tab-count" id="countPending">0</span></button>
+            <button class="tab" data-status="approved" onclick="setFilter('approved')">Approved <span class="tab-count" id="countApproved">0</span></button>
+            <button class="tab" data-status="active" onclick="setFilter('active')">Active <span class="tab-count" id="countActive">0</span></button>
+            <button class="tab" data-status="paused" onclick="setFilter('paused')">Paused <span class="tab-count" id="countPaused">0</span></button>
+            <button class="tab" data-status="rejected" onclick="setFilter('rejected')">Rejected <span class="tab-count" id="countRejected">0</span></button>
+          </div>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
           <div class="search-inline">
             <i class="fas fa-search"></i>
-            <input type="text" id="campSearch" placeholder="Search by campaign or advertiser..." oninput="renderTable()">
+            <input type="search" id="tableSearch" placeholder="Filter by name or advertiser…" oninput="renderTable()">
           </div>
-          <select id="formatFilter" onchange="renderTable()">
-            <option value="">All formats</option>
-            <option value="large">Large</option>
-            <option value="medium">Medium</option>
-            <option value="small">Small</option>
-            <option value="square">Square</option>
-            <option value="vertical">Vertical</option>
-          </select>
-          <select id="placementFilter" onchange="renderTable()">
+          <select id="filterPlacement" onchange="renderTable()">
             <option value="">All placements</option>
             <option value="home">Home</option>
             <option value="schools">Schools</option>
@@ -660,285 +400,158 @@
             <option value="exams">Exams</option>
             <option value="scholarships">Scholarships</option>
             <option value="trending">Trending</option>
-            <option value="__unassigned">Unassigned</option>
           </select>
-          <input type="date" id="dateFilter" onchange="renderTable()" title="Submitted on or after">
-          <select id="sortFilter" onchange="renderTable()">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="name">Name (A–Z)</option>
-            <option value="ending">Ending soonest</option>
+          <select id="filterFormat" onchange="renderTable()">
+            <option value="">All formats</option>
+            <option value="large">Large</option>
+            <option value="medium">Medium</option>
+            <option value="small">Small</option>
+            <option value="square">Square</option>
+            <option value="vertical">Vertical</option>
           </select>
         </div>
 
-        <!-- Table -->
         <div class="table-wrap">
           <div class="table-header">
-            <h3><i class="fas fa-list"></i> Advertisements</h3>
-            <span class="count" id="campCount">Loading…</span>
+            <h3><i class="fas fa-list"></i> Campaigns</h3>
+            <span class="count" id="tableCount">0 campaigns</span>
           </div>
-          <div id="campTableWrap">
+          <div style="overflow-x:auto;">
             <table class="camp-table">
               <thead>
                 <tr>
                   <th>Campaign</th>
                   <th>Format</th>
-                  <th>Duration</th>
-                  <th>Submitted</th>
+                  <th>Placement</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  <th>Dates</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="campTbody">
-                <tr><td colspan="6" style="text-align:center;padding:40px;"><span class="skeleton skeleton-text" style="display:inline-block;width:60%;"></span></td></tr>
+              <tbody id="campTableBody">
+                <tr><td colspan="6"><div class="skeleton" style="height:48px;margin:8px 0;"></div></td></tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <footer class="admin-footer">
-          <div class="footer-left">
-            <span class="dot" aria-hidden="true"></span>
-            <i class="fas fa-shield-halved" aria-hidden="true"></i>
-            <span>CampusNaija Administration</span>
-          </div>
-          <div class="footer-right">
-            <span id="footerYear">©</span>
-            <a href="/Privacy.html">Privacy</a>
-            <a href="/Terms.html">Terms</a>
-            <a href="mailto:support@campusnaija.ng">Support</a>
-          </div>
-        </footer>
       </main>
     </div>
   </div>
 
-  <!-- ═══════════════ REVIEW MODAL ═══════════════ -->
+  <!-- Review modal -->
   <div class="modal-overlay" id="reviewModal" aria-hidden="true">
-    <div class="modal" style="max-width: 960px;" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+    <div class="modal">
       <div class="modal-header">
-        <h3 id="reviewTitle">Review advertisement</h3>
-        <button class="modal-close" onclick="closeReviewModal()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+        <h3 id="reviewTitle">Review campaign</h3>
+        <button class="modal-close" onclick="closeReviewModal()"><i class="fas fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <div class="review-grid">
-          <!-- LEFT: Preview -->
-          <div class="review-left">
-            <div class="preview-tabs" role="tablist">
-              <button class="preview-tab active" data-preview="desktop" onclick="setPreviewMode('desktop')"><i class="fas fa-desktop"></i> Desktop</button>
-              <button class="preview-tab" data-preview="mobile" onclick="setPreviewMode('mobile')"><i class="fas fa-mobile-screen"></i> Mobile</button>
-            </div>
-
-            <div class="ad-preview" id="adPreviewBox">
-              <div class="ad-image" id="adPreviewImage">
-                <span class="ad-sponsor">Sponsored</span>
-                <i class="fas fa-image"></i>
-              </div>
-              <div class="ad-body">
-                <div class="ad-headline" id="adPreviewHeadline">Campaign headline</div>
-                <div class="ad-desc" id="adPreviewDesc">Campaign description goes here.</div>
-                <span class="ad-cta"><i class="fas fa-arrow-right"></i> <span id="adPreviewCta">Learn more</span></span>
-                <span class="ad-url" id="adPreviewUrl">https://example.com</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT: Info -->
-          <div class="review-right">
-            <div class="review-section">
-              <div class="review-section-title"><i class="fas fa-circle-info"></i> Campaign</div>
-              <div class="kv-list">
-                <div class="kv"><span class="k">Campaign name</span><span class="v" id="rvName">—</span></div>
-                <div class="kv"><span class="k">Advertiser</span><span class="v" id="rvAdvertiser">—</span></div>
-                <div class="kv"><span class="k">Contact</span><span class="v" id="rvContact">—</span></div>
-                <div class="kv"><span class="k">Format</span><span class="v" id="rvFormat">—</span></div>
-                <div class="kv"><span class="k">Placement</span><span class="v" id="rvPlacement">—</span></div>
-                <div class="kv"><span class="k">Requested duration</span><span class="v" id="rvDuration">—</span></div>
-              </div>
-            </div>
-
-            <div class="review-section">
-              <div class="review-section-title"><i class="fas fa-calendar"></i> Submission</div>
-              <div class="kv-list">
-                <div class="kv"><span class="k">Submitted</span><span class="v" id="rvSubmitted">—</span></div>
-                <div class="kv"><span class="k">Payment</span><span class="v" id="rvPayment">—</span></div>
-                <div class="kv"><span class="k">Status</span><span class="v" id="rvStatus">—</span></div>
-              </div>
-            </div>
-
-            <div class="review-section">
-              <div class="review-section-title"><i class="fas fa-comment-dots"></i> Advertiser notes</div>
-              <div class="advertiser-notes muted" id="rvNotes">No notes provided.</div>
-            </div>
-          </div>
+        <div class="field">
+          <label>Placement <span class="req">*</span>
+            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);margin-left:6px;">(where this ad will appear)</span>
+          </label>
+          <select id="reviewPlacement" class="input">
+            <option value="">— Choose placement —</option>
+            <option value="home">Home</option>
+            <option value="schools">Schools</option>
+            <option value="admissions">Admissions</option>
+            <option value="exams">Exams</option>
+            <option value="scholarships">Scholarships</option>
+            <option value="trending">Trending</option>
+          </select>
+          <div class="field-hint">Advertiser chose format: <strong id="reviewFormatLabel">—</strong></div>
         </div>
+        <div id="reviewBody"></div>
       </div>
       <div class="modal-footer" id="reviewFooter">
-        <!-- Populated dynamically based on status -->
+        <button class="btn-outline grow" onclick="closeReviewModal()">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════ MANAGE MODAL ═══════════════ -->
+  <!-- Manage modal -->
   <div class="modal-overlay" id="manageModal" aria-hidden="true">
-    <div class="modal" style="max-width: 820px;" role="dialog" aria-modal="true" aria-labelledby="manageTitle">
+    <div class="modal">
       <div class="modal-header">
-        <h3 id="manageTitle">Manage advertisement</h3>
-        <button class="modal-close" onclick="closeManageModal()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+        <h3 id="manageTitle">Manage campaign</h3>
+        <button class="modal-close" onclick="closeManageModal()"><i class="fas fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Metrics -->
-        <div class="metrics-grid" id="manageMetrics">
-          <div class="metric-box"><div class="metric-label">Impressions</div><div class="metric-value" id="mImpressions">—</div></div>
-          <div class="metric-box"><div class="metric-label">Clicks</div><div class="metric-value" id="mClicks">—</div></div>
-          <div class="metric-box"><div class="metric-label">CTR</div><div class="metric-value gold" id="mCtr">—</div></div>
+        <div class="field">
+          <label>Placement <span class="req">*</span></label>
+          <select id="managePlacement" class="input">
+            <option value="">— Choose placement —</option>
+            <option value="home">Home</option>
+            <option value="schools">Schools</option>
+            <option value="admissions">Admissions</option>
+            <option value="exams">Exams</option>
+            <option value="scholarships">Scholarships</option>
+            <option value="trending">Trending</option>
+          </select>
         </div>
-
-        <div class="review-grid">
-          <!-- LEFT: preview (compact) -->
-          <div class="review-left">
-            <div class="ad-preview" id="managePreviewBox">
-              <div class="ad-image" id="managePreviewImage">
-                <span class="ad-sponsor">Sponsored</span>
-                <i class="fas fa-image"></i>
-              </div>
-              <div class="ad-body">
-                <div class="ad-headline" id="managePreviewHeadline">Campaign headline</div>
-                <div class="ad-desc" id="managePreviewDesc">Campaign description goes here.</div>
-                <span class="ad-cta"><i class="fas fa-arrow-right"></i> <span id="managePreviewCta">Learn more</span></span>
-                <span class="ad-url" id="managePreviewUrl">https://example.com</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT: details -->
-          <div class="review-right">
-            <div class="review-section">
-              <div class="review-section-title"><i class="fas fa-circle-info"></i> Campaign</div>
-              <div class="kv-list">
-                <div class="kv"><span class="k">Campaign</span><span class="v" id="mgName">—</span></div>
-                <div class="kv"><span class="k">Advertiser</span><span class="v" id="mgAdvertiser">—</span></div>
-                <div class="kv"><span class="k">Format</span><span class="v" id="mgFormat">—</span></div>
-                <div class="kv"><span class="k">Placement</span><span class="v" id="mgPlacement">—</span></div>
-                <div class="kv"><span class="k">Status</span><span class="v" id="mgStatus">—</span></div>
-              </div>
-            </div>
-
-            <div class="review-section">
-              <div class="review-section-title"><i class="fas fa-calendar"></i> Schedule</div>
-              <div class="kv-list">
-                <div class="kv"><span class="k">Start</span><span class="v" id="mgStart">—</span></div>
-                <div class="kv"><span class="k">End</span><span class="v" id="mgEnd">—</span></div>
-                <div class="kv"><span class="k">Published</span><span class="v" id="mgPublished">—</span></div>
-              </div>
-            </div>
-
-            <div class="review-section" id="mgRejectionSection" style="display:none;">
-              <div class="review-section-title" style="color:var(--danger);"><i class="fas fa-circle-xmark"></i> Rejection reason</div>
-              <div class="advertiser-notes" id="mgRejectionReason">—</div>
-            </div>
-          </div>
-        </div>
+        <div id="manageBody"></div>
       </div>
       <div class="modal-footer" id="manageFooter">
-        <!-- Populated dynamically -->
+        <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════ CREATE/EDIT MODAL ═══════════════ -->
+  <!-- Create / Edit modal -->
   <div class="modal-overlay" id="campModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal">
       <div class="modal-header">
         <h3 id="campModalTitle">Create advertisement</h3>
-        <button class="modal-close" onclick="closeModal()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <div class="form-grid">
-          <div class="form-section-title"><i class="fas fa-circle-info"></i> Basics</div>
-
-          <div class="form-group full">
-            <label>Campaign name <span class="req">*</span></label>
-            <input type="text" id="campName" placeholder="e.g. JAMB Prep Sponsored Banner">
-            <span class="form-hint">This becomes the headline shown on the ad card.</span>
-          </div>
-          <div class="form-group">
-            <label>Advertiser <span class="req">*</span></label>
-            <input type="text" id="campAdvertiser" placeholder="Business or org name">
-          </div>
-          <div class="form-group">
-            <label>Format</label>
-            <select id="campFormat">
-              <option value="large">Large banner</option>
-              <option value="medium" selected>Medium banner</option>
-              <option value="small">Small banner</option>
-              <option value="square">Square</option>
-              <option value="vertical">Vertical</option>
-            </select>
-          </div>
-
-          <div class="form-section-title"><i class="fas fa-image"></i> Creative</div>
-
-          <div class="form-group full">
-            <label>Description <span class="optional">(shown below the headline)</span></label>
-            <textarea id="campDescription" placeholder="One or two sentences about the offer, programme or service."></textarea>
-          </div>
-          <div class="form-group">
-            <label>CTA button text</label>
-            <input type="text" id="campCta" placeholder="e.g. Explore School, Apply Now, Learn More">
-          </div>
-          <div class="form-group">
-            <label>Destination URL <span class="req">*</span></label>
-            <input type="url" id="campUrl" placeholder="https://advertiser.example/offer">
-          </div>
-          <div class="form-group full">
-            <label>Image URL <span class="optional">(optional)</span></label>
-            <input type="url" id="campImage" placeholder="https://advertiser.example/banner.jpg">
-          </div>
-
-          <div class="form-section-title"><i class="fas fa-calendar"></i> Placement &amp; schedule</div>
-
-          <div class="form-group">
-            <label>Placement page <span class="req">*</span></label>
-            <select id="campPlacement" onchange="updatePlacementOptions()">
-              <option value="">Select placement</option>
-              <option value="home">Home</option>
-              <option value="schools">Schools</option>
-              <option value="admissions">Admissions</option>
-              <option value="exams">Exams</option>
-              <option value="scholarships">Scholarships</option>
-              <option value="trending">Trending</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select id="campStatus">
-              <option value="draft">Draft</option>
-              <option value="pending">Pending approval</option>
-              <option value="approved">Approved</option>
-              <option value="active">Published</option>
-              <option value="paused">Paused</option>
-              <option value="rejected">Rejected</option>
-              <option value="expired">Expired</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Start date <span class="req">*</span></label>
-            <input type="date" id="campStart">
-          </div>
-          <div class="form-group">
-            <label>End date <span class="req">*</span></label>
-            <input type="date" id="campEnd">
-          </div>
-
-          <div class="form-section-title" id="schoolRefSection" style="display:none;"><i class="fas fa-building-columns"></i> Schools page targeting</div>
-
-          <div class="form-group full" id="schoolRefGroup" style="display:none;">
-            <label>Sponsored school <span class="optional">(required for Schools page card)</span></label>
-            <select id="campTargetSchool">
-              <option value="">Loading schools…</option>
-            </select>
-          </div>
+        <div class="field"><label>Name <span class="req">*</span></label><input class="input" id="campName"></div>
+        <div class="field"><label>Advertiser <span class="req">*</span></label><input class="input" id="campAdvertiser"></div>
+        <div class="field">
+          <label>Placement <span class="req">*</span></label>
+          <select class="input" id="campPlacement" onchange="updatePlacementOptions()">
+            <option value="">— Choose —</option>
+            <option value="home">Home</option>
+            <option value="schools">Schools</option>
+            <option value="admissions">Admissions</option>
+            <option value="exams">Exams</option>
+            <option value="scholarships">Scholarships</option>
+            <option value="trending">Trending</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Format</label>
+          <select class="input" id="campFormat">
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="small">Small</option>
+            <option value="square">Square</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </div>
+        <div class="field"><label>Destination URL <span class="req">*</span></label><input class="input" id="campUrl" placeholder="https://"></div>
+        <div class="field"><label>Image URL</label><input class="input" id="campImage" placeholder="https://"></div>
+        <div class="field"><label>Description</label><textarea class="input" id="campDescription" rows="3"></textarea></div>
+        <div class="field"><label>CTA text</label><input class="input" id="campCta" placeholder="Learn More"></div>
+        <div class="field" id="schoolRefSection" style="display:none;">
+          <label>Target school (optional)</label>
+          <select class="input" id="campTargetSchool"><option value="">— None —</option></select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="field"><label>Start date <span class="req">*</span></label><input class="input" type="date" id="campStart"></div>
+          <div class="field"><label>End date <span class="req">*</span></label><input class="input" type="date" id="campEnd"></div>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select class="input" id="campStatus">
+            <option value="draft">Draft</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="rejected">Rejected</option>
+            <option value="expired">Expired</option>
+          </select>
         </div>
       </div>
       <div class="modal-footer">
@@ -948,832 +561,792 @@
     </div>
   </div>
 
-  <!-- ═══════════════ CONFIRM MODAL (with optional reason) ═══════════════ -->
+  <!-- Confirm modal -->
   <div class="modal-overlay" id="confirmModal" aria-hidden="true">
-    <div class="confirm-modal">
-      <div class="confirm-icon" id="confirmIconWrap">
-        <i class="fas fa-triangle-exclamation" id="confirmIcon"></i>
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 id="confirmTitle">Confirm</h3>
+        <button class="modal-close" id="confirmClose"><i class="fas fa-xmark"></i></button>
       </div>
-      <h2 class="confirm-title" id="confirmTitle">Are you sure?</h2>
-      <p class="confirm-text" id="confirmText"></p>
-      <textarea class="confirm-textarea" id="confirmReason" placeholder="Reason (required)…" style="display:none;"></textarea>
-      <div class="confirm-actions">
-        <button class="btn-outline" id="confirmCancel">Cancel</button>
-        <button class="btn-danger-solid" id="confirmOk">Confirm</button>
+      <div class="modal-body">
+        <p id="confirmText" style="color:var(--muted);font-size:0.92rem;"></p>
+        <div id="confirmReasonWrap" style="display:none;margin-top:14px;">
+          <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Reason</label>
+          <textarea id="confirmReason" class="input" rows="3" placeholder=""></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline grow" id="confirmCancel">Cancel</button>
+        <button class="btn-primary" id="confirmOk">Confirm</button>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite">
-    <i class="fas fa-circle-check"></i>
-    <span id="toastText">Saved</span>
-  </div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    (function() {
-      'use strict';
-      const API_BASE = 'https://campus-naija.onrender.com';
-      const TOKEN_KEY = 'campusnaija_admin_token';
-      const USER_KEY = 'campusnaija_admin_user';
-      const LOGIN_URL = '/admin/login.html';
-      const ALLOWED_ROLES = ['owner', 'admin', 'editor', 'reviewer'];
+  (function () {
+    'use strict';
 
-      let token = null, currentUser = null;
-      let campaigns = [], schools = [], editingId = null;
-      let activeFilter = '';
-      let activeReviewId = null, activeManageId = null;
+    const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'http://localhost:10000'
+      : '';
+    const TOKEN_KEY = 'campusnaija_token';
+    const USER_KEY  = 'campusnaija_user';
+    const LOGIN_URL = '/admin/login.html';
 
-      const $ = (id) => document.getElementById(id);
+    const PLACEMENT_LABELS = {
+      home: 'Home', schools: 'Schools', admissions: 'Admissions',
+      exams: 'Exams', scholarships: 'Scholarships', trending: 'Trending',
+    };
 
-      const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-      const initials = (name) => (!name ? '?' : name.trim().split(/\s+/).filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join('') || '?');
-      const formatDate = (iso) => { if (!iso) return '—'; const d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
-      const capitalize = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    let campaigns = [];
+    let schools = [];
+    let currentFilter = 'all';
+    let activeReviewId = null;
+    let activeManageId = null;
+    let editingId = null;
+    let user = null;
 
-      const PLACEMENT_LABELS = {
-        home: 'Home', schools: 'Schools', admissions: 'Admissions',
-        exams: 'Exams', scholarships: 'Scholarships', trending: 'Trending',
-      };
-      const FORMAT_LABELS = {
-        large: 'Large', medium: 'Medium', small: 'Small',
-        square: 'Square', vertical: 'Vertical',
-      };
+    const $ = (id) => document.getElementById(id);
 
-      // Tabs — one per status
-      const TABS = [
-        { key: '',         label: 'All' },
-        { key: 'pending',  label: 'Pending' },
-        { key: 'approved', label: 'Approved' },
-        { key: 'active',   label: 'Published' },
-        { key: 'rejected', label: 'Rejected' },
-        { key: 'paused',   label: 'Paused' },
-        { key: 'expired',  label: 'Expired' },
-      ];
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
 
-      function redirectToLogin(reason) {
-        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
-        window.location.replace(LOGIN_URL + (reason ? '?reason=' + encodeURIComponent(reason) : ''));
+    function formatDate(d) {
+      if (!d) return '—';
+      try {
+        return new Date(d).toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch (_) { return String(d).slice(0, 10); }
+    }
+
+    function toast(msg, isError) {
+      const el = $('toast');
+      el.textContent = msg;
+      el.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    async function api(path, opts = {}) {
+      const headers = Object.assign({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }, opts.headers || {});
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (token) headers.Authorization = 'Bearer ' + token;
+      const res = await fetch(API_BASE + path, { ...opts, headers });
+      let data = null;
+      try { data = await res.json(); } catch (_) {}
+      if (res.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        window.location.replace(LOGIN_URL);
+        throw new Error('Session expired');
       }
-      async function api(path, opts) {
-        opts = opts || {};
-        opts.headers = Object.assign({ 'Content-Type': 'application/json', 'Accept': 'application/json' }, opts.headers || {});
-        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-        const res = await fetch(API_BASE + path, opts);
-        if (res.status === 401) { redirectToLogin('session_expired'); throw new Error('Session expired'); }
-        let data = null; try { data = await res.json(); } catch (_) {}
-        if (!res.ok) { const e = new Error((data && (data.error || data.message)) || ('HTTP ' + res.status)); e.status = res.status; throw e; }
-        return data;
+      if (!res.ok) throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
+      return data;
+    }
+
+    async function verifySession() {
+      try {
+        const data = await api('/api/auth/me');
+        user = data.user;
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        return true;
+      } catch (_) {
+        window.location.replace(LOGIN_URL);
+        return false;
       }
-      function toast(msg, isError) {
-        const el = $('toast'), txt = $('toastText');
-        if (!el || !txt) return;
-        txt.textContent = msg || '';
-        el.classList.toggle('error', !!isError);
-        const icon = el.querySelector('i'); if (icon) icon.className = 'fas ' + (isError ? 'fa-circle-xmark' : 'fa-circle-check');
-        el.classList.add('show'); clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 3200);
-      }
+    }
 
-      /* ─── Confirm (with optional required reason) ─── */
-      function openConfirm(opts) {
-        return new Promise((resolve) => {
-          const backdrop = $('confirmModal');
-          const iconWrap = $('confirmIconWrap');
-          const icon = $('confirmIcon');
-          const title = $('confirmTitle');
-          const text = $('confirmText');
-          const reasonEl = $('confirmReason');
-          const okBtn = $('confirmOk');
-          const cancelBtn = $('confirmCancel');
+    function renderUser() {
+      if (!user) return;
+      const initials = (user.name || 'A').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = initials; });
+      ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = user.name || 'Admin'; });
+      ['sideRole', 'topRole'].forEach(id => { const el = $(id); if (el) el.textContent = user.role || ''; });
+    }
 
-          title.textContent = opts.title || 'Are you sure?';
-          text.textContent = opts.text || '';
-          okBtn.textContent = opts.confirmText || 'Confirm';
-          okBtn.className = (opts.tone === 'gold') ? 'btn-gold-solid' : (opts.danger === false ? 'btn-primary-solid' : 'btn-danger-solid');
-          const tone = opts.tone || (opts.danger === false ? 'info' : '');
-          iconWrap.className = 'confirm-icon' + (tone === 'info' ? ' info' : tone === 'warn' ? ' warn' : '');
-          icon.className = 'fas ' + (opts.icon || (opts.danger === false ? 'fa-circle-question' : 'fa-triangle-exclamation'));
+    function badgeClass(status) {
+      const s = (status || '').toLowerCase();
+      return 'badge badge-' + (['draft','pending','approved','active','paused','rejected','expired','scheduled'].includes(s) ? s : 'draft');
+    }
 
-          const needsReason = !!opts.requireReason;
-          reasonEl.style.display = needsReason ? '' : 'none';
-          reasonEl.value = '';
-          reasonEl.placeholder = opts.reasonPlaceholder || 'Reason (required)…';
-          okBtn.disabled = needsReason;
-          if (needsReason) {
-            reasonEl.addEventListener('input', () => { okBtn.disabled = reasonEl.value.trim().length < 3; });
-          }
-
-          const cleanup = () => {
-            backdrop.classList.remove('active');
-            document.removeEventListener('keydown', onKey);
-            okBtn.removeEventListener('click', onOk);
-            cancelBtn.removeEventListener('click', onCancel);
-            backdrop.removeEventListener('click', onBackdrop);
-          };
-          const close = (result) => { cleanup(); resolve(result); };
-          const onOk = () => {
-            if (needsReason && reasonEl.value.trim().length < 3) return;
-            close(needsReason ? { ok: true, reason: reasonEl.value.trim() } : { ok: true });
-          };
-          const onCancel = () => close({ ok: false });
-          const onBackdrop = (e) => { if (e.target === backdrop) close({ ok: false }); };
-          const onKey = (e) => {
-            if (e.key === 'Escape') close({ ok: false });
-            if (e.key === 'Enter' && !needsReason) close({ ok: true });
-          };
-          okBtn.addEventListener('click', onOk);
-          cancelBtn.addEventListener('click', onCancel);
-          backdrop.addEventListener('click', onBackdrop);
-          document.addEventListener('keydown', onKey);
-          backdrop.classList.add('active');
-          setTimeout(() => { (needsReason ? reasonEl : okBtn).focus(); }, 50);
-        });
-      }
-
-      async function verifySession() {
-        try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
-        if (!token) { redirectToLogin('not_signed_in'); return false; }
-        try {
-          const data = await api('/api/auth/me');
-          currentUser = data.user;
-          if (!ALLOWED_ROLES.includes(currentUser.role)) { redirectToLogin('not_authorised'); return false; }
-          return true;
-        } catch (e) { console.error('[auth]', e.message); return false; }
-      }
-      function renderUser() {
-        const name = currentUser.name || 'Admin';
-        const role = currentUser.role || 'admin';
-        const ini = initials(name);
-        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
-        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = name; });
-        ['sideRole', 'topRole'].forEach(id => { const el = $(id); if (el) el.textContent = role; });
-      }
-
-      /* ─── Data ─── */
-      async function loadCampaigns() {
-        const tbody = $('campTbody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;"><span class="skeleton skeleton-text" style="display:inline-block;width:60%;"></span></td></tr>';
-        try {
-          const data = await api('/api/advertisements');
-          campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
-          renderStats(); renderTabs(); renderTable();
-        } catch (e) {
-          if (e.status === 404 || e.status === 405) {
-            campaigns = []; renderStats(); renderTabs();
-            tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-plug-circle-xmark"></i><h3>Advertisements API not wired up yet</h3><p>Create the <code>GET /api/advertisements</code> endpoint to load campaigns here.</p></div></td></tr>`;
-            $('campCount').textContent = '0 campaigns';
-            return;
-          }
-          tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Failed to load</h3><p>${esc(e.message)}</p></div></td></tr>`;
-          $('campCount').textContent = 'Error';
+    function openConfirm({ title, text, confirmText, icon, danger, requireReason, reasonPlaceholder, tone }) {
+      return new Promise((resolve) => {
+        $('confirmTitle').textContent = title || 'Confirm';
+        $('confirmText').textContent = text || '';
+        const okBtn = $('confirmOk');
+        okBtn.textContent = confirmText || 'Confirm';
+        okBtn.className = danger ? 'btn-danger' : (tone === 'gold' ? 'btn-gold' : 'btn-primary');
+        const wrap = $('confirmReasonWrap');
+        const reason = $('confirmReason');
+        if (requireReason) {
+          wrap.style.display = '';
+          reason.value = '';
+          reason.placeholder = reasonPlaceholder || 'Reason…';
+        } else {
+          wrap.style.display = 'none';
         }
+        $('confirmModal').classList.add('active');
+        const cleanup = () => {
+          $('confirmModal').classList.remove('active');
+          okBtn.onclick = null;
+          $('confirmCancel').onclick = null;
+          $('confirmClose').onclick = null;
+        };
+        okBtn.onclick = () => {
+          if (requireReason) {
+            const r = reason.value.trim();
+            if (r.length < 10) { toast('Please provide a reason (at least 10 characters).', true); return; }
+            cleanup(); resolve({ ok: true, reason: r });
+          } else {
+            cleanup(); resolve({ ok: true });
+          }
+        };
+        const cancel = () => { cleanup(); resolve({ ok: false }); };
+        $('confirmCancel').onclick = cancel;
+        $('confirmClose').onclick = cancel;
+      });
+    }
+
+    async function loadCampaigns() {
+      try {
+        const data = await api('/api/advertisements?limit=500');
+        campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
+        renderStats();
+        renderTabs();
+        renderTable();
+      } catch (e) {
+        toast(e.message || 'Failed to load campaigns', true);
+        $('campTableBody').innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-triangle-exclamation"></i><h3>Could not load</h3><p>${esc(e.message)}</p></div></td></tr>`;
       }
-      async function loadSchools() {
-        try {
-          const data = await api('/api/schools');
-          schools = Array.isArray(data.schools) ? data.schools : [];
-          const sel = $('campTargetSchool');
+    }
+
+    async function loadSchools() {
+      try {
+        const data = await api('/api/public/schools?limit=500');
+        schools = Array.isArray(data.schools) ? data.schools : [];
+        const sel = $('campTargetSchool');
+        if (sel) {
           sel.innerHTML = '<option value="">— None —</option>' +
             schools.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
-        } catch (e) { console.error('[schools]', e.message); }
-      }
-
-      /* ─── Stats ─── */
-      function renderStats() {
-        const countBy = (s) => campaigns.filter(c => (c.status || '').toLowerCase() === s).length;
-        $('statTotal').textContent = campaigns.length;
-        $('statPending').textContent = countBy('pending');
-        $('statApproved').textContent = countBy('approved');
-        $('statPublished').textContent = countBy('active');
-      }
-
-      /* ─── Tabs ─── */
-      function renderTabs() {
-        const bar = $('tabsBar');
-        const counts = { '': campaigns.length };
-        for (const c of campaigns) {
-          const s = (c.status || '').toLowerCase();
-          counts[s] = (counts[s] || 0) + 1;
         }
-        bar.innerHTML = TABS.map(t => `
-          <button class="tab ${activeFilter === t.key ? 'active' : ''}" onclick="setFilter('${t.key}')">
-            ${esc(t.label)}
-            <span class="tab-count">${counts[t.key] || 0}</span>
-          </button>
-        `).join('');
-      }
-      function setFilter(key) {
-        activeFilter = key;
-        renderTabs(); renderTable();
-      }
+      } catch (_) {}
+    }
 
-      /* ─── Status badge ─── */
-      function statusBadge(status) {
-        const s = (status || 'draft').toLowerCase();
-        const map = {
-          pending:  { cls: 'badge-pending',   icon: 'fa-clock',         label: 'Pending' },
-          approved: { cls: 'badge-approved',  icon: 'fa-circle-check',  label: 'Approved' },
-          active:   { cls: 'badge-published', icon: 'fa-play',          label: 'Published' },
-          paused:   { cls: 'badge-paused',    icon: 'fa-pause',         label: 'Paused' },
-          rejected: { cls: 'badge-rejected',  icon: 'fa-circle-xmark',  label: 'Rejected' },
-          expired:  { cls: 'badge-expired',   icon: 'fa-clock',         label: 'Expired' },
-          draft:    { cls: 'badge-draft',     icon: 'fa-file-pen',      label: 'Draft' },
-        };
-        const m = map[s] || { cls: 'badge-draft', icon: 'fa-circle', label: capitalize(status || 'draft') };
-        return `<span class="badge ${m.cls}"><i class="fas ${m.icon}"></i> ${esc(m.label)}</span>`;
-      }
-
-      function placementPill(placement) {
-        if (!placement) return '<span class="placement-pill unassigned"><i class="fas fa-location-dot"></i> Unassigned</span>';
-        const label = PLACEMENT_LABELS[placement] || capitalize(placement);
-        return `<span class="placement-pill"><i class="fas fa-location-dot"></i> ${esc(label)}</span>`;
-      }
-      function formatLabel(fmt) { return FORMAT_LABELS[fmt] || capitalize(fmt || 'medium'); }
-
-      function durationLabel(c) {
-        if (!c.start_date || !c.end_date) return '—';
-        const s = new Date(c.start_date), e = new Date(c.end_date);
-        const days = Math.max(0, Math.round((e - s) / 86400000));
-        return `${days} day${days === 1 ? '' : 's'}`;
-      }
-
-      /* ─── Row action button ─── */
-      function rowActionBtn(c) {
+    function renderStats() {
+      const counts = { pending: 0, approved: 0, active: 0, total: campaigns.length };
+      for (const c of campaigns) {
         const s = (c.status || '').toLowerCase();
-        if (s === 'pending') {
-          return `<button class="row-action-primary review" onclick="openReviewModal('${esc(c.id)}')"><i class="fas fa-eye"></i> Review</button>`;
-        }
-        return `<button class="row-action-primary" onclick="openManageModal('${esc(c.id)}')"><i class="fas fa-sliders"></i> Manage</button>`;
+        if (s === 'pending') counts.pending++;
+        if (s === 'approved') counts.approved++;
+        if (s === 'active') counts.active++;
       }
+      $('statPending').textContent = counts.pending;
+      $('statApproved').textContent = counts.approved;
+      $('statActive').textContent = counts.active;
+      $('statTotal').textContent = counts.total;
+    }
 
-      /* ─── Sort helper ─── */
-      function applySort(list) {
-        const sort = $('sortFilter')?.value || 'newest';
-        const copy = list.slice();
-        if (sort === 'name') copy.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-        else if (sort === 'ending') copy.sort((a, b) => new Date(a.end_date || 0) - new Date(b.end_date || 0));
-        else if (sort === 'oldest') copy.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
-        else copy.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-        return copy;
-      }
-
-      /* ─── Table render ─── */
-      function renderTable() {
-        const q = ($('campSearch').value || '').toLowerCase().trim();
-        const placementFilter = $('placementFilter').value;
-        const formatFilter = $('formatFilter').value;
-        const dateFilter = $('dateFilter').value;
-
-        let filtered = campaigns.filter(c => {
-          const hay = [c.name, c.advertiser, c.placement].filter(Boolean).join(' ').toLowerCase();
-          const matchQ = !q || hay.includes(q);
-          const matchStatus = !activeFilter || (c.status || '').toLowerCase() === activeFilter;
-          let matchPlacement = true;
-          if (placementFilter === '__unassigned') matchPlacement = !c.placement;
-          else if (placementFilter) matchPlacement = c.placement === placementFilter;
-          const matchFormat = !formatFilter || (c.format || 'medium') === formatFilter;
-          let matchDate = true;
-          if (dateFilter) {
-            const submitted = c.created_at || c.submitted_at;
-            if (!submitted) matchDate = false;
-            else {
-              const d = new Date(submitted);
-              const cutoff = new Date(dateFilter);
-              matchDate = !isNaN(d) && d >= cutoff;
-            }
-          }
-          return matchQ && matchStatus && matchPlacement && matchFormat && matchDate;
-        });
-        filtered = applySort(filtered);
-
-        $('campCount').textContent = `Showing ${filtered.length} of ${campaigns.length}`;
-        const tbody = $('campTbody');
-        if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-rectangle-ad"></i><h3>No advertisements</h3><p>${campaigns.length === 0 ? 'When advertisers submit campaigns, they will appear here.' : 'Try adjusting your filters.'}</p></div></td></tr>`;
-          return;
-        }
-        tbody.innerHTML = filtered.map(c => `
-          <tr>
-            <td data-label="Campaign">
-              <div class="camp-name">${esc(c.name || 'Untitled')}</div>
-              <div class="camp-advertiser">${esc(c.advertiser || '—')}</div>
-            </td>
-            <td data-label="Format"><div class="format-tag"><i class="fas fa-rectangle-ad"></i> ${esc(formatLabel(c.format))}</div></td>
-            <td data-label="Duration">
-              ${esc(durationLabel(c))}
-              <div class="camp-advertiser">${formatDate(c.start_date)} → ${formatDate(c.end_date)}</div>
-            </td>
-            <td data-label="Submitted">${formatDate(c.created_at || c.submitted_at)}</td>
-            <td data-label="Status">${statusBadge(c.status)}</td>
-            <td data-label="Action">${rowActionBtn(c)}</td>
-          </tr>`).join('');
-      }
-
-      function syncTopSearch() {
-        const v = $('topSearch').value || '';
-        $('campSearch').value = v;
-        renderTable();
-      }
-
-      /* ═══════════════ REVIEW MODAL ═══════════════ */
-      function setPreviewMode(mode) {
-        document.querySelectorAll('.preview-tab').forEach(t => {
-          t.classList.toggle('active', t.dataset.preview === mode);
-        });
-        $('adPreviewBox').classList.toggle('mobile', mode === 'mobile');
-      }
-
-      function openReviewModal(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        activeReviewId = id;
-
-        // Preview
-        const imgBox = $('adPreviewImage');
-        const imgUrl = c.image_url || c.image || '';
-        imgBox.innerHTML = `<span class="ad-sponsor">Sponsored</span>` +
-          (imgUrl ? `<img src="${esc(imgUrl)}" alt="" onerror="this.style.display='none'">` : '<i class="fas fa-image"></i>');
-        $('adPreviewHeadline').textContent = c.name || 'Untitled campaign';
-        $('adPreviewDesc').textContent = c.description || 'No description provided.';
-        $('adPreviewCta').textContent = c.cta_text || 'Learn more';
-        $('adPreviewUrl').textContent = c.url || '—';
-
-        // Info
-        $('rvName').textContent = c.name || '—';
-        $('rvAdvertiser').textContent = c.advertiser || '—';
-        $('rvContact').textContent = c.contact || c.contact_email || c.contact_phone || '—';
-        $('rvFormat').textContent = formatLabel(c.format);
-        $('rvPlacement').textContent = c.placement ? (PLACEMENT_LABELS[c.placement] || capitalize(c.placement)) : 'Unassigned';
-        $('rvDuration').textContent = durationLabel(c);
-        $('rvSubmitted').textContent = formatDate(c.created_at || c.submitted_at);
-        $('rvPayment').textContent = c.payment_status ? capitalize(c.payment_status) : '—';
-        $('rvStatus').innerHTML = statusBadge(c.status);
-        $('rvNotes').textContent = c.advertiser_notes || c.notes || 'No notes provided.';
-        $('rvNotes').classList.toggle('muted', !(c.advertiser_notes || c.notes));
-
-        // Footer actions depend on status
-        const footer = $('reviewFooter');
+    function renderTabs() {
+      const counts = { all: campaigns.length, pending: 0, approved: 0, active: 0, paused: 0, rejected: 0 };
+      for (const c of campaigns) {
         const s = (c.status || '').toLowerCase();
-        let html = `<button class="btn-outline" onclick="closeReviewModal()">Close</button>`;
-        if (s === 'pending') {
-          html = `
-            <button class="btn-outline grow" onclick="closeReviewModal()">Close</button>
-            <button class="btn-gold" onclick="requestChanges('${esc(c.id)}')"><i class="fas fa-pen"></i> Request Changes</button>
-            <button class="btn-danger" onclick="rejectCampaign('${esc(c.id)}')"><i class="fas fa-xmark"></i> Reject</button>
-            <button class="btn-primary" onclick="approveCampaign('${esc(c.id)}')"><i class="fas fa-check"></i> Approve</button>
-          `;
-        }
-        footer.innerHTML = html;
-        $('reviewModal').classList.add('active');
-        $('reviewModal').setAttribute('aria-hidden', 'false');
-        setPreviewMode('desktop');
+        if (counts[s] !== undefined) counts[s]++;
       }
-      function closeReviewModal() {
-        $('reviewModal').classList.remove('active');
-        $('reviewModal').setAttribute('aria-hidden', 'true');
-        activeReviewId = null;
+      $('countAll').textContent = counts.all;
+      $('countPending').textContent = counts.pending;
+      $('countApproved').textContent = counts.approved;
+      $('countActive').textContent = counts.active;
+      $('countPaused').textContent = counts.paused;
+      $('countRejected').textContent = counts.rejected;
+    }
+
+    function setFilter(status) {
+      currentFilter = status;
+      document.querySelectorAll('#statusTabs .tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.status === status);
+      });
+      renderTable();
+    }
+
+    function renderTable() {
+      const q = ($('tableSearch').value || '').toLowerCase().trim();
+      const placement = ($('filterPlacement').value || '').toLowerCase();
+      const format = ($('filterFormat').value || '').toLowerCase();
+
+      let list = campaigns.slice();
+      if (currentFilter !== 'all') list = list.filter(c => (c.status || '').toLowerCase() === currentFilter);
+      if (placement) list = list.filter(c => (c.placement || '').toLowerCase() === placement);
+      if (format) list = list.filter(c => (c.format || '').toLowerCase() === format);
+      if (q) list = list.filter(c =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.advertiser || '').toLowerCase().includes(q)
+      );
+
+      $('tableCount').textContent = list.length === 1 ? '1 campaign' : list.length + ' campaigns';
+
+      if (!list.length) {
+        $('campTableBody').innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox"></i><h3>No campaigns</h3><p>Nothing matches the current filters.</p></div></td></tr>`;
+        return;
       }
 
-      /* ═══════════════ MANAGE MODAL ═══════════════ */
-      function openManageModal(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        activeManageId = id;
+      $('campTableBody').innerHTML = list.map(c => {
+        const status = (c.status || 'draft').toLowerCase();
+        const placementHtml = c.placement
+          ? `<span class="placement-pill"><i class="fas fa-map-pin"></i> ${esc(PLACEMENT_LABELS[c.placement] || c.placement)}</span>`
+          : `<span class="placement-pill unassigned"><i class="fas fa-question"></i> Unassigned</span>`;
 
-        // Preview
-        const imgBox = $('managePreviewImage');
-        const imgUrl = c.image_url || c.image || '';
-        imgBox.innerHTML = `<span class="ad-sponsor">Sponsored</span>` +
-          (imgUrl ? `<img src="${esc(imgUrl)}" alt="" onerror="this.style.display='none'">` : '<i class="fas fa-image"></i>');
-        $('managePreviewHeadline').textContent = c.name || 'Untitled campaign';
-        $('managePreviewDesc').textContent = c.description || 'No description provided.';
-        $('managePreviewCta').textContent = c.cta_text || 'Learn more';
-        $('managePreviewUrl').textContent = c.url || '—';
-
-        // Metrics
-        const impressions = Number(c.impressions) || 0;
-        const clicks = Number(c.clicks) || 0;
-        const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '—';
-        $('mImpressions').textContent = impressions.toLocaleString('en-NG');
-        $('mClicks').textContent = clicks.toLocaleString('en-NG');
-        $('mCtr').textContent = ctr;
-
-        // Info
-        $('mgName').textContent = c.name || '—';
-        $('mgAdvertiser').textContent = c.advertiser || '—';
-        $('mgFormat').textContent = formatLabel(c.format);
-        $('mgPlacement').innerHTML = placementPill(c.placement);
-        $('mgStatus').innerHTML = statusBadge(c.status);
-        $('mgStart').textContent = formatDate(c.start_date);
-        $('mgEnd').textContent = formatDate(c.end_date);
-        $('mgPublished').textContent = c.published_at ? formatDate(c.published_at) : 'Not published';
-
-        // Rejection reason (if any)
-        const rejSection = $('mgRejectionSection');
-        if ((c.status || '').toLowerCase() === 'rejected' && (c.rejection_reason || c.reject_reason)) {
-          $('mgRejectionReason').textContent = c.rejection_reason || c.reject_reason;
-          rejSection.style.display = '';
+        let actions = '';
+        if (status === 'pending' || status === 'draft') {
+          actions = `<button class="row-action-primary review" onclick="openReviewModal('${esc(c.id)}')"><i class="fas fa-eye"></i> Review</button>`;
         } else {
-          rejSection.style.display = 'none';
+          actions = `<button class="row-action-primary" onclick="openManageModal('${esc(c.id)}')"><i class="fas fa-sliders"></i> Manage</button>`;
         }
 
-        // Footer actions per status
-        const footer = $('manageFooter');
-        const s = (c.status || '').toLowerCase();
-        let actions = `<button class="btn-outline grow" onclick="closeManageModal()">Close</button>`;
+        return `<tr>
+          <td>
+            <div class="camp-name">${esc(c.name || 'Untitled')}</div>
+            <div class="camp-advertiser">${esc(c.advertiser || '—')}</div>
+          </td>
+          <td><span class="format-tag"><i class="fas fa-vector-square"></i> ${esc((c.format || 'medium').toUpperCase())}</span></td>
+          <td>${placementHtml}</td>
+          <td><span class="${badgeClass(status)}">${esc(status)}</span></td>
+          <td style="white-space:nowrap;font-size:0.78rem;color:var(--muted);">${esc(formatDate(c.start_date))} → ${esc(formatDate(c.end_date))}</td>
+          <td><div class="action-group">${actions}</div></td>
+        </tr>`;
+      }).join('');
+    }
 
-        if (s === 'approved') {
-          actions = `
-            <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
-            <button class="btn-outline" onclick="openEditModal('${esc(c.id)}')"><i class="fas fa-pen"></i> Edit</button>
-            <button class="btn-gold" onclick="scheduleCampaign('${esc(c.id)}')"><i class="fas fa-calendar"></i> Schedule</button>
-            <button class="btn-primary" onclick="publishCampaign('${esc(c.id)}')"><i class="fas fa-rocket"></i> Publish</button>
-          `;
-        } else if (s === 'active') {
-          actions = `
-            <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
-            <button class="btn-outline" onclick="openEditModal('${esc(c.id)}')"><i class="fas fa-pen"></i> Edit</button>
-            <button class="btn-gold" onclick="pauseCampaign('${esc(c.id)}')"><i class="fas fa-pause"></i> Pause</button>
-          `;
-        } else if (s === 'paused') {
-          actions = `
-            <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
-            <button class="btn-outline" onclick="openEditModal('${esc(c.id)}')"><i class="fas fa-pen"></i> Edit</button>
-            <button class="btn-danger" onclick="endCampaign('${esc(c.id)}')"><i class="fas fa-stop"></i> End</button>
-            <button class="btn-primary" onclick="resumeCampaign('${esc(c.id)}')"><i class="fas fa-play"></i> Resume</button>
-          `;
-        } else if (s === 'expired' || s === 'rejected') {
-          actions = `
-            <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
-            <button class="btn-outline danger" onclick="deleteCampaign('${esc(c.id)}')"><i class="fas fa-trash"></i> Archive</button>
-          `;
-        } else if (s === 'pending') {
-          actions = `
-            <button class="btn-outline grow" onclick="closeManageModal()">Close</button>
-            <button class="btn-primary" onclick="openReviewModal('${esc(c.id)}')"><i class="fas fa-eye"></i> Review</button>
-          `;
-        }
-        footer.innerHTML = actions;
-        $('manageModal').classList.add('active');
-        $('manageModal').setAttribute('aria-hidden', 'false');
+    function syncTopSearch() {
+      const v = $('topSearch').value;
+      $('tableSearch').value = v;
+      renderTable();
+    }
+    $('topSearch').addEventListener('input', syncTopSearch);
+
+    /* ─── Review modal ─── */
+    function openReviewModal(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      activeReviewId = id;
+      $('reviewTitle').textContent = c.name || 'Review campaign';
+      $('reviewPlacement').value = c.placement || '';
+      $('reviewFormatLabel').textContent = (c.format || 'medium').toUpperCase();
+
+      $('reviewBody').innerHTML = `
+        <div style="display:grid;gap:10px;font-size:0.88rem;">
+          <div><span style="color:var(--muted);">Advertiser:</span> <strong>${esc(c.advertiser || '—')}</strong></div>
+          <div><span style="color:var(--muted);">URL:</span> <a href="${esc(c.url || '#')}" target="_blank" rel="noopener" style="color:var(--primary);">${esc(c.url || '—')}</a></div>
+          <div><span style="color:var(--muted);">Dates:</span> ${esc(formatDate(c.start_date))} → ${esc(formatDate(c.end_date))}</div>
+          ${c.description ? `<div style="margin-top:8px;color:var(--muted);white-space:pre-wrap;">${esc(c.description)}</div>` : ''}
+          ${c.image_url ? `<div style="margin-top:12px;"><img src="${esc(c.image_url)}" alt="" style="max-width:100%;border-radius:12px;border:1px solid var(--border);"></div>` : ''}
+        </div>
+      `;
+
+      $('reviewFooter').innerHTML = `
+        <button class="btn-outline grow" onclick="closeReviewModal()">Close</button>
+        <button class="btn-outline" onclick="requestChanges('${esc(id)}')"><i class="fas fa-pen"></i> Request changes</button>
+        <button class="btn-danger" onclick="rejectCampaign('${esc(id)}')"><i class="fas fa-xmark"></i> Reject</button>
+        <button class="btn-primary" onclick="approveCampaign('${esc(id)}')"><i class="fas fa-check"></i> Approve</button>
+      `;
+
+      $('reviewModal').classList.add('active');
+      $('reviewModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeReviewModal() {
+      $('reviewModal').classList.remove('active');
+      $('reviewModal').setAttribute('aria-hidden', 'true');
+      activeReviewId = null;
+    }
+
+    /* ─── Manage modal ─── */
+    function openManageModal(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      activeManageId = id;
+      $('manageTitle').textContent = c.name || 'Manage campaign';
+      $('managePlacement').value = c.placement || '';
+
+      const status = (c.status || '').toLowerCase();
+      $('manageBody').innerHTML = `
+        <div style="display:grid;gap:10px;font-size:0.88rem;">
+          <div><span style="color:var(--muted);">Status:</span> <span class="${badgeClass(status)}">${esc(status)}</span></div>
+          <div><span style="color:var(--muted);">Format:</span> <strong>${esc((c.format || 'medium').toUpperCase())}</strong></div>
+          <div><span style="color:var(--muted);">Advertiser:</span> ${esc(c.advertiser || '—')}</div>
+          <div><span style="color:var(--muted);">URL:</span> <a href="${esc(c.url || '#')}" target="_blank" rel="noopener" style="color:var(--primary);">${esc(c.url || '—')}</a></div>
+          <div><span style="color:var(--muted);">Dates:</span> ${esc(formatDate(c.start_date))} → ${esc(formatDate(c.end_date))}</div>
+          ${c.image_url ? `<div style="margin-top:12px;"><img src="${esc(c.image_url)}" alt="" style="max-width:100%;border-radius:12px;border:1px solid var(--border);"></div>` : ''}
+        </div>
+      `;
+
+      let actions = `<button class="btn-outline grow" onclick="closeManageModal()">Close</button>`;
+      if (status === 'approved') {
+        actions += `
+          <button class="btn-outline" onclick="openEditModal('${esc(id)}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn-gold" onclick="scheduleCampaign('${esc(id)}')"><i class="fas fa-calendar"></i> Schedule</button>
+          <button class="btn-primary" onclick="publishCampaign('${esc(id)}')"><i class="fas fa-rocket"></i> Publish</button>`;
+      } else if (status === 'active') {
+        actions += `
+          <button class="btn-outline" onclick="openEditModal('${esc(id)}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn-gold" onclick="pauseCampaign('${esc(id)}')"><i class="fas fa-pause"></i> Pause</button>`;
+      } else if (status === 'paused') {
+        actions += `
+          <button class="btn-outline" onclick="openEditModal('${esc(id)}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn-danger" onclick="endCampaign('${esc(id)}')"><i class="fas fa-stop"></i> End</button>
+          <button class="btn-primary" onclick="resumeCampaign('${esc(id)}')"><i class="fas fa-play"></i> Resume</button>`;
+      } else if (status === 'expired' || status === 'rejected') {
+        actions += `<button class="btn-danger" onclick="deleteCampaign('${esc(id)}')"><i class="fas fa-trash"></i> Delete</button>`;
+      } else if (status === 'scheduled') {
+        actions += `
+          <button class="btn-outline" onclick="openEditModal('${esc(id)}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn-primary" onclick="publishCampaign('${esc(id)}')"><i class="fas fa-rocket"></i> Publish now</button>`;
       }
-      function closeManageModal() {
-        $('manageModal').classList.remove('active');
-        $('manageModal').setAttribute('aria-hidden', 'true');
-        activeManageId = null;
+      $('manageFooter').innerHTML = actions;
+
+      $('manageModal').classList.add('active');
+      $('manageModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeManageModal() {
+      $('manageModal').classList.remove('active');
+      $('manageModal').setAttribute('aria-hidden', 'true');
+      activeManageId = null;
+    }
+
+    /* ═══════════════ CAMPAIGN ACTIONS (dedicated endpoints) ═══════════════ */
+
+    async function savePlacementIfNeeded(id) {
+      const sel = $('reviewPlacement') || $('managePlacement');
+      // Prefer the visible modal's select
+      const reviewOpen = $('reviewModal').classList.contains('active');
+      const manageOpen = $('manageModal').classList.contains('active');
+      const activeSel = reviewOpen ? $('reviewPlacement') : (manageOpen ? $('managePlacement') : null);
+      if (!activeSel) return true;
+
+      const placement = (activeSel.value || '').trim();
+      if (!placement) {
+        toast('Please choose a placement first.', true);
+        return false;
       }
 
-      /* ═══════════════ CAMPAIGN ACTIONS ═══════════════ */
-      async function patchCampaign(id, patch) {
-        await api('/api/advertisements/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(patch) });
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (c) Object.assign(c, patch);
-        renderStats(); renderTabs(); renderTable();
-      }
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (c && c.placement === placement) return true;
 
-      async function approveCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const res = await openConfirm({
-          title: 'Approve campaign?',
-          text: `"${c.name}" will be marked Approved. This does not publish it — you'll publish it manually when ready.`,
-          confirmText: 'Approve',
-          tone: 'info',
-          icon: 'fa-circle-check',
-          danger: false,
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id), {
+          method: 'PATCH',
+          body: JSON.stringify({ placement }),
         });
-        if (!res.ok) return;
-        try {
-          await patchCampaign(id, { status: 'approved' });
-          closeReviewModal();
-          toast('Campaign approved.');
-        } catch (e) { toast(e.message || 'Approve failed.', true); }
+        if (c) c.placement = placement;
+        return true;
+      } catch (e) {
+        toast(e.message || 'Could not save placement.', true);
+        return false;
       }
+    }
 
-      async function rejectCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const res = await openConfirm({
-          title: 'Reject campaign?',
-          text: `"${c.name}" will be rejected and the advertiser notified. Please provide a reason.`,
-          confirmText: 'Reject',
-          icon: 'fa-circle-xmark',
-          danger: true,
-          requireReason: true,
-          reasonPlaceholder: 'Explain why this advertisement is being rejected…',
+    async function approveCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      if (!(await savePlacementIfNeeded(id))) return;
+
+      const res = await openConfirm({
+        title: 'Approve campaign?',
+        text: `"${c.name}" will be marked Approved. This does not publish it — you'll publish it manually when ready.`,
+        confirmText: 'Approve',
+        tone: 'info',
+        icon: 'fa-circle-check',
+        danger: false,
+      });
+      if (!res.ok) return;
+
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/approve', { method: 'POST' });
+        closeReviewModal();
+        toast('Campaign approved.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Approve failed.', true);
+      }
+    }
+
+    async function rejectCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+
+      const res = await openConfirm({
+        title: 'Reject campaign?',
+        text: `"${c.name}" will be rejected and the advertiser notified. Please provide a reason.`,
+        confirmText: 'Reject',
+        icon: 'fa-circle-xmark',
+        danger: true,
+        requireReason: true,
+        reasonPlaceholder: 'Explain why this advertisement is being rejected…',
+      });
+      if (!res.ok) return;
+
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/reject', {
+          method: 'POST',
+          body: JSON.stringify({ reason: res.reason }),
         });
-        if (!res.ok) return;
-        try {
-          await patchCampaign(id, { status: 'rejected', rejection_reason: res.reason });
-          closeReviewModal();
-          toast('Campaign rejected.');
-        } catch (e) { toast(e.message || 'Reject failed.', true); }
+        closeReviewModal();
+        toast('Campaign rejected.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Reject failed.', true);
       }
+    }
 
-      async function requestChanges(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const res = await openConfirm({
-          title: 'Request changes?',
-          text: `The advertiser will be notified about "${c.name}". Describe what needs to change.`,
-          confirmText: 'Send request',
-          tone: 'gold',
-          icon: 'fa-pen',
-          danger: false,
-          requireReason: true,
-          reasonPlaceholder: 'Describe the changes needed…',
+    async function requestChanges(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+
+      const res = await openConfirm({
+        title: 'Request changes?',
+        text: `The advertiser will be notified about "${c.name}". Describe what needs to change.`,
+        confirmText: 'Send request',
+        tone: 'gold',
+        icon: 'fa-pen',
+        danger: false,
+        requireReason: true,
+        reasonPlaceholder: 'Describe the changes needed…',
+      });
+      if (!res.ok) return;
+
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/request-changes', {
+          method: 'POST',
+          body: JSON.stringify({ reason: res.reason }),
         });
-        if (!res.ok) return;
-        try {
-          await patchCampaign(id, { status: 'pending', changes_requested_reason: res.reason });
-          closeReviewModal();
-          toast('Changes requested.');
-        } catch (e) { toast(e.message || 'Request failed.', true); }
+        closeReviewModal();
+        toast('Changes requested.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Request failed.', true);
       }
+    }
 
-      async function scheduleCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        if (!c.placement) { toast('Assign a placement before scheduling.', true); return; }
-        const ok = await openConfirm({
-          title: 'Schedule campaign?',
-          text: `"${c.name}" will become eligible for publication on ${formatDate(c.start_date)}.`,
-          confirmText: 'Schedule',
-          tone: 'info',
-          icon: 'fa-calendar',
-          danger: false,
+    async function scheduleCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      if (!(await savePlacementIfNeeded(id))) return;
+
+      const ok = await openConfirm({
+        title: 'Schedule campaign?',
+        text: `"${c.name}" will become eligible for publication on ${formatDate(c.start_date)}.`,
+        confirmText: 'Schedule',
+        tone: 'info',
+        icon: 'fa-calendar',
+        danger: false,
+      });
+      if (!ok.ok) return;
+
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/schedule', {
+          method: 'POST',
+          body: JSON.stringify({ scheduled_at: new Date().toISOString() }),
         });
-        if (!ok.ok) return;
-        try {
-          await patchCampaign(id, { status: 'scheduled' });
-          closeManageModal();
-          toast('Campaign scheduled.');
-        } catch (e) { toast(e.message || 'Schedule failed.', true); }
-      }
-
-      async function publishCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        if (!c.placement) { toast('Assign a placement before publishing.', true); return; }
-        const ok = await openConfirm({
-          title: 'Publish campaign now?',
-          text: `"${c.name}" will start serving on the ${PLACEMENT_LABELS[c.placement] || c.placement} page immediately.`,
-          confirmText: 'Publish',
-          tone: 'info',
-          icon: 'fa-rocket',
-          danger: false,
-        });
-        if (!ok.ok) return;
-        try {
-          await patchCampaign(id, { status: 'active', published_at: new Date().toISOString() });
-          closeManageModal();
-          toast('Campaign published.');
-        } catch (e) { toast(e.message || 'Publish failed.', true); }
-      }
-
-      async function pauseCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const ok = await openConfirm({
-          title: 'Pause campaign?',
-          text: `"${c.name}" will stop serving immediately but remain in the campaign list.`,
-          confirmText: 'Pause',
-          tone: 'warn',
-          icon: 'fa-pause',
-          danger: false,
-        });
-        if (!ok.ok) return;
-        try {
-          await patchCampaign(id, { status: 'paused' });
-          closeManageModal();
-          toast('Campaign paused.');
-        } catch (e) { toast(e.message || 'Pause failed.', true); }
-      }
-
-      async function resumeCampaign(id) {
-        try {
-          await patchCampaign(id, { status: 'active' });
-          closeManageModal();
-          toast('Campaign resumed.');
-        } catch (e) { toast(e.message || 'Resume failed.', true); }
-      }
-
-      async function endCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const ok = await openConfirm({
-          title: 'End campaign?',
-          text: `"${c.name}" will be permanently marked as expired and cannot be resumed.`,
-          confirmText: 'End campaign',
-          icon: 'fa-stop',
-          danger: true,
-        });
-        if (!ok.ok) return;
-        try {
-          await patchCampaign(id, { status: 'expired' });
-          closeManageModal();
-          toast('Campaign ended.');
-        } catch (e) { toast(e.message || 'End failed.', true); }
-      }
-
-      async function deleteCampaign(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        const ok = await openConfirm({
-          title: 'Delete campaign?',
-          text: `"${c.name}" will be permanently removed from the system.`,
-          confirmText: 'Delete',
-          icon: 'fa-trash',
-          danger: true,
-        });
-        if (!ok.ok) return;
-        try {
-          await api('/api/advertisements/' + encodeURIComponent(id), { method: 'DELETE' });
-          toast('Campaign deleted.');
-          closeManageModal();
-          await loadCampaigns();
-        } catch (e) { toast(e.message || 'Delete failed.', true); }
-      }
-
-      /* ═══════════════ CREATE / EDIT ═══════════════ */
-      function updatePlacementOptions() {
-        const placement = $('campPlacement').value;
-        const section = $('schoolRefSection');
-        const group = $('schoolRefGroup');
-        const isSchools = placement === 'schools';
-        section.style.display = isSchools ? '' : 'none';
-        group.style.display = isSchools ? 'flex' : 'none';
-      }
-
-      function openCreateModal() {
-        editingId = null;
-        $('campModalTitle').textContent = 'Create advertisement';
-        ['campName','campAdvertiser','campPlacement','campDescription','campCta','campUrl','campImage','campStart','campEnd'].forEach(id => { $(id).value = ''; });
-        $('campFormat').value = 'medium';
-        $('campTargetSchool').value = '';
-        $('campStatus').value = 'draft';
-        updatePlacementOptions();
-        $('campModal').classList.add('active');
-        $('campModal').setAttribute('aria-hidden', 'false');
-      }
-      function openEditModal(id) {
-        const c = campaigns.find(x => String(x.id) === String(id));
-        if (!c) return;
-        editingId = id;
         closeManageModal();
-        $('campModalTitle').textContent = 'Edit advertisement';
-        $('campName').value = c.name || '';
-        $('campAdvertiser').value = c.advertiser || '';
-        $('campPlacement').value = c.placement || '';
-        $('campFormat').value = c.format || 'medium';
-        $('campDescription').value = c.description || '';
-        $('campCta').value = c.cta_text || '';
-        $('campUrl').value = c.url || '';
-        $('campImage').value = c.image_url || c.image || '';
-        $('campTargetSchool').value = c.target_school_id != null ? String(c.target_school_id) : '';
-        $('campStart').value = (c.start_date || '').slice(0, 10);
-        $('campEnd').value = (c.end_date || '').slice(0, 10);
-        $('campStatus').value = c.status || 'draft';
-        updatePlacementOptions();
-        $('campModal').classList.add('active');
-        $('campModal').setAttribute('aria-hidden', 'false');
+        toast('Campaign scheduled.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Schedule failed.', true);
       }
-      function closeModal() {
-        $('campModal').classList.remove('active');
-        $('campModal').setAttribute('aria-hidden', 'true');
-        editingId = null;
-      }
-      async function saveCampaign() {
-        const name        = $('campName').value.trim();
-        const advertiser  = $('campAdvertiser').value.trim();
-        const placement   = $('campPlacement').value;
-        const format      = $('campFormat').value;
-        const description = $('campDescription').value.trim();
-        const cta_text    = $('campCta').value.trim();
-        const url         = $('campUrl').value.trim();
-        const image_url   = $('campImage').value.trim();
-        const targetSchoolRaw = $('campTargetSchool').value;
-        const start_date  = $('campStart').value;
-        const end_date    = $('campEnd').value;
-        const status      = $('campStatus').value;
+    }
 
-        if (!name || !advertiser || !placement || !url || !start_date || !end_date) {
-          toast('Please fill in all required fields.', true); return;
-        }
-        try { new URL(url); } catch (_) { toast('Please enter a valid destination URL.', true); return; }
-        if (image_url) { try { new URL(image_url); } catch (_) { toast('Please enter a valid image URL.', true); return; } }
-        if (new Date(end_date) < new Date(start_date)) { toast('End date cannot be before start date.', true); return; }
+    async function publishCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      if (!(await savePlacementIfNeeded(id))) return;
 
-        const body = {
-          name, advertiser, placement, format, url,
-          start_date, end_date, status,
-          description: description || null,
-          cta_text: cta_text || null,
-          image_url: image_url || null,
-          target_school_id: targetSchoolRaw ? Number(targetSchoolRaw) : null,
-        };
-
-        const btn = $('campSaveBtn');
-        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
-        try {
-          if (editingId) {
-            await api('/api/advertisements/' + encodeURIComponent(editingId), { method: 'PATCH', body: JSON.stringify(body) });
-            toast('Advertisement updated.');
-          } else {
-            await api('/api/advertisements', { method: 'POST', body: JSON.stringify(body) });
-            toast('Advertisement created.');
-          }
-          closeModal();
-          await loadCampaigns();
-        } catch (e) {
-          toast(e.message || 'Save failed.', true);
-        } finally {
-          btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Save';
-        }
-      }
-
-      /* ═══════════════ Helpers ═══════════════ */
-      function refreshPage() {
-        loadCampaigns().then(() => toast('Refreshed.'));
-      }
-      function exportCampaigns() {
-        const rows = [['id','name','advertiser','format','placement','status','start_date','end_date','impressions','clicks','submitted']];
-        for (const c of campaigns) {
-          rows.push([c.id, c.name, c.advertiser, c.format || 'medium', c.placement || '', c.status || '', c.start_date || '', c.end_date || '', c.impressions || 0, c.clicks || 0, c.created_at || c.submitted_at || '']);
-        }
-        const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `campusnaija-advertisements-${new Date().toISOString().slice(0,10)}.csv`;
-        document.body.appendChild(a); a.click(); a.remove();
-        URL.revokeObjectURL(url);
-        toast('Exported advertisements CSV.');
-      }
-
-      /* ═══════════════ Sidebar / global ═══════════════ */
-      const menuToggle = $('menuToggle');
-      const sidebar = $('sidebar');
-      const overlay = $('sidebarOverlay');
-      function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); menuToggle.setAttribute('aria-expanded', 'false'); }
-      menuToggle.addEventListener('click', () => { const open = sidebar.classList.toggle('open'); overlay.classList.toggle('active', open); menuToggle.setAttribute('aria-expanded', String(open)); });
-      overlay.addEventListener('click', closeSidebar);
-
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          if ($('confirmModal').classList.contains('active')) return;
-          if ($('reviewModal').classList.contains('active')) { closeReviewModal(); return; }
-          if ($('manageModal').classList.contains('active')) { closeManageModal(); return; }
-          if ($('campModal').classList.contains('active')) { closeModal(); return; }
-          closeSidebar();
-        }
+      const ok = await openConfirm({
+        title: 'Publish campaign now?',
+        text: `"${c.name}" will start serving on the ${PLACEMENT_LABELS[c.placement] || c.placement || 'selected'} page immediately.`,
+        confirmText: 'Publish',
+        tone: 'info',
+        icon: 'fa-rocket',
+        danger: false,
       });
-      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+      if (!ok.ok) return;
 
-      $('reviewModal').addEventListener('click', e => { if (e.target.id === 'reviewModal') closeReviewModal(); });
-      $('manageModal').addEventListener('click', e => { if (e.target.id === 'manageModal') closeManageModal(); });
-      $('campModal').addEventListener('click', e => { if (e.target.id === 'campModal') closeModal(); });
-      $('confirmModal').addEventListener('click', e => {
-        if (e.target.id === 'confirmModal') {
-          const cancelBtn = $('confirmCancel');
-          if (cancelBtn) cancelBtn.click();
-        }
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/publish', { method: 'POST' });
+        closeManageModal();
+        toast('Campaign published.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Publish failed.', true);
+      }
+    }
+
+    async function pauseCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+
+      const ok = await openConfirm({
+        title: 'Pause campaign?',
+        text: `"${c.name}" will stop serving immediately but remain in the campaign list.`,
+        confirmText: 'Pause',
+        tone: 'warn',
+        icon: 'fa-pause',
+        danger: false,
       });
+      if (!ok.ok) return;
 
-      $('sideLogout').addEventListener('click', async () => {
-        const res = await openConfirm({
-          title: 'Sign out?',
-          text: 'You will need to sign in again to access the admin panel.',
-          confirmText: 'Sign out',
-          icon: 'fa-arrow-right-from-bracket',
-          danger: false,
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/pause', { method: 'POST' });
+        closeManageModal();
+        toast('Campaign paused.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Pause failed.', true);
+      }
+    }
+
+    async function resumeCampaign(id) {
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id) + '/resume', { method: 'POST' });
+        closeManageModal();
+        toast('Campaign resumed.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Resume failed.', true);
+      }
+    }
+
+    async function endCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+
+      const ok = await openConfirm({
+        title: 'End campaign?',
+        text: `"${c.name}" will be permanently marked as expired and cannot be resumed.`,
+        confirmText: 'End campaign',
+        icon: 'fa-stop',
+        danger: true,
+      });
+      if (!ok.ok) return;
+
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id), {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'expired' }),
         });
-        if (!res.ok) return;
-        try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
-        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
-        window.location.replace(LOGIN_URL);
+        closeManageModal();
+        toast('Campaign ended.');
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'End failed.', true);
+      }
+    }
+
+    async function deleteCampaign(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+
+      const ok = await openConfirm({
+        title: 'Delete campaign?',
+        text: `"${c.name}" will be permanently removed from the system.`,
+        confirmText: 'Delete',
+        icon: 'fa-trash',
+        danger: true,
       });
+      if (!ok.ok) return;
 
-      $('footerYear').textContent = '© ' + new Date().getFullYear();
+      try {
+        await api('/api/advertisements/' + encodeURIComponent(id), { method: 'DELETE' });
+        toast('Campaign deleted.');
+        closeManageModal();
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Delete failed.', true);
+      }
+    }
 
-      (async function boot() {
-        const ok = await verifySession();
-        if (!ok) return;
-        renderUser();
-        await Promise.all([loadCampaigns(), loadSchools()]);
-      })();
+    /* ─── Create / Edit ─── */
+    function updatePlacementOptions() {
+      const placement = $('campPlacement').value;
+      $('schoolRefSection').style.display = placement === 'schools' ? '' : 'none';
+    }
 
-      // Expose to inline handlers
-      Object.assign(window, {
-        openCreateModal, openEditModal, closeModal, saveCampaign, updatePlacementOptions,
-        renderTable, syncTopSearch, setFilter, refreshPage, exportCampaigns,
-        openReviewModal, closeReviewModal, setPreviewMode,
-        openManageModal, closeManageModal,
-        approveCampaign, rejectCampaign, requestChanges,
-        scheduleCampaign, publishCampaign, pauseCampaign, resumeCampaign,
-        endCampaign, deleteCampaign,
+    function openCreateModal() {
+      editingId = null;
+      $('campModalTitle').textContent = 'Create advertisement';
+      ['campName','campAdvertiser','campPlacement','campDescription','campCta','campUrl','campImage','campStart','campEnd'].forEach(id => { $(id).value = ''; });
+      $('campFormat').value = 'medium';
+      $('campTargetSchool').value = '';
+      $('campStatus').value = 'draft';
+      updatePlacementOptions();
+      $('campModal').classList.add('active');
+      $('campModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function openEditModal(id) {
+      const c = campaigns.find(x => String(x.id) === String(id));
+      if (!c) return;
+      editingId = id;
+      closeManageModal();
+      $('campModalTitle').textContent = 'Edit advertisement';
+      $('campName').value = c.name || '';
+      $('campAdvertiser').value = c.advertiser || '';
+      $('campPlacement').value = c.placement || '';
+      $('campFormat').value = c.format || 'medium';
+      $('campDescription').value = c.description || '';
+      $('campCta').value = c.cta_text || '';
+      $('campUrl').value = c.url || '';
+      $('campImage').value = c.image_url || c.image || '';
+      $('campTargetSchool').value = c.target_school_id != null ? String(c.target_school_id) : '';
+      $('campStart').value = (c.start_date || '').slice(0, 10);
+      $('campEnd').value = (c.end_date || '').slice(0, 10);
+      $('campStatus').value = c.status || 'draft';
+      updatePlacementOptions();
+      $('campModal').classList.add('active');
+      $('campModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      $('campModal').classList.remove('active');
+      $('campModal').setAttribute('aria-hidden', 'true');
+      editingId = null;
+    }
+
+    async function saveCampaign() {
+      const name        = $('campName').value.trim();
+      const advertiser  = $('campAdvertiser').value.trim();
+      const placement   = $('campPlacement').value;
+      const format      = $('campFormat').value;
+      const description = $('campDescription').value.trim();
+      const cta_text    = $('campCta').value.trim();
+      const url         = $('campUrl').value.trim();
+      const image_url   = $('campImage').value.trim();
+      const targetSchoolRaw = $('campTargetSchool').value;
+      const start_date  = $('campStart').value;
+      const end_date    = $('campEnd').value;
+      const status      = $('campStatus').value;
+
+      if (!name || !advertiser || !placement || !url || !start_date || !end_date) {
+        toast('Please fill in all required fields.', true); return;
+      }
+      try { new URL(url); } catch (_) { toast('Please enter a valid destination URL.', true); return; }
+      if (image_url) { try { new URL(image_url); } catch (_) { toast('Please enter a valid image URL.', true); return; } }
+      if (new Date(end_date) < new Date(start_date)) { toast('End date cannot be before start date.', true); return; }
+
+      const body = {
+        name, advertiser, placement, format, url,
+        start_date, end_date, status,
+        description: description || null,
+        cta_text: cta_text || null,
+        image_url: image_url || null,
+        target_school_id: targetSchoolRaw || null,
+      };
+
+      const btn = $('campSaveBtn');
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+      try {
+        if (editingId) {
+          await api('/api/advertisements/' + encodeURIComponent(editingId), { method: 'PATCH', body: JSON.stringify(body) });
+          toast('Advertisement updated.');
+        } else {
+          await api('/api/advertisements', { method: 'POST', body: JSON.stringify(body) });
+          toast('Advertisement created.');
+        }
+        closeModal();
+        await loadCampaigns();
+      } catch (e) {
+        toast(e.message || 'Save failed.', true);
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Save';
+      }
+    }
+
+    function refreshPage() {
+      loadCampaigns().then(() => toast('Refreshed.'));
+    }
+
+    function exportCampaigns() {
+      const rows = [['id','name','advertiser','format','placement','status','start_date','end_date','impressions','clicks','submitted']];
+      for (const c of campaigns) {
+        rows.push([c.id, c.name, c.advertiser, c.format || 'medium', c.placement || '', c.status || '', c.start_date || '', c.end_date || '', c.impressions || 0, c.clicks || 0, c.created_at || '']);
+      }
+      const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `campusnaija-advertisements-${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('Exported advertisements CSV.');
+    }
+
+    /* Sidebar */
+    const menuToggle = $('menuToggle');
+    const sidebar = $('sidebar');
+    const overlay = $('sidebarOverlay');
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+    menuToggle.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('open');
+      overlay.classList.toggle('active', open);
+      menuToggle.setAttribute('aria-expanded', String(open));
+    });
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if ($('confirmModal').classList.contains('active')) return;
+      if ($('reviewModal').classList.contains('active')) { closeReviewModal(); return; }
+      if ($('manageModal').classList.contains('active')) { closeManageModal(); return; }
+      if ($('campModal').classList.contains('active')) { closeModal(); return; }
+      closeSidebar();
+    });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+
+    $('reviewModal').addEventListener('click', e => { if (e.target.id === 'reviewModal') closeReviewModal(); });
+    $('manageModal').addEventListener('click', e => { if (e.target.id === 'manageModal') closeManageModal(); });
+    $('campModal').addEventListener('click', e => { if (e.target.id === 'campModal') closeModal(); });
+
+    $('sideLogout').addEventListener('click', async () => {
+      const res = await openConfirm({
+        title: 'Sign out?',
+        text: 'You will need to sign in again to access the admin panel.',
+        confirmText: 'Sign out',
+        icon: 'fa-arrow-right-from-bracket',
+        danger: false,
       });
+      if (!res.ok) return;
+      try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+      try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (_) {}
+      window.location.replace(LOGIN_URL);
+    });
+
+    (async function boot() {
+      const ok = await verifySession();
+      if (!ok) return;
+      renderUser();
+      await Promise.all([loadCampaigns(), loadSchools()]);
     })();
+
+    Object.assign(window, {
+      openCreateModal, openEditModal, closeModal, saveCampaign, updatePlacementOptions,
+      renderTable, syncTopSearch, setFilter, refreshPage, exportCampaigns,
+      openReviewModal, closeReviewModal,
+      openManageModal, closeManageModal,
+      approveCampaign, rejectCampaign, requestChanges,
+      scheduleCampaign, publishCampaign, pauseCampaign, resumeCampaign,
+      endCampaign, deleteCampaign,
+    });
+  })();
   </script>
 </body>
 </html>
