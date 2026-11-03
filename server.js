@@ -3802,7 +3802,8 @@ router.delete('/contact-messages/:id', authenticate, requireRole('owner','admin'
  * ============================================================ */
 
 const AD_PLACEMENTS = ['home', 'schools', 'admissions', 'exams', 'scholarships', 'trending'];
-const AD_STATUSES   = ['draft', 'pending', 'approved', 'active', 'paused', 'rejected', 'expired'];
+const AD_STATUSES   = ['draft', 'pending', 'approved', 'scheduled', 'active', 'paused', 'rejected', 'expired'];
+const AD_FORMATS    = ['large', 'medium', 'small', 'square', 'vertical'];
 
 function validateAdPlacement(value) {
   const v = validateField(value, 'placement', 50, { required: true }).toLowerCase();
@@ -3818,12 +3819,90 @@ function validateAdStatus(value, { required = false } = {}) {
     throw httpError(400, `status must be one of: ${AD_STATUSES.join(', ')}.`);
   return s;
 }
+function validateAdFormat(value, { required = false } = {}) {
+  const v = validateField(value, 'format', 20, { required });
+  if (v == null) return 'medium';
+  const f = String(v).toLowerCase();
+  if (!AD_FORMATS.includes(f))
+    throw httpError(400, `format must be one of: ${AD_FORMATS.join(', ')}.`);
+  return f;
+}
 
+/* ─── Derived fields: payment status + link to advertiser profile ─── */
+async function attachDerivedFields(campaigns) {
+  if (!Array.isArray(campaigns) || campaigns.length === 0) return campaigns;
+
+  // Resolve advertiser emails in one query
+  const advIds = [...new Set(
+    campaigns.map(c => c.advertiser_user_id).filter(Boolean)
+  )];
+  const emailById = {};
+  const profileByUser = {};
+  if (advIds.length) {
+    const users = await many(
+      `select id, email from public.users where id = ANY($1::uuid[])`,
+      [advIds]
+    );
+    for (const u of users) emailById[u.id] = u.email;
+
+    // Best-effort: attach business_name / contact info if profiles exist
+    try {
+      const profiles = await many(
+        `select user_id, business_name, phone
+           from public.advertiser_profiles
+          where user_id = ANY($1::uuid[])`,
+        [advIds]
+      );
+      for (const p of profiles) profileByUser[p.user_id] = p;
+    } catch (_) {}
+  }
+
+  for (const c of campaigns) {
+    const email = c.advertiser_user_id ? emailById[c.advertiser_user_id] : null;
+    c.advertiser_email = email || null;
+
+    const prof = c.advertiser_user_id ? profileByUser[c.advertiser_user_id] : null;
+    if (prof) {
+      if (!c.contact_name)  c.contact_name  = prof.business_name || null;
+      if (!c.contact_phone) c.contact_phone = prof.phone || null;
+    }
+
+    // Derive payment_status from transactions if not already present
+    if (c.payment_status === undefined) {
+      if (!email) { c.payment_status = null; }
+      else {
+        try {
+          const tx = await one(
+            `select status from public.transactions
+              where customer = $1
+                and notes ilike $2
+              order by created_at desc limit 1`,
+            [email, '%' + (c.name || '') + '%']
+          );
+          c.payment_status = tx?.status || null;
+        } catch (_) {
+          c.payment_status = null;
+        }
+      }
+    }
+
+    // Ensure fields the UI expects are always present (even if null)
+    for (const k of ['notes','contact_name','contact_email','contact_phone',
+                     'rejection_reason','changes_requested_reason',
+                     'published_at','scheduled_at']) {
+      if (c[k] === undefined) c[k] = null;
+    }
+  }
+  return campaigns;
+}
+
+/* ─── LIST ─── */
 router.get('/advertisements', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const { limit, offset } = pagination(req, { defaultLimit: 100, maxLimit: 500 });
   const clauses = []; const params = [];
   if (req.query.status)    { params.push(String(req.query.status).toLowerCase());    clauses.push(`status = $${params.length}`); }
   if (req.query.placement) { params.push(String(req.query.placement).toLowerCase()); clauses.push(`placement = $${params.length}`); }
+  if (req.query.format)    { params.push(String(req.query.format).toLowerCase());    clauses.push(`format = $${params.length}`); }
   if (req.query.q) {
     params.push(`%${req.query.q}%`, `%${req.query.q}%`);
     clauses.push(`(name ilike $${params.length-1} or advertiser ilike $${params.length})`);
@@ -3835,16 +3914,20 @@ router.get('/advertisements', authenticate, requireRole('owner','admin','editor'
       limit $${params.length + 1} offset $${params.length + 2}`,
     [...params, limit, offset]
   );
+  await attachDerivedFields(rows);
   const totalRow = await one(`select count(*)::int as c from public.advertisements ${where}`, params);
   res.json({ campaigns: rows, total: totalRow.c, limit, offset });
 }));
 
+/* ─── DETAIL ─── */
 router.get('/advertisements/:id', authenticate, requireRole('owner','admin','editor','reviewer'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
+  await attachDerivedFields([row]);
   res.json({ campaign: row });
 }));
 
+/* ─── CREATE ─── */
 router.post('/advertisements', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
   const b = req.body || {};
   const name       = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
@@ -3855,6 +3938,17 @@ router.post('/advertisements', authenticate, requireRole('owner','admin','editor
   const startDate  = validateField(b.start_date, 'start_date', 30, { required: true });
   const endDate    = validateField(b.end_date, 'end_date', 30, { required: true });
   const status     = validateAdStatus(b.status) || 'draft';
+  const format     = validateAdFormat(b.format);
+
+  let advertiserUserId = null;
+  if (b.advertiser_user_id) {
+    const adv = await one(
+      `select id from public.users where id=$1 and role='advertiser'`,
+      [b.advertiser_user_id]
+    );
+    if (!adv) throw httpError(400, 'advertiser_user_id does not reference an advertiser account.');
+    advertiserUserId = adv.id;
+  }
 
   if (new Date(endDate) < new Date(startDate))
     throw httpError(400, 'end_date cannot be before start_date.');
@@ -3862,36 +3956,47 @@ router.post('/advertisements', authenticate, requireRole('owner','admin','editor
   const row = await one(
     `insert into public.advertisements
        (name, advertiser, placement, url, image_url, start_date, end_date, status,
-        created_by, advertiser_user_id, format)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning *`,
+        created_by, advertiser_user_id, format, notes, contact_name, contact_email, contact_phone)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning *`,
     [name, advertiser, placement, url, imageUrl, startDate, endDate, status,
-     req.user.id, b.advertiser_user_id || null, b.format || null]
+     req.user.id, advertiserUserId, format,
+     validateField(b.notes, 'notes', FIELD_LIMITS.medium),
+     validateField(b.contact_name, 'contact_name', FIELD_LIMITS.name),
+     validateField(b.contact_email, 'contact_email', FIELD_LIMITS.email),
+     validateField(b.contact_phone, 'contact_phone', 30)]
   );
-  await audit(req, 'create', 'advertisement', row.id, row.name, { placement, status });
+  await audit(req, 'create', 'advertisement', row.id, row.name, { placement, status, format });
+  await attachDerivedFields([row]);
   res.status(201).json({ campaign: row });
 }));
 
+/* ─── UPDATE (content only; workflow status changes go through dedicated endpoints) ─── */
 router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','editor'), asyncH(async (req, res) => {
   const existing = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!existing) throw httpError(404, 'Campaign not found.');
 
   const b = req.body || {};
-  const allowed = ['name','advertiser','placement','url','image_url','start_date','end_date','format','advertiser_user_id'];
+  const allowed = [
+    'name','advertiser','placement','url','image_url','start_date','end_date','format',
+    'notes','contact_name','contact_email','contact_phone',
+  ];
   const updates = {};
   for (const k of allowed) if (k in b) updates[k] = b[k];
 
   if ('placement' in updates) updates.placement = validateAdPlacement(updates.placement);
   if ('url' in updates) updates.url = validateUrl(updates.url, 'url', { required: true });
   if ('image_url' in updates) updates.image_url = validateUrl(updates.image_url, 'image_url');
+  if ('format' in updates) updates.format = validateAdFormat(updates.format, { required: true });
 
-  let newStatus = null;
   if ('status' in b) {
-    newStatus = validateAdStatus(b.status, { required: true });
-    updates.status = newStatus;
-    if (newStatus === 'approved' || newStatus === 'active') {
-      updates.approved_by = req.user.id;
-      updates.approved_at = new Date();
+    const newStatus = validateAdStatus(b.status, { required: true });
+    // Only allow content-safe statuses here. Workflow transitions have dedicated endpoints.
+    const blocked = ['approved', 'active', 'scheduled'];
+    if (blocked.includes(newStatus) && (existing.status || '').toLowerCase() !== newStatus) {
+      throw httpError(400,
+        `Use the dedicated endpoint to move to "${newStatus}" (approve / schedule / publish).`);
     }
+    updates.status = newStatus;
   }
 
   if (!Object.keys(updates).length) throw httpError(400, 'No fields to update.');
@@ -3905,39 +4010,240 @@ router.patch('/advertisements/:id', authenticate, requireRole('owner','admin','e
     values
   );
 
-  await audit(
-    req,
-    newStatus ? 'update_status' : 'update',
-    'advertisement', existing.id, existing.name,
-    newStatus ? { status: newStatus } : { fields: keys }
-  );
+  await audit(req, 'update', 'advertisement', existing.id, existing.name, { fields: keys });
+  await attachDerivedFields([updated]);
   res.json({ campaign: updated });
 }));
 
+/* ─── APPROVE (status: pending → approved — does NOT publish) ─── */
 router.post('/advertisements/:id/approve', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
-  if (row.status === 'active')
-    return res.json({ ok: true, campaign: row });
+  if (!['pending', 'draft'].includes((row.status || '').toLowerCase()))
+    throw httpError(400, `Only pending or draft campaigns can be approved. Current status: ${row.status}.`);
 
   const updated = await one(
     `update public.advertisements
-        set status='active', approved_by=$1, approved_at=now(), updated_at=now()
+        set status='approved',
+            reviewed_by=$1,
+            reviewed_at=now(),
+            approved_by=$1,
+            approved_at=now(),
+            rejection_reason=null,
+            changes_requested_reason=null,
+            updated_at=now()
       where id=$2 returning *`,
     [req.user.id, row.id]
   );
-  await audit(req, 'approve', 'advertisement', row.id, row.name, { status: 'active' });
+
+  await audit(req, 'approve', 'advertisement', row.id, row.name, { status: 'approved' });
+
   if (row.advertiser_user_id) {
-    await notify(
-      row.advertiser_user_id, null,
-      'Your campaign is live',
-      `“${row.name}” has been approved and is now active.`,
-      '/advertiser/dashboard.html'
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Your campaign was approved',
+      `“${row.name}” has been approved. It will go live once published by our team.`,
+      '/advertiser/campaigns.html',
+      'review_decision'
     );
   }
+
+  await attachDerivedFields([updated]);
   res.json({ ok: true, campaign: updated });
 }));
 
+/* ─── REJECT (requires reason) ─── */
+router.post('/advertisements/:id/reject', authenticate, requireRole('owner','admin','reviewer'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (!['pending','draft'].includes((row.status || '').toLowerCase()))
+    throw httpError(400, `Only pending or draft campaigns can be rejected. Current status: ${row.status}.`);
+
+  const reason = validateField(req.body?.reason, 'reason', FIELD_LIMITS.medium, { required: true }).trim();
+  if (reason.length < 10)
+    throw httpError(400, 'Please provide a rejection reason of at least 10 characters.');
+
+  const updated = await one(
+    `update public.advertisements
+        set status='rejected',
+            rejection_reason=$1,
+            reviewed_by=$2,
+            reviewed_at=now(),
+            updated_at=now()
+      where id=$3 returning *`,
+    [reason, req.user.id, row.id]
+  );
+
+  await audit(req, 'reject', 'advertisement', row.id, row.name, { reason });
+
+  if (row.advertiser_user_id) {
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Your campaign was rejected',
+      reason,
+      '/advertiser/campaigns.html',
+      'review_decision'
+    );
+  }
+
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── REQUEST CHANGES (status stays pending; reason stored) ─── */
+router.post('/advertisements/:id/request-changes', authenticate, requireRole('owner','admin','reviewer'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (!['pending','draft'].includes((row.status || '').toLowerCase()))
+    throw httpError(400, `Only pending or draft campaigns can be sent back. Current status: ${row.status}.`);
+
+  const reason = validateField(req.body?.reason, 'reason', FIELD_LIMITS.medium, { required: true }).trim();
+  if (reason.length < 10)
+    throw httpError(400, 'Please describe the required changes (at least 10 characters).');
+
+  const updated = await one(
+    `update public.advertisements
+        set changes_requested_reason=$1,
+            reviewed_by=$2,
+            reviewed_at=now(),
+            updated_at=now()
+      where id=$3 returning *`,
+    [reason, req.user.id, row.id]
+  );
+
+  await audit(req, 'request_changes', 'advertisement', row.id, row.name, { reason });
+
+  if (row.advertiser_user_id) {
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Changes requested on your campaign',
+      reason,
+      '/advertiser/campaigns.html',
+      'review_decision'
+    );
+  }
+
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── SCHEDULE (status: approved → scheduled) ─── */
+router.post('/advertisements/:id/schedule', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if ((row.status || '').toLowerCase() !== 'approved')
+    throw httpError(400, 'Only approved campaigns can be scheduled.');
+  if (!row.placement)
+    throw httpError(400, 'Assign a placement before scheduling.');
+
+  const scheduledAt = validateField(req.body?.scheduled_at, 'scheduled_at', 40, { required: true });
+  const when = new Date(scheduledAt);
+  if (isNaN(when)) throw httpError(400, 'scheduled_at must be a valid ISO datetime.');
+
+  const updated = await one(
+    `update public.advertisements
+        set status='scheduled', scheduled_at=$1, updated_at=now()
+      where id=$2 returning *`,
+    [when.toISOString(), row.id]
+  );
+
+  await audit(req, 'schedule', 'advertisement', row.id, row.name, { scheduled_at: when.toISOString() });
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── PUBLISH (status → active; sets published_at once) ─── */
+router.post('/advertisements/:id/publish', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if (!['approved', 'scheduled', 'paused'].includes((row.status || '').toLowerCase()))
+    throw httpError(400, `Cannot publish from status "${row.status}".`);
+  if (!row.placement)
+    throw httpError(400, 'Assign a placement before publishing.');
+
+  const now = new Date();
+  const updated = await one(
+    `update public.advertisements
+        set status='active',
+            published_at = COALESCE(published_at, $1),
+            updated_at=now()
+      where id=$2 returning *`,
+    [now.toISOString(), row.id]
+  );
+
+  await audit(req, 'publish', 'advertisement', row.id, row.name);
+
+  if (row.advertiser_user_id) {
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Your campaign is now live',
+      `“${row.name}” is now serving on the ${row.placement} page.`,
+      '/advertiser/campaigns.html',
+      'publication_update'
+    );
+  }
+
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── PAUSE ─── */
+router.post('/advertisements/:id/pause', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if ((row.status || '').toLowerCase() !== 'active')
+    throw httpError(400, 'Only active campaigns can be paused.');
+
+  const updated = await one(
+    `update public.advertisements set status='paused', updated_at=now() where id=$1 returning *`,
+    [row.id]
+  );
+
+  await audit(req, 'pause', 'advertisement', row.id, row.name);
+
+  if (row.advertiser_user_id) {
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Your campaign was paused',
+      `“${row.name}” has been paused by the CampusNaija team.`,
+      '/advertiser/campaigns.html',
+      'publication_update'
+    );
+  }
+
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── RESUME ─── */
+router.post('/advertisements/:id/resume', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
+  const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
+  if (!row) throw httpError(404, 'Campaign not found.');
+  if ((row.status || '').toLowerCase() !== 'paused')
+    throw httpError(400, 'Only paused campaigns can be resumed.');
+
+  const updated = await one(
+    `update public.advertisements set status='active', updated_at=now() where id=$1 returning *`,
+    [row.id]
+  );
+
+  await audit(req, 'resume', 'advertisement', row.id, row.name);
+
+  if (row.advertiser_user_id) {
+    await notifyAdvertiser(
+      row.advertiser_user_id,
+      'Your campaign was resumed',
+      `“${row.name}” is live again.`,
+      '/advertiser/campaigns.html',
+      'publication_update'
+    );
+  }
+
+  await attachDerivedFields([updated]);
+  res.json({ ok: true, campaign: updated });
+}));
+
+/* ─── DELETE ─── */
 router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'), asyncH(async (req, res) => {
   const row = await one('select * from public.advertisements where id=$1', [req.params.id]);
   if (!row) throw httpError(404, 'Campaign not found.');
@@ -3946,31 +4252,10 @@ router.delete('/advertisements/:id', authenticate, requireRole('owner','admin'),
   res.json({ ok: true });
 }));
 
-router.get('/public/advertisements/:placement', asyncH(async (req, res) => {
-  await publicLimit(req);
-  const placement = String(req.params.placement).toLowerCase();
-  if (!AD_PLACEMENTS.includes(placement)) throw httpError(404, 'Unknown placement.');
-
-  const row = await one(
-    `select id, name, advertiser, placement, url, image_url, start_date, end_date, status
-       from public.advertisements
-      where placement = $1
-        and status = 'active'
-        and current_date between start_date and end_date
-      order by start_date asc
-      limit 1`,
-    [placement]
-  );
-  if (!row) return res.json({ campaign: null });
-
-  run(`update public.advertisements set impressions = impressions + 1 where id=$1`, [row.id])
-    .catch(err => console.error('[ad impression]', err.message));
-
-  res.json({ campaign: row });
-}));
-
 /* ============================================================
  * PUBLIC NAMED ADVERTISEMENT ENDPOINTS
+ * (single registration per placement — the earlier duplicate inside
+ *  the ADVERTISEMENTS block was removed; this is the only one.)
  * ============================================================ */
 
 async function resolvePublicCampaign(placement) {
