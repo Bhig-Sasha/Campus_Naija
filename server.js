@@ -643,7 +643,8 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
   const b = req.body || {};
   const name         = validateField(b.name, 'name', FIELD_LIMITS.name, { required: true }).trim();
   const businessName = validateField(b.business_name, 'business_name', FIELD_LIMITS.name, { required: true }).trim();
-  const email        = validateField(b.email, 'email', FIELD_LIMITS.email, { required: true }).trim().toLowerCase();
+  const rawEmail     = validateField(b.email, 'email', FIELD_LIMITS.email, { required: true }).trim();
+  const email        = rawEmail.toLowerCase();
   const phone        = validateField(b.phone, 'phone', 30);
   const password     = validateField(b.password, 'password', 200, { required: true });
 
@@ -652,9 +653,9 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
   if (password.length < 10)
     throw httpError(400, 'Password must be at least 10 characters.');
 
-  // Case-insensitive duplicate check + normalize email to lowercase
+  // Case-insensitive duplicate check
   const existing = await one(
-    'select id, role, status from public.users where lower(email)=lower($1)',
+    'select id from public.users where lower(email) = lower($1)',
     [email]
   );
   if (existing)
@@ -667,7 +668,7 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
       `insert into public.users (name, email, password_hash, role, status, must_change_password)
        values ($1,$2,$3,$4,'pending',false)
        returning *`,
-      [name, email.toLowerCase(), hash, ADVERTISER_ROLE]
+      [name, email, hash, ADVERTISER_ROLE]
     );
     await c.query(
       `insert into public.advertiser_profiles (user_id, business_name, phone)
@@ -678,25 +679,26 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
       `insert into public.audit_logs
          (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, ip)
        values ($1,$2,$3,'advertiser_register','advertiser',$1,$4,$5)`,
-      [u.rows[0].id, name, ADVERTISER_ROLE, email.toLowerCase(), ip]
+      [u.rows[0].id, name, ADVERTISER_ROLE, email, ip]
     );
-    // Wrap the notification insert in its own try/catch so it can't fail the whole register
-    try {
-      await c.query(
-        `insert into public.notifications (user_id, title, body, link)
-         select id,
-                'New advertiser awaiting approval',
-                $1 || ' (' || $2 || ') has requested an advertiser account.',
-                '/admin/advertisers.html'
-           from public.users where role='owner'`,
-        [businessName, email.toLowerCase()]
-      );
-    } catch (notifErr) {
-      console.warn('[register] notification insert failed (non-fatal):', notifErr.message);
+
+    // Notify owners — explicit per-row inserts, no || on params
+    const owners = await c.query(`select id from public.users where role = 'owner'`);
+    const body = `${businessName} (${email}) has requested an advertiser account.`;
+    for (const o of owners.rows) {
+      try {
+        await c.query(
+          `insert into public.notifications (user_id, title, body, link)
+           values ($1, $2, $3, $4)`,
+          [o.id, 'New advertiser awaiting approval', body, '/admin/advertisers.html']
+        );
+      } catch (notifErr) {
+        console.warn('[register] notification insert failed (non-fatal):', notifErr.message);
+      }
     }
   });
 
-  console.log(`[advertiser] registered ${email.toLowerCase()} (pending approval)`);
+  console.log(`[advertiser] registered ${email} (pending approval)`);
   res.status(201).json({
     ok: true,
     message: 'Your account has been created and is awaiting approval. You will be notified by email once approved.',
