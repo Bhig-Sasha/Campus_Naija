@@ -661,7 +661,6 @@ async function notifyAdvertiser(userId, title, body, link, category) {
       [userId, title, body, link, category || null, link || null]
     );
   } catch (e) {
-    // Fallback if category/action_url columns don't exist yet
     try {
       await run(
         `insert into public.notifications (user_id, title, body, link)
@@ -2306,6 +2305,233 @@ router.post('/advertiser/support/tickets/:id/attachments',
   })
 );
 
+/* ============================================================
+ * ADVERTISER NOTIFICATIONS
+ * ============================================================ */
+
+const NOTIF_CATEGORY_VALUES = ['campaign', 'payment', 'account', 'support'];
+
+/* Classify a notification into the advertiser UI category.
+ * Falls back gracefully if `category` isn't populated yet. */
+function classifyNotification(n) {
+  const raw = String(n.category || '').toLowerCase();
+  if (NOTIF_CATEGORY_VALUES.includes(raw)) return raw;
+
+  const hay = `${n.title || ''} ${n.body || ''} ${n.link || ''}`.toLowerCase();
+  if (/(campaign|advert|publication|approved|rejected|review|schedul|submission)/.test(hay)) return 'campaign';
+  if (/(payment|invoice|receipt|refund|transaction|billing)/.test(hay)) return 'payment';
+  if (/(ticket|support|help)/.test(hay)) return 'support';
+  return 'account';
+}
+
+/* ─── Stats ─── */
+router.get('/advertiser/notifications/stats', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+
+  const row = await one(
+    `select
+       count(*)::int as total,
+       count(*) filter (where is_read = false)::int as unread,
+       count(*) filter (where coalesce(category,'') = 'campaign')::int as campaign,
+       count(*) filter (where coalesce(category,'') = 'payment')::int as payment
+     from public.notifications
+     where user_id = $1`,
+    [uid]
+  );
+
+  // Backfill inferred categories for legacy rows where `category` is null
+  try {
+    const legacy = await many(
+      `select id, title, body, link, category
+         from public.notifications
+        where user_id = $1
+          and (category is null or category = '')`,
+      [uid]
+    );
+    if (legacy.length) {
+      let extraCampaign = 0, extraPayment = 0;
+      for (const n of legacy) {
+        const c = classifyNotification(n);
+        if (c === 'campaign') extraCampaign++;
+        else if (c === 'payment') extraPayment++;
+      }
+      row.campaign = (Number(row.campaign) || 0) + extraCampaign;
+      row.payment  = (Number(row.payment)  || 0) + extraPayment;
+    }
+  } catch (_) {}
+
+  res.json({
+    total:    Number(row.total)    || 0,
+    unread:   Number(row.unread)   || 0,
+    campaign: Number(row.campaign) || 0,
+    payment:  Number(row.payment)  || 0,
+  });
+}));
+
+/* ─── List ─── */
+router.get('/advertiser/notifications/list', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid  = req.advertiser.id;
+  const tab  = String(req.query.tab || '').toLowerCase();
+  const q    = String(req.query.q || '').trim();
+  const days = Number(req.query.days) || 0;
+  const sort = String(req.query.sort || 'newest').toLowerCase();
+
+  const clauses = [`user_id = $1`];
+  const params  = [uid];
+
+  if (tab === 'unread') {
+    clauses.push(`is_read = false`);
+  } else if (['campaign', 'payment', 'account', 'support'].includes(tab)) {
+    params.push(tab);
+    clauses.push(`coalesce(category, '') = $${params.length}`);
+  }
+
+  if (q) {
+    params.push(`%${q}%`, `%${q}%`, `%${q}%`);
+    clauses.push(`(title ilike $${params.length-2} or body ilike $${params.length-1} or coalesce(link,'') ilike $${params.length})`);
+  }
+
+  if (days > 0) {
+    params.push(days);
+    clauses.push(`created_at >= now() - ($${params.length} || ' days')::interval`);
+  }
+
+  const order = sort === 'oldest' ? 'created_at asc' : 'created_at desc';
+
+  const rows = await many(
+    `select id, user_id, title, body, link, category, action_url, is_read, created_at
+       from public.notifications
+      where ${clauses.join(' and ')}
+      order by ${order}
+      limit 200`,
+    params
+  );
+
+  const notifications = rows.map(n => {
+    const cat  = classifyNotification(n);
+    const href = n.action_url || n.link || '#';
+    return {
+      id: n.id,
+      title: n.title,
+      body: n.body,
+      category: cat,
+      is_read: !!n.is_read,
+      created_at: n.created_at,
+      action_url: href,
+      link: href,
+      action_label:
+        cat === 'campaign' ? 'View campaign' :
+        cat === 'payment'  ? 'View transaction' :
+        cat === 'support'  ? 'View ticket' :
+                             'View account',
+    };
+  });
+
+  res.json({ notifications });
+}));
+
+/* ─── Mark single as read ─── */
+router.post('/advertiser/notifications/:id/read', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select id from public.notifications
+      where id = $1 and user_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Notification not found.');
+
+  await run(`update public.notifications set is_read = true where id = $1`, [row.id]);
+  res.json({ ok: true });
+}));
+
+/* ─── Mark all read ─── */
+router.post('/advertiser/notifications/read-all', authenticateAdvertiser, asyncH(async (req, res) => {
+  const updated = await run(
+    `update public.notifications
+        set is_read = true
+      where user_id = $1 and is_read = false`,
+    [req.advertiser.id]
+  );
+  await audit(
+    { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'notifications_read_all', 'notification', null, null, { updated }
+  );
+  res.json({ ok: true, updated: updated || 0 });
+}));
+
+/* ─── Delete one ─── */
+router.delete('/advertiser/notifications/:id', authenticateAdvertiser, asyncH(async (req, res) => {
+  const row = await one(
+    `select id from public.notifications
+      where id = $1 and user_id = $2`,
+    [req.params.id, req.advertiser.id]
+  );
+  if (!row) throw httpError(404, 'Notification not found.');
+
+  await run(`delete from public.notifications where id = $1`, [row.id]);
+  res.json({ ok: true });
+}));
+
+/* ─── Notification preferences ─── */
+const DEFAULT_ADV_NOTIF_PREFS = {
+  campaign_updates:    { in_app: true, email: true },
+  review_decisions:    { in_app: true, email: true },
+  publication_updates: { in_app: true, email: true },
+  payment_updates:     { in_app: true, email: true },
+  expiry_reminders:    { in_app: true, email: true },
+  support_replies:     { in_app: true, email: true },
+};
+
+router.get('/advertiser/notifications/prefs', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid = req.advertiser.id;
+  const row = await ensureSettingsRow(uid);
+  const stored = row?.notif_prefs || {};
+  const merged = { ...DEFAULT_ADV_NOTIF_PREFS };
+  for (const k of Object.keys(DEFAULT_ADV_NOTIF_PREFS)) {
+    if (stored[k]) {
+      merged[k] = {
+        in_app: stored[k].in_app !== false,
+        email:  stored[k].email  !== false,
+      };
+    }
+  }
+  res.json({ prefs: merged });
+}));
+
+router.patch('/advertiser/notifications/prefs', authenticateAdvertiser, asyncH(async (req, res) => {
+  const uid  = req.advertiser.id;
+  const body = req.body || {};
+
+  const clean = {};
+  for (const k of Object.keys(DEFAULT_ADV_NOTIF_PREFS)) {
+    if (body[k] && typeof body[k] === 'object') {
+      clean[k] = {
+        in_app: !!body[k].in_app,
+        email:  !!body[k].email,
+      };
+    }
+  }
+  if (!Object.keys(clean).length) throw httpError(400, 'No preferences provided.');
+
+  const row = await ensureSettingsRow(uid);
+  const stored = row?.notif_prefs || {};
+  const merged = { ...DEFAULT_ADV_NOTIF_PREFS, ...stored, ...clean };
+
+  await run(
+    `update public.advertiser_settings
+        set notif_prefs = $1, updated_at = now()
+      where user_id = $2`,
+    [JSON.stringify(merged), uid]
+  );
+
+  await audit(
+    { user: { id: uid, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
+    'update_notification_prefs', 'advertiser', uid, req.advertiser.email,
+    { keys: Object.keys(clean) }
+  );
+
+  res.json({ ok: true, prefs: merged });
+}));
+
 router.get('/public/help/articles', asyncH(async (req, res) => {
   await publicLimit(req);
   const { q: query, category } = req.query;
@@ -2338,6 +2564,7 @@ router.get('/public/help/articles/:slug', asyncH(async (req, res) => {
   if (!row) throw httpError(404, 'Article not found.');
   res.json({ article: row });
 }));
+
 
 /* ---------- PUBLIC (no auth) ---------- */
 async function publicLimit(req) {
