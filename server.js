@@ -635,6 +635,45 @@ router.post('/auth/reset-password', asyncH(async (req, res) => {
 /* ============================================================
  * ADVERTISER ENDPOINTS
  * ============================================================ */
+
+/* Helper: notify all owners + admins without type ambiguity */
+async function notifyStaff(title, body, link) {
+  const staff = await many(
+    `select id from public.users where role in ('owner','admin')`
+  );
+  for (const s of staff) {
+    try {
+      await run(
+        `insert into public.notifications (user_id, title, body, link)
+         values ($1,$2,$3,$4)`,
+        [s.id, title, body, link]
+      );
+    } catch (e) {
+      console.warn('[notifyStaff]', e.message);
+    }
+  }
+}
+
+/* Helper: notify a single advertiser with a category */
+async function notifyAdvertiser(userId, title, body, link, category) {
+  try {
+    await run(
+      `insert into public.notifications (user_id, title, body, link, category, action_url)
+       values ($1,$2,$3,$4,$5,$6)`,
+      [userId, title, body, link, category || null, link || null]
+    );
+  } catch (e) {
+    // Fallback if category/action_url columns don't exist yet
+    try {
+      await run(
+        `insert into public.notifications (user_id, title, body, link)
+         values ($1,$2,$3,$4)`,
+        [userId, title, body, link]
+      );
+    } catch (e2) { console.warn('[notifyAdvertiser]', e2.message); }
+  }
+}
+
 router.post('/advertiser/register', asyncH(async (req, res) => {
   const ip = req.ip || 'unknown';
   if (!(await rateLimit(`adv_register:${ip}`, 5, 60 * 60 * 1000)))
@@ -653,7 +692,6 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
   if (password.length < 10)
     throw httpError(400, 'Password must be at least 10 characters.');
 
-  // Case-insensitive duplicate check
   const existing = await one(
     'select id from public.users where lower(email) = lower($1)',
     [email]
@@ -670,34 +708,32 @@ router.post('/advertiser/register', asyncH(async (req, res) => {
        returning *`,
       [name, email, hash, ADVERTISER_ROLE]
     );
+    const newUserId = u.rows[0].id;
+
     await c.query(
       `insert into public.advertiser_profiles (user_id, business_name, phone)
        values ($1,$2,$3)`,
-      [u.rows[0].id, businessName, phone || null]
+      [newUserId, businessName, phone || null]
     );
+
     await c.query(
       `insert into public.audit_logs
         (actor_id, actor_name, actor_role, action, target_type, target_id, target_label, ip)
-      values ($1,$2,$3,'advertiser_register','advertiser',$4,$5,$6)`,
-      [
-        u.rows[0].id,          // $1 – actor_id (uuid)
-        name,                  // $2
-        ADVERTISER_ROLE,       // $3
-        String(u.rows[0].id),  // $4 – target_id (text)
-        email,                 // $5 – target_label
-        ip                     // $6
-      ]
+       values ($1::uuid, $2, $3, 'advertiser_register', 'advertiser', $4, $5, $6)`,
+      [newUserId, name, ADVERTISER_ROLE, String(newUserId), email, ip]
     );
 
-    // Notify owners — explicit per-row inserts, no || on params
-    const owners = await c.query(`select id from public.users where role = 'owner'`);
+    // Notify owners/admins — per-row inserts, no || on params
+    const staff = await c.query(
+      `select id from public.users where role in ('owner','admin')`
+    );
     const body = `${businessName} (${email}) has requested an advertiser account.`;
-    for (const o of owners.rows) {
+    for (const s of staff.rows) {
       try {
         await c.query(
           `insert into public.notifications (user_id, title, body, link)
-           values ($1, $2, $3, $4)`,
-          [o.id, 'New advertiser awaiting approval', body, '/admin/advertisers.html']
+           values ($1,$2,$3,$4)`,
+          [s.id, 'New advertiser awaiting approval', body, '/admin/advertisers.html']
         );
       } catch (notifErr) {
         console.warn('[register] notification insert failed (non-fatal):', notifErr.message);
@@ -717,7 +753,7 @@ router.post('/advertiser/login', asyncH(async (req, res) => {
   if (!(await rateLimit(`adv_login:${ip}`, 8, 15 * 60 * 1000)))
     throw httpError(429, 'Too many sign-in attempts. Try again later.', 'rate_limited');
 
-  const email    = validateField(req.body?.email, 'email', FIELD_LIMITS.email, { required: true });
+  const email    = validateField(req.body?.email, 'email', FIELD_LIMITS.email, { required: true }).trim().toLowerCase();
   const password = validateField(req.body?.password, 'password', 200, { required: true });
 
   const u = await one(
@@ -817,14 +853,12 @@ router.post('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, 
     { format, duration_days: durationDays, media_type: mediaType }
   );
 
-  await run(
-    `insert into public.notifications (user_id, title, body, link)
-     select id, 'New advertiser campaign submitted',
-            $1 || ' submitted "' || $2 || '" for review.',
-            '/admin/advertisements.html'
-       from public.users where role in ('owner','admin')`,
-    [req.advertiserProfile?.business_name || req.advertiser.name, name]
-  ).catch(() => {});
+  // Notify staff — per-row insert
+  await notifyStaff(
+    'New advertiser campaign submitted',
+    `${req.advertiserProfile?.business_name || req.advertiser.name} submitted "${name}" for review.`,
+    '/admin/advertisements.html'
+  );
 
   res.status(201).json({ ok: true, campaign: row });
 }));
@@ -859,14 +893,11 @@ router.post('/advertiser/campaigns/:id/request-pause', authenticateAdvertiser, a
     { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
     'request_pause', 'advertisement', row.id, row.name
   );
-  await run(
-    `insert into public.notifications (user_id, title, body, link)
-     select id, 'Advertiser paused a campaign',
-            $1 || ' was paused by the advertiser.',
-            '/admin/advertisements.html'
-       from public.users where role in ('owner','admin')`,
-    [row.name]
-  ).catch(() => {});
+  await notifyStaff(
+    'Advertiser paused a campaign',
+    `${row.name} was paused by the advertiser.`,
+    '/admin/advertisements.html'
+  );
   res.json({ ok: true });
 }));
 
@@ -882,6 +913,11 @@ router.post('/advertiser/campaigns/:id/request-resume', authenticateAdvertiser, 
   await audit(
     { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
     'request_resume', 'advertisement', row.id, row.name
+  );
+  await notifyStaff(
+    'Advertiser resumed a campaign',
+    `${row.name} was resumed by the advertiser.`,
+    '/admin/advertisements.html'
   );
   res.json({ ok: true });
 }));
@@ -1323,14 +1359,12 @@ router.post('/advertiser/profile/verify', authenticateAdvertiser, asyncH(async (
     [uid, note]
   );
 
-  await run(
-    `insert into public.notifications (user_id, title, body, link)
-     select id, 'Advertiser verification request',
-            $1 || ' requested business verification.',
-            '/admin/advertisers.html'
-       from public.users where role in ('owner','admin')`,
-    [req.advertiserProfile?.business_name || req.advertiser.name || 'Advertiser']
-  ).catch(() => {});
+  // Notify staff — per-row insert
+  await notifyStaff(
+    'Advertiser verification request',
+    `${req.advertiserProfile?.business_name || req.advertiser.name || 'Advertiser'} requested business verification.`,
+    '/admin/advertisers.html'
+  );
 
   await audit(
     { user: { id: req.advertiser.id, name: req.advertiser.name, role: 'advertiser' }, ip: req.ip },
@@ -1372,7 +1406,7 @@ router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, r
        count(*) filter (where status in ('active','published'))::int as active_campaigns,
        count(*)::int as total_campaigns
      from public.advertisements
-     where advertiser_user_id = $1
+     where advertiser_user_id = $1::uuid
        and status in ('active','published','expired','paused')`,
     [uid]
   );
@@ -1382,7 +1416,7 @@ router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, r
        coalesce(sum(impressions),0)::bigint as imp,
        coalesce(sum(clicks),0)::bigint      as clk
      from public.advertisements
-     where advertiser_user_id = $1
+     where advertiser_user_id = $1::uuid
        and status in ('active','published','expired','paused')`,
     [uid]
   );
@@ -1390,9 +1424,10 @@ router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, r
   const spendRow = await one(
     `select coalesce(sum(amount),0)::numeric as spend, count(*)::int as tx_count
        from public.transactions
-      where customer = $1
+      where customer = $1::text
         and status in ('paid','confirmed','verified','successful')
-        and created_at >= $2 and created_at <= $3`,
+        and created_at >= $2::timestamptz
+        and created_at <= $3::timestamptz`,
     [req.advertiser.email, range.from, range.to]
   );
 
@@ -1401,7 +1436,7 @@ router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, r
             impressions, clicks, start_date, end_date, image_url,
             created_at
        from public.advertisements
-      where advertiser_user_id = $1
+      where advertiser_user_id = $1::uuid
         and status in ('active','published','expired','paused')
       order by impressions desc`,
     [uid]
@@ -1442,18 +1477,19 @@ router.get('/advertiser/analytics', authenticateAdvertiser, asyncH(async (req, r
     byPlacement[p].count       += 1;
   }
 
+  // ─── FIXED: use $1, $2, $3 (uuid, timestamptz, timestamptz) explicitly ───
   const activeDays = await one(
     `select
        coalesce(sum(
          greatest(0,
-           least(end_date::date, $2::date) - greatest(start_date::date, $1::date) + 1
+           least(end_date::date, $3::date) - greatest(start_date::date, $2::date) + 1
          )
        ), 0)::int as days
      from public.advertisements
-     where advertiser_user_id = $1
-       and status in ('active','published','expired','paused')
-       and start_date is not null
-       and end_date is not null`,
+    where advertiser_user_id = $1::uuid
+      and status in ('active','published','expired','paused')
+      and start_date is not null
+      and end_date is not null`,
     [uid, range.from, range.to]
   );
 
@@ -4131,6 +4167,7 @@ router.get('/health', asyncH(async (req, res) => {
     try {
       const payload = jwt.verify(token, JWT_SECRET);
       const user = await one('select * from public.users where id=$1', [payload.sub]);
+
       if (user && user.role === 'owner') {
         const orphan = await one(
           `select count(*)::int as c from public.users where role='school_manager' and school_id is null`
@@ -4141,6 +4178,49 @@ router.get('/health', asyncH(async (req, res) => {
         const pendingAdvertisers = await one(
           `select count(*)::int as c from public.users where role='advertiser' and status='pending'`
         );
+
+        // ── Schema probe: verify every table the app depends on exists ──
+        const requiredTables = [
+          'users', 'schools', 'settings', 'audit_logs', 'notifications',
+          'password_resets', 'rate_limits',
+          'advertisements', 'transactions',
+          'advertiser_profiles', 'advertiser_profiles_ext', 'advertiser_billing',
+          'advertiser_settings', 'advertiser_sessions',
+          'support_tickets', 'support_ticket_messages', 'support_attachments',
+          'help_articles',
+        ];
+        let missingTables = [];
+        try {
+          const present = await many(
+            `select table_name
+               from information_schema.tables
+              where table_schema = 'public'
+                and table_name = ANY($1::text[])`,
+            [requiredTables]
+          );
+          const presentSet = new Set(present.map(r => r.table_name));
+          missingTables = requiredTables.filter(t => !presentSet.has(t));
+        } catch (e) {
+          console.warn('[health] schema probe failed:', e.message);
+          missingTables = ['<probe_failed>'];
+        }
+
+        // ── Optional column probe for the notifications extension ──
+        let missingNotificationColumns = [];
+        try {
+          const cols = await many(
+            `select column_name
+               from information_schema.columns
+              where table_schema = 'public' and table_name = 'notifications'
+                and column_name = ANY($1::text[])`,
+            [['category', 'action_url']]
+          );
+          const have = new Set(cols.map(c => c.column_name));
+          missingNotificationColumns = ['category', 'action_url'].filter(c => !have.has(c));
+        } catch (_) {
+          missingNotificationColumns = ['<probe_failed>'];
+        }
+
         return res.json({
           ...publicBody,
           media: 'supabase-storage',
@@ -4154,9 +4234,16 @@ router.get('/health', asyncH(async (req, res) => {
           orphan_school_managers: orphan ? orphan.c : 0,
           active_password_resets: pendingResets ? pendingResets.c : 0,
           pending_advertisers: pendingAdvertisers ? pendingAdvertisers.c : 0,
+
+          // ── Schema health ──
+          schema_ok: missingTables.length === 0 && missingNotificationColumns.length === 0,
+          missing_tables: missingTables,
+          missing_notification_columns: missingNotificationColumns,
         });
       }
-    } catch (_) {}
+    } catch (_) {
+      // Ignore invalid token — fall through to public health body
+    }
   }
 
   if (!dbOk) {
