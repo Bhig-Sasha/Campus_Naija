@@ -825,11 +825,30 @@ router.post('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, 
   const format      = validateField(b.format, 'format', 20, { required: true }).toLowerCase();
   if (!['large','medium','small','square','vertical'].includes(format))
     throw httpError(400, 'format must be large, medium, small, square or vertical.');
+
   const durationDays = Number(b.duration_days);
   if (!Number.isFinite(durationDays) || durationDays < 1 || durationDays > 365)
     throw httpError(400, 'duration_days must be between 1 and 365.');
-  const imageUrl = validateUrl(b.image_url, 'image_url', { required: true });
+
+  const imageUrl  = validateUrl(b.image_url, 'image_url', { required: true });
   const mediaType = (b.media_type === 'video') ? 'video' : 'image';
+
+  // Compute dates from duration_days (or accept explicit dates if provided)
+  let startDate = b.start_date || null;
+  let endDate   = b.end_date   || null;
+
+  if (!startDate || !endDate) {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + durationDays);
+
+    startDate = start.toISOString().slice(0, 10); // YYYY-MM-DD
+    endDate   = end.toISOString().slice(0, 10);
+  }
+
+  if (new Date(endDate) < new Date(startDate))
+    throw httpError(400, 'end_date cannot be before start_date.');
 
   const row = await one(
     `insert into public.advertisements
@@ -841,9 +860,14 @@ router.post('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, 
       name,
       (req.advertiserProfile?.business_name || req.advertiser.name || 'Advertiser'),
       (description || headline),
-      cta, url, imageUrl, format,
-      b.start_date || null, b.end_date || null,
-      req.advertiser.id, req.advertiser.id,
+      cta,
+      url,
+      imageUrl,
+      format,
+      startDate,
+      endDate,
+      req.advertiser.id,
+      req.advertiser.id,
     ]
   );
 
@@ -853,7 +877,6 @@ router.post('/advertiser/campaigns', authenticateAdvertiser, asyncH(async (req, 
     { format, duration_days: durationDays, media_type: mediaType }
   );
 
-  // Notify staff — per-row insert
   await notifyStaff(
     'New advertiser campaign submitted',
     `${req.advertiserProfile?.business_name || req.advertiser.name} submitted "${name}" for review.`,
