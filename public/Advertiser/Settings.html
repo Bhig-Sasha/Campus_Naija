@@ -61,7 +61,6 @@
 
     .adv-shell { display: flex; min-height: 100vh; }
 
-    /* ─── Sidebar ─── */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -131,7 +130,6 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ─── Main ─── */
     .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
 
     .topbar {
@@ -215,7 +213,6 @@
 
     .content { padding: 28px 24px 96px; flex: 1; max-width: 1180px; margin: 0 auto; width: 100%; }
 
-    /* ─── Page heading ─── */
     .page-heading {
       margin-bottom: 22px;
       display: flex; flex-wrap: wrap; align-items: flex-start;
@@ -232,7 +229,6 @@
 
     .heading-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    /* ─── Layout ─── */
     .settings-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -242,7 +238,6 @@
       .settings-grid { grid-template-columns: 240px 1fr; align-items: start; }
     }
 
-    /* ─── Settings side nav ─── */
     .settings-nav {
       background-color: var(--elevated);
       border: 1px solid var(--border);
@@ -282,7 +277,6 @@
       color: var(--primary);
     }
 
-    /* ─── Panels ─── */
     .settings-panel { display: none; animation: slideUp 0.25s ease both; }
     .settings-panel.active { display: block; }
 
@@ -301,7 +295,6 @@
     .panel-title i { color: var(--primary); font-size: 1rem; }
     .panel-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
 
-    /* ─── Fields ─── */
     .field { margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
     .field label {
@@ -337,7 +330,6 @@
     @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
     .field-hint { font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
 
-    /* ─── Appearance picker ─── */
     .appearance-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -366,16 +358,13 @@
       border: 1px solid var(--border);
       display: flex; overflow: hidden;
     }
-    .appearance-preview span {
-      display: block; height: 100%;
-    }
+    .appearance-preview span { display: block; height: 100%; }
     .preview-dark { background: #0D1210; flex: 0 0 32%; }
     .preview-dark-2 { background: #070A09; flex: 1; }
     .preview-light { background: #E8EFEA; flex: 0 0 32%; }
     .preview-light-2 { background: #FFFFFF; flex: 1; }
     .preview-system { background: linear-gradient(90deg, #0D1210 0%, #0D1210 50%, #FFFFFF 50%, #FFFFFF 100%); flex: 1; }
 
-    /* ─── Toggle switch ─── */
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 0;
@@ -415,7 +404,6 @@
       color: var(--primary);
     }
 
-    /* ─── Security cards ─── */
     .security-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -447,10 +435,8 @@
       margin-bottom: 10px;
     }
 
-    /* ─── Password modal fields ─── */
     .pw-form .field { margin-bottom: 14px; }
 
-    /* ─── Sessions table ─── */
     .session-list { display: flex; flex-direction: column; gap: 8px; }
 
     .session-card {
@@ -495,15 +481,10 @@
     }
 
     @media (max-width: 640px) {
-      .session-card {
-        grid-template-columns: 40px 1fr;
-      }
-      .session-card .sess-actions {
-        grid-column: 2;
-      }
+      .session-card { grid-template-columns: 40px 1fr; }
+      .session-card .sess-actions { grid-column: 2; }
     }
 
-    /* ─── Danger zone ─── */
     .danger-zone {
       background-color: rgba(224,112,112,0.04);
       border: 1px solid rgba(224,112,112,0.28);
@@ -521,7 +502,6 @@
     .danger-row h4 { font-size: 0.9rem; margin-bottom: 4px; }
     .danger-row p { font-size: 0.76rem; color: var(--muted); }
 
-    /* ─── Privacy policy link row ─── */
     .link-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 0;
@@ -536,7 +516,6 @@
     }
     .link-row a:hover { text-decoration: underline; }
 
-    /* ─── Sticky save bar ─── */
     .save-bar {
       position: fixed; left: var(--sidebar-w); right: 0; bottom: 0;
       background-color: rgba(13,18,16,0.94);
@@ -558,7 +537,6 @@
     .save-bar .actions { display: flex; gap: 8px; }
     @media (max-width: 1023px) { .save-bar { left: 0; padding: 12px 16px; } }
 
-    /* ─── Modals ─── */
     .modal-backdrop {
       position: fixed; inset: 0;
       background-color: rgba(3,5,4,0.75);
@@ -628,7 +606,9 @@
     }
     .warn-banner.danger i { color: var(--danger); }
 
-    /* ─── Overlay / toast ─── */
+    /* Sign-out modal is narrower */
+    .modal.signout { max-width: 420px; }
+
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
       background-color: rgba(0,0,0,0.6);
@@ -655,7 +635,6 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
 
-    /* ─── Responsive ─── */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
@@ -689,7 +668,6 @@
 
   <div class="adv-shell">
 
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -722,7 +700,6 @@
       </div>
     </aside>
 
-    <!-- Main -->
     <div class="main-area">
       <header class="topbar">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
@@ -767,8 +744,6 @@
         </div>
 
         <div class="settings-grid">
-
-          <!-- Settings nav -->
           <nav class="settings-nav" id="settingsNav" role="tablist" aria-label="Settings sections">
             <button class="settings-nav-item active" data-panel="general" role="tab">
               <i class="fas fa-sliders"></i> <span>General</span>
@@ -790,9 +765,7 @@
             </button>
           </nav>
 
-          <!-- Panels -->
           <div>
-
             <!-- General -->
             <div class="settings-panel active" data-panel-content="general">
               <div class="panel">
@@ -1206,6 +1179,27 @@
     </div>
   </div>
 
+  <!-- Sign-out confirmation modal -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal signout">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
@@ -1227,6 +1221,7 @@
         settings: null,
         dirty: false,
         currentPanel: 'general',
+        signingOut: false,
       };
 
       const $ = (id) => document.getElementById(id);
@@ -1247,12 +1242,6 @@
         const dt = new Date(d);
         if (isNaN(dt)) return '—';
         return dt.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      };
-      const fmtDate = (d) => {
-        if (!d) return '—';
-        const dt = new Date(d);
-        if (isNaN(dt)) return '—';
-        return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       };
 
       function redirectToLogin(reason) {
@@ -1305,7 +1294,6 @@
         ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
       }
 
-      /* ─── Panels ─── */
       function switchPanel(name) {
         state.currentPanel = name;
         document.querySelectorAll('.settings-nav-item').forEach(el => {
@@ -1317,13 +1305,11 @@
         if (name === 'sessions') loadSessions();
       }
 
-      /* ─── Load settings ─── */
       async function loadSettings() {
         try {
           const data = await api('/api/advertiser/settings');
           state.settings = data;
 
-          // General
           $('fDisplayName').value = data.general.display_name || '';
           $('fContactEmail').value = data.general.contact_email || '';
           $('fPhone').value = data.general.phone || '';
@@ -1331,21 +1317,17 @@
           fillTimezones(data.options.timezones, data.general.timezone || 'Africa/Lagos');
           $('fDateFormat').value = data.general.date_format || 'DD MMM YYYY';
 
-          // Appearance
           document.querySelectorAll('.appearance-card').forEach(c => {
             c.classList.toggle('selected', c.getAttribute('data-appearance') === (data.general.appearance || 'dark'));
           });
 
-          // Security
           $('lastPasswordChange').textContent = data.security.last_password_change
             ? fmtDateTime(data.security.last_password_change)
             : 'Never';
           update2FA(data.security.two_factor_enabled);
 
-          // Notifications
           renderNotifTable(data.notifications);
 
-          // Privacy
           document.querySelectorAll('[data-privacy]').forEach(t => {
             const k = t.getAttribute('data-privacy');
             const on = !!(data.privacy && data.privacy[k]);
@@ -1397,7 +1379,6 @@
           `;
         }).join('');
 
-        // Always-on security alerts row
         tbody.innerHTML += `
           <tr style="border-bottom:none;">
             <td style="padding:12px 6px;">
@@ -1416,16 +1397,9 @@
         $('twofaToggle').dataset.enabled = String(enabled);
       }
 
-      /* ─── Dirty tracking ─── */
-      function markDirty() {
-        state.dirty = true;
-        updateSaveBar();
-      }
-      function updateSaveBar() {
-        $('saveBar').classList.toggle('visible', state.dirty);
-      }
+      function markDirty() { state.dirty = true; updateSaveBar(); }
+      function updateSaveBar() { $('saveBar').classList.toggle('visible', state.dirty); }
 
-      /* ─── Save ─── */
       function collectPayload() {
         const notifications = {};
         document.querySelectorAll('[data-notif-key]').forEach(t => {
@@ -1469,7 +1443,6 @@
           });
           state.dirty = false;
           updateSaveBar();
-          // Refresh user so topbar updates
           try {
             const me = await api('/api/advertiser/me');
             if (me && me.user) {
@@ -1494,7 +1467,6 @@
         toast('Changes reset');
       }
 
-      /* ─── Sessions ─── */
       async function loadSessions() {
         try {
           const data = await api('/api/advertiser/settings/sessions');
@@ -1571,7 +1543,6 @@
         }
       }
 
-      /* ─── Password modal ─── */
       function openPwModal() {
         $('pwCurrent').value = '';
         $('pwNext').value = '';
@@ -1615,7 +1586,6 @@
         }
       }
 
-      /* ─── 2FA toggle ─── */
       async function toggle2FA() {
         const enabled = $('twofaToggle').dataset.enabled === 'true';
         try {
@@ -1630,13 +1600,11 @@
         }
       }
 
-      /* ─── Download data ─── */
       function downloadData() {
         const url = `${API_BASE}/api/advertiser/settings/export?token=${encodeURIComponent(state.token)}`;
         window.open(url, '_blank');
       }
 
-      /* ─── Deactivate ─── */
       function openDeactivate() {
         $('deactivatePassword').value = '';
         $('deactivateModal').classList.add('open');
@@ -1669,7 +1637,6 @@
         }
       }
 
-      /* ─── Delete request ─── */
       function openDelete() {
         $('deleteReason').value = '';
         $('deletePassword').value = '';
@@ -1703,9 +1670,20 @@
         }
       }
 
-      /* ─── Wiring ─── */
+      /* ─── Sign-out modal ─── */
+      function openSignoutModal() {
+        state.signingOut = true;
+        $('signoutModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+      function closeSignoutModal() {
+        state.signingOut = false;
+        $('signoutModal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
       function wireEvents() {
-        // Sidebar
         $('menuToggle').addEventListener('click', () => {
           const open = $('sidebar').classList.toggle('open');
           $('sidebarOverlay').classList.toggle('active', open);
@@ -1715,28 +1693,30 @@
           $('sidebar').classList.remove('open');
           $('sidebarOverlay').classList.remove('active');
         });
+
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            $('sidebar').classList.remove('open');
-            $('sidebarOverlay').classList.remove('active');
-            closePwModal(); closeDeactivate(); closeDelete();
-          }
+          if (e.key !== 'Escape') return;
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+          if ($('signoutModal').classList.contains('open')) closeSignoutModal();
+          closePwModal(); closeDeactivate(); closeDelete();
         });
 
-        // Logout
-        $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
-          redirectToLogin();
+        // Sign-out modal
+        $('sideLogout').addEventListener('click', openSignoutModal);
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        $('signoutModal').addEventListener('click', (e) => {
+          if (e.target === $('signoutModal')) closeSignoutModal();
         });
+        $('signoutConfirm').addEventListener('click', () => redirectToLogin());
 
-        // Sidebar settings nav
         $('settingsNav').addEventListener('click', (e) => {
           const btn = e.target.closest('.settings-nav-item');
           if (!btn) return;
           switchPanel(btn.getAttribute('data-panel'));
         });
 
-        // Form changes → mark dirty
         ['fDisplayName','fContactEmail','fPhone','fLanguage','fTimezone','fDateFormat']
           .forEach(id => $(id).addEventListener('input', markDirty));
         document.querySelectorAll('.appearance-card').forEach(card => {
@@ -1747,7 +1727,6 @@
           });
         });
 
-        // Global toggle handler (works for notif, privacy, security alerts)
         document.addEventListener('click', (e) => {
           const toggle = e.target.closest('.toggle');
           if (!toggle) return;
@@ -1757,50 +1736,40 @@
           markDirty();
         });
 
-        // Save / reset
         $('saveBtn').addEventListener('click', saveSettings);
         $('saveBtnBottom').addEventListener('click', saveSettings);
         $('resetBtn').addEventListener('click', resetSettings);
         $('discardBtn').addEventListener('click', resetSettings);
 
-        // Password
         $('openPasswordModal').addEventListener('click', openPwModal);
         $('pwClose').addEventListener('click', closePwModal);
         $('pwCancel').addEventListener('click', closePwModal);
         $('pwSave').addEventListener('click', savePassword);
         $('pwModal').addEventListener('click', (e) => { if (e.target === $('pwModal')) closePwModal(); });
 
-        // 2FA
         $('twofaToggle').addEventListener('click', toggle2FA);
-
-        // Sessions
         $('revokeOthersBtn').addEventListener('click', revokeOthers);
 
-        // Download data
         $('downloadDataBtn').addEventListener('click', (e) => { e.preventDefault(); downloadData(); });
         $('exportDataBtn').addEventListener('click', downloadData);
 
-        // Deactivate
         $('deactivateBtn').addEventListener('click', openDeactivate);
         $('deactivateClose').addEventListener('click', closeDeactivate);
         $('deactivateCancel').addEventListener('click', closeDeactivate);
         $('deactivateConfirm').addEventListener('click', confirmDeactivate);
         $('deactivateModal').addEventListener('click', (e) => { if (e.target === $('deactivateModal')) closeDeactivate(); });
 
-        // Delete
         $('deleteBtn').addEventListener('click', openDelete);
         $('deleteClose').addEventListener('click', closeDelete);
         $('deleteCancel').addEventListener('click', closeDelete);
         $('deleteConfirm').addEventListener('click', confirmDelete);
         $('deleteModal').addEventListener('click', (e) => { if (e.target === $('deleteModal')) closeDelete(); });
 
-        // Unsaved changes warning
         window.addEventListener('beforeunload', (e) => {
-          if (state.dirty) { e.preventDefault(); e.returnValue = ''; }
+          if (state.dirty && !state.signingOut) { e.preventDefault(); e.returnValue = ''; }
         });
       }
 
-      /* ─── Boot ─── */
       (async function boot() {
         try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!state.token) { redirectToLogin('not_signed_in'); return; }
@@ -1826,7 +1795,6 @@
         wireEvents();
         await loadSettings();
 
-        // URL param for initial panel
         const params = new URLSearchParams(location.search);
         if (params.get('panel')) switchPanel(params.get('panel'));
       })();

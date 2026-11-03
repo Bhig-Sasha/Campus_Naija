@@ -275,7 +275,6 @@
     .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.92rem; }
 
-    /* ─── Identity hero ─── */
     .identity-hero {
       background: linear-gradient(135deg, #0D1210 0%, #111815 100%);
       border: 1px solid var(--border);
@@ -352,7 +351,6 @@
     }
     .pill i { font-size: 0.55rem; }
 
-    /* ─── Tab nav ─── */
     .profile-tabs {
       display: flex; gap: 4px;
       background-color: var(--elevated);
@@ -384,7 +382,6 @@
       color: #051410;
     }
 
-    /* ─── Tab panel ─── */
     .tab-panel { display: none; animation: slideUp 0.3s ease both; }
     .tab-panel.active { display: block; }
 
@@ -406,7 +403,6 @@
       margin-bottom: 20px;
     }
 
-    /* ─── Fields ─── */
     .field { margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
     .field label {
@@ -454,7 +450,6 @@
     }
     @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
 
-    /* ─── Logo uploader ─── */
     .logo-uploader {
       display: flex; align-items: center; gap: 18px;
       flex-wrap: wrap;
@@ -495,7 +490,6 @@
       font-weight: 700;
     }
 
-    /* ─── Verification ─── */
     .verification-card {
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -535,7 +529,6 @@
       color: var(--primary); font-size: 0.7rem;
       margin-top: 3px; flex-shrink: 0;
     }
-
     .verification-card.verified {
       border-color: rgba(0,201,130,0.3);
       background-color: rgba(0,201,130,0.04);
@@ -600,6 +593,50 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
 
+    /* ─── Sign-out modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 150;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(-8px);
+      transition: transform 0.25s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .modal-head .head-body { flex: 1; min-width: 0; }
+    .modal-head h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .modal-head p { font-size: 0.82rem; color: var(--muted); }
+    .modal-foot {
+      padding: 16px 22px;
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
+
     /* ─── Responsive ─── */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
@@ -639,7 +676,6 @@
 
   <div class="adv-shell">
 
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
       <div class="sidebar-brand">
         <div class="logo">Campus<span>Naija</span></div>
@@ -676,7 +712,6 @@
       </div>
     </aside>
 
-    <!-- Main -->
     <div class="main-area">
       <header class="topbar">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
@@ -712,7 +747,6 @@
           </div>
         </div>
 
-        <!-- Identity hero -->
         <section class="identity-hero" id="identityHero">
           <div class="hero-logo" id="heroLogo">?</div>
           <div class="hero-body">
@@ -725,7 +759,6 @@
           </div>
         </section>
 
-        <!-- Tabs -->
         <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
           <button class="profile-tab active" data-tab="business" role="tab">
             <i class="fas fa-briefcase"></i> Business Information
@@ -744,7 +777,6 @@
           </button>
         </nav>
 
-        <!-- Tab: Business information -->
         <section class="tab-panel active" data-panel="business">
           <div class="panel">
             <div class="panel-title"><i class="fas fa-briefcase"></i> Business details</div>
@@ -783,7 +815,6 @@
           </div>
         </section>
 
-        <!-- Tab: Contact information -->
         <section class="tab-panel" data-panel="contact">
           <div class="panel">
             <div class="panel-title"><i class="fas fa-address-book"></i> Business contact details</div>
@@ -833,7 +864,6 @@
           </div>
         </section>
 
-        <!-- Tab: Brand identity -->
         <section class="tab-panel" data-panel="brand">
           <div class="panel">
             <div class="panel-title"><i class="fas fa-palette"></i> Your business branding</div>
@@ -871,7 +901,6 @@
           </div>
         </section>
 
-        <!-- Tab: Online presence -->
         <section class="tab-panel" data-panel="online">
           <div class="panel">
             <div class="panel-title"><i class="fas fa-globe"></i> Where customers can find you</div>
@@ -900,7 +929,6 @@
           </div>
         </section>
 
-        <!-- Tab: Verification -->
         <section class="tab-panel" data-panel="verify">
           <div class="panel">
             <div class="panel-title"><i class="fas fa-shield-halved"></i> Business verification</div>
@@ -914,7 +942,6 @@
     </div>
   </div>
 
-  <!-- Sticky save bar -->
   <div class="save-bar" id="saveBar">
     <div class="state">
       <i class="fas fa-circle-exclamation"></i>
@@ -930,7 +957,27 @@
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Sign-out confirmation modal -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText">Loaded</span>
@@ -948,8 +995,8 @@
       const state = {
         token: null,
         user: null,
-        original: {},   // server snapshot
-        draft: {},      // local working copy
+        original: {},
+        draft: {},
         activeTab: 'business',
         saving: false,
       };
@@ -1027,7 +1074,6 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
 
-      /* ─── user chrome ─── */
       function renderUser() {
         if (!state.user) return;
         const label = state.draft.brand_name || state.draft.business_name || state.user.business_name || state.user.name || 'Advertiser';
@@ -1043,7 +1089,6 @@
         }
       }
 
-      /* ─── hydration ─── */
       function hydrateForm() {
         const d = state.draft;
         $('fBusinessName').value = d.business_name || '';
@@ -1111,7 +1156,6 @@
         return dirty;
       }
 
-      /* ─── logo ─── */
       function renderLogoPreview(url) {
         const img = $('logoImg');
         const ph = $('logoPlaceholder');
@@ -1152,7 +1196,6 @@
         }
       }
 
-      /* ─── verification ─── */
       function renderVerification() {
         const status = state.draft.verification_status || 'unverified';
         const submitted = state.draft.verification_submitted_at;
@@ -1227,7 +1270,6 @@
         }
       }
 
-      /* ─── save ─── */
       async function saveProfile() {
         if (state.saving) return;
         const payload = readForm();
@@ -1277,7 +1319,6 @@
         toast('Changes discarded');
       }
 
-      /* ─── tabs ─── */
       function switchTab(tab) {
         state.activeTab = tab;
         document.querySelectorAll('.profile-tab').forEach(t => {
@@ -1288,7 +1329,17 @@
         });
       }
 
-      /* ─── wiring ─── */
+      /* ─── Sign-out modal ─── */
+      function openSignoutModal() {
+        $('signoutModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+      function closeSignoutModal() {
+        $('signoutModal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
       function wireEvents() {
         // Sidebar
         $('menuToggle').addEventListener('click', () => {
@@ -1300,18 +1351,23 @@
           $('sidebar').classList.remove('open');
           $('sidebarOverlay').classList.remove('active');
         });
+
+        // Escape closes sign-out modal (if open) and the sidebar
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            $('sidebar').classList.remove('open');
-            $('sidebarOverlay').classList.remove('active');
-          }
+          if (e.key !== 'Escape') return;
+          if ($('signoutModal').classList.contains('open')) closeSignoutModal();
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
         });
 
-        // Logout
-        $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
-          redirectToLogin();
+        // Sign-out modal
+        $('sideLogout').addEventListener('click', openSignoutModal);
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        $('signoutModal').addEventListener('click', (e) => {
+          if (e.target === $('signoutModal')) closeSignoutModal();
         });
+        $('signoutConfirm').addEventListener('click', () => redirectToLogin());
 
         // Tabs
         document.querySelectorAll('.profile-tab').forEach(tab => {
@@ -1358,7 +1414,6 @@
         });
       }
 
-      /* ─── boot ─── */
       (async function boot() {
         try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!state.token) { redirectToLogin('not_signed_in'); return; }
@@ -1380,7 +1435,6 @@
 
         if (!state.user) { redirectToLogin('not_signed_in'); return; }
 
-        // Load profile
         try {
           const data = await api('/api/advertiser/profile');
           const p = data.profile || {};
@@ -1427,7 +1481,6 @@
         wireEvents();
         refreshDirtyState();
 
-        // URL param for initial tab
         const params = new URLSearchParams(location.search);
         if (params.get('tab')) switchTab(params.get('tab'));
       })();

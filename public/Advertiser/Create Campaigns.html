@@ -966,6 +966,45 @@
       display: flex; flex-direction: column; gap: 8px;
     }
 
+    /* ─── Sign-out modal (smaller, no success icon) ─── */
+    .signout-backdrop {
+      position: fixed; inset: 0; z-index: 150;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .signout-backdrop.show { display: flex; animation: fadeIn 0.2s ease; }
+    .signout-modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      max-width: 420px; width: 100%;
+      animation: slideUp 0.3s ease both;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .signout-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .signout-head .head-body { flex: 1; min-width: 0; }
+    .signout-head h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .signout-head p { font-size: 0.82rem; color: var(--muted); }
+    .signout-foot {
+      padding: 16px 22px;
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
+
     /* ─── Responsive ─── */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
@@ -1085,7 +1124,6 @@
           </button>
         </div>
 
-        <!-- Progress -->
         <div class="progress-wrap">
           <div class="progress-head">
             <div>
@@ -1161,7 +1199,7 @@
           </div>
 
           <div class="wizard-footer">
-            <a href="./dashboard.html" class="btn-outline">
+            <a href="./Index.html" class="btn-outline">
               <i class="fas fa-arrow-left"></i> Cancel
             </a>
             <div class="right">
@@ -1340,7 +1378,6 @@
             <div class="panel-sub">Review your campaign, then proceed to payment.</div>
 
             <div class="review-grid">
-              <!-- Preview column -->
               <div>
                 <div class="preview-tabs">
                   <button class="preview-tab active" data-mode="desktop">
@@ -1366,7 +1403,6 @@
                 </div>
               </div>
 
-              <!-- Summary column -->
               <div>
                 <div class="panel" style="background-color:var(--surface);padding:18px;margin-bottom:14px;">
                   <h4 style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:800;">
@@ -1428,7 +1464,6 @@
               </div>
             </div>
 
-            <!-- After payment timeline -->
             <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);">
               <h4 style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:800;">
                 What happens after payment?
@@ -1490,6 +1525,27 @@
         </a>
         <button class="btn-outline" id="modalClose" style="justify-content:center;">
           Create another
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign-out confirmation modal -->
+  <div class="signout-backdrop" id="signoutModal">
+    <div class="signout-modal">
+      <div class="signout-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>Your draft will be saved automatically. You can pick up right where you left off.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="signout-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
         </button>
       </div>
     </div>
@@ -1585,7 +1641,6 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 3200);
       }
 
-      /* ─── user chrome ─── */
       function initials(name) {
         if (!name) return 'AD';
         return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
@@ -1600,13 +1655,10 @@
         ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
       }
 
-      /* ─── draft persistence ─── */
       function saveDraft() {
         try {
           const toSave = Object.assign({}, state.draft);
-          // media preview may be a data URL; keep it out of localStorage to avoid size limits
           if (toSave.media && toSave.media.previewDataUrl && !toSave.media.url) {
-            // Only persist metadata (not the preview)
             toSave.media = { filename: toSave.media.filename, size: toSave.media.size, mime_type: toSave.media.mime_type };
           }
           localStorage.setItem(DRAFT_KEY, JSON.stringify({ draft: toSave, step: state.step }));
@@ -1636,7 +1688,6 @@
         } catch (_) {}
       }
 
-      /* ─── hydration ─── */
       function hydrateForm() {
         $('fName').value = state.draft.name || '';
         $('fHeadline').value = state.draft.headline || '';
@@ -1674,7 +1725,6 @@
         $('descCount').textContent = ($('fDescription').value || '').length;
       }
 
-      /* ─── stepper ─── */
       const STEP_NAMES = ['Campaign details', 'Format', 'Creative', 'Duration', 'Review & payment'];
 
       function goToStep(n) {
@@ -1703,7 +1753,6 @@
         if (n > state.maxUnlocked) state.maxUnlocked = n;
       }
 
-      /* ─── validation ─── */
       function validateStep1() {
         const name = $('fName').value.trim();
         const headline = $('fHeadline').value.trim();
@@ -1728,7 +1777,6 @@
         return true;
       }
 
-      /* ─── pricing ─── */
       function calcPrice(days) {
         if (!state.pricing) return { subtotal: 0, vat: 0, total: 0 };
         const p = state.pricing;
@@ -1759,7 +1807,6 @@
         });
       }
 
-      /* ─── media upload ─── */
       async function handleFile(file) {
         if (!file) return;
         const allowedImg = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
@@ -1774,7 +1821,6 @@
           return;
         }
 
-        // Show local preview immediately
         const reader = new FileReader();
         reader.onload = (e) => {
           renderMediaPreview({
@@ -1787,7 +1833,6 @@
         };
         reader.readAsDataURL(file);
 
-        // Upload to backend
         $('uploadProgress').classList.add('active');
         $('uploadBar').style.width = '10%';
 
@@ -1849,12 +1894,10 @@
         });
       }
 
-      /* ─── review & payment ─── */
       function updateReview() {
         const d = state.draft;
         const media = d.media;
 
-        // Preview
         if (media && media.url) {
           const isVideo = (media.mime_type || '').startsWith('video/');
           $('adMedia').innerHTML = isVideo
@@ -1867,7 +1910,6 @@
         $('adDesc').textContent = d.description || 'Your short description will appear here.';
         $('adCta').innerHTML = `${esc(d.cta_text || 'Learn More')} <i class="fas fa-arrow-right"></i>`;
 
-        // Summary
         $('sumName').textContent = d.name || '—';
         $('sumHeadline').textContent = d.headline || '—';
         $('sumFormat').textContent = d.format
@@ -1882,7 +1924,6 @@
         $('sumVat').textContent = fmtMoney(vat, cur);
         $('sumTotal').innerHTML = `${fmtMoney(total, cur)}<small>Payable now</small>`;
 
-        // Terms
         updatePayButton();
       }
 
@@ -1894,7 +1935,6 @@
         if (!hasPrice) $('termsHint').textContent = 'Select a duration first';
       }
 
-      /* ─── submit ─── */
       async function submitCampaign() {
         const d = state.draft;
         if (!d.media || !d.media.url) { toast('Please upload a creative first', true); return; }
@@ -1920,7 +1960,6 @@
             body: JSON.stringify(payload),
           });
 
-          // Clear draft
           try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
 
           $('successModal').classList.add('show');
@@ -1931,7 +1970,21 @@
         }
       }
 
-      /* ─── wire ─── */
+      /* ─── Sign-out modal ─── */
+      function openSignoutModal() {
+        const m = $('signoutModal');
+        if (!m) return;
+        m.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+      function closeSignoutModal() {
+        const m = $('signoutModal');
+        if (!m) return;
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
       function wire() {
         // Sidebar
         $('menuToggle').addEventListener('click', () => {
@@ -1943,16 +1996,24 @@
           $('sidebar').classList.remove('open');
           $('sidebarOverlay').classList.remove('active');
         });
+
+        // Escape closes everything
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            $('sidebar').classList.remove('open');
-            $('sidebarOverlay').classList.remove('active');
-          }
+          if (e.key !== 'Escape') return;
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+          if ($('signoutModal')?.classList.contains('show')) closeSignoutModal();
         });
 
-        // Logout
-        $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
+        // Sign-out modal
+        $('sideLogout').addEventListener('click', openSignoutModal);
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        $('signoutModal').addEventListener('click', (e) => {
+          if (e.target === $('signoutModal')) closeSignoutModal();
+        });
+        $('signoutConfirm').addEventListener('click', () => {
+          saveDraft();
           redirectToLogin();
         });
 
@@ -1969,13 +2030,11 @@
         $('fUrl').addEventListener('input', (e) => { state.draft.url = e.target.value; });
         $('fCta').addEventListener('change', (e) => { state.draft.cta_text = e.target.value; });
 
-        // Save draft
         $('saveDraftBtn').addEventListener('click', () => {
           saveDraft();
           toast('Draft saved');
         });
 
-        // Stepper clicks
         $('stepper').addEventListener('click', (e) => {
           const s = e.target.closest('.step');
           if (!s) return;
@@ -1983,7 +2042,6 @@
           if (n <= state.maxUnlocked) goToStep(n);
         });
 
-        // Next / Prev
         document.querySelectorAll('[data-next]').forEach(btn => {
           btn.addEventListener('click', () => {
             const n = Number(btn.getAttribute('data-next'));
@@ -2003,7 +2061,6 @@
           });
         });
 
-        // Format cards
         $('formatGrid').addEventListener('click', (e) => {
           const card = e.target.closest('.format-card');
           if (!card) return;
@@ -2013,7 +2070,6 @@
           renderPricingHints();
         });
 
-        // Upload zone
         const zone = $('uploadZone');
         zone.addEventListener('click', (e) => {
           if (e.target.closest('#removeMedia')) return;
@@ -2036,7 +2092,6 @@
           e.target.value = '';
         });
 
-        // Duration cards
         $('durationGrid').addEventListener('click', (e) => {
           const card = e.target.closest('.duration-card');
           if (!card) return;
@@ -2056,7 +2111,6 @@
           $('customPrice').textContent = `Estimated total: ${fmtMoney(total, state.pricing?.currency || 'NGN')}`;
         });
 
-        // Preview tabs
         document.querySelectorAll('.preview-tab').forEach(tab => {
           tab.addEventListener('click', () => {
             document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
@@ -2066,13 +2120,9 @@
           });
         });
 
-        // Terms
         $('termsCheck').addEventListener('change', updatePayButton);
-
-        // Pay / submit
         $('payBtn').addEventListener('click', submitCampaign);
 
-        // Success modal
         $('modalClose').addEventListener('click', () => {
           $('successModal').classList.remove('show');
           try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
@@ -2080,7 +2130,6 @@
         });
       }
 
-      /* ─── boot ─── */
       (async function boot() {
         try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!state.token) { redirectToLogin('not_signed_in'); return; }
@@ -2104,12 +2153,10 @@
 
         renderUser();
 
-        // Load pricing
         try {
           state.pricing = await api('/api/advertiser/pricing');
         } catch (e) {
           console.warn('[pricing]', e.message);
-          // Fallback so the wizard still works
           state.pricing = {
             currency: 'NGN', per_day: 500,
             discounts: { d7: 0, d14: 0.05, d30: 0.10, d60: 0.15 },

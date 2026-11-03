@@ -152,7 +152,6 @@
       color: var(--muted);
     }
 
-    /* Sidebar footer — advertiser identity */
     .sidebar-footer {
       padding: 14px 12px 18px;
       border-top: 1px solid var(--border);
@@ -186,7 +185,7 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ─── Main area ─── */
+    /* ─── Main ─── */
     .main-area {
       flex: 1; margin-left: var(--sidebar-w);
       display: flex; flex-direction: column;
@@ -213,8 +212,7 @@
 
     .topbar-heading { flex: 1; min-width: 0; }
     .topbar-heading h1 {
-      font-size: 1.25rem;
-      font-weight: 800;
+      font-size: 1.25rem; font-weight: 800;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .topbar-heading p {
@@ -259,7 +257,6 @@
     .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
     .topbar-admin-role { font-size: 0.66rem; color: var(--muted); line-height: 1.2; }
 
-    /* ─── Create ad button ─── */
     .btn-primary {
       background-color: var(--primary); color: #070A09;
       font-weight: 800; font-size: 0.85rem;
@@ -283,7 +280,6 @@
     }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
-    /* ─── Content ─── */
     .content { padding: 28px 24px 56px; flex: 1; }
 
     .page-heading {
@@ -300,7 +296,6 @@
     .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.92rem; }
 
-    /* ─── Stats grid ─── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -352,7 +347,6 @@
     .stat-card-value.gold { color: var(--accent); }
     .stat-card-sub { font-size: 0.72rem; color: var(--muted); }
 
-    /* ─── Panel ─── */
     .panel {
       background-color: var(--elevated);
       border: 1px solid var(--border);
@@ -387,7 +381,6 @@
     }
     .panel-link:hover { gap: 10px; }
 
-    /* ─── Chart ─── */
     .chart-controls {
       display: flex; gap: 4px; flex-wrap: wrap;
       padding: 4px;
@@ -428,8 +421,7 @@
 
     .chart-wrap {
       position: relative; height: 260px;
-      background:
-        linear-gradient(rgba(41,53,47,0.15) 1px, transparent 1px);
+      background: linear-gradient(rgba(41,53,47,0.15) 1px, transparent 1px);
       background-size: 100% 25%;
     }
     .chart-svg { width: 100%; height: 100%; display: block; }
@@ -443,7 +435,6 @@
       vertical-align: middle;
     }
 
-    /* ─── Campaigns table ─── */
     .table-wrap { overflow-x: auto; margin: 0 -22px; padding: 0 22px; }
     table.camp-table {
       width: 100%; border-collapse: collapse;
@@ -523,9 +514,7 @@
     .st-paid      { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .st-unpaid    { background-color: rgba(245,185,66,0.12); color: var(--accent); }
 
-    .row-actions {
-      display: flex; gap: 4px;
-    }
+    .row-actions { display: flex; gap: 4px; }
     .icon-action {
       background: transparent; border: 1px solid var(--border);
       color: var(--muted); cursor: pointer;
@@ -533,11 +522,8 @@
       display: inline-flex; align-items: center; gap: 4px;
       transition: all 0.15s;
     }
-    .icon-action:hover {
-      color: var(--primary); border-color: var(--primary);
-    }
+    .icon-action:hover { color: var(--primary); border-color: var(--primary); }
 
-    /* ─── Bottom grid ─── */
     .bottom-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -545,7 +531,6 @@
     }
     @media (min-width: 1024px) { .bottom-grid { grid-template-columns: 1fr 1fr; } }
 
-    /* ─── Payment overview ─── */
     .payment-stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -572,10 +557,7 @@
     .pay-stat-value.green { color: var(--primary); }
     .pay-stat-value.gold { color: var(--accent); }
 
-    /* ─── Activity ─── */
-    .activity-list {
-      display: flex; flex-direction: column; gap: 2px;
-    }
+    .activity-list { display: flex; flex-direction: column; gap: 2px; }
     .activity-item {
       display: flex; gap: 12px;
       padding: 12px 0;
@@ -606,10 +588,7 @@
       display: flex; align-items: center; gap: 6px;
     }
 
-    /* ─── Attention / notifications ─── */
-    .attention-list {
-      display: flex; flex-direction: column; gap: 10px;
-    }
+    .attention-list { display: flex; flex-direction: column; gap: 10px; }
     .attention-item {
       display: flex; gap: 12px;
       padding: 12px 14px;
@@ -628,9 +607,7 @@
     .attention-item.danger .attention-icon { color: var(--danger); }
     .attention-item.info .attention-icon { color: var(--primary); }
     .attention-body { flex: 1; min-width: 0; }
-    .attention-body h4 {
-      font-size: 0.82rem; font-weight: 700; margin-bottom: 2px;
-    }
+    .attention-body h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 2px; }
     .attention-body p { font-size: 0.73rem; color: var(--muted); }
     .attention-cta {
       font-size: 0.72rem; font-weight: 700;
@@ -677,6 +654,50 @@
     .toast i { color: var(--primary); font-size: 1rem; flex-shrink: 0; }
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+
+    /* ─── Sign-out modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 150;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(-8px);
+      transition: transform 0.25s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .modal-head .head-body { flex: 1; min-width: 0; }
+    .modal-head h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .modal-head p { font-size: 0.82rem; color: var(--muted); }
+    .modal-foot {
+      padding: 16px 22px;
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background-color: var(--elevated); }
 
     /* ─── Mobile ─── */
     @media (max-width: 1023px) {
@@ -825,7 +846,6 @@
           </div>
         </div>
 
-        <!-- ─── Six stat cards ─── -->
         <section class="stats-grid" aria-label="Campaign statistics">
           <div class="stat-card">
             <div class="stat-card-top">
@@ -882,7 +902,6 @@
           </div>
         </section>
 
-        <!-- ─── Campaign performance chart ─── -->
         <section class="panel" aria-label="Campaign performance">
           <div class="panel-header">
             <div class="panel-title">
@@ -917,7 +936,6 @@
           </div>
         </section>
 
-        <!-- ─── Recent advertisements ─── -->
         <section class="panel" aria-label="Recent advertisements">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-rectangle-ad"></i> My recent advertisements</div>
@@ -937,34 +955,20 @@
                 </tr>
               </thead>
               <tbody id="recentCampaignsBody">
-                <tr>
-                  <td colspan="6">
-                    <div class="skeleton" style="height:36px;"></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="6">
-                    <div class="skeleton" style="height:36px;"></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="6">
-                    <div class="skeleton" style="height:36px;"></div>
-                  </td>
-                </tr>
+                <tr><td colspan="6"><div class="skeleton" style="height:36px;"></div></td></tr>
+                <tr><td colspan="6"><div class="skeleton" style="height:36px;"></div></td></tr>
+                <tr><td colspan="6"><div class="skeleton" style="height:36px;"></div></td></tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- ─── Bottom grid ─── -->
         <section class="bottom-grid">
 
-          <!-- Payment overview -->
           <div class="panel" aria-label="Payment overview">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-credit-card"></i> Payment overview</div>
-              <a href="./payments.html" class="panel-link">Manage <i class="fas fa-arrow-right"></i></a>
+              <a href="./Billing.html" class="panel-link">Manage <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="payment-stats">
               <div class="pay-stat">
@@ -990,7 +994,6 @@
             </div>
           </div>
 
-          <!-- Attention -->
           <div class="panel" aria-label="Action needed">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-triangle-exclamation"></i> Needs your attention</div>
@@ -1006,7 +1009,6 @@
 
         </section>
 
-        <!-- ─── Recent activity ─── -->
         <section class="panel" aria-label="Recent activity">
           <div class="panel-header">
             <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent activity</div>
@@ -1045,6 +1047,27 @@
     <span id="toastText">Loaded</span>
   </div>
 
+  <!-- Sign-out confirmation modal -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       'use strict';
@@ -1060,7 +1083,8 @@
       let payments = [];
       let chartRange = '30d';
 
-      /* ─── helpers ─── */
+      const $ = (id) => document.getElementById(id);
+
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -1090,21 +1114,6 @@
         const dt = new Date(d);
         if (isNaN(dt)) return '—';
         return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-      };
-
-      const timeAgo = (iso) => {
-        if (!iso) return '';
-        const then = new Date(iso).getTime();
-        if (isNaN(then)) return '';
-        const diff = Math.max(0, Date.now() - then);
-        const mins = Math.floor(diff / 60000);
-        if (mins < 1) return 'just now';
-        if (mins < 60) return mins + 'm ago';
-        const hrs = Math.floor(mins / 60);
-        if (hrs < 24) return hrs + 'h ago';
-        const days = Math.floor(hrs / 24);
-        if (days < 30) return days + 'd ago';
-        return fmtDate(iso);
       };
 
       function redirectToLogin(reason) {
@@ -1137,8 +1146,8 @@
       }
 
       function toast(msg, isError) {
-        const el = document.getElementById('toast');
-        const txt = document.getElementById('toastText');
+        const el = $('toast');
+        const txt = $('toastText');
         if (!el || !txt) return;
         txt.textContent = msg || '';
         el.classList.toggle('error', !!isError);
@@ -1149,7 +1158,6 @@
         el._timer = setTimeout(() => el.classList.remove('show'), 3000);
       }
 
-      /* ─── status pill ─── */
       function statusPill(status) {
         const s = (status || 'draft').toLowerCase();
         const map = {
@@ -1168,104 +1176,71 @@
         return `<span class="status-pill ${m.cls}"><i class="fas ${m.icon}"></i> ${esc(m.label)}</span>`;
       }
 
-      /* ─── greeting ─── */
       function renderGreeting() {
         const h = new Date().getHours();
         const part = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
         const name = user && (user.business_name || user.name) ? (user.business_name || user.name).split(' ')[0] : '';
-        document.getElementById('greeting').textContent = name
-          ? `${part}, ${name}`
-          : `${part}, Advertiser`;
+        $('greeting').textContent = name ? `${part}, ${name}` : `${part}, Advertiser`;
       }
 
-      /* ─── user chrome ─── */
       function renderUser() {
         if (!user) return;
         const label = user.business_name || user.name || 'Advertiser';
         const role = 'Business Account';
         const ini = initials(label);
-
-        ['sideAvatar', 'topAvatar'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = ini;
-        });
-        ['sideName', 'topName'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = label;
-        });
-        ['sideRole', 'topRole'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = role;
-        });
+        ['sideAvatar', 'topAvatar'].forEach(id => { const el = $(id); if (el) el.textContent = ini; });
+        ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+        ['sideRole', 'topRole'].forEach(id => { const el = $(id); if (el) el.textContent = role; });
       }
 
-      /* ─── stats ─── */
       function renderStats() {
         const total = campaigns.length;
-        const published = campaigns.filter(c => (c.status || '') === 'published' || (c.status || '') === 'active').length;
-        const pending   = campaigns.filter(c => (c.status || '') === 'pending').length;
-        const drafts    = campaigns.filter(c => (c.status || '') === 'draft').length;
+        const published = campaigns.filter(c => ['published','active'].includes((c.status || '').toLowerCase())).length;
+        const pending   = campaigns.filter(c => (c.status || '').toLowerCase() === 'pending').length;
+        const drafts    = campaigns.filter(c => (c.status || '').toLowerCase() === 'draft').length;
+        const impressions = campaigns.filter(c => ['published','active','expired'].includes((c.status || '').toLowerCase())).reduce((s, c) => s + (Number(c.impressions) || 0), 0);
+        const clicks = campaigns.filter(c => ['published','active','expired'].includes((c.status || '').toLowerCase())).reduce((s, c) => s + (Number(c.clicks) || 0), 0);
 
-        const impressions = campaigns
-          .filter(c => ['published', 'active', 'expired'].includes((c.status || '')))
-          .reduce((sum, c) => sum + (Number(c.impressions) || 0), 0);
-        const clicks = campaigns
-          .filter(c => ['published', 'active', 'expired'].includes((c.status || '')))
-          .reduce((sum, c) => sum + (Number(c.clicks) || 0), 0);
+        $('statTotalCampaigns').textContent = total;
+        $('statPublished').textContent = published;
+        $('statPending').textContent = pending;
+        $('statDrafts').textContent = drafts;
+        $('statImpressions').textContent = fmtNum(impressions);
+        $('statClicks').textContent = fmtNum(clicks);
 
-        document.getElementById('statTotalCampaigns').textContent = total;
-        document.getElementById('statPublished').textContent = published;
-        document.getElementById('statPending').textContent = pending;
-        document.getElementById('statDrafts').textContent = drafts;
-        document.getElementById('statImpressions').textContent = fmtNum(impressions);
-        document.getElementById('statClicks').textContent = fmtNum(clicks);
-
-        document.getElementById('chartTotalImpressions').textContent = impressions.toLocaleString('en-NG') || '24,800';
-        document.getElementById('chartTotalClicks').textContent = clicks.toLocaleString('en-NG') || '1,420';
+        $('chartTotalImpressions').textContent = impressions.toLocaleString('en-NG') || '0';
+        $('chartTotalClicks').textContent = clicks.toLocaleString('en-NG') || '0';
       }
 
-      /* ─── performance chart ─── */
       function renderChart() {
-        const svg = document.getElementById('perfChart');
+        const svg = $('perfChart');
         if (!svg) return;
-
-        // Generate illustrative series per range
         const points = chartRange === '7d' ? 7 : chartRange === '90d' ? 12 : 30;
-        const labels = [];
         const impData = [];
         const clkData = [];
         const baseImp = chartRange === '7d' ? 800 : chartRange === '90d' ? 2000 : 900;
         const baseClk = chartRange === '7d' ? 60 : chartRange === '90d' ? 120 : 50;
-
         for (let i = 0; i < points; i++) {
-          labels.push(i);
           impData.push(baseImp + Math.round(Math.sin(i * 0.9) * baseImp * 0.4 + Math.random() * baseImp * 0.4));
           clkData.push(baseClk + Math.round(Math.sin(i * 0.9) * baseClk * 0.4 + Math.random() * baseClk * 0.4));
         }
-
         const W = 800, H = 260, PAD = 20;
         const maxImp = Math.max(...impData, 1);
         const maxClk = Math.max(...clkData, 1);
         const stepX = (W - PAD * 2) / Math.max(points - 1, 1);
-
         const pathFor = (data, max) => data.map((v, i) => {
           const x = PAD + i * stepX;
           const y = H - PAD - (v / max) * (H - PAD * 2);
           return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
         }).join(' ');
-
         const areaPathFor = (data, max) => {
           const p = pathFor(data, max);
-          return p
-            + ' L' + (PAD + (points - 1) * stepX).toFixed(1) + ',' + (H - PAD)
-            + ' L' + PAD + ',' + (H - PAD) + ' Z';
+          return p + ' L' + (PAD + (points - 1) * stepX).toFixed(1) + ',' + (H - PAD) + ' L' + PAD + ',' + (H - PAD) + ' Z';
         };
-
         const gridLines = [0.25, 0.5, 0.75].map(f => {
           const y = H - PAD - f * (H - PAD * 2);
           return `<line x1="${PAD}" y1="${y}" x2="${W - PAD}" y2="${y}" stroke="#29352F" stroke-dasharray="2 4" stroke-width="1"/>`;
         }).join('');
-
         svg.innerHTML = `
           <defs>
             <linearGradient id="gradImp" x1="0" y1="0" x2="0" y2="1">
@@ -1285,36 +1260,23 @@
         `;
       }
 
-      /* ─── recent campaigns ─── */
       function renderRecentCampaigns() {
-        const tbody = document.getElementById('recentCampaignsBody');
+        const tbody = $('recentCampaignsBody');
         if (!tbody) return;
-
-        const recent = campaigns
-          .slice()
+        const recent = campaigns.slice()
           .sort((a, b) => new Date(b.created_at || b.start_date || 0) - new Date(a.created_at || a.start_date || 0))
           .slice(0, 5);
-
         if (!recent.length) {
-          tbody.innerHTML = `
-            <tr><td colspan="6">
-              <div class="empty-state">
-                <i class="fas fa-rectangle-ad"></i>
-                <h3>No campaigns yet</h3>
-                <p>Create your first campaign to get started.</p>
-              </div>
-            </td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-rectangle-ad"></i><h3>No campaigns yet</h3><p>Create your first campaign to get started.</p></div></td></tr>`;
           return;
         }
-
         tbody.innerHTML = recent.map(c => {
           const format = (c.format || c.ad_format || 'Medium');
           const start = fmtDate(c.start_date);
           const end = fmtDate(c.end_date);
           const impr = Number(c.impressions) || 0;
           const clk = Number(c.clicks) || 0;
-          const canEdit = ['draft', 'pending', 'approved', 'paused', 'rejected'].includes((c.status || '').toLowerCase());
-
+          const canEdit = ['draft','pending','approved','paused','rejected'].includes((c.status || '').toLowerCase());
           return `
             <tr>
               <td data-label="Campaign">
@@ -1326,109 +1288,70 @@
                   </div>
                 </div>
               </td>
-              <td data-label="Format">
-                <span class="camp-format-pill"><i class="fas fa-crop-simple"></i> ${esc(format)}</span>
-              </td>
+              <td data-label="Format"><span class="camp-format-pill"><i class="fas fa-crop-simple"></i> ${esc(format)}</span></td>
               <td data-label="Period" class="camp-period">${esc(start)} → ${esc(end)}</td>
-              <td data-label="Impressions / Clicks">
-                <div class="camp-num">${fmtNum(impr)} <small>${fmtNum(clk)} clicks</small></div>
-              </td>
+              <td data-label="Impressions / Clicks"><div class="camp-num">${fmtNum(impr)} <small>${fmtNum(clk)} clicks</small></div></td>
               <td data-label="Status">${statusPill(c.status)}</td>
               <td data-label="Actions">
                 <div class="row-actions">
-                  <button class="icon-action" onclick="window.location.href='./campaigns.html?id=${esc(c.id)}'">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  ${canEdit ? `
-                    <button class="icon-action" onclick="window.location.href='./campaigns.html?id=${esc(c.id)}&edit=1'">
-                      <i class="fas fa-pen"></i>
-                    </button>` : ''}
+                  <button class="icon-action" onclick="window.location.href='./campaigns.html?id=${esc(c.id)}'"><i class="fas fa-eye"></i></button>
+                  ${canEdit ? `<button class="icon-action" onclick="window.location.href='./campaigns.html?id=${esc(c.id)}&edit=1'"><i class="fas fa-pen"></i></button>` : ''}
                 </div>
               </td>
             </tr>`;
         }).join('');
       }
 
-      /* ─── payment overview ─── */
       function renderPayments() {
         const total = payments.reduce((s, p) => s + Number(p.amount || 0), 0);
-        const successful = payments
-          .filter(p => ['paid', 'confirmed', 'successful', 'verified'].includes((p.status || '').toLowerCase()))
-          .reduce((s, p) => s + Number(p.amount || 0), 0);
-        const pending = payments
-          .filter(p => ['pending', 'unpaid', 'outstanding'].includes((p.status || '').toLowerCase()))
-          .reduce((s, p) => s + Number(p.amount || 0), 0);
+        const successful = payments.filter(p => ['paid','confirmed','successful','verified'].includes((p.status || '').toLowerCase())).reduce((s, p) => s + Number(p.amount || 0), 0);
+        const pending = payments.filter(p => ['pending','unpaid','outstanding'].includes((p.status || '').toLowerCase())).reduce((s, p) => s + Number(p.amount || 0), 0);
         const cur = payments[0]?.currency || 'NGN';
-
-        document.getElementById('payTotalSpent').textContent = fmtMoney(total, cur);
-        document.getElementById('paySuccessful').textContent = fmtMoney(successful, cur);
-        document.getElementById('payPending').textContent = fmtMoney(pending, cur);
+        $('payTotalSpent').textContent = fmtMoney(total, cur);
+        $('paySuccessful').textContent = fmtMoney(successful, cur);
+        $('payPending').textContent = fmtMoney(pending, cur);
       }
 
-      /* ─── attention ─── */
       function renderAttention() {
         const items = [];
-
-        const pendingCampaigns = campaigns.filter(c => (c.status || '') === 'pending');
-        if (pendingCampaigns.length) {
-          items.push({
-            tone: 'gold', icon: 'fa-clock',
-            title: `${pendingCampaigns.length} campaign${pendingCampaigns.length > 1 ? 's' : ''} awaiting review`,
-            desc: 'An administrator will review them shortly.',
-            link: './campaigns.html?status=pending',
-            cta: 'View',
-          });
-        }
-
-        const rejectedCampaigns = campaigns.filter(c => (c.status || '') === 'rejected');
-        if (rejectedCampaigns.length) {
-          items.push({
-            tone: 'danger', icon: 'fa-circle-xmark',
-            title: `${rejectedCampaigns.length} campaign${rejectedCampaigns.length > 1 ? 's' : ''} rejected`,
-            desc: 'Review the admin notes and resubmit.',
-            link: './campaigns.html?status=rejected',
-            cta: 'Review',
-          });
-        }
-
-        const unpaid = payments.filter(p => ['pending', 'unpaid'].includes((p.status || '').toLowerCase()));
-        if (unpaid.length) {
-          items.push({
-            tone: 'gold', icon: 'fa-credit-card',
-            title: `${unpaid.length} payment${unpaid.length > 1 ? 's' : ''} pending`,
-            desc: 'Complete payment to publish campaigns.',
-            link: './payments.html',
-            cta: 'Pay now',
-          });
-        }
-
+        const pendingCampaigns = campaigns.filter(c => (c.status || '').toLowerCase() === 'pending');
+        if (pendingCampaigns.length) items.push({
+          tone: 'gold', icon: 'fa-clock',
+          title: `${pendingCampaigns.length} campaign${pendingCampaigns.length > 1 ? 's' : ''} awaiting review`,
+          desc: 'An administrator will review them shortly.',
+          link: './campaigns.html?status=pending', cta: 'View',
+        });
+        const rejectedCampaigns = campaigns.filter(c => (c.status || '').toLowerCase() === 'rejected');
+        if (rejectedCampaigns.length) items.push({
+          tone: 'danger', icon: 'fa-circle-xmark',
+          title: `${rejectedCampaigns.length} campaign${rejectedCampaigns.length > 1 ? 's' : ''} rejected`,
+          desc: 'Review the admin notes and resubmit.',
+          link: './campaigns.html?status=rejected', cta: 'Review',
+        });
+        const unpaid = payments.filter(p => ['pending','unpaid'].includes((p.status || '').toLowerCase()));
+        if (unpaid.length) items.push({
+          tone: 'gold', icon: 'fa-credit-card',
+          title: `${unpaid.length} payment${unpaid.length > 1 ? 's' : ''} pending`,
+          desc: 'Complete payment to publish campaigns.',
+          link: './Billing.html', cta: 'Pay now',
+        });
         const nearingExpiry = campaigns.filter(c => {
           if (!c.end_date) return false;
-          if (!['published', 'active'].includes((c.status || ''))) return false;
+          if (!['published','active'].includes((c.status || '').toLowerCase())) return false;
           const days = (new Date(c.end_date) - Date.now()) / 86400000;
           return days >= 0 && days <= 7;
         });
-        if (nearingExpiry.length) {
-          items.push({
-            tone: 'info', icon: 'fa-hourglass-half',
-            title: `${nearingExpiry.length} campaign${nearingExpiry.length > 1 ? 's' : ''} ending soon`,
-            desc: 'Renew or extend to keep them running.',
-            link: './campaigns.html',
-            cta: 'Extend',
-          });
-        }
-
-        const el = document.getElementById('attentionList');
+        if (nearingExpiry.length) items.push({
+          tone: 'info', icon: 'fa-hourglass-half',
+          title: `${nearingExpiry.length} campaign${nearingExpiry.length > 1 ? 's' : ''} ending soon`,
+          desc: 'Renew or extend to keep them running.',
+          link: './campaigns.html', cta: 'Extend',
+        });
+        const el = $('attentionList');
         if (!items.length) {
-          el.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-circle-check"></i>
-              <h3>You're all caught up</h3>
-              <p>No outstanding actions right now.</p>
-            </div>`;
+          el.innerHTML = `<div class="empty-state"><i class="fas fa-circle-check"></i><h3>You're all caught up</h3><p>No outstanding actions right now.</p></div>`;
           return;
         }
-
         el.innerHTML = items.map(it => `
           <div class="attention-item ${it.tone}">
             <div class="attention-icon"><i class="fas ${it.icon}"></i></div>
@@ -1441,12 +1364,11 @@
         `).join('');
       }
 
-      /* ─── notifications badge ─── */
       function renderNotificationsBadge() {
-        const unread = campaigns.filter(c => (c.status || '') === 'rejected').length
-                     + payments.filter(p => ['pending', 'unpaid'].includes((p.status || '').toLowerCase())).length;
-        const dot = document.getElementById('notifDot');
-        const navBadge = document.getElementById('navNotifBadge');
+        const unread = campaigns.filter(c => (c.status || '').toLowerCase() === 'rejected').length
+                     + payments.filter(p => ['pending','unpaid'].includes((p.status || '').toLowerCase())).length;
+        const dot = $('notifDot');
+        const navBadge = $('navNotifBadge');
         if (unread > 0) {
           if (dot) dot.classList.add('show');
           if (navBadge) { navBadge.textContent = unread; navBadge.style.display = ''; }
@@ -1454,19 +1376,16 @@
           if (dot) dot.classList.remove('show');
           if (navBadge) navBadge.style.display = 'none';
         }
-
-        const payBadge = document.getElementById('navPaymentsBadge');
-        const pendingPayments = payments.filter(p => ['pending', 'unpaid'].includes((p.status || '').toLowerCase())).length;
+        const payBadge = $('navPaymentsBadge');
+        const pendingPayments = payments.filter(p => ['pending','unpaid'].includes((p.status || '').toLowerCase())).length;
         if (payBadge) {
           if (pendingPayments > 0) { payBadge.textContent = pendingPayments; payBadge.style.display = ''; }
           else payBadge.style.display = 'none';
         }
       }
 
-      /* ─── data load ─── */
       async function loadDashboard() {
         try {
-          // Campaigns
           try {
             const data = await api('/api/advertiser/campaigns');
             campaigns = Array.isArray(data.campaigns) ? data.campaigns : (Array.isArray(data) ? data : []);
@@ -1474,8 +1393,6 @@
             if (e.message !== 'Session expired') console.warn('[campaigns]', e.message);
             campaigns = [];
           }
-
-          // Payments
           try {
             const data = await api('/api/advertiser/payments');
             payments = Array.isArray(data.payments) ? data.payments : (Array.isArray(data) ? data : []);
@@ -1483,7 +1400,6 @@
             if (e.message !== 'Session expired') console.warn('[payments]', e.message);
             payments = [];
           }
-
           renderStats();
           renderChart();
           renderRecentCampaigns();
@@ -1496,10 +1412,10 @@
         }
       }
 
-      /* ─── sidebar ─── */
-      const menuToggle = document.getElementById('menuToggle');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
+      /* ─── Sidebar ─── */
+      const menuToggle = $('menuToggle');
+      const sidebar = $('sidebar');
+      const overlay = $('sidebarOverlay');
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1511,12 +1427,30 @@
         menuToggle.setAttribute('aria-expanded', String(open));
       });
       overlay.addEventListener('click', closeSidebar);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
       window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
 
-      /* ─── logout ─── */
-      document.getElementById('sideLogout').addEventListener('click', () => {
-        if (!confirm('Sign out of the advertiser portal?')) return;
+      /* ─── Sign-out modal ─── */
+      const signoutModal = $('signoutModal');
+
+      function openSignoutModal() {
+        signoutModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        // Focus Cancel so accidental Enter doesn't sign the user out
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+      function closeSignoutModal() {
+        signoutModal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      $('sideLogout').addEventListener('click', openSignoutModal);
+      $('signoutClose').addEventListener('click', closeSignoutModal);
+      $('signoutCancel').addEventListener('click', closeSignoutModal);
+      signoutModal.addEventListener('click', (e) => {
+        if (e.target === signoutModal) closeSignoutModal();
+      });
+
+      $('signoutConfirm').addEventListener('click', () => {
         try {
           localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);
@@ -1524,8 +1458,14 @@
         window.location.replace(LOGIN_URL);
       });
 
-      /* ─── chart range ─── */
-      document.getElementById('chartControls').addEventListener('click', (e) => {
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (signoutModal.classList.contains('open')) closeSignoutModal();
+        else closeSidebar();
+      });
+
+      /* ─── Chart range buttons ─── */
+      $('chartControls').addEventListener('click', (e) => {
         const btn = e.target.closest('.chart-btn');
         if (!btn) return;
         document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
@@ -1534,7 +1474,12 @@
         renderChart();
       });
 
-      /* ─── boot ─── */
+      /* ─── Notifications bell → page ─── */
+      $('notifBtn').addEventListener('click', () => {
+        window.location.href = './Notifications.html';
+      });
+
+      /* ─── Boot ─── */
       (async function boot() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!token) { redirectToLogin('not_signed_in'); return; }

@@ -329,9 +329,7 @@
     }
     .hero-card .big-amount .sym { color: var(--primary); font-size: 1.4rem; margin-right: 4px; vertical-align: 6px; }
     .hero-card .sub { font-size: 0.78rem; color: var(--muted); }
-    .hero-card .side-stat {
-      text-align: right;
-    }
+    .hero-card .side-stat { text-align: right; }
     .hero-card .side-stat .amount {
       font-size: 1.3rem; font-weight: 800;
       color: var(--accent);
@@ -377,10 +375,7 @@
     }
     .stat-card .stat-value.green { color: var(--primary); }
     .stat-card .stat-value.gold  { color: var(--accent); }
-    .stat-card .stat-sub {
-      font-size: 0.7rem; color: var(--muted);
-      margin-top: 4px;
-    }
+    .stat-card .stat-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
 
     /* ─── Panels ─── */
     .panel {
@@ -766,6 +761,41 @@
     .toast.error i { color: var(--danger); }
     .toast span { font-size: 0.82rem; color: var(--text); font-weight: 600; }
 
+    /* ─── Sign-out modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 150;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(-8px);
+      transition: transform 0.25s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .modal-head .head-body { flex: 1; min-width: 0; }
+    .modal-head h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .modal-head p { font-size: 0.82rem; color: var(--muted); }
+    .modal-foot {
+      padding: 16px 22px;
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+
     /* ─── Responsive ─── */
     @media (max-width: 1023px) {
       .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
@@ -925,7 +955,7 @@
           </div>
         </section>
 
-        <!-- Outstanding banner (rendered only if there's an unpaid invoice) -->
+        <!-- Outstanding banner -->
         <div id="outstandingSection"></div>
 
         <!-- Transactions panel -->
@@ -1059,6 +1089,27 @@
     <div class="drawer-foot" id="drawerFoot"></div>
   </aside>
 
+  <!-- Sign-out confirmation modal -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
@@ -1154,7 +1205,6 @@
           .map(w => w[0].toUpperCase()).join('') || 'AD';
       };
 
-      /* ─── status helpers ─── */
       function statusInfo(status) {
         const s = String(status || 'pending').toLowerCase();
         if (['paid', 'confirmed', 'verified', 'successful'].includes(s))
@@ -1186,7 +1236,6 @@
         return ['pending', 'unpaid', 'outstanding', 'awaiting'].includes(String(status || '').toLowerCase());
       }
 
-      /* ─── user chrome ─── */
       function renderUser() {
         if (!state.user) return;
         const label = state.user.business_name || state.user.name || 'Advertiser';
@@ -1195,7 +1244,6 @@
         ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
       }
 
-      /* ─── summary rendering ─── */
       function computeTotals() {
         let paid = 0, pending = 0, success = 0, outstanding = 0;
         const currencies = new Set();
@@ -1227,14 +1275,10 @@
         }
       }
 
-      /* ─── outstanding banner ─── */
       function renderOutstanding() {
         const pendingTxs = state.payments.filter(p => isPending(p.status));
         const wrap = $('outstandingSection');
-        if (!pendingTxs.length) {
-          wrap.innerHTML = '';
-          return;
-        }
+        if (!pendingTxs.length) { wrap.innerHTML = ''; return; }
         const first = pendingTxs[0];
         const invRef = first.reference || `CN-INV-${String(first.id).slice(0, 4)}`;
         wrap.innerHTML = `
@@ -1256,7 +1300,6 @@
         `;
       }
 
-      /* ─── transaction list ─── */
       function filteredTxs() {
         return state.payments.filter(p => {
           if (state.filter && statusInfo(p.status).key !== state.filter) return false;
@@ -1309,32 +1352,23 @@
         }).join('');
       }
 
-      /* ─── documents ─── */
       function renderDocuments() {
         const grid = $('docGrid');
         const docs = [];
         for (const p of state.payments) {
           const ref = String(p.reference || p.id).replace(/[^A-Z0-9]/gi, '').slice(-6).toUpperCase();
           docs.push({
-            kind: 'invoice',
-            id: p.id,
-            label: `CN-INV-${ref}`,
-            date: p.created_at,
+            kind: 'invoice', id: p.id, label: `CN-INV-${ref}`, date: p.created_at,
             status: isPaid(p.status) ? 'paid' : isPending(p.status) ? 'unpaid' : 'cancelled',
             docQuery: 'invoice',
           });
           if (isPaid(p.status)) {
             docs.push({
-              kind: 'receipt',
-              id: p.id,
-              label: `CN-RCP-${ref}`,
-              date: p.created_at,
-              status: 'available',
-              docQuery: 'receipt',
+              kind: 'receipt', id: p.id, label: `CN-RCP-${ref}`, date: p.created_at,
+              status: 'available', docQuery: 'receipt',
             });
           }
         }
-        // Sort newest first
         docs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         if (!docs.length) {
@@ -1355,7 +1389,6 @@
           const statusClass = d.status === 'paid' ? 'st-paid' : d.status === 'unpaid' ? 'st-unpaid' : 'st-cancelled';
           const iconClass = isInvoice ? '' : 'gold';
           const icon = isInvoice ? 'fa-file-invoice' : 'fa-receipt';
-          const url = `${API_BASE}/api/advertiser/payments/${encodeURIComponent(d.id)}/invoice?doc=${d.docQuery}&token=${encodeURIComponent(state.token)}`;
 
           return `
             <div class="doc-card">
@@ -1383,7 +1416,6 @@
         window.open(url, '_blank');
       }
 
-      /* ─── drawer ─── */
       function openDrawer(tx) {
         state.drawerTx = tx;
         const ref = tx.reference || `#${String(tx.id).slice(0, 8)}`;
@@ -1450,7 +1482,6 @@
         state.drawerTx = null;
       }
 
-      /* ─── billing profile ─── */
       function renderBilling() {
         const b = state.billing;
         const view = $('billingView');
@@ -1525,7 +1556,6 @@
         }
       }
 
-      /* ─── data load ─── */
       async function loadPayments() {
         try {
           const data = await api('/api/advertiser/payments');
@@ -1556,7 +1586,21 @@
         renderBilling();
       }
 
-      /* ─── wiring ─── */
+      /* ─── Sign-out modal ─── */
+      function openSignoutModal() {
+        const m = $('signoutModal');
+        if (!m) return;
+        m.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+      function closeSignoutModal() {
+        const m = $('signoutModal');
+        if (!m) return;
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
       function wireEvents() {
         // Sidebar
         $('menuToggle').addEventListener('click', () => {
@@ -1568,19 +1612,24 @@
           $('sidebar').classList.remove('open');
           $('sidebarOverlay').classList.remove('active');
         });
+
+        // Escape handles: sidebar, drawer, signout modal
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            $('sidebar').classList.remove('open');
-            $('sidebarOverlay').classList.remove('active');
-            if ($('drawer').classList.contains('open')) closeDrawer();
-          }
+          if (e.key !== 'Escape') return;
+          $('sidebar').classList.remove('open');
+          $('sidebarOverlay').classList.remove('active');
+          if ($('signoutModal')?.classList.contains('open')) closeSignoutModal();
+          if ($('drawer').classList.contains('open')) closeDrawer();
         });
 
-        // Logout
-        $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
-          redirectToLogin();
+        // Sign-out modal
+        $('sideLogout').addEventListener('click', openSignoutModal);
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        $('signoutModal').addEventListener('click', (e) => {
+          if (e.target === $('signoutModal')) closeSignoutModal();
         });
+        $('signoutConfirm').addEventListener('click', () => redirectToLogin());
 
         // Filters
         document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -1601,7 +1650,7 @@
           const row = e.target.closest('.tx-row');
           if (!row) return;
           const id = row.getAttribute('data-id');
-          const tx = state.payments.find(p => p.id === id);
+          const tx = state.payments.find(p => String(p.id) === String(id));
           if (tx) openDrawer(tx);
         });
 
@@ -1617,9 +1666,7 @@
         $('drawerBackdrop').addEventListener('click', closeDrawer);
         $('drawerFoot').addEventListener('click', (e) => {
           const btn = e.target.closest('[data-doc-id]');
-          if (btn) {
-            openDocument(btn.getAttribute('data-doc-id'), btn.getAttribute('data-doc-type'));
-          }
+          if (btn) openDocument(btn.getAttribute('data-doc-id'), btn.getAttribute('data-doc-type'));
         });
 
         // Billing toggle
@@ -1633,7 +1680,6 @@
         });
         $('billingSave').addEventListener('click', saveBilling);
 
-        // Empty state create button (delegated)
         document.addEventListener('click', (e) => {
           if (e.target.closest('#billingCreateBtn')) {
             state.editingBilling = true;
@@ -1642,7 +1688,6 @@
         });
       }
 
-      /* ─── boot ─── */
       (async function boot() {
         try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!state.token) { redirectToLogin('not_signed_in'); return; }

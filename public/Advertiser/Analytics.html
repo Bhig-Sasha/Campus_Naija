@@ -46,14 +46,7 @@
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulseDot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.55; }
-    }
-    @keyframes shimmer {
-      0% { background-position: -400px 0; }
-      100% { background-position: 400px 0; }
-    }
+    @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 
     .skeleton {
       background: linear-gradient(90deg, #111815 0%, #1a221e 50%, #111815 100%);
@@ -76,10 +69,7 @@
       z-index: 60;
       transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .sidebar-brand {
-      padding: 24px 22px 20px;
-      border-bottom: 1px solid var(--border);
-    }
+    .sidebar-brand { padding: 24px 22px 20px; border-bottom: 1px solid var(--border); }
     .sidebar-brand .logo {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
@@ -94,11 +84,7 @@
       background-color: rgba(0,201,130,0.1);
       border: 1px solid rgba(0,201,130,0.25);
     }
-    .sidebar-nav {
-      flex: 1; overflow-y: auto;
-      padding: 16px 12px;
-      display: flex; flex-direction: column; gap: 2px;
-    }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
     .nav-group-label {
       font-size: 0.62rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
@@ -112,31 +98,14 @@
       transition: background 0.15s, color 0.15s, transform 0.15s;
       position: relative;
     }
-    .nav-item i {
-      width: 20px; text-align: center;
-      font-size: 0.9rem; flex-shrink: 0;
-      transition: transform 0.15s;
-    }
-    .nav-item:hover {
-      background-color: var(--elevated); color: var(--text);
-      transform: translateX(2px);
-    }
-    .nav-item:hover i { transform: scale(1.1); }
-    .nav-item.active {
-      background-color: rgba(0,201,130,0.1);
-      color: var(--primary);
-    }
+    .nav-item i { width: 20px; text-align: center; font-size: 0.9rem; flex-shrink: 0; }
+    .nav-item:hover { background-color: var(--elevated); color: var(--text); transform: translateX(2px); }
+    .nav-item.active { background-color: rgba(0,201,130,0.1); color: var(--primary); }
     .nav-item.active::before {
-      content: ''; position: absolute;
-      left: 0; top: 50%; transform: translateY(-50%);
-      width: 3px; height: 18px;
-      background-color: var(--primary);
-      border-radius: 0 3px 3px 0;
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 18px; background-color: var(--primary); border-radius: 0 3px 3px 0;
     }
-    .sidebar-footer {
-      padding: 14px 12px 18px;
-      border-top: 1px solid var(--border);
-    }
+    .sidebar-footer { padding: 14px 12px 18px; border-top: 1px solid var(--border); }
     .adv-user {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 12px; border-radius: 10px;
@@ -151,14 +120,8 @@
       flex-shrink: 0;
     }
     .adv-user-info { flex: 1; min-width: 0; }
-    .adv-user-name {
-      font-size: 0.85rem; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .adv-user-role {
-      font-size: 0.68rem; color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .adv-user-name { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .adv-user-role { font-size: 0.68rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .logout-btn {
       background: transparent; border: none; color: var(--muted);
       font-size: 0.9rem; cursor: pointer; padding: 6px;
@@ -167,13 +130,7 @@
     .logout-btn:hover { color: var(--danger); }
 
     /* ─── Main ─── */
-    .main-area {
-      flex: 1; margin-left: var(--sidebar-w);
-      display: flex; flex-direction: column;
-      min-width: 0;
-    }
-
-    /* ─── Topbar ─── */
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
     .topbar {
       position: sticky; top: 0; z-index: 40;
       background-color: rgba(13, 18, 16, 0.92);
@@ -190,14 +147,8 @@
     }
     .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
     .topbar-heading { flex: 1; min-width: 0; }
-    .topbar-heading h1 {
-      font-size: 1.25rem; font-weight: 800;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .topbar-heading p {
-      font-size: 0.78rem; color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .topbar-heading h1 { font-size: 1.25rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-heading p { font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
     .icon-btn {
       position: relative;
@@ -207,19 +158,9 @@
       display: inline-flex; align-items: center; justify-content: center;
       transition: all 0.15s;
     }
-    .icon-btn:hover {
-      background-color: var(--elevated); color: var(--primary);
-      border-color: var(--border);
-    }
-    .topbar-divider {
-      width: 1px; height: 26px;
-      background-color: var(--border); margin: 0 6px;
-    }
-    .topbar-admin {
-      display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 6px 6px; border-radius: 40px;
-      cursor: pointer; transition: background 0.15s;
-    }
+    .icon-btn:hover { background-color: var(--elevated); color: var(--primary); border-color: var(--border); }
+    .topbar-divider { width: 1px; height: 26px; background-color: var(--border); margin: 0 6px; }
+    .topbar-admin { display: flex; align-items: center; gap: 10px; padding: 6px 10px 6px 6px; border-radius: 40px; cursor: pointer; transition: background 0.15s; }
     .topbar-admin:hover { background-color: var(--elevated); }
     .topbar-admin .adv-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-admin-name { font-size: 0.8rem; font-weight: 700; line-height: 1.2; }
@@ -274,16 +215,9 @@
     }
     .page-heading h2 { font-size: 1.8rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.92rem; }
-
     .heading-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-    /* ─── Period select ─── */
     .period-wrap { display: flex; align-items: center; gap: 8px; }
-    .period-label {
-      font-size: 0.68rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted);
-      font-weight: 800;
-    }
+    .period-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
     .period-select {
       appearance: none;
       background-color: var(--surface);
@@ -300,7 +234,7 @@
     }
     .period-select:focus { outline: none; border-color: var(--primary); }
 
-    /* ─── Stats grid ─── */
+    /* ─── Stats ─── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -339,10 +273,7 @@
     .stat-card .stat-delta.up { color: var(--primary); }
     .stat-card .stat-delta.down { color: var(--danger); }
     .stat-card .stat-delta i { font-size: 0.55rem; }
-    .stat-card .stat-sub {
-      font-size: 0.7rem; color: var(--muted);
-      margin-top: 4px;
-    }
+    .stat-card .stat-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
 
     /* ─── Panels ─── */
     .panel {
@@ -355,13 +286,9 @@
     }
     .panel-header {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 18px;
-      flex-wrap: wrap;
+      gap: 12px; margin-bottom: 18px; flex-wrap: wrap;
     }
-    .panel-title {
-      font-size: 1.05rem; font-weight: 800;
-      display: flex; align-items: center; gap: 10px;
-    }
+    .panel-title { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
     .panel-title i { color: var(--primary); font-size: 0.9rem; }
     .panel-title .illustrative {
       font-size: 0.58rem; font-weight: 800;
@@ -383,8 +310,7 @@
     /* ─── Chart ─── */
     .chart-summary {
       display: flex; gap: 28px; flex-wrap: wrap;
-      margin-bottom: 18px;
-      padding-bottom: 18px;
+      margin-bottom: 18px; padding-bottom: 18px;
       border-bottom: 1px solid var(--border);
     }
     .chart-summary-item .label {
@@ -399,7 +325,6 @@
     }
     .chart-summary-item .value.green { color: var(--primary); }
     .chart-summary-item .value.gold { color: var(--accent); }
-
     .chart-controls {
       display: flex; gap: 4px; flex-wrap: wrap;
       padding: 4px;
@@ -411,36 +336,18 @@
       background: transparent; border: none;
       color: var(--muted); font-size: 0.72rem; font-weight: 700;
       padding: 6px 12px; border-radius: 7px;
-      cursor: pointer;
-      transition: all 0.15s;
+      cursor: pointer; transition: all 0.15s;
     }
     .chart-btn:hover { color: var(--text); }
-    .chart-btn.active {
-      background-color: var(--primary); color: #070A09;
-    }
+    .chart-btn.active { background-color: var(--primary); color: #070A09; }
 
-    .chart-wrap {
-      position: relative;
-      height: 280px;
-      padding: 6px 0 24px;
-    }
+    .chart-wrap { position: relative; height: 280px; padding: 6px 0 24px; }
     .chart-svg { width: 100%; height: 100%; display: block; }
-    .chart-legend {
-      display: flex; gap: 20px; flex-wrap: wrap;
-      margin-top: 8px; font-size: 0.75rem; color: var(--muted);
-    }
-    .legend-dot {
-      display: inline-block; width: 8px; height: 8px;
-      border-radius: 50%; margin-right: 6px;
-      vertical-align: middle;
-    }
+    .chart-legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; font-size: 0.75rem; color: var(--muted); }
+    .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 
     /* ─── Top campaigns ─── */
-    .top-camp-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
+    .top-camp-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
     @media (min-width: 900px) { .top-camp-grid { grid-template-columns: repeat(3, 1fr); } }
 
     .top-camp-card {
@@ -451,10 +358,7 @@
       cursor: pointer;
       transition: all 0.15s;
     }
-    .top-camp-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-    }
+    .top-camp-card:hover { border-color: var(--primary); transform: translateY(-2px); }
     .top-camp-card .rank {
       display: inline-flex; align-items: center; justify-content: center;
       width: 22px; height: 22px;
@@ -464,10 +368,7 @@
       border-radius: 6px;
       margin-bottom: 10px;
     }
-    .top-camp-card .rank.gold {
-      background-color: rgba(245,185,66,0.15);
-      color: var(--accent);
-    }
+    .top-camp-card .rank.gold { background-color: rgba(245,185,66,0.15); color: var(--accent); }
     .top-camp-card .camp-name {
       font-size: 0.92rem; font-weight: 800;
       margin-bottom: 8px;
@@ -476,22 +377,11 @@
     .top-camp-card .camp-metrics {
       display: flex; gap: 14px;
       font-size: 0.7rem; color: var(--muted);
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      margin-bottom: 12px; flex-wrap: wrap;
     }
-    .top-camp-card .camp-metrics strong {
-      color: var(--text); font-weight: 800;
-      font-feature-settings: 'tnum';
-    }
-    .top-camp-card .ctr-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 8px;
-    }
-    .top-camp-card .ctr-bar .ctr-label {
-      font-size: 0.62rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted);
-      font-weight: 800;
-    }
+    .top-camp-card .camp-metrics strong { color: var(--text); font-weight: 800; font-feature-settings: 'tnum'; }
+    .top-camp-card .ctr-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .top-camp-card .ctr-bar .ctr-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
     .top-camp-card .ctr-bar .ctr-val {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.1rem; font-weight: 800;
@@ -500,13 +390,8 @@
     }
 
     /* ─── Format bars ─── */
-    .format-bars {
-      display: flex; flex-direction: column;
-      gap: 14px;
-    }
-    .format-row {
-      display: flex; align-items: center; gap: 12px;
-    }
+    .format-bars { display: flex; flex-direction: column; gap: 14px; }
+    .format-row { display: flex; align-items: center; gap: 12px; }
     .format-row .format-label {
       width: 76px;
       font-size: 0.75rem; font-weight: 800;
@@ -516,11 +401,9 @@
       flex-shrink: 0;
     }
     .format-row .format-track {
-      flex: 1;
-      height: 22px;
+      flex: 1; height: 22px;
       background-color: var(--surface);
-      border-radius: 6px;
-      overflow: hidden;
+      border-radius: 6px; overflow: hidden;
       position: relative;
     }
     .format-row .format-fill {
@@ -535,20 +418,11 @@
       min-width: 36px;
       transition: width 0.4s ease;
     }
-    .format-row .format-stats {
-      font-size: 0.72rem; color: var(--muted);
-      white-space: nowrap;
-      min-width: 120px;
-      text-align: right;
-      font-feature-settings: 'tnum';
-    }
+    .format-row .format-stats { font-size: 0.72rem; color: var(--muted); white-space: nowrap; min-width: 120px; text-align: right; font-feature-settings: 'tnum'; }
 
     /* ─── Table ─── */
     .table-wrap { overflow-x: auto; margin: 0 -22px; padding: 0 22px; }
-    table.camp-table {
-      width: 100%; border-collapse: collapse;
-      font-size: 0.83rem;
-    }
+    table.camp-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
     .camp-table thead th {
       text-align: left;
       padding: 10px 12px;
@@ -566,10 +440,7 @@
     .camp-table tbody tr:last-child td { border-bottom: none; }
     .camp-table tbody tr { transition: background 0.15s; }
     .camp-table tbody tr:hover { background-color: var(--surface); }
-
-    .camp-cell-name {
-      display: flex; align-items: center; gap: 10px;
-    }
+    .camp-cell-name { display: flex; align-items: center; gap: 10px; }
     .camp-mini-thumb {
       width: 34px; height: 34px;
       border-radius: 8px;
@@ -580,21 +451,11 @@
       overflow: hidden;
     }
     .camp-mini-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .camp-cell-name strong {
-      font-size: 0.85rem; font-weight: 700; color: var(--text);
-      display: block;
-    }
+    .camp-cell-name strong { font-size: 0.85rem; font-weight: 700; color: var(--text); display: block; }
     .camp-cell-name small { font-size: 0.7rem; color: var(--muted); }
-
     .num { font-variant-numeric: tabular-nums; font-weight: 700; }
     .num .pct { color: var(--primary); }
-
-    .status-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 0.64rem; font-weight: 800;
-      padding: 3px 9px; border-radius: 40px;
-      white-space: nowrap;
-    }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 0.64rem; font-weight: 800; padding: 3px 9px; border-radius: 40px; white-space: nowrap; }
     .st-active    { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .st-published { background-color: rgba(0,201,130,0.12); color: var(--primary); }
     .st-pending   { background-color: rgba(245,185,66,0.12); color: var(--accent); }
@@ -603,9 +464,7 @@
     .st-expired   { background-color: rgba(155,169,161,0.12); color: var(--muted); }
 
     /* ─── Empty state ─── */
-    .empty-state {
-      text-align: center; padding: 48px 20px;
-    }
+    .empty-state { text-align: center; padding: 48px 20px; }
     .empty-state .icon-circle {
       width: 60px; height: 60px; margin: 0 auto 14px;
       border-radius: 16px;
@@ -617,7 +476,7 @@
     .empty-state h3 { font-size: 1rem; margin-bottom: 4px; }
     .empty-state p { font-size: 0.82rem; color: var(--muted); max-width: 340px; margin: 0 auto 16px; }
 
-    /* ─── Drawer (campaign report) ─── */
+    /* ─── Drawer ─── */
     .drawer-backdrop {
       position: fixed; inset: 0;
       background-color: rgba(3,5,4,0.7);
@@ -639,20 +498,10 @@
       box-shadow: -10px 0 40px rgba(0,0,0,0.5);
     }
     .drawer.open { transform: translateX(0); }
-    .drawer-head {
-      padding: 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: flex-start; gap: 12px;
-    }
+    .drawer-head { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
     .drawer-head .head-body { flex: 1; min-width: 0; }
-    .drawer-head h2 {
-      font-size: 1.05rem; margin-bottom: 4px;
-      word-break: break-word;
-    }
-    .drawer-head .sub {
-      color: var(--muted); font-size: 0.72rem;
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    }
+    .drawer-head h2 { font-size: 1.05rem; margin-bottom: 4px; word-break: break-word; }
+    .drawer-head .sub { color: var(--muted); font-size: 0.72rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .close-btn {
       width: 34px; height: 34px; border-radius: 9px;
       background: transparent; border: 1px solid var(--border);
@@ -662,13 +511,9 @@
       transition: all 0.15s;
     }
     .close-btn:hover { color: var(--text); background-color: var(--elevated); }
-    .drawer-body {
-      padding: 20px;
-      overflow-y: auto; flex: 1;
-    }
+    .drawer-body { padding: 20px; overflow-y: auto; flex: 1; }
     .drawer-body::-webkit-scrollbar { width: 8px; }
     .drawer-body::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 4px; }
-
     .creative-preview {
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -680,61 +525,26 @@
       overflow: hidden;
       margin-bottom: 18px;
     }
-    .creative-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .creative-preview video { width: 100%; height: 100%; object-fit: cover; }
-
-    .kv {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px; margin-bottom: 18px;
-    }
+    .creative-preview img, .creative-preview video { width: 100%; height: 100%; object-fit: cover; }
+    .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
     .kv > div {
       background-color: var(--elevated);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 12px;
     }
-    .kv .k {
-      font-size: 0.6rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      font-weight: 800; margin-bottom: 3px;
-    }
-    .kv .v {
-      font-size: 0.85rem; font-weight: 600;
-      word-break: break-word;
-      font-feature-settings: 'tnum';
-    }
-
-    .drawer-chart {
-      background-color: var(--elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 18px;
-    }
+    .kv .k { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-bottom: 3px; }
+    .kv .v { font-size: 0.85rem; font-weight: 600; word-break: break-word; font-feature-settings: 'tnum'; }
+    .drawer-chart { background-color: var(--elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 18px; }
     .drawer-chart .chart-wrap { height: 180px; padding-bottom: 4px; }
-
-    .sub-heading {
-      font-size: 0.62rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted);
-      font-weight: 800; margin-bottom: 10px;
-    }
-
-    .drawer-foot {
-      padding: 14px 20px;
-      border-top: 1px solid var(--border);
-      display: flex; gap: 8px;
-    }
+    .sub-heading { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 800; margin-bottom: 10px; }
+    .drawer-foot { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
     .drawer-foot > * { flex: 1; justify-content: center; }
 
-    /* ─── Overlays ─── */
-    .sidebar-overlay {
-      display: none; position: fixed; inset: 0;
-      background-color: rgba(0,0,0,0.6);
-      z-index: 55; backdrop-filter: blur(2px);
-    }
+    /* ─── Overlay / toast ─── */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 55; backdrop-filter: blur(2px); }
     .sidebar-overlay.active { display: block; animation: fadeIn 0.2s ease; }
 
-    /* ─── Toast ─── */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background-color: var(--elevated);
@@ -780,15 +590,36 @@
       transition: background 0.15s;
     }
     .export-menu button:hover { background-color: var(--surface); }
-    .export-menu button i {
-      width: 20px; text-align: center;
-      color: var(--primary);
+    .export-menu button i { width: 20px; text-align: center; color: var(--primary); }
+    .export-menu button .doc-meta { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 1px; font-weight: 500; }
+
+    /* ─── Sign-out modal ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(3,5,4,0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 150;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
     }
-    .export-menu button .doc-meta {
-      display: block; font-size: 0.7rem;
-      color: var(--muted); margin-top: 1px;
-      font-weight: 500;
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(-8px);
+      transition: transform 0.25s;
     }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-head { padding: 20px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
+    .modal-head .head-body { flex: 1; min-width: 0; }
+    .modal-head h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .modal-head p { font-size: 0.82rem; color: var(--muted); }
+    .modal-foot { padding: 16px 22px; display: flex; gap: 8px; justify-content: flex-end; }
 
     /* ─── Responsive ─── */
     @media (max-width: 1023px) {
@@ -827,16 +658,10 @@
       .format-row .format-label { width: 60px; font-size: 0.65rem; }
       .format-row .format-stats { font-size: 0.65rem; min-width: 90px; }
     }
-
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
-    .sidebar-nav::-webkit-scrollbar-thumb {
-      background-color: var(--border); border-radius: 3px;
-    }
+    .sidebar-nav::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        transition: none !important;
-        animation: none !important;
-      }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
     }
   </style>
 </head>
@@ -939,10 +764,6 @@
                 <button data-format="csv">
                   <i class="fas fa-file-csv"></i>
                   <span>CSV export<span class="doc-meta">Raw data for spreadsheets · CSV</span></span>
-                </button>
-                <button data-format="pdf">
-                  <i class="fas fa-file-pdf"></i>
-                  <span>PDF report<span class="doc-meta">Printable campaign summary · PDF</span></span>
                 </button>
               </div>
             </div>
@@ -1102,6 +923,27 @@
     <div class="drawer-foot" id="drawerFoot"></div>
   </aside>
 
+  <!-- Sign-out confirmation modal -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3>Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
@@ -1138,24 +980,19 @@
         if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
         return String(num);
       };
-
       const fmtNumFull = (n) => Number(n || 0).toLocaleString('en-NG');
-
       const fmtMoney = (n, currency) => {
         const c = (currency || 'NGN').toUpperCase();
         const sym = c === 'NGN' ? '₦' : c === 'USD' ? '$' : c === 'GBP' ? '£' : c === 'EUR' ? '€' : c + ' ';
         return sym + Math.round(Number(n || 0)).toLocaleString('en-NG');
       };
-
       const fmtDate = (d) => {
         if (!d) return '—';
         const dt = new Date(d);
         if (isNaN(dt)) return '—';
         return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       };
-
       const fmtPct = (v) => (Number(v || 0)).toFixed(2) + '%';
-
       const initials = (name) => {
         if (!name) return 'AD';
         return name.trim().split(/\s+/).filter(w => w.length > 1).slice(0, 2)
@@ -1178,10 +1015,7 @@
         }, opts.headers || {});
         if (state.token) opts.headers['Authorization'] = 'Bearer ' + state.token;
         const res = await fetch(API_BASE + path, opts);
-        if (res.status === 401) {
-          redirectToLogin('session_expired');
-          throw new Error('Session expired');
-        }
+        if (res.status === 401) { redirectToLogin('session_expired'); throw new Error('Session expired'); }
         let data = null;
         try { data = await res.json(); } catch (_) {}
         if (!res.ok) {
@@ -1212,7 +1046,6 @@
         ['sideName', 'topName'].forEach(id => { const el = $(id); if (el) el.textContent = label; });
       }
 
-      /* ─── status pill ─── */
       function statusPill(status) {
         const s = String(status || 'draft').toLowerCase();
         const map = {
@@ -1227,12 +1060,10 @@
         return `<span class="status-pill ${m.cls}"><i class="fas ${m.icon}"></i> ${esc(m.label)}</span>`;
       }
 
-      /* ─── stats ─── */
       function renderStats() {
         const d = state.data;
         if (!d) return;
         const t = d.totals, p = d.previous;
-
         $('statImpressions').textContent = fmtNum(t.impressions);
         $('statClicks').textContent = fmtNum(t.clicks);
         $('statCtr').textContent = fmtPct(t.ctr);
@@ -1241,7 +1072,6 @@
         $('statDeliveryDays').textContent = String(t.delivery_days) + ' days';
         $('statSpend').textContent = fmtMoney(t.spend, 'NGN');
 
-        // Deltas
         const renderDelta = (id, current, previous) => {
           const el = $(id);
           if (!previous) { el.style.display = 'none'; return; }
@@ -1256,7 +1086,6 @@
         renderDelta('deltaCtr',         t.ctr,         p.ctr);
       }
 
-      /* ─── chart ─── */
       function renderChart() {
         const svg = $('perfChart');
         if (!svg) return;
@@ -1268,38 +1097,28 @@
           $('chartAvgImp').textContent = '0';
           return;
         }
-
         const series = d.series;
         const points = series.length;
         const W = 800, H = 260, PAD_L = 20, PAD_R = 20, PAD_T = 20, PAD_B = 24;
-
         const maxImp = Math.max(...series.map(s => s.impressions), 1);
         const maxClk = Math.max(...series.map(s => s.clicks), 1);
-
         const stepX = (W - PAD_L - PAD_R) / Math.max(points - 1, 1);
-
         const pathFor = (data, max) => data.map((v, i) => {
           const x = PAD_L + i * stepX;
           const y = H - PAD_B - (v / max) * (H - PAD_T - PAD_B);
           return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
         }).join(' ');
-
         const areaPathFor = (data, max) => {
           const p = pathFor(data, max);
           const lastX = PAD_L + (points - 1) * stepX;
           return p + ` L${lastX.toFixed(1)},${(H - PAD_B).toFixed(1)} L${PAD_L.toFixed(1)},${(H - PAD_B).toFixed(1)} Z`;
         };
-
         const impVals = series.map(s => s.impressions);
         const clkVals = series.map(s => s.clicks);
-
-        // Y grid lines
         const gridLines = [0.25, 0.5, 0.75, 1.0].map(f => {
           const y = H - PAD_B - f * (H - PAD_T - PAD_B);
           return `<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" stroke="#29352F" stroke-dasharray="2 4" stroke-width="1" opacity="0.6"/>`;
         }).join('');
-
-        // X axis labels (thin out to ~6 labels)
         const stride = Math.ceil(points / 6);
         const xLabels = series.map((s, i) => {
           if (i % stride !== 0 && i !== points - 1) return '';
@@ -1308,14 +1127,11 @@
           const label = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
           return `<text x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle" fill="#9AA8A0" font-size="10" font-family="Inter">${label}</text>`;
         }).join('');
-
-        // Y axis labels
         const yLabels = [0, 0.5, 1.0].map(f => {
           const y = H - PAD_B - f * (H - PAD_T - PAD_B);
           const v = Math.round(maxImp * f);
           return `<text x="${W - PAD_R + 2}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="#9AA8A0" font-size="9" font-family="Inter">${fmtNum(v)}</text>`;
         }).join('');
-
         svg.innerHTML = `
           <defs>
             <linearGradient id="gradImp" x1="0" y1="0" x2="0" y2="1">
@@ -1335,7 +1151,6 @@
           ${xLabels}
           ${yLabels}
         `;
-
         const totalImp = impVals.reduce((s, v) => s + v, 0);
         const totalClk = clkVals.reduce((s, v) => s + v, 0);
         $('chartTotalImp').textContent = fmtNumFull(totalImp);
@@ -1343,7 +1158,6 @@
         $('chartAvgImp').textContent = fmtNumFull(Math.round(totalImp / points));
       }
 
-      /* ─── top campaigns ─── */
       function renderTopCampaigns() {
         const d = state.data;
         if (!d || !d.campaigns || !d.campaigns.length) {
@@ -1378,7 +1192,6 @@
         }).join('');
       }
 
-      /* ─── format bars ─── */
       function renderFormatBars() {
         const d = state.data;
         if (!d || !d.by_format || !d.by_format.length) {
@@ -1390,10 +1203,8 @@
             </div>`;
           return;
         }
-
         const rows = d.by_format.slice().sort((a, b) => b.impressions - a.impressions);
         const max = Math.max(...rows.map(r => r.impressions), 1);
-
         $('formatBars').innerHTML = rows.map(r => {
           const pct = (r.impressions / max) * 100;
           const ctr = r.impressions > 0 ? ((r.clicks / r.impressions) * 100).toFixed(2) : '—';
@@ -1409,11 +1220,9 @@
         }).join('');
       }
 
-      /* ─── detailed table ─── */
       function renderCampaignTable() {
         const d = state.data;
         const tbody = $('campaignTableBody');
-
         if (!d || !d.campaigns || !d.campaigns.length) {
           tbody.innerHTML = `
             <tr><td colspan="6">
@@ -1425,7 +1234,6 @@
             </td></tr>`;
           return;
         }
-
         tbody.innerHTML = d.campaigns.map(c => {
           const imp = Number(c.impressions) || 0;
           const clk = Number(c.clicks) || 0;
@@ -1464,7 +1272,6 @@
         }).join('');
       }
 
-      /* ─── campaign report drawer ─── */
       async function openCampaignReport(campaignId) {
         state.drawerCampaignId = campaignId;
         $('drawerTitle').textContent = 'Campaign report';
@@ -1479,31 +1286,24 @@
         $('drawer').setAttribute('aria-hidden', 'false');
         $('drawerBackdrop').classList.add('open');
         document.body.style.overflow = 'hidden';
-
         try {
           const data = await api(`/api/advertiser/analytics/campaigns/${encodeURIComponent(campaignId)}?period=${state.period}`);
           const c = data.campaign;
           const imp = Number(c.impressions) || 0;
           const clk = Number(c.clicks) || 0;
           const ctr = imp > 0 ? ((clk / imp) * 100) : 0;
-          const fmtPct = (v) => Number(v || 0).toFixed(2) + '%';
-
           $('drawerTitle').textContent = c.name || 'Campaign';
           $('drawerSub').innerHTML = `${statusPill(c.status)} <span>${data.range.days}d window</span>`;
-
           const creative = c.image_url
             ? ((c.format || '').toLowerCase() === 'video'
               ? `<video src="${esc(c.image_url)}" muted playsinline></video>`
               : `<img src="${esc(c.image_url)}" alt="">`)
             : `<i class="fas fa-rectangle-ad"></i>`;
-
           const paymentInfo = data.payment
             ? `${fmtMoney(data.payment.amount, data.payment.currency)} · ${esc(data.payment.status)} · ${fmtDate(data.payment.created_at)}`
             : '—';
-
           $('drawerBody').innerHTML = `
             <div class="creative-preview">${creative}</div>
-
             <div class="kv">
               <div><div class="k">Impressions</div><div class="v">${fmtNumFull(imp)}</div></div>
               <div><div class="k">Clicks</div><div class="v">${fmtNumFull(clk)}</div></div>
@@ -1513,7 +1313,6 @@
               <div><div class="k">Ends</div><div class="v">${fmtDate(c.end_date)}</div></div>
               <div style="grid-column:1/-1;"><div class="k">Payment</div><div class="v">${paymentInfo}</div></div>
             </div>
-
             <div class="sub-heading">Daily performance</div>
             <div class="drawer-chart">
               <div class="chart-wrap">
@@ -1521,10 +1320,7 @@
               </div>
             </div>
           `;
-
-          // Mini chart in drawer
           drawDrawerChart(data.series);
-
           $('drawerFoot').innerHTML = `
             <button class="btn-outline" onclick="window.location.href='./campaigns.html?id=${encodeURIComponent(c.id)}'">
               <i class="fas fa-eye"></i> Campaign details
@@ -1540,7 +1336,6 @@
               window.open(url + '&token=' + encodeURIComponent(state.token), '_blank');
             });
           }
-
         } catch (e) {
           $('drawerBody').innerHTML = `
             <div class="empty-state">
@@ -1568,16 +1363,13 @@
         const maxImp = Math.max(...series.map(s => s.impressions), 1);
         const maxClk = Math.max(...series.map(s => s.clicks), 1);
         const stepX = (W - PAD_L - PAD_R) / Math.max(points - 1, 1);
-
         const pathFor = (data, max) => data.map((v, i) => {
           const x = PAD_L + i * stepX;
           const y = H - PAD_B - (v / max) * (H - PAD_T - PAD_B);
           return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
         }).join(' ');
-
         const impVals = series.map(s => s.impressions);
         const clkVals = series.map(s => s.clicks);
-
         svg.innerHTML = `
           <defs>
             <linearGradient id="gradImp2" x1="0" y1="0" x2="0" y2="1">
@@ -1599,7 +1391,6 @@
         state.drawerCampaignId = null;
       }
 
-      /* ─── data load ─── */
       async function loadAnalytics() {
         try {
           const data = await api(`/api/advertiser/analytics?period=${state.period}`);
@@ -1617,15 +1408,12 @@
         }
       }
 
-      /* ─── export ─── */
       function doExport(format) {
-        const url = `${API_BASE}/api/advertiser/analytics/${format === 'pdf' ? 'export.pdf' : 'export'}?period=${state.period}&format=${format}`;
+        const url = `${API_BASE}/api/advertiser/analytics/export?period=${state.period}&format=${format}`;
         window.open(url + '&token=' + encodeURIComponent(state.token), '_blank');
       }
 
-      /* ─── wiring ─── */
       function wireEvents() {
-        // Sidebar
         $('menuToggle').addEventListener('click', () => {
           const open = $('sidebar').classList.toggle('open');
           $('sidebarOverlay').classList.toggle('active', open);
@@ -1641,16 +1429,25 @@
             $('sidebarOverlay').classList.remove('active');
             if ($('drawer').classList.contains('open')) closeDrawer();
             if ($('exportMenu').classList.contains('open')) $('exportMenu').classList.remove('open');
+            if ($('signoutModal').classList.contains('open')) closeSignoutModal();
           }
         });
 
-        // Logout
+        /* Sign-out modal wiring */
+        const signoutModal = $('signoutModal');
         $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
-          redirectToLogin();
+          signoutModal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+          setTimeout(() => $('signoutCancel')?.focus(), 60);
         });
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        signoutModal.addEventListener('click', (e) => {
+          if (e.target === signoutModal) closeSignoutModal();
+        });
+        $('signoutConfirm').addEventListener('click', redirectToLogin);
 
-        // Period select
+        /* Period select */
         $('periodSelect').addEventListener('change', (e) => {
           state.period = e.target.value;
           document.querySelectorAll('.chart-btn').forEach(b => {
@@ -1659,7 +1456,7 @@
           loadAnalytics();
         });
 
-        // Chart range buttons
+        /* Chart range buttons */
         $('chartControls').addEventListener('click', (e) => {
           const btn = e.target.closest('.chart-btn');
           if (!btn) return;
@@ -1671,7 +1468,7 @@
           loadAnalytics();
         });
 
-        // Export dropdown
+        /* Export dropdown */
         $('exportBtn').addEventListener('click', (e) => {
           e.stopPropagation();
           $('exportMenu').classList.toggle('open');
@@ -1684,18 +1481,18 @@
         });
         document.addEventListener('click', () => $('exportMenu').classList.remove('open'));
 
-        // Drawer close
+        /* Drawer */
         $('drawerClose').addEventListener('click', closeDrawer);
         $('drawerBackdrop').addEventListener('click', closeDrawer);
 
-        // Table view report
+        /* Table */
         $('campaignTableBody').addEventListener('click', (e) => {
           const btn = e.target.closest('[data-report-id]');
           if (!btn) return;
           openCampaignReport(btn.getAttribute('data-report-id'));
         });
 
-        // Top campaign card click
+        /* Top campaign card */
         $('topCampaigns').addEventListener('click', (e) => {
           const card = e.target.closest('[data-campaign-id]');
           if (!card) return;
@@ -1703,16 +1500,20 @@
         });
       }
 
-      /* ─── boot ─── */
+      function closeSignoutModal() {
+        const m = $('signoutModal');
+        if (!m) return;
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
       (async function boot() {
         try { state.token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!state.token) { redirectToLogin('not_signed_in'); return; }
-
         try {
           const cached = localStorage.getItem(USER_KEY);
           if (cached) state.user = JSON.parse(cached);
         } catch (_) {}
-
         try {
           const me = await api('/api/advertiser/me');
           if (me && me.user) {
@@ -1722,13 +1523,9 @@
         } catch (e) {
           if (e.message !== 'Session expired') console.warn('[me]', e.message);
         }
-
         if (!state.user) { redirectToLogin('not_signed_in'); return; }
-
         renderUser();
         wireEvents();
-
-        // URL param
         const params = new URLSearchParams(location.search);
         if (params.get('period')) {
           state.period = params.get('period');
@@ -1737,7 +1534,6 @@
             b.classList.toggle('active', b.getAttribute('data-range') === state.period);
           });
         }
-
         await loadAnalytics();
       })();
 

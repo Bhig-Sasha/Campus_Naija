@@ -1242,6 +1242,27 @@
     </div>
   </div>
 
+  <!-- ============ SIGN-OUT MODAL ============ -->
+  <div class="modal-backdrop" id="signoutModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signoutTitle" style="max-width: 420px;">
+      <div class="modal-head">
+        <div class="head-body">
+          <h3 id="signoutTitle">Sign out?</h3>
+          <p>You'll need to sign in again to access your campaigns.</p>
+        </div>
+        <button class="close-btn" id="signoutClose" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-outline" id="signoutCancel">Cancel</button>
+        <button class="btn-primary" id="signoutConfirm">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
@@ -1891,6 +1912,28 @@
         document.body.style.overflow = '';
       }
 
+      /* ─── Sign-out modal ─── */
+      let signoutOpener = null;
+
+      function openSignoutModal() {
+        signoutOpener = document.activeElement;
+        $('signoutModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        // Reset confirm button in case it was disabled from a prior open
+        const confirmBtn = $('signoutConfirm');
+        if (confirmBtn) confirmBtn.disabled = false;
+        setTimeout(() => $('signoutCancel')?.focus(), 60);
+      }
+
+      function closeSignoutModal() {
+        $('signoutModal').classList.remove('open');
+        document.body.style.overflow = '';
+        if (signoutOpener && typeof signoutOpener.focus === 'function') {
+          signoutOpener.focus();
+        }
+        signoutOpener = null;
+      }
+
       /* ─── Wiring ─── */
       function wireEvents() {
         // Sidebar
@@ -1905,6 +1948,13 @@
         });
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
+            // If a sign-out modal is open, close it and stop — don't also close
+            // the sidebar/drawer behind it.
+            const signout = $('signoutModal');
+            if (signout && signout.classList.contains('open')) {
+              closeSignoutModal();
+              return;
+            }
             $('sidebar').classList.remove('open');
             $('sidebarOverlay').classList.remove('active');
             if ($('drawer').classList.contains('open')) closeDrawer();
@@ -1913,9 +1963,17 @@
           }
         });
 
-        // Logout
-        $('sideLogout').addEventListener('click', () => {
-          if (!confirm('Sign out of the advertiser portal?')) return;
+        // Sign-out
+        $('sideLogout').addEventListener('click', openSignoutModal);
+        $('signoutClose').addEventListener('click', closeSignoutModal);
+        $('signoutCancel').addEventListener('click', closeSignoutModal);
+        $('signoutModal').addEventListener('click', (e) => {
+          if (e.target === $('signoutModal')) closeSignoutModal();
+        });
+        $('signoutConfirm').addEventListener('click', () => {
+          const btn = $('signoutConfirm');
+          if (btn.disabled) return;
+          btn.disabled = true;
           redirectToLogin();
         });
 
