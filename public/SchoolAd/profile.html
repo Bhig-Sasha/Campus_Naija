@@ -284,6 +284,10 @@
     .panel {
       background-color: var(--elevated); border: 1px solid var(--border);
       border-radius: var(--radius-card); padding: 24px; margin-bottom: 20px;
+      transition: border-color 0.15s;
+    }
+    .panel.editing {
+      border-color: rgba(0, 201, 130, 0.45);
     }
     .panel-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -293,23 +297,44 @@
     .panel-title i { color: var(--primary); font-size: 0.95rem; }
     .panel-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
+    .mode-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.68rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 40px;
+      background-color: rgba(155, 169, 161, 0.12);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .mode-pill.editing {
+      background-color: rgba(0, 201, 130, 0.12);
+      color: var(--primary);
+      border-color: rgba(0, 201, 130, 0.35);
+    }
+
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
     @media (min-width: 700px) { .form-grid { grid-template-columns: 1fr 1fr; } }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
     .form-group label {
       font-size: 0.78rem; font-weight: 600; color: var(--text);
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
     }
     .form-group label .req { color: var(--danger); font-size: 0.75rem; }
     .form-group label .optional { color: var(--muted); font-size: 0.7rem; font-weight: 500; font-style: italic; }
+    .form-group label .locked-tag {
+      font-size: 0.64rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted);
+      background-color: var(--surface); border: 1px solid var(--border);
+      padding: 1px 7px; border-radius: 40px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
     .form-group input,
     .form-group select,
     .form-group textarea {
       background-color: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-input); padding: 10px 14px;
       font-size: 0.88rem; color: var(--text); outline: none;
-      transition: border-color 0.15s; width: 100%;
+      transition: border-color 0.15s, opacity 0.15s; width: 100%;
     }
     .form-group input::placeholder,
     .form-group textarea::placeholder { color: #6b7c74; }
@@ -320,30 +345,36 @@
     .form-group input:disabled,
     .form-group select:disabled,
     .form-group textarea:disabled {
-      background-color: rgba(17,24,21,0.5); color: var(--muted);
-      cursor: not-allowed; border-color: var(--border);
+      background-color: rgba(13, 18, 16, 0.65); color: var(--muted);
+      cursor: not-allowed; border-color: var(--border); opacity: 0.85;
     }
     .form-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 
-    /* Radio */
+    /* Radio — Ownership is always locked */
     .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
     .radio-option {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 9px 16px;
       background-color: var(--surface); border: 1px solid var(--border);
-      border-radius: 40px; cursor: pointer; font-size: 0.85rem;
+      border-radius: 40px; font-size: 0.85rem;
       font-weight: 600; color: var(--muted);
       transition: all 0.15s;
     }
-    .radio-option:hover { border-color: var(--primary); color: var(--text); }
+    .radio-option.locked {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+    .radio-option.locked input {
+      cursor: not-allowed;
+    }
     .radio-option input {
       appearance: none; -webkit-appearance: none;
       width: 16px; height: 16px; border-radius: 50%;
       border: 2px solid var(--border); background-color: var(--elevated);
-      cursor: pointer; position: relative; flex-shrink: 0;
+      position: relative; flex-shrink: 0;
       transition: all 0.15s;
     }
-    .radio-option input:checked { border-color: var(--primary); background-color: var(--primary); }
+    .radio-option input:checked { border-color: var(--muted); background-color: var(--muted); }
     .radio-option input:checked::after {
       content: ''; position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -351,8 +382,8 @@
       background-color: #070A09;
     }
     .radio-option.selected {
-      border-color: var(--primary); color: var(--text);
-      background-color: rgba(0,201,130,0.06);
+      border-color: var(--border); color: var(--text);
+      background-color: rgba(155, 169, 161, 0.08);
     }
 
     /* Media */
@@ -376,16 +407,18 @@
       border: 1px dashed var(--border); border-radius: 8px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 6px;
-      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      color: var(--muted); font-size: 0.78rem;
       transition: border-color 0.15s, color 0.15s;
       margin-bottom: 10px; overflow: hidden; position: relative;
       background-size: cover; background-position: center;
     }
-    .media-preview:hover { border-color: var(--primary); color: var(--primary); }
+    .media-preview.editable { cursor: pointer; }
+    .media-preview.editable:hover { border-color: var(--primary); color: var(--primary); }
+    .media-preview:not(.editable) { cursor: not-allowed; opacity: 0.75; }
     .media-preview.has-image {
       border-style: solid; border-color: var(--border);
     }
-    .media-preview.has-image:hover { border-color: var(--primary); }
+    .media-preview.editable.has-image:hover { border-color: var(--primary); }
     .media-preview .media-preview-label {
       position: absolute; bottom: 0; left: 0; right: 0;
       background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
@@ -400,6 +433,7 @@
     .form-actions {
       display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
       padding-top: 20px; border-top: 1px solid var(--border);
+      align-items: center;
     }
     .btn-primary {
       background-color: var(--primary); color: #070A09; font-weight: 700;
@@ -743,7 +777,7 @@
         <div class="page-heading">
           <div class="eyebrow"><i class="fas fa-building-columns"></i> School profile management</div>
           <h1>School Profile</h1>
-          <p>Manage your institution's public identity and information. Changes are saved directly to your school's record.</p>
+          <p>View your institution's public identity and information. Click or tap <strong>Edit</strong> on a section to unlock changes and reveal the save button.</p>
         </div>
 
         <div class="draft-banner" id="draftBanner">
@@ -777,11 +811,13 @@
           </button>
         </div>
 
+        <!-- BASIC INFORMATION TAB -->
         <div class="profile-panel active" id="panel-basic">
 
-          <div class="panel">
+          <div class="panel" id="panelMedia">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-photo-film"></i> Logo &amp; cover images</div>
+              <span class="mode-pill" id="mediaModePill"><i class="fas fa-lock"></i> Read-only</span>
             </div>
             <p class="panel-desc">Select images from the media library. The logo appears beside your school's name across the platform. The cover image appears at the top of your public profile.</p>
             <div class="media-row">
@@ -790,15 +826,15 @@
                   <span>School logo</span>
                   <span class="media-tag">Recommended</span>
                 </div>
-                <div class="media-preview" id="logoPreview" onclick="openMediaPicker('logo')">
+                <div class="media-preview" id="logoPreview" onclick="onMediaPreviewClick('logo')">
                   <i class="fas fa-image"></i>
                   <span>Choose from media library</span>
                 </div>
                 <div class="media-actions">
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="openMediaPicker('logo')" id="logoSelectBtn">
+                  <button type="button" class="btn-outline" style="padding:8px 14px; font-size:0.78rem; display:none;" onclick="openMediaPicker('logo')" id="logoSelectBtn">
                     <i class="fas fa-photo-film"></i> Select
                   </button>
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="clearMedia('logo')" id="logoClearBtn">
+                  <button type="button" class="btn-outline" style="padding:8px 14px; font-size:0.78rem; display:none;" onclick="clearMedia('logo')" id="logoClearBtn">
                     <i class="fas fa-xmark"></i> Clear
                   </button>
                 </div>
@@ -808,35 +844,45 @@
                   <span>Campus cover image</span>
                   <span class="media-tag">Optional</span>
                 </div>
-                <div class="media-preview" id="coverPreview" onclick="openMediaPicker('cover')">
+                <div class="media-preview" id="coverPreview" onclick="onMediaPreviewClick('cover')">
                   <i class="fas fa-image"></i>
                   <span>Choose from media library</span>
                 </div>
                 <div class="media-actions">
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="openMediaPicker('cover')" id="coverSelectBtn">
+                  <button type="button" class="btn-outline" style="padding:8px 14px; font-size:0.78rem; display:none;" onclick="openMediaPicker('cover')" id="coverSelectBtn">
                     <i class="fas fa-photo-film"></i> Select
                   </button>
-                  <button class="btn-outline" style="padding:8px 14px; font-size:0.78rem;" onclick="clearMedia('cover')" id="coverClearBtn">
+                  <button type="button" class="btn-outline" style="padding:8px 14px; font-size:0.78rem; display:none;" onclick="clearMedia('cover')" id="coverClearBtn">
                     <i class="fas fa-xmark"></i> Clear
                   </button>
                 </div>
               </div>
             </div>
+            <div class="form-actions">
+              <button type="button" class="btn-outline" id="editMediaBtn" onclick="enterEditMode('media')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+              <button type="button" class="btn-outline" id="cancelMediaBtn" style="display:none;" onclick="cancelEditMode('media')">
+                <i class="fas fa-xmark"></i> Cancel
+              </button>
+            </div>
           </div>
 
-          <div class="panel">
+          <div class="panel" id="panelBasic">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-circle-info"></i> Basic information</div>
+              <span class="mode-pill" id="basicModePill"><i class="fas fa-lock"></i> Read-only</span>
             </div>
+            <p class="panel-desc">Core institution details. Ownership is fixed on your school's record and cannot be changed here.</p>
             <div class="form-grid">
               <div class="form-group full">
                 <label>Official school name <span class="req">*</span></label>
-                <input type="text" id="schoolName" placeholder="Official institution name">
+                <input type="text" id="schoolName" placeholder="Official institution name" disabled>
                 <span class="form-hint">This must match the name used on official documents.</span>
               </div>
               <div class="form-group">
                 <label>Institution type <span class="req">*</span></label>
-                <select id="schoolType">
+                <select id="schoolType" disabled>
                   <option value="">Select type</option>
                   <option value="University">University</option>
                   <option value="Polytechnic">Polytechnic</option>
@@ -845,21 +891,25 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Ownership <span class="req">*</span></label>
+                <label>
+                  Ownership
+                  <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span>
+                </label>
                 <div class="radio-group" id="ownershipGroup">
-                  <label class="radio-option">
-                    <input type="radio" name="ownership" value="Public">
+                  <label class="radio-option locked">
+                    <input type="radio" name="ownership" value="Public" disabled>
                     Public
                   </label>
-                  <label class="radio-option">
-                    <input type="radio" name="ownership" value="Private">
+                  <label class="radio-option locked">
+                    <input type="radio" name="ownership" value="Private" disabled>
                     Private
                   </label>
                 </div>
+                <span class="form-hint">Ownership cannot be changed. Contact the platform administrator if an update is needed.</span>
               </div>
               <div class="form-group">
                 <label>State / FCT <span class="req">*</span></label>
-                <select id="schoolState">
+                <select id="schoolState" disabled>
                   <option value="">Select state</option>
                   <option value="Abuja">Abuja (FCT)</option>
                   <option value="Abia">Abia</option>
@@ -902,79 +952,93 @@
               </div>
               <div class="form-group">
                 <label>City</label>
-                <input type="text" id="schoolCity" placeholder="City or town">
+                <input type="text" id="schoolCity" placeholder="City or town" disabled>
               </div>
               <div class="form-group full">
                 <label>Campus address or location <span class="req">*</span></label>
-                <input type="text" id="schoolAddress" placeholder="Full campus address">
+                <input type="text" id="schoolAddress" placeholder="Full campus address" disabled>
               </div>
               <div class="form-group">
                 <label>Year established</label>
-                <input type="text" id="schoolEstablished" placeholder="e.g. 1962">
+                <input type="text" id="schoolEstablished" placeholder="e.g. 1962" disabled>
               </div>
               <div class="form-group">
                 <label>Official website</label>
-                <input type="url" id="schoolWebsite" placeholder="https://">
+                <input type="url" id="schoolWebsite" placeholder="https://" disabled>
               </div>
             </div>
-          </div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
-            </div>
-            <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-primary" onclick="saveBasic()" id="saveBasicBtn"><i class="fas fa-save"></i> Save changes</button>
+            <div class="form-actions">
+              <button type="button" class="btn-outline" id="editBasicBtn" onclick="enterEditMode('basic')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+              <button type="button" class="btn-primary" id="saveBasicBtn" style="display:none;" onclick="saveBasic()">
+                <i class="fas fa-save"></i> Save changes
+              </button>
+              <button type="button" class="btn-outline" id="cancelBasicBtn" style="display:none;" onclick="cancelEditMode('basic')">
+                <i class="fas fa-xmark"></i> Cancel
+              </button>
             </div>
           </div>
         </div>
 
+        <!-- CONTACT DETAILS TAB -->
         <div class="profile-panel" id="panel-contact">
-          <div class="panel">
+          <div class="panel" id="panelContact">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-address-book"></i> Contact details</div>
+              <span class="mode-pill" id="contactModePill"><i class="fas fa-lock"></i> Read-only</span>
             </div>
             <p class="panel-desc">Official contact information shown on your public school profile. These details should reach a monitored inbox or phone line.</p>
             <div class="form-grid">
               <div class="form-group full">
                 <label>Official contact email <span class="req">*</span></label>
-                <input type="email" id="schoolEmail" placeholder="info@institution.edu.ng">
+                <input type="email" id="schoolEmail" placeholder="info@institution.edu.ng" disabled>
               </div>
             </div>
-          </div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
-            </div>
-            <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-primary" onclick="saveContact()" id="saveContactBtn"><i class="fas fa-save"></i> Save changes</button>
+            <div class="form-actions">
+              <button type="button" class="btn-outline" id="editContactBtn" onclick="enterEditMode('contact')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+              <button type="button" class="btn-primary" id="saveContactBtn" style="display:none;" onclick="saveContact()">
+                <i class="fas fa-save"></i> Save changes
+              </button>
+              <button type="button" class="btn-outline" id="cancelContactBtn" style="display:none;" onclick="cancelEditMode('contact')">
+                <i class="fas fa-xmark"></i> Cancel
+              </button>
             </div>
           </div>
         </div>
 
+        <!-- ABOUT SCHOOL TAB -->
         <div class="profile-panel" id="panel-about">
-          <div class="panel">
+          <div class="panel" id="panelAbout">
             <div class="panel-header">
               <div class="panel-title"><i class="fas fa-file-lines"></i> About the school</div>
+              <span class="mode-pill" id="aboutModePill"><i class="fas fa-lock"></i> Read-only</span>
             </div>
             <p class="panel-desc">A public description of your institution shown on the school profile.</p>
             <div class="form-group full">
               <label>Full description <span class="optional">(plain text)</span></label>
-              <textarea class="rich-editor" id="schoolDescription" placeholder="Describe your institution, its history, academic focus, campus environment and student life..."></textarea>
+              <textarea class="rich-editor" id="schoolDescription" placeholder="Describe your institution, its history, academic focus, campus environment and student life..." disabled></textarea>
             </div>
-          </div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-paper-plane"></i> Save changes</div>
-            </div>
-            <div class="form-actions" style="margin-top: 0; padding-top: 0; border-top: none;">
-              <button class="btn-primary" onclick="saveAbout()" id="saveAboutBtn"><i class="fas fa-save"></i> Save changes</button>
+            <div class="form-actions">
+              <button type="button" class="btn-outline" id="editAboutBtn" onclick="enterEditMode('about')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+              <button type="button" class="btn-primary" id="saveAboutBtn" style="display:none;" onclick="saveAbout()">
+                <i class="fas fa-save"></i> Save changes
+              </button>
+              <button type="button" class="btn-outline" id="cancelAboutBtn" style="display:none;" onclick="cancelEditMode('about')">
+                <i class="fas fa-xmark"></i> Cancel
+              </button>
             </div>
           </div>
         </div>
 
+        <!-- CHANGE HISTORY TAB -->
         <div class="profile-panel" id="panel-history">
           <div class="panel">
             <div class="panel-header">
@@ -1086,6 +1150,13 @@
       let mediaPickerTarget = null;
       let pendingPickerSelection = null;
       let schoolState = 'unassigned';
+
+      const editState = {
+        media: false,
+        basic: false,
+        contact: false,
+        about: false,
+      };
 
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -1276,6 +1347,7 @@
         document.querySelectorAll('input[name="ownership"]').forEach(r => {
           const checked = r.value.toLowerCase() === String(s.ownership || '').toLowerCase();
           r.checked = checked;
+          r.disabled = true;
           r.closest('.radio-option').classList.toggle('selected', checked);
         });
 
@@ -1288,38 +1360,131 @@
         const clearBtn = document.getElementById(kind === 'logo' ? 'logoClearBtn' : 'coverClearBtn');
         if (!el) return;
 
+        const isEditing = !!editState.media && schoolState === 'ok';
         const url = mediaId ? getMediaUrlById(mediaId) : null;
+
+        el.classList.toggle('editable', isEditing);
+
         if (url) {
           el.classList.add('has-image');
           el.style.backgroundImage = 'url("' + url + '")';
           el.innerHTML = '<div class="media-preview-label">' +
             (kind === 'logo' ? 'Current logo' : 'Current cover') +
-            ' · Click to change</div>';
-          clearBtn.disabled = false;
+            (isEditing ? ' · Click to change' : ' · Click Edit to change') +
+            '</div>';
+          clearBtn.disabled = !isEditing;
         } else {
           el.classList.remove('has-image');
           el.style.backgroundImage = '';
-          el.innerHTML = '<i class="fas fa-image"></i><span>Choose from media library</span>';
+          el.innerHTML = '<i class="fas fa-image"></i><span>' +
+            (isEditing ? 'Choose from media library' : 'Click Edit to choose an image') +
+            '</span>';
           clearBtn.disabled = true;
         }
       }
 
-      function disableAllForms(disabled) {
-        const ids = [
-          'schoolName', 'schoolType', 'schoolState', 'schoolCity', 'schoolAddress',
-          'schoolEstablished', 'schoolWebsite', 'schoolEmail', 'schoolDescription'
-        ];
-        ids.forEach(id => {
+      function applySectionLockState() {
+        const canEditAnything = schoolState === 'ok';
+
+        // 1. Media section
+        const mediaEditing = canEditAnything && editState.media;
+        document.getElementById('panelMedia').classList.toggle('editing', mediaEditing);
+        document.getElementById('mediaModePill').className = 'mode-pill' + (mediaEditing ? ' editing' : '');
+        document.getElementById('mediaModePill').innerHTML = mediaEditing
+          ? '<i class="fas fa-pen"></i> Editing'
+          : '<i class="fas fa-lock"></i> Read-only';
+        document.getElementById('editMediaBtn').style.display = mediaEditing ? 'none' : 'inline-flex';
+        document.getElementById('editMediaBtn').disabled = !canEditAnything;
+        document.getElementById('cancelMediaBtn').style.display = mediaEditing ? 'inline-flex' : 'none';
+        document.getElementById('logoSelectBtn').style.display = mediaEditing ? 'inline-flex' : 'none';
+        document.getElementById('logoClearBtn').style.display = mediaEditing ? 'inline-flex' : 'none';
+        document.getElementById('coverSelectBtn').style.display = mediaEditing ? 'inline-flex' : 'none';
+        document.getElementById('coverClearBtn').style.display = mediaEditing ? 'inline-flex' : 'none';
+        updateMediaPreview('logo', currentSchool && currentSchool.logo_media_id);
+        updateMediaPreview('cover', currentSchool && currentSchool.cover_media_id);
+
+        // 2. Basic info section (Ownership always remains disabled/locked)
+        const basicEditing = canEditAnything && editState.basic;
+        document.getElementById('panelBasic').classList.toggle('editing', basicEditing);
+        document.getElementById('basicModePill').className = 'mode-pill' + (basicEditing ? ' editing' : '');
+        document.getElementById('basicModePill').innerHTML = basicEditing
+          ? '<i class="fas fa-pen"></i> Editing'
+          : '<i class="fas fa-lock"></i> Read-only';
+        ['schoolName', 'schoolType', 'schoolState', 'schoolCity', 'schoolAddress', 'schoolEstablished', 'schoolWebsite'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.disabled = disabled;
+          if (el) el.disabled = !basicEditing;
         });
-        document.querySelectorAll('input[name="ownership"]').forEach(r => r.disabled = disabled);
-        document.getElementById('saveBasicBtn').disabled = disabled;
-        document.getElementById('saveContactBtn').disabled = disabled;
-        document.getElementById('saveAboutBtn').disabled = disabled;
-        document.getElementById('logoSelectBtn').disabled = disabled;
-        document.getElementById('coverSelectBtn').disabled = disabled;
+        document.querySelectorAll('input[name="ownership"]').forEach(r => {
+          r.disabled = true;
+        });
+        document.getElementById('editBasicBtn').style.display = basicEditing ? 'none' : 'inline-flex';
+        document.getElementById('editBasicBtn').disabled = !canEditAnything;
+        document.getElementById('saveBasicBtn').style.display = basicEditing ? 'inline-flex' : 'none';
+        document.getElementById('cancelBasicBtn').style.display = basicEditing ? 'inline-flex' : 'none';
+
+        // 3. Contact section
+        const contactEditing = canEditAnything && editState.contact;
+        document.getElementById('panelContact').classList.toggle('editing', contactEditing);
+        document.getElementById('contactModePill').className = 'mode-pill' + (contactEditing ? ' editing' : '');
+        document.getElementById('contactModePill').innerHTML = contactEditing
+          ? '<i class="fas fa-pen"></i> Editing'
+          : '<i class="fas fa-lock"></i> Read-only';
+        document.getElementById('schoolEmail').disabled = !contactEditing;
+        document.getElementById('editContactBtn').style.display = contactEditing ? 'none' : 'inline-flex';
+        document.getElementById('editContactBtn').disabled = !canEditAnything;
+        document.getElementById('saveContactBtn').style.display = contactEditing ? 'inline-flex' : 'none';
+        document.getElementById('cancelContactBtn').style.display = contactEditing ? 'inline-flex' : 'none';
+
+        // 4. About section
+        const aboutEditing = canEditAnything && editState.about;
+        document.getElementById('panelAbout').classList.toggle('editing', aboutEditing);
+        document.getElementById('aboutModePill').className = 'mode-pill' + (aboutEditing ? ' editing' : '');
+        document.getElementById('aboutModePill').innerHTML = aboutEditing
+          ? '<i class="fas fa-pen"></i> Editing'
+          : '<i class="fas fa-lock"></i> Read-only';
+        document.getElementById('schoolDescription').disabled = !aboutEditing;
+        document.getElementById('editAboutBtn').style.display = aboutEditing ? 'none' : 'inline-flex';
+        document.getElementById('editAboutBtn').disabled = !canEditAnything;
+        document.getElementById('saveAboutBtn').style.display = aboutEditing ? 'inline-flex' : 'none';
+        document.getElementById('cancelAboutBtn').style.display = aboutEditing ? 'inline-flex' : 'none';
       }
+
+      window.enterEditMode = function(section) {
+        if (schoolState !== 'ok' || !currentSchool) {
+          toast('No institution assigned.', true);
+          return;
+        }
+        if (!Object.prototype.hasOwnProperty.call(editState, section)) return;
+        editState[section] = true;
+        applySectionLockState();
+
+        if (section === 'basic') {
+          document.getElementById('schoolName').focus();
+        } else if (section === 'contact') {
+          document.getElementById('schoolEmail').focus();
+        } else if (section === 'about') {
+          document.getElementById('schoolDescription').focus();
+        }
+      };
+
+      window.cancelEditMode = function(section) {
+        if (!Object.prototype.hasOwnProperty.call(editState, section)) return;
+        editState[section] = false;
+        populateForm();
+        applySectionLockState();
+      };
+
+      window.onMediaPreviewClick = function(target) {
+        if (schoolState !== 'ok' || !currentSchool) {
+          toast('No institution assigned.', true);
+          return;
+        }
+        if (!editState.media) {
+          toast('Click Edit first to change images.');
+          return;
+        }
+        openMediaPicker(target);
+      };
 
       window.switchTab = function(tab, el) {
         document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
@@ -1334,35 +1499,40 @@
         if (tab === 'history') loadHistory();
       };
 
-      document.querySelectorAll('input[name="ownership"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-          document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
-          radio.closest('.radio-option').classList.add('selected');
-        });
-      });
-
-      async function patchSchool(payload, successMsg) {
-        if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
+      async function patchSchool(payload, successMsg, sectionToExit) {
+        if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return false; }
+        // Guard against any attempt to mutate ownership via client payloads
+        if (Object.prototype.hasOwnProperty.call(payload, 'ownership')) {
+          delete payload.ownership;
+        }
         try {
           const data = await api('/api/schools/' + encodeURIComponent(currentSchool.id), {
             method: 'PATCH',
             body: JSON.stringify(payload),
           });
           currentSchool = data.school || currentSchool;
+          if (sectionToExit && Object.prototype.hasOwnProperty.call(editState, sectionToExit)) {
+            editState[sectionToExit] = false;
+          }
           populateForm();
+          applySectionLockState();
           renderBanner();
           toast(successMsg || 'Saved.');
+          return true;
         } catch (err) {
           toast(err.message, true);
+          return false;
         }
       }
 
       window.saveBasic = async function() {
+        if (!editState.basic) return;
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const name = document.getElementById('schoolName').value.trim();
         const address = document.getElementById('schoolAddress').value.trim();
         if (!name) { toast('Please enter the official school name.', true); return; }
         if (!address) { toast('Please enter the campus address.', true); return; }
+
         const payload = {
           name,
           type: document.getElementById('schoolType').value || null,
@@ -1372,37 +1542,49 @@
           established: document.getElementById('schoolEstablished').value.trim() || null,
           website: document.getElementById('schoolWebsite').value.trim() || null,
         };
-        const ownership = document.querySelector('input[name="ownership"]:checked');
-        if (ownership) payload.ownership = ownership.value;
 
         const btn = document.getElementById('saveBasicBtn');
+        const cancelBtn = document.getElementById('cancelBasicBtn');
         btn.disabled = true;
-        await patchSchool(payload, 'Basic information saved.');
+        cancelBtn.disabled = true;
+        await patchSchool(payload, 'Basic information saved.', 'basic');
         btn.disabled = false;
+        cancelBtn.disabled = false;
       };
 
       window.saveContact = async function() {
+        if (!editState.contact) return;
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const email = document.getElementById('schoolEmail').value.trim();
         if (!email) { toast('Please enter a contact email.', true); return; }
         const payload = { email };
+
         const btn = document.getElementById('saveContactBtn');
+        const cancelBtn = document.getElementById('cancelContactBtn');
         btn.disabled = true;
-        await patchSchool(payload, 'Contact details saved.');
+        cancelBtn.disabled = true;
+        await patchSchool(payload, 'Contact details saved.', 'contact');
         btn.disabled = false;
+        cancelBtn.disabled = false;
       };
 
       window.saveAbout = async function() {
+        if (!editState.about) return;
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const description = document.getElementById('schoolDescription').value.trim();
         const payload = { description: description || null };
+
         const btn = document.getElementById('saveAboutBtn');
+        const cancelBtn = document.getElementById('cancelAboutBtn');
         btn.disabled = true;
-        await patchSchool(payload, 'About section saved.');
+        cancelBtn.disabled = true;
+        await patchSchool(payload, 'About section saved.', 'about');
         btn.disabled = false;
+        cancelBtn.disabled = false;
       };
 
       window.openMediaPicker = async function(target) {
+        if (!editState.media) { toast('Click Edit first to select media.', true); return; }
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         mediaPickerTarget = target;
         pendingPickerSelection = null;
@@ -1453,16 +1635,17 @@
         if (!pendingPickerSelection || !mediaPickerTarget || !currentSchool) return;
         const field = mediaPickerTarget === 'logo' ? 'logo_media_id' : 'cover_media_id';
         const payload = {}; payload[field] = pendingPickerSelection;
-        await patchSchool(payload, (mediaPickerTarget === 'logo' ? 'Logo' : 'Cover') + ' updated.');
-        closeMediaPicker();
+        const ok = await patchSchool(payload, (mediaPickerTarget === 'logo' ? 'Logo' : 'Cover') + ' updated.', 'media');
+        if (ok) closeMediaPicker();
       };
 
       window.clearMedia = async function(kind) {
+        if (!editState.media) return;
         if (schoolState !== 'ok' || !currentSchool) return;
         if (!confirm('Remove this ' + kind + '? The image file will not be deleted from your media library.')) return;
         const field = kind === 'logo' ? 'logo_media_id' : 'cover_media_id';
         const payload = {}; payload[field] = null;
-        await patchSchool(payload, (kind === 'logo' ? 'Logo' : 'Cover') + ' cleared.');
+        await patchSchool(payload, (kind === 'logo' ? 'Logo' : 'Cover') + ' cleared.', 'media');
       };
 
       async function loadHistory() {
@@ -1658,7 +1841,7 @@
         await loadMediaCache();
         renderBanner();
         populateForm();
-        disableAllForms(schoolState !== 'ok');
+        applySectionLockState();
       })();
 
     })();
