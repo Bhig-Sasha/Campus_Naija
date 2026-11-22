@@ -71,7 +71,7 @@
     /* ─── Shell ─── */
     .adv-shell { display: flex; min-height: 100vh; }
 
-    /* ─── Sidebar ─── */
+    /* ─── Sidebar (Drawer on all screen sizes) ─── */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -79,27 +79,35 @@
       display: flex; flex-direction: column;
       position: fixed; top: 0; left: 0; bottom: 0;
       z-index: 60;
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .sidebar-brand {
-      padding: 24px 22px 20px;
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 8px 0 32px rgba(0, 0, 0, 0.55);
+    }
+
+    .sidebar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 18px 14px;
       border-bottom: 1px solid var(--border);
     }
-    .sidebar-brand .logo {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
-    }
-    .sidebar-brand .logo span { color: var(--primary); }
-    .sidebar-brand .portal-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 8px;
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+    .sidebar-top-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--primary);
-      padding: 4px 10px; border-radius: 40px;
-      background-color: rgba(0,201,130,0.1);
-      border: 1px solid rgba(0,201,130,0.25);
     }
-    .sidebar-brand .portal-tag i { font-size: 0.65rem; }
+    .sidebar-close {
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .sidebar-close:hover {
+      background-color: var(--elevated);
+      color: var(--text);
+      border-color: var(--border);
+    }
 
     .sidebar-nav {
       flex: 1; overflow-y: auto;
@@ -185,11 +193,11 @@
     }
     .logout-btn:hover { color: var(--danger); }
 
-    /* ─── Main ─── */
+    /* ─── Main (Full width) ─── */
     .main-area {
-      flex: 1; margin-left: var(--sidebar-w);
+      flex: 1; margin-left: 0;
       display: flex; flex-direction: column;
-      min-width: 0;
+      min-width: 0; width: 100%;
     }
 
     /* ─── Topbar ─── */
@@ -202,13 +210,13 @@
       padding: 0 24px; height: 72px;
     }
     .menu-toggle {
-      display: none;
-      background: transparent; border: none;
-      color: var(--text); font-size: 1.2rem;
-      cursor: pointer; padding: 8px; border-radius: 8px;
-      transition: background 0.15s, color 0.15s;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); font-size: 1.15rem;
+      cursor: pointer; width: 40px; height: 40px; border-radius: 10px;
+      transition: all 0.15s;
     }
-    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .menu-toggle:hover { color: var(--primary); border-color: var(--primary); background: var(--elevated); }
 
     .topbar-heading { flex: 1; min-width: 0; }
     .topbar-heading h1 {
@@ -701,10 +709,6 @@
 
     /* ─── Mobile ─── */
     @media (max-width: 1023px) {
-      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
-      .sidebar.open { transform: translateX(0); }
-      .main-area { margin-left: 0; }
-      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; height: 64px; }
       .topbar-heading h1 { font-size: 1rem; }
       .topbar-heading p { display: none; }
@@ -764,11 +768,11 @@
 
     <!-- ═══════════ SIDEBAR ═══════════ -->
     <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
-      <div class="sidebar-brand">
-        <div class="logo">Campus<span>Naija</span></div>
-        <div class="portal-tag">
-          <i class="fas fa-bullhorn"></i> Advertiser Portal
-        </div>
+      <div class="sidebar-top">
+        <span class="sidebar-top-label">Navigation</span>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close navigation">
+          <i class="fas fa-xmark"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -1412,10 +1416,12 @@
         }
       }
 
-      /* ─── Sidebar ─── */
+      /* ─── Sidebar (Drawer toggle on all screens) ─── */
       const menuToggle = $('menuToggle');
+      const sidebarClose = $('sidebarClose');
       const sidebar = $('sidebar');
       const overlay = $('sidebarOverlay');
+
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1426,8 +1432,11 @@
         overlay.classList.toggle('active', open);
         menuToggle.setAttribute('aria-expanded', String(open));
       });
+      if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
       overlay.addEventListener('click', closeSidebar);
-      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+      sidebar.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', closeSidebar);
+      });
 
       /* ─── Sign-out modal ─── */
       const signoutModal = $('signoutModal');
@@ -1435,7 +1444,6 @@
       function openSignoutModal() {
         signoutModal.classList.add('open');
         document.body.style.overflow = 'hidden';
-        // Focus Cancel so accidental Enter doesn't sign the user out
         setTimeout(() => $('signoutCancel')?.focus(), 60);
       }
       function closeSignoutModal() {
