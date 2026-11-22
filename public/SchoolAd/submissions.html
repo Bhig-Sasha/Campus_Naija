@@ -491,6 +491,9 @@
     .footer-brand .footer-tagline {
       font-size: 0.78rem; color: var(--muted); max-width: 320px; line-height: 1.5;
     }
+    .footer-brand .footer-copyright {
+      font-size: 0.72rem; color: var(--muted); margin-top: 10px;
+    }
     .footer-links {
       display: flex; flex-wrap: wrap; gap: 32px;
     }
@@ -509,13 +512,6 @@
     }
     .footer-col a:hover { color: var(--primary); }
     .footer-col a i { font-size: 0.7rem; }
-    .footer-bottom {
-      display: flex; flex-wrap: wrap; gap: 12px;
-      align-items: center; justify-content: space-between;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-      font-size: 0.72rem; color: var(--muted);
-    }
 
     /* Toast */
     .toast {
@@ -558,7 +554,6 @@
       .sub-tab { padding: 9px 12px; font-size: 0.8rem; }
       .footer-top { flex-direction: column; gap: 20px; }
       .footer-links { gap: 24px; }
-      .footer-bottom { flex-direction: column; align-items: flex-start; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -709,6 +704,7 @@
             <div class="footer-brand">
               <div class="footer-logo">Campus<span>Naija</span></div>
               <p class="footer-tagline">The school administration portal for verified Nigerian institutions. Manage your profile, courses, fees, admissions and calendar in one place.</p>
+              <p class="footer-copyright">&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</p>
             </div>
             <div class="footer-links">
               <div class="footer-col">
@@ -728,19 +724,7 @@
                   <li><a href="./media.html"><i class="fas fa-photo-film"></i> Media library</a></li>
                 </ul>
               </div>
-              <div class="footer-col">
-                <h5>Support</h5>
-                <ul>
-                  <li><a href="/FAQ.html"><i class="fas fa-circle-question"></i> FAQ</a></li>
-                  <li><a href="mailto:support@campusnaija.ng"><i class="fas fa-envelope"></i> Contact admin</a></li>
-                  <li><a href="/privacy.html"><i class="fas fa-shield-halved"></i> Privacy</a></li>
-                  <li><a href="/terms.html"><i class="fas fa-file-contract"></i> Terms</a></li>
-                </ul>
-              </div>
             </div>
-          </div>
-          <div class="footer-bottom">
-            <span>&copy; <span id="footerYear">2026</span> CampusNaija. All rights reserved.</span>
           </div>
         </footer>
 
