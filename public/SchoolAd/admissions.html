@@ -39,46 +39,51 @@
       --sidebar-w: 260px;
     }
 
-    /* SIDEBAR */
+    /* SIDEBAR (Drawer on all screen sizes so main body is full width) */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
       position: fixed; top: 0; left: 0; bottom: 0;
-      z-index: 60; transition: transform 0.25s ease;
+      z-index: 60;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .sidebar-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
-    .sidebar-brand .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
-    .sidebar-brand .logo span { color: var(--primary); }
-    .sidebar-brand .portal-label {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 10px; font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 8px 0 32px rgba(0, 0, 0, 0.55);
     }
-    .sidebar-brand .portal-label i { font-size: 0.7rem; }
 
-    .sidebar-institution {
-      margin: 14px 14px 0; padding: 14px;
+    .sidebar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-top-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--primary);
+    }
+    .sidebar-close {
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 1rem; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .sidebar-close:hover {
       background-color: var(--elevated);
-      border: 1px solid var(--border); border-radius: 12px;
-    }
-    .sidebar-institution .inst-label {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
-    }
-    .sidebar-institution .inst-name {
-      font-size: 0.85rem; font-weight: 700; line-height: 1.3;
-      word-break: break-word;
+      color: var(--text);
+      border-color: var(--border);
     }
 
     .sidebar-nav {
-      flex: 1; overflow-y: auto; padding: 20px 14px;
+      flex: 1; overflow-y: auto; padding: 16px 14px 24px;
       display: flex; flex-direction: column; gap: 4px;
     }
     .nav-group-label {
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted); padding: 14px 12px 8px;
+      text-transform: uppercase; color: var(--muted); padding: 10px 12px 8px;
     }
     .nav-item {
       display: flex; align-items: center; gap: 12px;
@@ -103,13 +108,6 @@
       min-width: 20px; text-align: center;
     }
 
-    .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); }
-    .rep-user {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 12px; border-radius: 10px;
-      transition: background 0.18s ease;
-    }
-    .rep-user:hover { background-color: var(--elevated); }
     .rep-avatar {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, #F5B942, #b88720);
@@ -118,39 +116,9 @@
       box-shadow: 0 0 0 2px rgba(245,185,66,0.15);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .rep-user:hover .rep-avatar {
-      transform: scale(1.05);
-      box-shadow: 0 0 0 4px rgba(245,185,66,0.2);
-    }
-    .rep-user-info { flex: 1; min-width: 0; }
-    .rep-user-name {
-      font-size: 0.85rem; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .rep-user-role {
-      font-size: 0.7rem; color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .logout-btn {
-      background: transparent; border: none; color: var(--muted);
-      font-size: 0.95rem; cursor: pointer;
-      padding: 6px; border-radius: 8px;
-      transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease;
-      flex-shrink: 0;
-    }
-    .logout-btn:hover {
-      color: var(--danger);
-      background-color: rgba(224, 112, 112, 0.08);
-      transform: translateX(2px);
-    }
-    .logout-btn:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(224, 112, 112, 0.25);
-      color: var(--danger);
-    }
 
-    /* MAIN */
-    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+    /* MAIN (Full width) */
+    .main-area { flex: 1; margin-left: 0; display: flex; flex-direction: column; min-width: 0; width: 100%; }
 
     .topbar {
       position: sticky; top: 0; z-index: 40;
@@ -161,11 +129,13 @@
       padding: 0 24px; height: 68px;
     }
     .menu-toggle {
-      display: none; background: transparent; border: none;
-      color: var(--text); font-size: 1.25rem; cursor: pointer;
-      padding: 8px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); font-size: 1.15rem; cursor: pointer;
+      width: 40px; height: 40px; border-radius: 10px;
+      transition: all 0.15s;
     }
-    .menu-toggle:hover { color: var(--primary); }
+    .menu-toggle:hover { color: var(--primary); border-color: var(--primary); background-color: var(--elevated); }
 
     .topbar-title { display: flex; flex-direction: column; gap: 2px; }
     .topbar-title .t-eyebrow {
@@ -193,6 +163,10 @@
       display: flex; align-items: center; gap: 10px;
       padding: 6px 10px 6px 6px; border-radius: 40px; cursor: default;
     }
+    .topbar-rep:hover .rep-avatar {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 4px rgba(245,185,66,0.2);
+    }
     .topbar-rep .rep-avatar { width: 32px; height: 32px; font-size: 0.75rem; }
     .topbar-rep-name { font-size: 0.82rem; font-weight: 700; line-height: 1.2; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .topbar-rep-role { font-size: 0.68rem; color: var(--muted); line-height: 1.2; }
@@ -209,7 +183,7 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* SCOPE BANNER — hidden when everything is fine */
+    /* SCOPE BANNER — hidden when everything is fine, visible only for unassigned / orphaned */
     .scope-banner {
       display: none;
       flex-wrap: wrap; align-items: center; gap: 14px;
@@ -524,6 +498,71 @@
       font-size: 0.72rem; color: var(--muted);
     }
 
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 120;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1; pointer-events: auto;
+    }
+    .modal-card {
+      width: 100%; max-width: 400px;
+      background-color: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.2s ease;
+    }
+    .modal-backdrop.open .modal-card {
+      transform: translateY(0) scale(1);
+    }
+    .modal-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 12px;
+    }
+    .modal-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background-color: rgba(224, 112, 112, 0.12);
+      color: var(--danger);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .modal-title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .modal-body {
+      font-size: 0.86rem; color: var(--muted);
+      line-height: 1.5; margin-bottom: 22px;
+    }
+    .modal-actions {
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .btn-modal {
+      padding: 9px 16px; border-radius: var(--radius-btn);
+      font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+      border: 1px solid var(--border);
+    }
+    .btn-modal-cancel {
+      background-color: var(--surface); color: var(--text);
+    }
+    .btn-modal-cancel:hover {
+      background-color: #161f1b; border-color: var(--muted);
+    }
+    .btn-modal-danger {
+      background-color: var(--danger); color: #070A09;
+      border-color: var(--danger);
+    }
+    .btn-modal-danger:hover {
+      filter: brightness(1.08);
+    }
+
     /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
@@ -549,10 +588,6 @@
     .sidebar-overlay.active { display: block; }
 
     @media (max-width: 1023px) {
-      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
-      .sidebar.open { transform: translateX(0); }
-      .main-area { margin-left: 0; }
-      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; }
       .content { padding: 24px 16px 40px; }
       .topbar-title { display: none; }
@@ -584,14 +619,11 @@
   <div class="admin-shell" style="display:flex; min-height:100vh;">
 
     <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
-      <div class="sidebar-brand">
-        <div class="logo">Campus<span>Naija</span></div>
-        <div class="portal-label"><i class="fas fa-school"></i> School Administration</div>
-      </div>
-
-      <div class="sidebar-institution">
-        <div class="inst-label">Assigned institution</div>
-        <div class="inst-name" id="sidebarInstName">—</div>
+      <div class="sidebar-top">
+        <span class="sidebar-top-label">Navigation</span>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close navigation">
+          <i class="fas fa-xmark"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -608,19 +640,6 @@
         </a>
         <a href="./profile.html" class="nav-item"><i class="fas fa-building-columns"></i> School Profile</a>
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="rep-user">
-          <div class="rep-avatar" id="sideAvatar">—</div>
-          <div class="rep-user-info">
-            <div class="rep-user-name" id="sideName">—</div>
-            <div class="rep-user-role" id="sideRole">School Representative</div>
-          </div>
-          <button class="logout-btn" aria-label="Sign out" title="Sign out" onclick="signOut()">
-            <i class="fas fa-arrow-right-from-bracket"></i>
-          </button>
-        </div>
-      </div>
     </aside>
 
     <div class="main-area">
@@ -852,6 +871,21 @@
     </div>
   </div>
 
+  <!-- SIGN OUT MODAL -->
+  <div class="modal-backdrop" id="signoutModal" role="dialog" aria-modal="true" aria-labelledby="signoutModalTitle" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon"><i class="fas fa-arrow-right-from-bracket"></i></div>
+        <h3 class="modal-title" id="signoutModalTitle">Sign out</h3>
+      </div>
+      <p class="modal-body">Are you sure you want to sign out of the school representative portal?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal btn-modal-cancel" id="cancelSignoutBtn">Cancel</button>
+        <button type="button" class="btn-modal btn-modal-danger" id="confirmSignoutBtn">Sign out</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite">
     <i class="fas fa-circle-check"></i>
     <span id="toastText"></span>
@@ -926,15 +960,11 @@
       function renderUser() {
         const name = (currentUser && currentUser.name) || '—';
         const ini = initials(name);
-        document.getElementById('sideAvatar').textContent = ini;
-        document.getElementById('sideName').textContent = name;
-        document.getElementById('sideRole').textContent = 'School Representative';
         document.getElementById('topAvatar').textContent = ini;
         document.getElementById('topName').textContent = name;
       }
 
       function renderSchool() {
-        const sidebarName = document.getElementById('sidebarInstName');
         const banner = document.getElementById('scopeBanner');
         const bannerTitle = document.getElementById('scopeBannerTitle');
         const bannerDesc = document.getElementById('scopeBannerDesc');
@@ -948,7 +978,6 @@
           bannerTitle.textContent = 'No institution assigned';
           bannerDesc.textContent = 'Contact the platform administrator to be assigned to your institution before managing admissions.';
           pill.textContent = 'Unassigned';
-          sidebarName.textContent = 'No institution assigned';
           if (addBtn) addBtn.disabled = true;
           return;
         }
@@ -959,20 +988,13 @@
           bannerTitle.textContent = 'Assigned school could not be found';
           bannerDesc.textContent = 'This account is linked to a school that no longer exists (school_id: ' + String(ref) + ').';
           pill.textContent = 'Orphaned reference';
-          sidebarName.textContent = 'School reference invalid';
           if (addBtn) addBtn.disabled = true;
           return;
         }
 
-        // schoolState === 'ok' — no banner, just plain branding
-        sidebarName.textContent = currentSchool.name || '—';
         if (addBtn) addBtn.disabled = false;
       }
 
-      /* ----- CLASSIFY -----
-       * A record is "sent back" if it is draft AND has a review comment.
-       * Otherwise: published / archived / draft.
-       */
       function classify(n) {
         if (n.status === 'archived') return 'archived';
         if (n.status === 'published') return 'published';
@@ -980,7 +1002,6 @@
         return 'draft';
       }
 
-      /* ----- STATS ----- */
       function updateStats() {
         const total = allNotices.length;
         const sentBack = allNotices.filter(n => classify(n) === 'sent_back').length;
@@ -1007,7 +1028,6 @@
         document.getElementById('countPublished').textContent = String(published);
         document.getElementById('countArchived').textContent = String(archived);
 
-        // Sidebar badge
         const badge = document.getElementById('myContentBadge');
         if (badge) {
           if (sentBack > 0) {
@@ -1019,7 +1039,6 @@
         }
       }
 
-      /* ----- CATEGORY TAB ----- */
       window.switchCategory = function(cat, el) {
         activeCategory = cat;
         document.querySelectorAll('.notice-tab').forEach(t => t.classList.remove('active'));
@@ -1027,7 +1046,6 @@
         renderNotices();
       };
 
-      /* ----- RENDER ----- */
       function statusBadge(n) {
         const cat = classify(n);
         if (cat === 'sent_back') return '<span class="data-row-badge sent-back">Needs fix</span>';
@@ -1105,7 +1123,6 @@
               '<i class="fas fa-pen"></i> Fix &amp; re-publish</button>');
           }
 
-          // Delete is allowed for non-published items.
           if (cat !== 'published') {
             actions.push('<button class="btn-danger btn-sm" onclick="deleteNotice(\'' + esc(n.id) + '\', \'' +
               esc((n.title || '').replace(/'/g, "\\'")) + '\')">' +
@@ -1127,7 +1144,6 @@
         }).join('') + '</div>';
       }
 
-      /* ----- LOAD ----- */
       async function loadNotices() {
         if (schoolState !== 'ok' || !currentSchool) {
           allNotices = [];
@@ -1151,7 +1167,6 @@
         }
       }
 
-      /* ----- FORM ----- */
       window.toggleAddForm = function() {
         const form = document.getElementById('addNoticeForm');
         form.classList.toggle('open');
@@ -1233,13 +1248,6 @@
         }
       };
 
-      /**
-       * editNotice
-       * ----------
-       * "Fix & re-publish" for a sent-back notice. Prompts for the corrected
-       * fields inline (no separate edit form for now — the same fields as
-       * create). Saving flips status back to 'published' (server-side).
-       */
       window.editNotice = async function(id) {
         const n = allNotices.find(x => String(x.id) === String(id));
         if (!n) return;
@@ -1278,7 +1286,6 @@
         }
       };
 
-      /* ----- DELETE ----- */
       window.deleteNotice = async function(id, title) {
         if (!confirm('Delete "' + (title || 'this notice') + '"?\n\nThis cannot be undone.')) return;
         try {
@@ -1290,7 +1297,6 @@
         }
       };
 
-      /* ----- SESSION ----- */
       async function verifySession() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
         if (!token) { redirectToLogin('not_signed_in'); return false; }
@@ -1347,20 +1353,49 @@
         schoolState = 'orphaned';
       }
 
-      window.signOut = async function() {
-        if (!confirm('Sign out of the school portal?')) return;
+      /* ----- SIGN OUT MODAL ----- */
+      const signoutModal = document.getElementById('signoutModal');
+      const cancelSignoutBtn = document.getElementById('cancelSignoutBtn');
+      const confirmSignoutBtn = document.getElementById('confirmSignoutBtn');
+
+      function openSignoutModal() {
+        signoutModal.classList.add('open');
+        signoutModal.setAttribute('aria-hidden', 'false');
+        cancelSignoutBtn.focus();
+      }
+
+      function closeSignoutModal() {
+        signoutModal.classList.remove('open');
+        signoutModal.setAttribute('aria-hidden', 'true');
+      }
+
+      async function performSignOut() {
+        confirmSignoutBtn.disabled = true;
+        confirmSignoutBtn.textContent = 'Signing out…';
         try { await api('/api/auth/logout', { method: 'POST' }); } catch (_) {}
         try {
           localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);
         } catch (_) {}
         window.location.replace(LOGIN_URL);
+      }
+
+      window.signOut = function() {
+        openSignoutModal();
       };
 
-      /* ----- MOBILE SIDEBAR ----- */
+      cancelSignoutBtn.addEventListener('click', closeSignoutModal);
+      confirmSignoutBtn.addEventListener('click', performSignOut);
+      signoutModal.addEventListener('click', (e) => {
+        if (e.target === signoutModal) closeSignoutModal();
+      });
+
+      /* ----- COLLAPSIBLE SIDEBAR DRAWER ----- */
       const menuToggle = document.getElementById('menuToggle');
+      const sidebarClose = document.getElementById('sidebarClose');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
+
       function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
@@ -1371,16 +1406,23 @@
         overlay.classList.toggle('active', open);
         menuToggle.setAttribute('aria-expanded', String(open));
       });
+      sidebarClose.addEventListener('click', closeSidebar);
       overlay.addEventListener('click', closeSidebar);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
-      window.addEventListener('resize', () => { if (window.innerWidth >= 1024) closeSidebar(); });
+      sidebar.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', closeSidebar);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          if (signoutModal.classList.contains('open')) closeSignoutModal();
+          else closeSidebar();
+        }
+      });
 
       (function setFooterYear() {
         const y = document.getElementById('footerYear');
         if (y) y.textContent = String(new Date().getFullYear());
       })();
 
-      /* ----- INIT ----- */
       (async function boot() {
         const ok = await verifySession();
         if (!ok) return;
