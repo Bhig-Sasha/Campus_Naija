@@ -67,7 +67,7 @@
 
     .adv-shell { display: flex; min-height: 100vh; }
 
-    /* ─── Sidebar ─── */
+    /* ─── Collapsible Sidebar Drawer (All Screen Sizes) ─── */
     .sidebar {
       width: var(--sidebar-w);
       background-color: var(--surface);
@@ -75,29 +75,33 @@
       display: flex; flex-direction: column;
       position: fixed; top: 0; left: 0; bottom: 0;
       z-index: 60;
+      transform: translateX(-100%);
+      box-shadow: 8px 0 32px rgba(0,0,0,0.5);
       transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .sidebar-brand {
-      padding: 24px 22px 20px;
-      border-bottom: 1px solid var(--border);
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-drawer-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px 8px;
     }
-    .sidebar-brand .logo {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em;
+    .sidebar-drawer-label {
+      font-size: 0.62rem; font-weight: 800;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
     }
-    .sidebar-brand .logo span { color: var(--primary); }
-    .sidebar-brand .portal-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 8px;
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--primary);
-      padding: 4px 10px; border-radius: 40px;
-      background-color: rgba(0,201,130,0.1);
-      border: 1px solid rgba(0,201,130,0.25);
+    .sidebar-close {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+    }
+    .sidebar-close:hover {
+      color: var(--text); background-color: var(--elevated); border-color: var(--primary);
     }
     .sidebar-nav {
       flex: 1; overflow-y: auto;
-      padding: 16px 12px;
+      padding: 8px 12px 16px;
       display: flex; flex-direction: column; gap: 2px;
     }
     .nav-group-label {
@@ -176,9 +180,9 @@
 
     /* ─── Main ─── */
     .main-area {
-      flex: 1; margin-left: var(--sidebar-w);
+      flex: 1; margin-left: 0;
       display: flex; flex-direction: column;
-      min-width: 0;
+      min-width: 0; width: 100%;
     }
 
     /* ─── Topbar ─── */
@@ -191,12 +195,14 @@
       padding: 0 24px; height: 72px;
     }
     .menu-toggle {
-      display: none;
-      background: transparent; border: none;
-      color: var(--text); font-size: 1.2rem;
-      cursor: pointer; padding: 8px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); font-size: 1.05rem;
+      cursor: pointer; width: 38px; height: 38px; border-radius: 10px;
+      flex-shrink: 0;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
     }
-    .menu-toggle:hover { color: var(--primary); background: var(--elevated); }
+    .menu-toggle:hover { color: var(--primary); background: var(--elevated); border-color: var(--primary); }
     .topbar-heading { flex: 1; min-width: 0; }
     .topbar-heading h1 {
       font-size: 1.25rem; font-weight: 800;
@@ -798,10 +804,6 @@
 
     /* ─── Responsive ─── */
     @media (max-width: 1023px) {
-      .sidebar { transform: translateX(-100%); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
-      .sidebar.open { transform: translateX(0); }
-      .main-area { margin-left: 0; }
-      .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
       .topbar { padding: 0 16px; height: 64px; }
       .topbar-heading h1 { font-size: 1rem; }
       .topbar-heading p { display: none; }
@@ -840,13 +842,13 @@
 
   <div class="adv-shell">
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation">
-      <div class="sidebar-brand">
-        <div class="logo">Campus<span>Naija</span></div>
-        <div class="portal-tag">
-          <i class="fas fa-bullhorn"></i> Advertiser Portal
-        </div>
+    <!-- Sidebar Drawer -->
+    <aside class="sidebar" id="sidebar" aria-label="Advertiser navigation" aria-hidden="true">
+      <div class="sidebar-drawer-top">
+        <span class="sidebar-drawer-label">Navigation</span>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close navigation" title="Close navigation">
+          <i class="fas fa-xmark"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -1586,6 +1588,20 @@
         renderBilling();
       }
 
+      /* ─── Sidebar Drawer ─── */
+      function openSidebar() {
+        $('sidebar').classList.add('open');
+        $('sidebar').setAttribute('aria-hidden', 'false');
+        $('sidebarOverlay').classList.add('active');
+        $('menuToggle').setAttribute('aria-expanded', 'true');
+      }
+      function closeSidebar() {
+        $('sidebar').classList.remove('open');
+        $('sidebar').setAttribute('aria-hidden', 'true');
+        $('sidebarOverlay').classList.remove('active');
+        $('menuToggle').setAttribute('aria-expanded', 'false');
+      }
+
       /* ─── Sign-out modal ─── */
       function openSignoutModal() {
         const m = $('signoutModal');
@@ -1602,24 +1618,23 @@
       }
 
       function wireEvents() {
-        // Sidebar
+        // Sidebar drawer
         $('menuToggle').addEventListener('click', () => {
-          const open = $('sidebar').classList.toggle('open');
-          $('sidebarOverlay').classList.toggle('active', open);
-          $('menuToggle').setAttribute('aria-expanded', String(open));
+          if ($('sidebar').classList.contains('open')) closeSidebar();
+          else openSidebar();
         });
-        $('sidebarOverlay').addEventListener('click', () => {
-          $('sidebar').classList.remove('open');
-          $('sidebarOverlay').classList.remove('active');
+        $('sidebarClose').addEventListener('click', closeSidebar);
+        $('sidebarOverlay').addEventListener('click', closeSidebar);
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(link => {
+          link.addEventListener('click', closeSidebar);
         });
 
         // Escape handles: sidebar, drawer, signout modal
         document.addEventListener('keydown', (e) => {
           if (e.key !== 'Escape') return;
-          $('sidebar').classList.remove('open');
-          $('sidebarOverlay').classList.remove('active');
-          if ($('signoutModal')?.classList.contains('open')) closeSignoutModal();
-          if ($('drawer').classList.contains('open')) closeDrawer();
+          if ($('signoutModal')?.classList.contains('open')) { closeSignoutModal(); return; }
+          if ($('drawer').classList.contains('open')) { closeDrawer(); return; }
+          if ($('sidebar').classList.contains('open')) { closeSidebar(); return; }
         });
 
         // Sign-out modal
