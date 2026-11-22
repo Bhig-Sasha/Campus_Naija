@@ -39,6 +39,11 @@
       --sidebar-w: 260px;
     }
 
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
     /* SIDEBAR (Drawer on all screen sizes so main body is full width) */
     .sidebar {
       width: var(--sidebar-w);
@@ -183,7 +188,7 @@
     .page-heading h1 { font-size: 2rem; margin-bottom: 6px; }
     .page-heading p { color: var(--muted); font-size: 0.95rem; max-width: 720px; }
 
-    /* SCOPE BANNER — hidden when everything is fine, visible only for unassigned / orphaned */
+    /* SCOPE BANNER */
     .scope-banner {
       display: none;
       flex-wrap: wrap; align-items: center; gap: 14px;
@@ -616,12 +621,12 @@
 
   <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-  <div class="admin-shell" style="display:flex; min-height:100vh;">
+  <div class="admin-shell" id="appShell" style="display:flex; min-height:100vh;">
 
     <aside class="sidebar" id="sidebar" aria-label="School representative navigation">
       <div class="sidebar-top">
         <span class="sidebar-top-label">Navigation</span>
-        <button class="sidebar-close" id="sidebarClose" aria-label="Close navigation">
+        <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close navigation">
           <i class="fas fa-xmark"></i>
         </button>
       </div>
@@ -631,7 +636,7 @@
         <a href="./index.html" class="nav-item"><i class="fas fa-gauge-high"></i> Dashboard</a>
         <a href="./courses.html" class="nav-item"><i class="fas fa-book-open"></i> Faculties &amp; Courses</a>
         <a href="./fees.html" class="nav-item"><i class="fas fa-money-bill"></i> Fees</a>
-        <a href="./admissions.html" class="nav-item active"><i class="fas fa-clipboard-list"></i> Admissions</a>
+        <a href="./admissions.html" class="nav-item active" aria-current="page"><i class="fas fa-clipboard-list"></i> Admissions</a>
         <a href="./calendar.html" class="nav-item"><i class="fas fa-calendar"></i> Academic Calendar</a>
         <a href="./media.html" class="nav-item"><i class="fas fa-photo-film"></i> Media Library</a>
         <a href="./submissions.html" class="nav-item">
@@ -645,7 +650,7 @@
     <div class="main-area">
 
       <header class="topbar">
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">
           <i class="fas fa-bars"></i>
         </button>
 
@@ -655,8 +660,8 @@
         </div>
 
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
-          <button class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
+          <button type="button" class="icon-btn" aria-label="Notifications"><i class="far fa-bell"></i></button>
+          <button type="button" class="icon-btn" aria-label="Help"><i class="far fa-circle-question"></i></button>
           <div class="topbar-divider" aria-hidden="true"></div>
           <div class="topbar-rep">
             <div class="rep-avatar" id="topAvatar">—</div>
@@ -665,7 +670,7 @@
               <div class="topbar-rep-role">School Representative</div>
             </div>
           </div>
-          <button class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
+          <button type="button" class="icon-btn signout-icon" aria-label="Sign out" title="Sign out" onclick="signOut()">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </button>
         </div>
@@ -679,7 +684,6 @@
           <p>Manage admission notices for your institution. Notices go live the moment you save them. If the platform administrator spots a fault, they send it back for you to fix.</p>
         </div>
 
-        <!-- Scope banner: hidden when everything is fine, visible only for unassigned / orphaned -->
         <div class="scope-banner" id="scopeBanner">
           <i class="fas fa-triangle-exclamation"></i>
           <div class="scope-text">
@@ -713,22 +717,22 @@
         </div>
 
         <div class="toolbar">
-          <button class="btn-primary" id="addNoticeBtn" onclick="toggleAddForm()">
+          <button type="button" class="btn-primary" id="addNoticeBtn" onclick="toggleAddForm()">
             <i class="fas fa-plus"></i> Create admission notice
           </button>
         </div>
 
-        <div class="notice-tabs">
-          <button class="notice-tab active" data-cat="all" onclick="switchCategory('all', this)">
+        <div class="notice-tabs" role="tablist" aria-label="Filter admission notices">
+          <button type="button" class="notice-tab active" role="tab" aria-selected="true" data-cat="all" onclick="switchCategory('all', this)">
             <i class="fas fa-list"></i> All notices <span class="tab-count" id="countAll">—</span>
           </button>
-          <button class="notice-tab" data-cat="sent_back" onclick="switchCategory('sent_back', this)">
+          <button type="button" class="notice-tab" role="tab" aria-selected="false" data-cat="sent_back" onclick="switchCategory('sent_back', this)">
             <i class="fas fa-triangle-exclamation"></i> Needs fix <span class="tab-count" id="countSentBack">—</span>
           </button>
-          <button class="notice-tab" data-cat="published" onclick="switchCategory('published', this)">
+          <button type="button" class="notice-tab" role="tab" aria-selected="false" data-cat="published" onclick="switchCategory('published', this)">
             <i class="fas fa-circle-check"></i> Published <span class="tab-count" id="countPublished">—</span>
           </button>
-          <button class="notice-tab" data-cat="archived" onclick="switchCategory('archived', this)">
+          <button type="button" class="notice-tab" role="tab" aria-selected="false" data-cat="archived" onclick="switchCategory('archived', this)">
             <i class="fas fa-archive"></i> Archived <span class="tab-count" id="countArchived">—</span>
           </button>
         </div>
@@ -736,23 +740,23 @@
         <div class="add-inline" id="addNoticeForm">
           <div class="ai-header">
             <div class="ai-title"><i class="fas fa-plus"></i> New admission notice</div>
-            <button class="ai-close" onclick="toggleAddForm()" aria-label="Close">
+            <button type="button" class="ai-close" onclick="closeAddForm()" aria-label="Close">
               <i class="fas fa-xmark"></i>
             </button>
           </div>
           <div class="form-grid">
             <div class="form-section-title"><i class="fas fa-circle-info"></i> Basic details</div>
             <div class="form-group full">
-              <label>Notice title <span class="req">*</span></label>
+              <label for="noticeTitle">Notice title <span class="req">*</span></label>
               <input type="text" id="noticeTitle" placeholder="e.g. 2026/2027 UTME Admission Notice">
             </div>
             <div class="form-group">
-              <label>Academic session <span class="req">*</span></label>
+              <label for="noticeSession">Academic session <span class="req">*</span></label>
               <input type="text" id="noticeSession" placeholder="e.g. 2025/2026" autocomplete="off">
               <span class="form-hint">Format: YYYY/YYYY</span>
             </div>
             <div class="form-group">
-              <label>Entry route <span class="req">*</span></label>
+              <label for="noticeRoute">Entry route <span class="req">*</span></label>
               <select id="noticeRoute">
                 <option value="">Select route</option>
                 <option value="UTME">UTME (Undergraduate)</option>
@@ -766,49 +770,49 @@
 
             <div class="form-section-title"><i class="fas fa-calendar"></i> Application dates</div>
             <div class="form-group">
-              <label>Opening date <span class="optional">(optional)</span></label>
+              <label for="noticeOpenDate">Opening date <span class="optional">(optional)</span></label>
               <input type="date" id="noticeOpenDate">
             </div>
             <div class="form-group">
-              <label>Closing date <span class="optional">(optional)</span></label>
+              <label for="noticeCloseDate">Closing date <span class="optional">(optional)</span></label>
               <input type="date" id="noticeCloseDate">
             </div>
             <div class="form-group full">
-              <label>Verified extension <span class="optional">(if applicable)</span></label>
+              <label for="noticeExtension">Verified extension <span class="optional">(if applicable)</span></label>
               <input type="text" id="noticeExtension" placeholder="e.g. Extended to 30 Sep 2026 — official source confirmed">
             </div>
 
             <div class="form-section-title"><i class="fas fa-list-check"></i> Entry requirements</div>
             <div class="form-group full">
-              <label>Requirements summary <span class="optional">(optional)</span></label>
+              <label for="noticeRequirements">Requirements summary <span class="optional">(optional)</span></label>
               <textarea id="noticeRequirements" placeholder="O'Level, UTME subjects, Direct Entry criteria..." style="min-height: 70px;"></textarea>
             </div>
             <div class="form-group full">
-              <label>Eligibility / additional criteria <span class="optional">(optional)</span></label>
+              <label for="noticeEligibility">Eligibility / additional criteria <span class="optional">(optional)</span></label>
               <textarea id="noticeEligibility" placeholder="Special eligibility notes..." style="min-height: 60px;"></textarea>
             </div>
 
             <div class="form-section-title"><i class="fas fa-link"></i> Official links</div>
             <div class="form-group full">
-              <label>Official application URL <span class="req">*</span></label>
+              <label for="noticeApplyUrl">Official application URL <span class="req">*</span></label>
               <input type="url" id="noticeApplyUrl" placeholder="https://official-application-portal.example">
               <span class="form-hint">Direct applicants to a verified institutional or examination portal only.</span>
             </div>
             <div class="form-group full">
-              <label>Official source / announcement URL <span class="req">*</span></label>
+              <label for="noticeSourceUrl">Official source / announcement URL <span class="req">*</span></label>
               <input type="url" id="noticeSourceUrl" placeholder="Paste the official announcement link">
               <span class="form-hint">Required before the notice can be published.</span>
             </div>
             <div class="form-group full">
-              <label>Additional notes <span class="optional">(optional)</span></label>
+              <label for="noticeNotes">Additional notes <span class="optional">(optional)</span></label>
               <textarea id="noticeNotes" placeholder="Any additional instructions..." style="min-height: 60px;"></textarea>
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn-primary btn-sm" id="saveNoticeBtn" onclick="saveNotice()">
+            <button type="button" class="btn-primary btn-sm" id="saveNoticeBtn" onclick="saveNotice()">
               <i class="fas fa-save"></i> Save &amp; publish
             </button>
-            <button class="btn-outline btn-sm" onclick="toggleAddForm()">Cancel</button>
+            <button type="button" class="btn-outline btn-sm" onclick="closeAddForm()">Cancel</button>
           </div>
           <p class="form-hint" style="margin-top: 10px;">
             <i class="fas fa-circle-info" style="margin-right: 4px;"></i>
@@ -871,6 +875,21 @@
     </div>
   </div>
 
+  <!-- CONFIRM DELETE MODAL -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon"><i class="fas fa-trash"></i></div>
+        <h3 class="modal-title" id="confirmModalTitle">Delete notice</h3>
+      </div>
+      <p class="modal-body" id="confirmModalBody">Are you sure you want to delete this notice? This cannot be undone.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal btn-modal-cancel" id="cancelConfirmBtn">Cancel</button>
+        <button type="button" class="btn-modal btn-modal-danger" id="acceptConfirmBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SIGN OUT MODAL -->
   <div class="modal-backdrop" id="signoutModal" role="dialog" aria-modal="true" aria-labelledby="signoutModalTitle" aria-hidden="true">
     <div class="modal-card">
@@ -906,6 +925,8 @@
       let allNotices = [];
       let activeCategory = 'all';
       let schoolState = 'unassigned';
+      let pendingConfirmAction = null;
+      let lastFocusedElement = null;
 
       const esc = (s) => String(s ?? '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -917,6 +938,15 @@
         if (!parts.length) return '—';
         return parts.slice(0, 2).map(w => w[0].toUpperCase()).join('');
       };
+
+      function isValidHttpUrl(val) {
+        try {
+          const parsed = new URL(val);
+          return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+        } catch (_) {
+          return false;
+        }
+      }
 
       function redirectToLogin(reason) {
         try {
@@ -1041,8 +1071,11 @@
 
       window.switchCategory = function(cat, el) {
         activeCategory = cat;
-        document.querySelectorAll('.notice-tab').forEach(t => t.classList.remove('active'));
-        if (el) el.classList.add('active');
+        document.querySelectorAll('.notice-tab').forEach(t => {
+          const isSelected = t === el;
+          t.classList.toggle('active', isSelected);
+          t.setAttribute('aria-selected', String(isSelected));
+        });
         renderNotices();
       };
 
@@ -1076,7 +1109,7 @@
               '<h3>No admission notices yet</h3>' +
               '<p>Create your first admission notice to publish it on your school\'s public page. Notices go live the moment you save them.</p>' +
               '<div class="empty-actions">' +
-              '<button class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Create first admission notice</button>' +
+              '<button type="button" class="btn-primary" onclick="toggleAddForm()"><i class="fas fa-plus"></i> Create first admission notice</button>' +
               '</div>';
           } else if (activeCategory === 'sent_back') {
             emptyHtml =
@@ -1119,13 +1152,12 @@
           const actions = [];
 
           if (isSentBack) {
-            actions.push('<button class="btn-primary btn-sm" onclick="editNotice(\'' + esc(n.id) + '\')">' +
+            actions.push('<button type="button" class="btn-primary btn-sm" data-action="edit" data-id="' + esc(n.id) + '">' +
               '<i class="fas fa-pen"></i> Fix &amp; re-publish</button>');
           }
 
           if (cat !== 'published') {
-            actions.push('<button class="btn-danger btn-sm" onclick="deleteNotice(\'' + esc(n.id) + '\', \'' +
-              esc((n.title || '').replace(/'/g, "\\'")) + '\')">' +
+            actions.push('<button type="button" class="btn-danger btn-sm" data-action="delete" data-id="' + esc(n.id) + '">' +
               '<i class="fas fa-trash"></i> Delete</button>');
           }
 
@@ -1143,6 +1175,19 @@
           '</div>';
         }).join('') + '</div>';
       }
+
+      document.getElementById('noticesList').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action][data-id]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-action');
+        if (action === 'edit') {
+          editNotice(id);
+        } else if (action === 'delete') {
+          const item = allNotices.find(x => String(x.id) === String(id));
+          requestDeleteNotice(id, item ? item.title : 'this notice');
+        }
+      });
 
       async function loadNotices() {
         if (schoolState !== 'ok' || !currentSchool) {
@@ -1167,13 +1212,26 @@
         }
       }
 
+      function clearFormFields() {
+        ['noticeTitle', 'noticeSession', 'noticeRoute', 'noticeOpenDate', 'noticeCloseDate',
+         'noticeExtension', 'noticeRequirements', 'noticeEligibility',
+         'noticeApplyUrl', 'noticeSourceUrl', 'noticeNotes']
+          .forEach(id => { document.getElementById(id).value = ''; });
+      }
+
       window.toggleAddForm = function() {
         const form = document.getElementById('addNoticeForm');
-        form.classList.toggle('open');
-        if (form.classList.contains('open')) {
+        const willOpen = !form.classList.contains('open');
+        form.classList.toggle('open', willOpen);
+        if (willOpen) {
           const first = form.querySelector('input, select');
           if (first) first.focus();
         }
+      };
+
+      window.closeAddForm = function() {
+        document.getElementById('addNoticeForm').classList.remove('open');
+        clearFormFields();
       };
 
       function validateForm() {
@@ -1194,13 +1252,11 @@
         if (openDate && closeDate && new Date(closeDate) < new Date(openDate)) {
           toast('Closing date cannot be before the opening date.', true); return null;
         }
-        if (!applyUrl) { toast('An official application URL is required.', true); return null; }
-        try { new URL(applyUrl); } catch (e) {
-          toast('Please enter a valid application URL (including https://).', true); return null;
+        if (!applyUrl || !isValidHttpUrl(applyUrl)) {
+          toast('Please enter a valid application URL (http or https).', true); return null;
         }
-        if (!sourceUrl) { toast('An official source URL is required.', true); return null; }
-        try { new URL(sourceUrl); } catch (e) {
-          toast('Please enter a valid source URL (including https://).', true); return null;
+        if (!sourceUrl || !isValidHttpUrl(sourceUrl)) {
+          toast('Please enter a valid source URL (http or https).', true); return null;
         }
 
         return {
@@ -1218,14 +1274,6 @@
         };
       }
 
-      function resetForm() {
-        ['noticeTitle', 'noticeSession', 'noticeRoute', 'noticeOpenDate', 'noticeCloseDate',
-         'noticeExtension', 'noticeRequirements', 'noticeEligibility',
-         'noticeApplyUrl', 'noticeSourceUrl', 'noticeNotes']
-          .forEach(id => { document.getElementById(id).value = ''; });
-        toggleAddForm();
-      }
-
       window.saveNotice = async function() {
         if (schoolState !== 'ok' || !currentSchool) { toast('No institution assigned.', true); return; }
         const payload = validateForm();
@@ -1239,7 +1287,7 @@
             body: JSON.stringify(payload),
           });
           toast('Notice published.');
-          resetForm();
+          window.closeAddForm();
           await loadNotices();
         } catch (err) {
           toast(err.message, true);
@@ -1248,7 +1296,7 @@
         }
       };
 
-      window.editNotice = async function(id) {
+      async function editNotice(id) {
         const n = allNotices.find(x => String(x.id) === String(id));
         if (!n) return;
 
@@ -1258,14 +1306,14 @@
 
         const newApplyUrl = prompt('Official application URL:', n.application_url || '');
         if (newApplyUrl == null) return;
-        if (!/^https?:\/\//i.test(newApplyUrl.trim())) {
+        if (!isValidHttpUrl(newApplyUrl.trim())) {
           toast('Application URL must be a valid http(s) URL.', true);
           return;
         }
 
         const newSourceUrl = prompt('Official source URL:', n.source_url || '');
         if (newSourceUrl == null) return;
-        if (!/^https?:\/\//i.test(newSourceUrl.trim())) {
+        if (!isValidHttpUrl(newSourceUrl.trim())) {
           toast('Source URL must be a valid http(s) URL.', true);
           return;
         }
@@ -1284,18 +1332,75 @@
         } catch (err) {
           toast(err.message, true);
         }
-      };
+      }
 
-      window.deleteNotice = async function(id, title) {
-        if (!confirm('Delete "' + (title || 'this notice') + '"?\n\nThis cannot be undone.')) return;
-        try {
-          await api('/api/admissions/' + encodeURIComponent(id), { method: 'DELETE' });
-          toast('Admission notice deleted.');
-          await loadNotices();
-        } catch (err) {
-          toast(err.message, true);
+      /* ----- MODAL FOCUS & CONFIRMATION HELPERS ----- */
+      function trapModalFocus(modal, e) {
+        if (e.key !== 'Tab') return;
+        const focusables = Array.from(
+          modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
         }
-      };
+      }
+
+      const confirmModal = document.getElementById('confirmModal');
+      const confirmModalBody = document.getElementById('confirmModalBody');
+      const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
+      const acceptConfirmBtn = document.getElementById('acceptConfirmBtn');
+
+      function openConfirmModal(message, onConfirm) {
+        lastFocusedElement = document.activeElement;
+        pendingConfirmAction = onConfirm;
+        confirmModalBody.textContent = message;
+        confirmModal.classList.add('open');
+        confirmModal.setAttribute('aria-hidden', 'false');
+        cancelConfirmBtn.focus();
+      }
+
+      function closeConfirmModal() {
+        pendingConfirmAction = null;
+        confirmModal.classList.remove('open');
+        confirmModal.setAttribute('aria-hidden', 'true');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+          lastFocusedElement = null;
+        }
+      }
+
+      cancelConfirmBtn.addEventListener('click', closeConfirmModal);
+      acceptConfirmBtn.addEventListener('click', async () => {
+        const fn = pendingConfirmAction;
+        closeConfirmModal();
+        if (typeof fn === 'function') await fn();
+      });
+      confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) closeConfirmModal();
+      });
+      confirmModal.addEventListener('keydown', (e) => trapModalFocus(confirmModal, e));
+
+      function requestDeleteNotice(id, title) {
+        openConfirmModal(
+          'Delete "' + (title || 'this notice') + '"? This cannot be undone.',
+          async () => {
+            try {
+              await api('/api/admissions/' + encodeURIComponent(id), { method: 'DELETE' });
+              toast('Admission notice deleted.');
+              await loadNotices();
+            } catch (err) {
+              toast(err.message, true);
+            }
+          }
+        );
+      }
 
       async function verifySession() {
         try { token = localStorage.getItem(TOKEN_KEY); } catch (_) {}
@@ -1359,6 +1464,7 @@
       const confirmSignoutBtn = document.getElementById('confirmSignoutBtn');
 
       function openSignoutModal() {
+        lastFocusedElement = document.activeElement;
         signoutModal.classList.add('open');
         signoutModal.setAttribute('aria-hidden', 'false');
         cancelSignoutBtn.focus();
@@ -1367,6 +1473,10 @@
       function closeSignoutModal() {
         signoutModal.classList.remove('open');
         signoutModal.setAttribute('aria-hidden', 'true');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+          lastFocusedElement = null;
+        }
       }
 
       async function performSignOut() {
@@ -1389,6 +1499,7 @@
       signoutModal.addEventListener('click', (e) => {
         if (e.target === signoutModal) closeSignoutModal();
       });
+      signoutModal.addEventListener('keydown', (e) => trapModalFocus(signoutModal, e));
 
       /* ----- COLLAPSIBLE SIDEBAR DRAWER ----- */
       const menuToggle = document.getElementById('menuToggle');
@@ -1413,7 +1524,8 @@
       });
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-          if (signoutModal.classList.contains('open')) closeSignoutModal();
+          if (confirmModal.classList.contains('open')) closeConfirmModal();
+          else if (signoutModal.classList.contains('open')) closeSignoutModal();
           else closeSidebar();
         }
       });
